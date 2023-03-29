@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 function App() {
   return (
     <>
-    <Navbar/>
+    <Navbar notification={5}/>
     <Sidebar/>
     </>
   );

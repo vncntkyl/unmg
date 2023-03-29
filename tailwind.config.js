@@ -9,8 +9,12 @@ export default {
       white: colors.white,
       black: colors.black,
       "un-blue": "#183145",
+      "un-red": "#D22735",
 
     }),
+    fontSize: {
+      tooltip: "12px",
+    }
   },
   plugins: [],
 }
