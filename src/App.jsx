@@ -1,9 +1,12 @@
 import React from "react";
 import "./css/root.css";
+import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
 function App() {
   return (
     <>
-      <h1 className="text-3xl font-bold">United Neon Media Group Performance Management System</h1>
+    <Navbar/>
+    <Sidebar/>
     </>
   );
 }
