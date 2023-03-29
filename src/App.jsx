@@ -1,11 +1,10 @@
 import React from "react";
 import "./css/root.css";
-import Sidebar from "./components/Sidebar";
-import Overview from "./components/Overview";
+import Navbar from "./components/Navbar";
 function App() {
   return (
     <>
-      <Sidebar />
+      <Navbar notification_count={7} />
     </>
   );
 }

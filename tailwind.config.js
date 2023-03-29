@@ -8,8 +8,13 @@ export default {
     colors: ({ colors }) => ({
       white: colors.white,
       "un-blue": "#183145",
+      "un-red": "#d22735",
       
     }),
+    fontSize:{
+      tooltip:'11px',
+    }
+    
   },
   plugins: [],
 };
