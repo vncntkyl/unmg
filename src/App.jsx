@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 function App() {
   return (
     <>
-      <Navbar notification_count={7} />
+      <Navbar notification_count={0} />
     </>
   );
 }
