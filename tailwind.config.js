@@ -14,6 +14,7 @@ export default {
     }),
     fontSize: {
       tooltip: "12px",
+      title: "20px",
     }
   },
   plugins: [],
