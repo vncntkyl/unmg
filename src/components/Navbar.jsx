@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import logo from "../assets/unmg_logo_plain.png";
 import { FaBell, FaUserCircle } from "react-icons/fa";
+import { BiDownArrow } from "react-icons/bi";
 import classNames from "classnames";
 
-export default function Navbar({ notification_count, user_img }) {
+export default function Navbar({ notification_count, user_data }) {
   const [panel, togglePanel] = useState({
     notification: false,
     user: false,
@@ -20,17 +21,17 @@ export default function Navbar({ notification_count, user_img }) {
           </span>
         </div>
         <div className="nav_page col-[1/2] flex items-center md:mr-auto">
-          <span className="crumbs text-white text-sm md:text-lg">
+          <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
             Admin /{" "}
-            <span className="font-semibold text-[1.3rem]">Dashboard</span>
+            <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">Dashboard</span>
           </span>
-          <span className="hidden text-white text-[1.5rem] font-semibold">
+          {/* <span className="hidden text-white text-[1.5rem] font-semibold">
             Dashboard
-          </span>
+          </span> */}
         </div>
         <div className="nav_user relative col-[2/3] flex-shrink-0 flex items-center justify-end p-1 gap-2">
-          <span className="text-white text-sm md:text-lg font-medium hidden">
-            Welcome Juan Dela Cruz
+          <span className="text-white text-sm md:text-lg font-medium hidden lg:block">
+            Welcome {user_data.first_name}!
           </span>
           <button
             onClick={() =>
@@ -42,13 +43,14 @@ export default function Navbar({ notification_count, user_img }) {
               })
             }
             data-count={notification_count}
-            className="relative before:block before:absolute before:content-[attr(data-count)] before:top-[-5px] before:right-[-5px] before:text-tooltip before:text-white before:bg-un-red before:w-[1.1rem] before:h-[1.1rem] before:rounded-full ml-3"
+            className="relative before:block before:absolute before:content-[attr(data-count)] before:top-[-5px] before:right-[-5px] before:text-tooltip before:text-white before:bg-un-red before:w-[1rem] before:h-[1rem] sm:before:w-[1.1rem] sm:before:h-[1.1rem] before:rounded-full ml-3"
           >
+            <FaBell className="text-white text-[1.2rem] sm:text-[1.5rem]" />
             <div
               className={classNames(
                 "notification_panel",
                 !panel.notification && "hidden",
-                "absolute top-full right-0 w-[max-content] mt-4 bg-white py-2 px-3 rounded-md shadow-md"
+                "absolute top-full right-0 w-[max-content] mt-4 bg-white py-2 px-3 rounded-md shadow-md animate-slide-down z-[-1]"
               )}
             >
               <ul>
@@ -60,35 +62,40 @@ export default function Navbar({ notification_count, user_img }) {
                 </li>
               </ul>
             </div>
-            <FaBell className="text-white text-[1.5rem]" />
           </button>
           <div className="user_dropdown relative ml-3">
-              <button
-                className="flex text-sm rounded-full"
-                onClick={() =>
-                  togglePanel((prev) => {
-                    return {
-                      notification: false,
-                      user: !prev.user,
-                    };
-                  })
-                }
-              >
-                {user_img ? (
-                  <>
-                    <img src="" alt="" className="h-8 w-8 rounded-full" />
-                  </>
-                ) : (
-                  <>
-                    <FaUserCircle className="text-white text-[1.7rem]" />
-                  </>
-                )}
-              </button>
+            <button
+              className="flex text-sm rounded-full bg-white items-center gap-1 pr-1 lg:pr-0 lg:bg-transparent"
+              onClick={() =>
+                togglePanel((prev) => {
+                  return {
+                    notification: false,
+                    user: !prev.user,
+                  };
+                })
+              }
+            >
+              {user_data && user_data.image ? (
+                <>
+                  <img src="" alt="" className="h-8 w-8 rounded-full" />
+                </>
+              ) : (
+                <>
+                  <FaUserCircle className="text-un-blue text-[1.7rem] lg:text-white" />
+                </>
+              )}
+              {user_data && user_data.first_name && (
+                <>
+                  <span className="lg:hidden">{user_data.first_name}</span>
+                </>
+              )}
+              <BiDownArrow className= {classNames(panel.user && "rotate-180", "transition-all ease-in-out duration-300 lg:hidden")}/>
+            </button>
             <div
               className={classNames(
                 "user_panel",
                 !panel.user && "hidden",
-                "absolute top-full right-0 w-[max-content] mt-3 bg-white py-2 px-3 rounded-md shadow-md"
+                "absolute top-full right-0 w-[max-content] mt-3 bg-white py-2 px-3 rounded-md shadow-md animate-slide-down z-[-1]"
               )}
             >
               <ul>
