@@ -10,16 +10,16 @@ export default function Navbar({ notification_count, user_img }) {
   });
   return (
     <>
-      <nav className="bg-un-blue mx-auto px-4 py-2 grid grid-cols-2 sm:px-6 lg:px-8">
+      <nav className="bg-un-blue mx-auto px-4 py-2 grid grid-cols-2 md:px-6 md:flex md:gap-4 md:justify-between">
         <div className="nav_brand col-[1/3] flex flex-row gap-2 py-2 items-center justify-center">
-          <img src={logo} alt="unmg_logo" className="h-7 w-auto" />
-          <span className="text-white text-[.8rem] md:text-lg font-medium">
+          <img src={logo} alt="unmg_logo" className="h-7 w-auto md:h-10" />
+          <span className="text-white text-[.8rem] md:text-[.9rem] font-medium">
             United Neon Media Group
             <br />
             Performance Management System
           </span>
         </div>
-        <div className="nav_page col-[1/2] flex items-center">
+        <div className="nav_page col-[1/2] flex items-center md:mr-auto">
           <span className="crumbs text-white text-sm md:text-lg">
             Admin /{" "}
             <span className="font-semibold text-[1.3rem]">Dashboard</span>
@@ -34,9 +34,11 @@ export default function Navbar({ notification_count, user_img }) {
           </span>
           <button
             onClick={() =>
-              togglePanel({
-                notification: true,
-                user: false,
+              togglePanel((prev) => {
+                return {
+                  notification: !prev.notification,
+                  user: false,
+                };
               })
             }
             data-count={notification_count}
@@ -51,35 +53,37 @@ export default function Navbar({ notification_count, user_img }) {
             >
               <ul>
                 <li className="p-2">
-                  <a href="/account-settings">Account Settings</a>
+                  <a href="/account-settings">Notification 1</a>
                 </li>
                 <li className="p-2">
-                  <a href="/logout">Logout</a>
+                  <a href="/logout">Notification 2</a>
                 </li>
               </ul>
             </div>
             <FaBell className="text-white text-[1.5rem]" />
           </button>
           <div className="user_dropdown relative ml-3">
-            <button
-              className="flex text-sm rounded-full"
-              onClick={() =>
-                togglePanel({
-                  notification: false,
-                  user: true,
-                })
-              }
-            >
-              {user_img ? (
-                <>
-                  <img src="" alt="" className="h-8 w-8 rounded-full" />
-                </>
-              ) : (
-                <>
-                  <FaUserCircle className="text-white text-[1.7rem]" />
-                </>
-              )}
-            </button>
+              <button
+                className="flex text-sm rounded-full"
+                onClick={() =>
+                  togglePanel((prev) => {
+                    return {
+                      notification: false,
+                      user: !prev.user,
+                    };
+                  })
+                }
+              >
+                {user_img ? (
+                  <>
+                    <img src="" alt="" className="h-8 w-8 rounded-full" />
+                  </>
+                ) : (
+                  <>
+                    <FaUserCircle className="text-white text-[1.7rem]" />
+                  </>
+                )}
+              </button>
             <div
               className={classNames(
                 "user_panel",
