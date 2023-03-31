@@ -10,6 +10,8 @@ export default {
       black: colors.black,
       "un-blue": "#183145",
       "un-red": "#D22735",
+      "offwhite": "#D3D6D7",
+      transparent: colors.transparent,
 
     }),
     fontSize: {
