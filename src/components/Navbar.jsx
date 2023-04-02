@@ -20,7 +20,7 @@ export default function Navbar({ notification_count, user_data, sidebarToggler }
     setCurrentUser([]);
     navigate("/login");
   };
-  return (
+  return user_data && (
     <>
       <nav className="w-[100%] bg-un-blue mx-auto px-4 py-2 grid grid-cols-3 md:px-6 md:flex md:gap-4 md:justify-between xl:px-8">
         <div className=" col-[1/2] flex flex-row gap-2 py-2 items-center">
@@ -45,7 +45,7 @@ export default function Navbar({ notification_count, user_data, sidebarToggler }
         </div>
         <div className="nav_user relative col-[3/4] flex-shrink-0 flex items-center justify-end p-1 gap-2">
           <span className="text-white text-sm md:text-lg font-medium hidden lg:block">
-            Welcome {user_data.first_name}!
+            Welcome {user_data.username}!
           </span>
           <button
             onClick={() =>
@@ -98,10 +98,10 @@ export default function Navbar({ notification_count, user_data, sidebarToggler }
                   <FaUserCircle className="text-un-blue text-[1.7rem] lg:text-white" />
                 </>
               )}
-              {user_data && user_data.first_name && (
+              {user_data && user_data[0].username && (
                 <>
                   <span className="hidden text-[.9rem] group-hover/user:block lg:hidden group-hover/user:lg:hidden">
-                    {user_data.first_name}
+                    {user_data[0].username}
                   </span>
                 </>
               )}

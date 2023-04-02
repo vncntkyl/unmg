@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navbar, Sidebar } from "../components";
 import { useNavigate } from "react-router-dom";
+import classNames from "classnames";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
@@ -18,7 +19,7 @@ export default function Dashboard() {
     }
     let xDiff = xDown - evt.touches[0].clientX;
     if (xDiff < 0) {
-      toggleSidebar((prev) => !prev);
+      toggleSidebar((prev) => true);
     }
     xDown = null;
   }
@@ -49,19 +50,17 @@ export default function Dashboard() {
     <>
       <Navbar
         notification_count={0}
-        user_data={{
-          first_name: "Kyle",
-        }}
+        user_data={user}
         sidebarToggler={toggleSidebar}
       />
-      {sidebar ? (
-        <>
-          <Sidebar sidebarToggler={toggleSidebar}/>
-          <div className="bg-[#00000050] fixed h-full w-full z-[4] top-0 left-0 animate-fade pointer-events-auto" onClick={() => toggleSidebar(false)} />
-        </>
-      ) : (
-        <></>
-      )}
+      <Sidebar sidebarToggler={toggleSidebar} className={classNames(sidebar && "translate-x-[0%]")} />
+      <div
+        className={classNames(
+          "bg-[#00000050] fixed h-full w-full z-[4] top-0 left-0 animate-fade pointer-events-auto",
+          !sidebar && "hidden pointer-events-none"
+        )}
+        onClick={() => toggleSidebar(false)}
+      />
       {user.map((data) => {
         return (
           <>
