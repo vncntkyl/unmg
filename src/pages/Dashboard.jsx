@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Navbar } from "../components";
+import { Navbar, Sidebar } from "../components";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/authContext";
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
   const [sidebar, toggleSidebar] = useState(false);
-
+  const [loader, toggleLoader] = useState(true);
+  const [user, setUser] = useState({});
   let xDown = null;
 
   function handleTouchStart(evt) {
@@ -31,6 +30,9 @@ export default function Dashboard() {
   useEffect(() => {
     if (!sessionStorage.getItem("currentUser")) {
       navigate("/login");
+    } else {
+      setUser(JSON.parse(sessionStorage.getItem("currentUser")));
+      toggleLoader(false);
     }
     document.addEventListener("touchstart", handleTouchStart);
     document.addEventListener("touchmove", handleTouchMove);
@@ -43,17 +45,24 @@ export default function Dashboard() {
       document.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
-  return (
+  return !loader ? (
     <>
       <Navbar
         notification_count={0}
         user_data={{
           first_name: "Kyle",
         }}
+        sidebarToggler={toggleSidebar}
       />
-      {sidebar ? "helo" : "hi"}
-      <br />
-      {currentUser.map((data) => {
+      {sidebar ? (
+        <>
+          <Sidebar sidebarToggler={toggleSidebar}/>
+          <div className="bg-[#00000050] fixed h-full w-full z-[4] top-0 left-0 animate-fade pointer-events-auto" onClick={() => toggleSidebar(false)} />
+        </>
+      ) : (
+        <></>
+      )}
+      {user.map((data) => {
         return (
           <>
             <div key={data}>
@@ -64,5 +73,7 @@ export default function Dashboard() {
         );
       })}
     </>
+  ) : (
+    <>Loading...</>
   );
 }

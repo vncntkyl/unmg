@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import logo from "../assets/unmg_logo_plain.png";
 import { FaBell, FaUserCircle } from "react-icons/fa";
 import { BiDownArrow } from "react-icons/bi";
+import { GiHamburgerMenu } from "react-icons/gi";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
-export default function Navbar({ notification_count, user_data }) {
+export default function Navbar({ notification_count, user_data, sidebarToggler }) {
   const { setCurrentUser } = useAuth();
   const [panel, togglePanel] = useState({
     notification: false,
@@ -21,16 +22,17 @@ export default function Navbar({ notification_count, user_data }) {
   };
   return (
     <>
-      <nav className="w-[100%] bg-un-blue mx-auto px-4 py-2 grid grid-cols-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-8">
-        <div className="nav_brand col-[1/3] flex flex-row gap-2 py-2 items-center justify-center">
-          <img src={logo} alt="unmg_logo" className="h-7 w-auto md:h-10" />
-          <span className="text-white text-[.8rem] md:text-[.9rem] font-medium">
+      <nav className="w-[100%] bg-un-blue mx-auto px-4 py-2 grid grid-cols-3 md:px-6 md:flex md:gap-4 md:justify-between xl:px-8">
+        <div className=" col-[1/2] flex flex-row gap-2 py-2 items-center">
+          <img src={logo} alt="unmg_logo" className="hidden h-7 w-auto md:h-10" />
+          <GiHamburgerMenu className="text-white text-[2rem]" onClick={() => sidebarToggler(true)}/>
+          <span className="hidden text-white text-[.8rem] md:text-[.9rem] font-medium">
             United Neon Media Group
             <br />
             Performance Management System
           </span>
         </div>
-        <div className="nav_page col-[1/2] flex items-center md:mr-auto">
+        <div className="nav_page col-[2/3] flex items-center md:mr-auto">
           <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
             Admin /{" "}
             <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">
@@ -41,7 +43,7 @@ export default function Navbar({ notification_count, user_data }) {
             Dashboard
           </span> */}
         </div>
-        <div className="nav_user relative col-[2/3] flex-shrink-0 flex items-center justify-end p-1 gap-2">
+        <div className="nav_user relative col-[3/4] flex-shrink-0 flex items-center justify-end p-1 gap-2">
           <span className="text-white text-sm md:text-lg font-medium hidden lg:block">
             Welcome {user_data.first_name}!
           </span>

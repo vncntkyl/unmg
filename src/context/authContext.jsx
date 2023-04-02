@@ -19,8 +19,8 @@ export function AuthProvider({ children }) {
     axios
       .post(url, formData)
       .then((response) => {
-        setCurrentUser(response.data);
-        sessionStorage.setItem("currentUser", response.data);
+        setCurrentUser(JSON.stringify(response.data));
+        sessionStorage.setItem("currentUser", JSON.stringify(response.data));
         nav("/");
       })
       .catch((e) => {
@@ -32,13 +32,13 @@ export function AuthProvider({ children }) {
     if (sessionStorage.getItem("currentUser")) {
       setCurrentUser(sessionStorage.getItem("currentUser"));
     }
-  }, []);
+  }, [currentUser]);
 
   const value = {
     currentUser,
     nav,
     signInUser,
-    setCurrentUser
+    setCurrentUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
