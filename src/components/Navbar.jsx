@@ -3,15 +3,25 @@ import logo from "../assets/unmg_logo_plain.png";
 import { FaBell, FaUserCircle } from "react-icons/fa";
 import { BiDownArrow } from "react-icons/bi";
 import classNames from "classnames";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ notification_count, user_data }) {
+  const { setCurrentUser } = useAuth();
   const [panel, togglePanel] = useState({
     notification: false,
     user: false,
   });
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    setCurrentUser([]);
+    navigate("/login");
+  };
   return (
     <>
-      <nav className="bg-un-blue mx-auto px-4 py-2 grid grid-cols-2 md:px-6 md:flex md:gap-4 md:justify-between">
+      <nav className="w-[100%] bg-un-blue mx-auto px-4 py-2 grid grid-cols-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-8">
         <div className="nav_brand col-[1/3] flex flex-row gap-2 py-2 items-center justify-center">
           <img src={logo} alt="unmg_logo" className="h-7 w-auto md:h-10" />
           <span className="text-white text-[.8rem] md:text-[.9rem] font-medium">
@@ -23,7 +33,9 @@ export default function Navbar({ notification_count, user_data }) {
         <div className="nav_page col-[1/2] flex items-center md:mr-auto">
           <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
             Admin /{" "}
-            <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">Dashboard</span>
+            <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">
+              Dashboard
+            </span>
           </span>
           {/* <span className="hidden text-white text-[1.5rem] font-semibold">
             Dashboard
@@ -63,9 +75,9 @@ export default function Navbar({ notification_count, user_data }) {
               </ul>
             </div>
           </button>
-          <div className="user_dropdown relative ml-3">
+          <div className="user_dropdown relative ml-3 group/user">
             <button
-              className="flex text-sm rounded-full bg-white items-center gap-1 pr-1 lg:pr-0 lg:bg-transparent"
+              className="flex text-sm rounded-full bg-white items-center gap-1 transition-all group-hover/user:pr-1 lg:pr-0 lg:bg-transparent lg:group-hover/user:pr-0"
               onClick={() =>
                 togglePanel((prev) => {
                   return {
@@ -86,10 +98,17 @@ export default function Navbar({ notification_count, user_data }) {
               )}
               {user_data && user_data.first_name && (
                 <>
-                  <span className="lg:hidden">{user_data.first_name}</span>
+                  <span className="hidden text-[.9rem] group-hover/user:block lg:hidden group-hover/user:lg:hidden">
+                    {user_data.first_name}
+                  </span>
                 </>
               )}
-              <BiDownArrow className= {classNames(panel.user && "rotate-180", "transition-all ease-in-out duration-300 lg:hidden")}/>
+              <BiDownArrow
+                className={classNames(
+                  panel.user && "rotate-180",
+                  "transition-all ease-in-out duration-300 hidden group-hover/user:block lg:hidden group-hover/user:lg:hidden"
+                )}
+              />
             </button>
             <div
               className={classNames(
@@ -103,7 +122,9 @@ export default function Navbar({ notification_count, user_data }) {
                   <a href="/account-settings">Account Settings</a>
                 </li>
                 <li className="p-2 text-end">
-                  <a href="/logout">Logout</a>
+                  <button type="button" onClick={() => handleLogout()}>
+                    Logout
+                  </button>
                 </li>
               </ul>
             </div>

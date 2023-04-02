@@ -1,16 +1,19 @@
 import React from "react";
 import "./css/root.css";
-import { Navbar } from "./components";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import { AuthProvider } from "./context/authContext";
 function App() {
   return (
-    <>
-      <Navbar
-        notification_count={0}
-        user_data={{
-          first_name: "Kyle",
-        }}
-      />
-    </>
+    <Router>
+      <AuthProvider>
+        <Routes>
+          <Route path="/*" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </AuthProvider>
+    </Router>
   );
 }
 
