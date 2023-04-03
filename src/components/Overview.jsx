@@ -2,7 +2,28 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 
 export default function Overview({ overview_type }) {
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState([
+    {
+      id: 1,
+      title: "Employees",
+      count: 175,
+    },
+    {
+      id: 2,
+      title: "Not Evaluated",
+      count: 130,
+    },
+    {
+      id: 3,
+      title: "1 on 1 Discussion",
+      count: 62,
+    },
+    {
+      id: 4,
+      title: "Finalized Sign Off",
+      count: 20,
+    },
+  ]);
   const [loader, toggleLoader] = useState(false);
   useEffect(() => {
     if (overview_type === "regular") {
