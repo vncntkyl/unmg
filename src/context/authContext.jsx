@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
 
   function signInUser(username, password) {
     const url = "http://localhost/unmg_pms/api/signInUser.php";
+    //const url = "../api/signInUser.php";
     let formData = new FormData();
     formData.append("username", username);
     formData.append("password", password);

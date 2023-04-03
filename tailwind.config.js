@@ -6,7 +6,7 @@ export default {
       animation: {
         "slide-down": "slide-down 500ms ease-in-out forwards",
         "slide-right": "slide-right 200ms ease-in-out forwards",
-        "fade": "fade 200ms ease-in-out forwards",
+        fade: "fade 200ms ease-in-out forwards",
       },
       keyframes: {
         "slide-down": {
@@ -27,7 +27,7 @@ export default {
             transform: "translateX(0)",
           },
         },
-        "fade": {
+        fade: {
           "0%": {
             opacity: "0",
           },

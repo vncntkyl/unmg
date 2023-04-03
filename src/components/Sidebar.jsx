@@ -17,14 +17,20 @@ export default function Sidebar({ sidebarToggler, className }) {
   });
   return (
     <>
-      <section className={classNames("sidebar fixed top-0 left-0 w-[250px] bg-white h-full z-[5] p-2 flex flex-col gap-2 translate-x-[-100%] transition-all", className)}>
-        <div className="w-full flex justify-end">
+      <section
+        className={classNames(
+          "sidebar fixed top-0 left-0 w-[250px] bg-white h-full z-[20] p-2 flex flex-col gap-2 translate-x-[-100%] transition-all",
+          "lg:absolute lg:translate-x-[1.5rem] lg:translate-y-[4.7rem] lg:rounded-md shadow-lg xl:translate-x-[8rem]",
+          className
+        )}
+      >
+        <div className="w-full flex justify-end lg:hidden">
           <GiHamburgerMenu
-            className="text-un-blue-light text-[2rem]"
+            className="text-un-blue text-[1.5rem] cursor-pointer"
             onClick={() => sidebarToggler(false)}
           />
         </div>
-        <div className="flex w-full justify-start gap-1 items-center">
+        <div className="flex w-full justify-start gap-1 items-center lg:hidden">
           <img src={logo} alt="unmg_logo" className="h-7 w-auto md:h-10" />
           <span className="text-black text-[.67rem] font-medium">
             United Neon Media Group
@@ -32,7 +38,7 @@ export default function Sidebar({ sidebarToggler, className }) {
             Performance Management System
           </span>
         </div>
-        <section className="w-full flex flex-col py-2">
+        <section className="w-full flex flex-col py-2 lg:py-0">
           <NavButton
             icon={<RxDashboard />}
             textLabel={"Dashboard"}
@@ -49,7 +55,7 @@ export default function Sidebar({ sidebarToggler, className }) {
             />
             <div
               className={classNames(
-                "pl-4 scale-0 origin-top-left transition-all duration-200",
+                "pl-4 scale-0 origin-top-left transition-all duration-200 bg-[#00000015] rounded-sm",
                 dropdown.regular ? "scale-100 max-h-[10rem]" : "max-h-[0rem]"
               )}
             >
