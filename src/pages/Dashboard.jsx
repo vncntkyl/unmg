@@ -71,7 +71,7 @@ export default function Dashboard() {
         />
         {/* DASHBOARD MAIN */}
 
-        <div className="w-full bg-un-blue px-4 lg:pl-[18rem] xl:pl-[24.5rem]">
+        <div className="w-full bg-un-blue px-4 lg:pl-[22.5rem] xl:pl-[29rem]">
           {/* toggler */}
           <div
             className={classNames(

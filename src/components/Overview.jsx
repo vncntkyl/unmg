@@ -78,7 +78,7 @@ export default function Overview({ overview_type }) {
   return loader ? (
     <>
       {/* top overview */}
-      <div className="w-full bg-un-blue min-h-[100px] p-4 lg:pl-[18rem] lg:pr-6 xl:pl-[24.5rem] xl:pr-32">
+      <div className="w-full bg-un-blue min-h-[100px] p-4 lg:pl-[22.5rem] lg:pr-6 xl:pl-[29rem] xl:pr-32">
         <div className="overview_container w-full overflow-hidden overflow-x-scroll snap-x snap-mandatory scroll-smooth flex flex-row gap-1">
           {cards.map((card) => {
             return (
