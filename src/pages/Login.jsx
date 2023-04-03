@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/unmg_logo_colored.png";
+import logo_2 from "../assets/unmg_logo_plain_colored.png";
 
 export default function Login() {
-  const navigate = useNavigate()
-  const { currentUser, signInUser } = useAuth();
+  const navigate = useNavigate();
+  const { signInUser } = useAuth();
   const username = useRef();
   const password = useRef();
 
@@ -14,65 +16,71 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (sessionStorage.getItem('currentUser')) {
+    if (sessionStorage.getItem("currentUser")) {
       navigate("/");
     }
   }, []);
   return (
     <>
-      <div className="flex justify-center items-center h-screen">
-        <form
-          className="w-full max-w-sm bg-white rounded-lg shadow-md p-8"
-          onSubmit={handleSubmit}
-        >
-          <h2 className="text-2xl mb-4">Login</h2>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 font-bold mb-2"
-              htmlFor="username"
-            >
-              Username
-            </label>
+      <div className="w-screen h-screen flex flex-col justify-center items-center drop-shadow-lg p-4">
+        <div className="overflow-hidden rounded-lg transition-all w-[90%] md:w-[50%] flex flex-col lg:flex-row">
+          <div className="bg-white flex flex-row gap-2 justify-center items-center p-4 lg:w-1/2 lg:h-[500px]">
+            <img src={logo_2} alt="logo" className="w-auto h-[3rem] lg:hidden" />
+            <span className="text-[.8rem] text-un-blue font-semibold lg:hidden">
+              United Neon Media Group
+              <br />
+              Performance Management System
+            </span>
+            <img src={logo} alt="logo" className="hidden w-auto h-[15rem] lg:block" />
+          </div>
+          <form
+            action=""
+            onSubmit={handleSubmit}
+            className="bg-un-blue flex flex-col justify-center items-center p-8 gap-6 lg:w-1/2"
+          >
+            <span className="text-white text-[1.5rem] pb-3">Sign In</span>
             <input
-              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
+              className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
               type="text"
               placeholder="Username"
-              autoComplete="username"
               ref={username}
             />
-          </div>
-          <div className="mb-6">
-            <label
-              className="block text-gray-700 font-bold mb-2"
-              htmlFor="password"
-            >
-              Password
-            </label>
             <input
-              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
+              className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
               type="password"
               placeholder="Password"
-              autoComplete="current-password"
               ref={password}
             />
-          </div>
-          <div className="flex items-center justify-between">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
+              className="bg-un-red text-white p-2 w-[80%] rounded"
             >
               Sign In
             </button>
-            <a
-              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-              href="#"
-            >
-              Forgot Password?
-            </a>
-          </div>
-        </form>
+          </form>
+        </div>
+        {/* <form onSubmit={handleSubmit} className="bg-un-blue w-[25%] h-[60%] rounded-r-lg flex flex-col justify-center items-center p-8 gap-6">
+          <span className="text-white text-[30px] pb-3">Sign In</span>
+          <input
+            className="bg-transparent placeholder:text-white  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
+            type="text"
+            placeholder="Username"
+            ref={username}
+          />
+          <input
+            className="bg-transparent placeholder:text-white  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
+            type="password"
+            placeholder="Password"
+            ref={password}
+          />
+          <button
+            type="submit"
+            className="bg-un-red text-white p-2 w-[80%] rounded"
+          >
+            Sign In
+          </button>
+        </form> */}
+        
       </div>
     </>
   );
