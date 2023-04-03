@@ -1,3 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+body {
+    background-color: #EFEDF8;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.toggle::before {
+    position: absolute;
+    content: "";
+    top: 50%;
+    left: 0;
+    width: 50%;
+    height: 30px;
+    background-color: #d22735;
+    transform: translate(5%, -50%);
+    border-radius: 10rem;
+}
+
+.toggle::before,
+.toggle_text {
+    transition: all 300ms ease-in-out;
+}
+
+.toggle.on::before {
+    transform: translate(95%, -50%);
+}
+.overview_container::-webkit-scrollbar{
+    display: none;
+}
