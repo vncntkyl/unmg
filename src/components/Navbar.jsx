@@ -121,8 +121,8 @@ export default function Navbar({
                   className={classNames(
                     panel.user && "rotate-180",
                     "transition-all ease-in-out duration-300 hidden group-hover/user:block lg:hidden group-hover/user:lg:hidden"
-                  )}
-                />
+                    )}
+                    />
               </button>
               <div
                 className={classNames(
@@ -142,6 +142,7 @@ export default function Navbar({
                   </li>
                 </ul>
               </div>
+            </div>
               <div
                 className={classNames(
                   "bg-[#00000000] fixed h-full w-full z-[8] top-0 left-0 animate-fade pointer-events-auto",
@@ -156,7 +157,6 @@ export default function Navbar({
                   })
                 }
               />
-            </div>
           </div>
         </nav>
       </>
