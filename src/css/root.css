@@ -26,7 +26,7 @@ body {
 
 .toggle::before,
 .toggle_text {
-    transition: all 300ms ease-in-out;
+    transition: all 300ms cubic-bezier(.63,.16,.22,.96);
 }
 
 .toggle.on::before {
@@ -34,4 +34,24 @@ body {
 }
 .overview_container::-webkit-scrollbar{
     display: none;
+}
+.company_container,
+.company_data{
+    transform: translateX(-110%);
+    max-height: 0;
+}
+.company_container.show,
+.company_data.show{
+    transform: translateX(0);
+    max-height: 500px;
+}
+
+@media screen and (min-width: 1024px) {
+    .company_container,.company_data{
+        transform: unset;
+        max-height: unset;
+    }
+    .company_container.show,.company_data.show{
+        transform: unset;
+    }
 }

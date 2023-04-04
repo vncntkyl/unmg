@@ -3,6 +3,7 @@ import { Navbar, Sidebar } from "../components";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import Overview from "../components/Overview";
+import MainOverview from "../components/MainOverview";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
@@ -71,8 +72,8 @@ export default function Dashboard() {
         />
         {/* DASHBOARD MAIN */}
 
-        <div className="w-full bg-un-blue px-4 lg:pl-[22.5rem] xl:pl-[29rem]">
           {/* toggler */}
+        <div className="w-full bg-un-blue px-4 lg:pl-[18rem] xl:pl-[24.5rem]">
           <div
             className={classNames(
               "toggle flex flex-row gap-2 bg-white w-[200px] p-1 rounded-full relative overflow-hidden z-[4]",
@@ -107,6 +108,7 @@ export default function Dashboard() {
         </div>
         {/* overview */}
         <Overview overview_type={panel} />
+        <MainOverview panel_type={panel}/>
       </div>
     </>
   ) : (

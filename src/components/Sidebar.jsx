@@ -20,7 +20,7 @@ export default function Sidebar({ sidebarToggler, className }) {
       <section
         className={classNames(
           "sidebar fixed top-0 left-0 w-[250px] bg-white h-full z-[20] p-2 flex flex-col gap-2 translate-x-[-100%] transition-all",
-          "lg:absolute lg:w-[320px] lg:translate-x-[1.5rem] lg:translate-y-[4.7rem] lg:rounded-md shadow-lg xl:translate-x-[8rem]",
+          "lg:absolute lg:translate-x-[1.5rem] lg:translate-y-[4.7rem] lg:rounded-md shadow-lg xl:translate-x-[8rem]",
           className
         )}
       >
