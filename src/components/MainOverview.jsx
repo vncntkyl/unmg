@@ -15,6 +15,18 @@ export default function MainOverview({ panel_type }) {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
+    if (company.length > 0 || panel_type !== 'regular') {
+      if (query.length > 0) {
+        console.log(query);
+        setEmployeeSearch(
+          employees.filter((emp) => emp.toLowerCase().includes(query))
+        );
+      } else {
+        setEmployeeSearch([]);
+      }
+    }
+  }, [query]);
+  useEffect(() => {
     //const url = "../api/conglomerate.php";
     const url = "http://localhost/unmg_pms/api/conglomerate.php";
     axios
@@ -73,18 +85,6 @@ export default function MainOverview({ panel_type }) {
         );
     }
   }, [quarter, company, panel_type]);
-
-  useEffect(() => {
-    if (company > 0 || panel_type !== "regular") {
-      if (query.length > 0) {
-        setEmployeeSearch(
-          employees.filter((emp) => emp.toLowerCase().includes(query))
-        );
-      } else {
-        setEmployeeSearch([]);
-      }
-    }
-  }, [query]);
   return (
     <>
       <div className="overflow-hidden bg-white m-2 rounded-md p-2 shadow-md flex flex-col gap-2 lg:ml-[18rem] lg:mr-6 xl:ml-[24.5rem] xl:mr-32">
@@ -127,7 +127,11 @@ export default function MainOverview({ panel_type }) {
                   All
                 </option>
                 {employees.map((emp, index) => {
-                  return <option value={emp} key={index}>{emp}</option>;
+                  return (
+                    <option value={emp} key={index}>
+                      {emp}
+                    </option>
+                  );
                 })}
               </select>
             </div>
@@ -169,7 +173,7 @@ export default function MainOverview({ panel_type }) {
             className={classNames(
               panel_type === "regular" ? company !== "" && "show" : "show",
               panel_type === "regular" ? "lg:w-1/2 xl:w-2/3" : "w-full",
-              "company_data flex flex-col py-2  rounded-md overflow-hidden overflow-y-scroll border shadow-sm border-gray transition-all"
+              "company_data flex flex-col py-2  rounded-md overflow-hidden border shadow-sm border-gray transition-all"
             )}
           >
             <button
@@ -201,7 +205,9 @@ export default function MainOverview({ panel_type }) {
                 <GrFormSearch className="text-[1.3rem]" />
                 <input
                   type="text"
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                  }}
                   className="w-full outline-none"
                 />
               </div>
@@ -225,13 +231,13 @@ export default function MainOverview({ panel_type }) {
             {/* BODY */}
             {employees && (
               <>
-                <div className="m-2 overflow-hidden rounded-md shadow-sm border border-gray">
+                <div className="hide_scroll m-2 rounded-md shadow-sm overflow-hidden border border-gray">
                   <div className="grid grid-cols-[1fr_2fr_.5fr] px-2 text-center gap-1 bg-un-blue-light text-white">
                     <span>Name</span>
                     <span>Job Title</span>
                     <span>Result</span>
                   </div>
-                  <div className="flex flex-col max-h-[300px] gap-1 overflow-hidden overflow-y-scroll px-2 pt-1">
+                  <div className="hide_scroll flex flex-col max-h-[300px] gap-1 overflow-hidden overflow-y-scroll px-2 pt-1">
                     {employeeSearch.length > 0
                       ? employeeSearch.map((employee, index) => {
                           return (
