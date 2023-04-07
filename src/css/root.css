@@ -45,7 +45,9 @@ body {
     transform: translateX(0);
     max-height: 500px;
 }
-
+.hide_scroll::-webkit-scrollbar{
+    display: none;
+}
 @media screen and (min-width: 1024px) {
     .company_container,.company_data{
         transform: unset;
