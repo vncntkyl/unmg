@@ -3,11 +3,10 @@ import { Navbar, Sidebar } from "../components";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { Routes, Route } from "react-router-dom";
-import DashboardOverview from "./DashboardOverview";
+import { DashboardOverview, EmployeeList } from "./";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
-
   const [loader, toggleLoader] = useState(true);
   const [user, setUser] = useState({});
   let xDown = null;
@@ -34,6 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!sessionStorage.getItem("currentUser")) {
       navigate("/login");
+      return;
     } else {
       setUser(JSON.parse(sessionStorage.getItem("currentUser")));
       toggleLoader(false);
@@ -50,7 +50,7 @@ export default function Dashboard() {
         document.removeEventListener("touchend", handleTouchEnd);
       };
     }
-  }, []);
+  }, [sessionStorage]);
   return !loader ? (
     <>
       <Navbar
@@ -73,6 +73,7 @@ export default function Dashboard() {
         {/* DASHBOARD MAIN */}
         <Routes>
           <Route path="/" element={<DashboardOverview />} />
+          <Route path="/employees/*" element={<EmployeeList />} />
         </Routes>
       </div>
     </>

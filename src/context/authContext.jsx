@@ -29,6 +29,25 @@ export function AuthProvider({ children }) {
       });
   }
 
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  function splitPath(path) {
+    return path.split("/");
+  }
+  function capitalizePath(path) {
+    const split = splitPath(path);
+    let capitalizedPath = "";
+    split.slice(1).forEach((s) => {
+      capitalizedPath += "/" + capitalize(s);
+    });
+
+    return capitalizedPath.substring(1);
+  }
+  function getPath() {
+    return window.location.pathname;
+  }
+
   useEffect(() => {
     if (sessionStorage.getItem("currentUser")) {
       setCurrentUser(sessionStorage.getItem("currentUser"));
@@ -40,6 +59,10 @@ export function AuthProvider({ children }) {
     nav,
     signInUser,
     setCurrentUser,
+    capitalize,
+    splitPath,
+    getPath,
+    capitalizePath
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
