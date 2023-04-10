@@ -8,6 +8,7 @@ export function useAuth() {
 }
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
+  const [companyList, setCompanyList] = useState([]);
   const nav = useNavigate();
 
   function signInUser(username, password) {
@@ -28,41 +29,29 @@ export function AuthProvider({ children }) {
         alert(e);
       });
   }
-
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-  function splitPath(path) {
-    return path.split("/");
-  }
-  function capitalizePath(path) {
-    const split = splitPath(path);
-    let capitalizedPath = "";
-    split.slice(1).forEach((s) => {
-      capitalizedPath += "/" + capitalize(s);
-    });
-
-    return capitalizedPath.substring(1);
-  }
-  function getPath() {
-    return window.location.pathname;
-  }
-
+  
   useEffect(() => {
     if (sessionStorage.getItem("currentUser")) {
       setCurrentUser(sessionStorage.getItem("currentUser"));
     }
+    //const url = "../api/conglomerate.php";
+    const url = "http://localhost/unmg_pms/api/conglomerate.php";
+    axios
+      .get(url)
+      .then((response) => {
+        setCompanyList(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, [currentUser]);
 
   const value = {
     currentUser,
+    companyList,
     nav,
     signInUser,
     setCurrentUser,
-    capitalize,
-    splitPath,
-    getPath,
-    capitalizePath
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

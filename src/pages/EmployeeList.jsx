@@ -2,11 +2,11 @@ import React from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
 import { Route, Routes } from "react-router-dom";
-import { useAuth } from "../context/authContext";
-import { EmployeeTable } from "../components/";
+import { EmployeeTable, EmployeeAdd } from "../components/";
+import { useFunction } from "../context/FunctionContext";
 
 export default function EmployeeList() {
-  const { getPath } = useAuth();
+  const { getPath } = useFunction();
 
   const setHeader = (pathname) => {
     switch (pathname) {
@@ -31,9 +31,9 @@ export default function EmployeeList() {
               </span>
               <div
                 className={
-                  getPath() === "/employees" || "/employees/"
-                    ? "flex flex-row gap-4 items-center justify-evenly md:w-1/2 xl:w-1/3"
-                    : "hidden"
+                  getPath() !== ("/employees" || "/employees/")
+                  ? "hidden"
+                  : "flex flex-row gap-4 items-center justify-evenly md:w-1/2 xl:w-1/3"
                 }
               >
                 <button
@@ -59,7 +59,7 @@ export default function EmployeeList() {
                 path="*"
                 element={<EmployeeTable panel_type={"regular"} />}
               />
-              <Route path="/add" element={<>Hi</>} />
+              <Route path="/add" element={<EmployeeAdd />} />
             </Routes>
           </div>
         </div>

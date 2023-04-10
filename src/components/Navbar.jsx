@@ -6,13 +6,15 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { useFunction } from "../context/FunctionContext";
 
 export default function Navbar({
   notification_count,
   user_data,
   sidebarToggler,
 }) {
-  const { setCurrentUser, getPath, capitalize, capitalizePath } = useAuth();
+  const { setCurrentUser } = useAuth();
+  const {getPath, capitalize, capitalizePath} = useFunction();
   const [panel, togglePanel] = useState({
     notification: false,
     user: false,
