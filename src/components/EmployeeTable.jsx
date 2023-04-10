@@ -3,6 +3,7 @@ import axios from "axios";
 import { GrFormNext, GrFormPrevious, GrFormSearch } from "react-icons/gr";
 import { HiOutlineUserGroup, HiMenu } from "react-icons/hi";
 import classNames from "classnames";
+import { useAuth } from "../context/authContext";
 
 export default function EmployeeTable({ quarter, panel_type }) {
   const [employees, setEmployees] = useState([]);
@@ -10,6 +11,8 @@ export default function EmployeeTable({ quarter, panel_type }) {
   const [companies, setCompanies] = useState([]);
   const [company, setCompany] = useState(-1);
   const [query, setQuery] = useState("");
+
+  const { companyList } = useAuth();
 
   useEffect(() => {
     if (query.length > 0) {
@@ -24,17 +27,8 @@ export default function EmployeeTable({ quarter, panel_type }) {
     }
   }, [query]);
   useEffect(() => {
-    //const url = "../api/conglomerate.php";
-    const url = "http://localhost/unmg_pms/api/conglomerate.php";
     let employeeURL = "../../api/employees.json";
-    axios
-      .get(url)
-      .then((response) => {
-        setCompanies(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+
     if (panel_type !== "regular") {
       setCompany(-1);
       employeeURL = "../../api/probation.json";
@@ -64,7 +58,7 @@ export default function EmployeeTable({ quarter, panel_type }) {
               <span className="bg-un-red-light px-2 text-white py-1">
                 United Neon Media Group
               </span>
-              {companies.map((comp, index) => {
+              {companyList.map((comp, index) => {
                 return (
                   <button
                     key={index}
@@ -109,7 +103,7 @@ export default function EmployeeTable({ quarter, panel_type }) {
               <span className="text-[.9rem]">
                 {panel_type === "regular"
                   ? company !== -1
-                    ? companies.find((c) => c.id === company).name
+                    ? companyList.find((c) => c.id === company).name
                     : "United Neon Media Group"
                   : "Probationary Employees"}
               </span>
