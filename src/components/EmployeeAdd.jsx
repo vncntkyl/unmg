@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoChevronBack } from "react-icons/io5";
 import { Input } from "./";
 import { useAuth } from "../context/authContext";
@@ -40,6 +40,10 @@ export default function EmployeeAdd() {
     e.preventDefault();
     alert(userInformation, jobInformation);
   };
+
+  useEffect(()=> {
+    document.title = "Add Employee | United Neon Media Group Performance Management System";
+  },[])
   return (
     <>
       <div>

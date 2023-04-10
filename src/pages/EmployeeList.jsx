@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
 import { Route, Routes } from "react-router-dom";
@@ -19,6 +19,9 @@ export default function EmployeeList() {
         return "Edit Employee";
     }
   };
+  useEffect(()=> {
+    document.title = "Employees | United Neon Media Group Performance Management System";
+  },[])
   return (
     <>
       <section className="relative">
