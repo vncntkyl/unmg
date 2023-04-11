@@ -23,6 +23,11 @@ export default function Overview({ overview_type }) {
       title: "Finalized Sign Off",
       count: 20,
     },
+    {
+      id: 5,
+      title: "Submitted",
+      count: 20,
+    },
   ]);
   const [loader, toggleLoader] = useState(false);
   useEffect(() => {
@@ -48,6 +53,11 @@ export default function Overview({ overview_type }) {
           title: "Finalized Sign Off",
           count: 20,
         },
+        {
+          id: 5,
+          title: "Submitted",
+          count: 20,
+        },
       ]);
     } else {
       setCards([
@@ -71,6 +81,11 @@ export default function Overview({ overview_type }) {
           title: "Finalized Sign Off",
           count: 1,
         },
+        {
+          id: 5,
+          title: "Submitted",
+          count: 1,
+        },
       ]);
     }
     toggleLoader(true);
@@ -82,7 +97,7 @@ export default function Overview({ overview_type }) {
         <div className="overview_container w-full overflow-hidden overflow-x-scroll snap-x snap-mandatory scroll-smooth flex flex-row gap-1">
           {cards.map((card) => {
             return (
-              <div key={card.id} className="bg-white min-w-full flex flex-col text-center items-center justify-between rounded-md snap-start p-4 md:min-w-[49.5%] lg:min-w-[24.5%]">
+              <div key={card.id} className="bg-white min-w-full flex flex-col text-center items-center justify-between rounded-md snap-start p-4 md:min-w-[49.5%] lg:min-w-[32.75%] xl:min-w-[19.5%]">
                 <span className="text-[1rem] font-semibold">{card.title}</span>
                 <span className="text-[3rem]">{card.count}</span>
               </div>
