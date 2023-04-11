@@ -10,7 +10,9 @@ function App() {
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
     ) {
-      document.head.querySelector("link").href = "../public/logo_white.png";
+      const url = "../public/logo_white.png";
+      //const url = "../logo_white.png"
+      document.head.querySelector("link").href = url;
     }
   }, []);
   return (

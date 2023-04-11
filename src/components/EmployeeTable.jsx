@@ -7,6 +7,7 @@ import { MdNavigateNext } from "react-icons/md";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import { useFunction } from "../context/FunctionContext";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function EmployeeTable({ quarter, panel_type }) {
   const [employees, setEmployees] = useState([]);
@@ -214,7 +215,7 @@ export default function EmployeeTable({ quarter, panel_type }) {
                         <>
                           <div
                             key={index}
-                            className="flex flex-row gap-2 p-1 z-10"
+                            className="flex flex-row gap-2 p-1 z-[10]"
                           >
                             <input
                               type="checkbox"
@@ -250,7 +251,7 @@ export default function EmployeeTable({ quarter, panel_type }) {
           {/* BODY */}
           {employees && (
             <>
-              <div className="relative max-w-full max-h-[400px] shadow-md rounded border border-gray overflow-x-scroll mx-3">
+              <div className="max-w-full max-h-[400px] shadow-md rounded border border-gray overflow-x-scroll mx-3">
                 <table>
                   <thead>
                     {Object.keys(userdata).map((objKey) => {
@@ -272,24 +273,59 @@ export default function EmployeeTable({ quarter, panel_type }) {
                   </thead>
                   <tbody>
                     {employeeSearch.length > 0
-                      ? employeeSearch.map((emp) => (
+                      ? employeeSearch.map((emp, idx) => (
                           <tr key={emp.id} className={`text-left w-full`}>
                             {Object.entries(userdata).map(
                               ([key, value]) =>
                                 value && (
                                   <td
                                     key={key}
-                                    className="whitespace-nowrap px-2 py-1 text-white"
+                                    className="whitespace-nowrap px-2 py-1"
                                   >
-                                    {key === "company"
-                                      ? companyList.find(
-                                          (company) =>
-                                            company.id === emp.company
-                                        )?.name
-                                      : emp[key]}
+                                    {key === "company" ? (
+                                      companyList.find(
+                                        (company) => company.id === emp.company
+                                      )?.name
+                                    ) : key === "picture" ? (
+                                      <div className="flex items-center justify-center">
+                                        <FaUserCircle />
+                                      </div>
+                                    ) : (
+                                      emp[key]
+                                    )}
                                   </td>
                                 )
                             )}
+                            <td className="relative flex items-center justify-center py-1">
+                              <button
+                                type="button"
+                                onClick={() => toggleActions(idx)}
+                                className=" outline-none cursor-pointer text-un-blue text-[1.5rem] hover:text-un-blue-light transition-all"
+                              >
+                                <CiCircleMore />
+                              </button>
+                              <div
+                                className={classNames(
+                                  actionsVisibility[idx]
+                                    ? "max-h-[500px] opacity-1 pointer-events-auto"
+                                    : "max-h-[0px] opacity-0 pointer-events-none",
+                                  "absolute top-1/4 right-1/2 text-[.9rem] min-w-max bg-white shadow-md rounded flex flex-col transition-all z-10 p-2 items-start"
+                                )}
+                              >
+                                <button className="p-1 hover:bg-gray w-full text-left rounded">
+                                  View Employee
+                                </button>
+                                <button className="p-1 hover:bg-gray w-full text-left rounded">
+                                  Edit Employee
+                                </button>
+                                <button className="p-1 hover:bg-gray w-full text-left rounded">
+                                  Deactivate Employee
+                                </button>
+                                <button className="p-1 hover:bg-gray w-full text-left rounded text-un-red">
+                                  Delete Employee
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         ))
                       : employees.map((emp, idx) => (
@@ -301,12 +337,17 @@ export default function EmployeeTable({ quarter, panel_type }) {
                                     key={key}
                                     className="whitespace-nowrap px-2 py-1"
                                   >
-                                    {key === "company"
-                                      ? companyList.find(
-                                          (company) =>
-                                            company.id === emp.company
-                                        )?.name
-                                      : emp[key]}
+                                    {key === "company" ? (
+                                      companyList.find(
+                                        (company) => company.id === emp.company
+                                      )?.name
+                                    ) : key === "picture" ? (
+                                      <div className="flex items-center justify-center">
+                                        <FaUserCircle />
+                                      </div>
+                                    ) : (
+                                      emp[key]
+                                    )}
                                   </td>
                                 )
                             )}
@@ -345,11 +386,10 @@ export default function EmployeeTable({ quarter, panel_type }) {
                     <div
                       className={classNames(
                         "bg-[#00000000] fixed h-full w-full z-[8] top-0 left-0 animate-fade pointer-events-auto",
-                        actionsVisibility.length === 0 && "z-[-1] hidden pointer-events-none"
+                        actionsVisibility.length === 0 &&
+                          "z-[-1] hidden pointer-events-none"
                       )}
-                      onClick={() =>
-                        setActionsVisibility([])
-                      }
+                      onClick={() => setActionsVisibility([])}
                     />
                   </tbody>
                 </table>
