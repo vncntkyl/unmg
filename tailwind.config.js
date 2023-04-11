@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      transitionTimingFunction: {
+        toggle: "cubic-bezier(0,.72,1,.52)",
+      },
       animation: {
         "slide-down": "slide-down 500ms ease-in-out forwards",
         "slide-right": "slide-right 200ms ease-in-out forwards",
@@ -43,10 +46,13 @@ export default {
     colors: ({ colors }) => ({
       white: colors.white,
       black: colors.black,
+      gray: "#c1c1c1",
+      "dark-gray": "#515151",
       transparent: colors.transparent,
       "un-blue": "#183145",
       "un-blue-light": "#306088",
       "un-red": "#d22735",
+      "un-red-light": "#883030",
       "bg-default": "#efedf8",
     }),
     fontSize: {

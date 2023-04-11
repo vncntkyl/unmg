@@ -18,22 +18,16 @@ export default function NavButton({
         <button
           onClick={() => {
             onClick((prev) => {
-              switch (code) {
-                case "reg":
-                  return {
-                    ...prev,
-                    regular: !prev.regular,
-                  };
-                case "prob":
-                  return {
-                    ...prev,
-                    probation: !prev.probation,
-                  };
-                case "adm":
-                  return {
-                    ...prev,
-                    administrator: !prev.administrator,
-                  };
+              if (code === "forms") {
+                return {
+                  ...prev,
+                  forms: !prev.forms,
+                };
+              } else {
+                return {
+                  ...prev,
+                  administrator: !prev.administrator,
+                };
               }
             });
           }}
@@ -47,11 +41,9 @@ export default function NavButton({
           <BiDownArrow
             className={classNames(
               "transition-all",
-              code == "reg"
-                ? dropdown.regular && "rotate-180"
-                : code == "prob"
-                ? dropdown.probation && "rotate-180"
-                : code == "adm"
+              code == "forms"
+                ? dropdown.forms && "rotate-180"
+                : code == "admin"
                 ? dropdown.administrator && "rotate-180"
                 : ""
             )}

@@ -1,5 +1,5 @@
 <?php
-header("Acces-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 if (isset($_POST['username']) && isset($_POST['password'])) {
     session_start();
     $_SESSION['currentuser'] = array([

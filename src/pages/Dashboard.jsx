@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Sidebar } from "../components";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
-import Overview from "../components/Overview";
+import { Routes, Route } from "react-router-dom";
+import { DashboardOverview, EmployeeList } from "./";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
-  const [panel, setPanel] = useState("regular");
   const [loader, toggleLoader] = useState(true);
   const [user, setUser] = useState({});
   let xDown = null;
@@ -33,6 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!sessionStorage.getItem("currentUser")) {
       navigate("/login");
+      return;
     } else {
       setUser(JSON.parse(sessionStorage.getItem("currentUser")));
       toggleLoader(false);
@@ -49,7 +50,7 @@ export default function Dashboard() {
         document.removeEventListener("touchend", handleTouchEnd);
       };
     }
-  }, []);
+  }, [sessionStorage]);
   return !loader ? (
     <>
       <Navbar
@@ -70,43 +71,10 @@ export default function Dashboard() {
           onClick={() => toggleSidebar(false)}
         />
         {/* DASHBOARD MAIN */}
-
-        <div className="w-full bg-un-blue px-4 lg:pl-[22.5rem] xl:pl-[29rem]">
-          {/* toggler */}
-          <div
-            className={classNames(
-              "toggle flex flex-row gap-2 bg-white w-[200px] p-1 rounded-full relative overflow-hidden z-[4]",
-              panel !== "regular" && "on"
-            )}
-          >
-            <button
-              type="button"
-              className={classNames(
-                "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2",
-                panel === "regular" ? "text-white" : "text-black"
-              )}
-              onClick={() => {
-                setPanel("regular");
-              }}
-            >
-              Regular
-            </button>
-            <button
-              type="button"
-              className={classNames(
-                "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2 text-start",
-                panel === "probation" ? "text-white" : "text-black"
-              )}
-              onClick={() => {
-                setPanel("probation");
-              }}
-            >
-              Probation
-            </button>
-          </div>
-        </div>
-        {/* overview */}
-        <Overview overview_type={panel} />
+        <Routes>
+          <Route path="/" element={<DashboardOverview />} />
+          <Route path="/employees/*" element={<EmployeeList />} />
+        </Routes>
       </div>
     </>
   ) : (

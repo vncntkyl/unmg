@@ -8,6 +8,7 @@ export function useAuth() {
 }
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
+  const [companyList, setCompanyList] = useState([]);
   const nav = useNavigate();
 
   function signInUser(username, password) {
@@ -28,15 +29,26 @@ export function AuthProvider({ children }) {
         alert(e);
       });
   }
-
+  
   useEffect(() => {
     if (sessionStorage.getItem("currentUser")) {
       setCurrentUser(sessionStorage.getItem("currentUser"));
     }
+    //const url = "../api/conglomerate.php";
+    const url = "http://localhost/unmg_pms/api/conglomerate.php";
+    axios
+      .get(url)
+      .then((response) => {
+        setCompanyList(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, [currentUser]);
 
   const value = {
     currentUser,
+    companyList,
     nav,
     signInUser,
     setCurrentUser,
