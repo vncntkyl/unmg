@@ -6,6 +6,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { useFunction } from "../context/FunctionContext";
 
 export default function Navbar({
   notification_count,
@@ -13,6 +14,7 @@ export default function Navbar({
   sidebarToggler,
 }) {
   const { setCurrentUser } = useAuth();
+  const {getPath, capitalize, capitalizePath} = useFunction();
   const [panel, togglePanel] = useState({
     notification: false,
     user: false,
@@ -48,7 +50,7 @@ export default function Navbar({
             <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
               Admin /{" "}
               <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">
-                Dashboard
+               {getPath() === "/" ? 'Dashboard' : capitalizePath(getPath())}
               </span>
             </span>
             {/* <span className="hidden text-white text-[1.5rem] font-semibold">
@@ -57,7 +59,7 @@ export default function Navbar({
           </div>
           <div className="nav_user relative col-[3/4] flex-shrink-0 flex items-center justify-end p-1 gap-2">
             <span className="text-white text-sm md:text-lg font-medium hidden lg:block">
-              Welcome {user_data[0].username}!
+              Welcome {capitalize(user_data[0].username)}!
             </span>
             <button
               onClick={() =>
