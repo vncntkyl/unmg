@@ -139,7 +139,7 @@ export default function EmployeeAdd() {
                 ? false
                 : true
             }
-            className="w-full lg:w-1/2 cursor-pointer transition-all bg-un-blue text-white rounded p-1 hover:bg-un-blue-light disabled:bg-dark-gray"
+            className="w-full lg:w-1/2 cursor-pointer transition-all bg-un-blue text-white rounded p-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
           />
         </form>
       </div>
