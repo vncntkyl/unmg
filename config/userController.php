@@ -45,7 +45,7 @@ class User extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll(); 
     }
-    function retrieveSpecificImmSupervisor()
+    function retrieveSpecificImmSupervisor($uID)
     {
         $this->setStatement("SELECT * FROM `hr_users` WHERE users_id= ':uID' AND user_type= '6'");
         $this->statement->execute();
