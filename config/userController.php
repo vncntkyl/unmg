@@ -33,9 +33,21 @@ class User extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll(); 
     }
+    function retrieveSpecificSupervisor($uID)
+    {
+        $this->setStatement("SELECT * FROM `hr_users` WHERE users_id= ':uID' AND user_type= '5'");
+        $this->statement->execute([':uID' => $uID]);
+        return $this->statement->fetchAll(); 
+    }
     function retrieveImmSupervisor()
     {
         $this->setStatement("SELECT last_name,first_name,middle_name FROM `hr_users` WHERE user_type= '6'");
+        $this->statement->execute();
+        return $this->statement->fetchAll(); 
+    }
+    function retrieveSpecificImmSupervisor()
+    {
+        $this->setStatement("SELECT * FROM `hr_users` WHERE users_id= ':uID' AND user_type= '6'");
         $this->statement->execute();
         return $this->statement->fetchAll(); 
     }
