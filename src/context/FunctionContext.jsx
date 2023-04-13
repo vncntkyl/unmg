@@ -20,11 +20,13 @@ export function FunctionProvider({ children }) {
   function splitPath(path) {
     return path.split("/");
   }
+
   function capitalizePath(path) {
     const split = splitPath(path);
     let capitalizedPath = "";
     split.slice(1).forEach((s) => {
-      capitalizedPath += "/" + capitalize(s);
+      let temp = reformatName(s);
+      capitalizedPath += "/" + capitalize(temp);
     });
 
     return capitalizedPath.substring(1);
@@ -35,15 +37,24 @@ export function FunctionProvider({ children }) {
 
   function areValuesFilled(obj) {
     const values = Object.values(obj);
-    return values.every(value => value !== "");
+    return values.every((value) => value !== "");
   }
 
+  function formatName(name) {
+    return name.split(" ").join("_");
+  }
+
+  function reformatName(name){
+    return name.split("_").join(" ");
+  }
   const value = {
-    capitalize,
-    splitPath,
     getPath,
-    capitalizePath,
     splitKey,
+    splitPath,
+    capitalize,
+    formatName,
+    reformatName,
+    capitalizePath,
     areValuesFilled,
   };
 

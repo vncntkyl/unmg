@@ -53,9 +53,6 @@ export default function Navbar({
                {getPath() === "/" ? 'Dashboard' : capitalizePath(getPath())}
               </span>
             </span>
-            {/* <span className="hidden text-white text-[1.5rem] font-semibold">
-            Dashboard
-          </span> */}
           </div>
           <div className="nav_user relative col-[3/4] flex-shrink-0 flex items-center justify-end p-1 gap-2">
             <span className="text-white text-sm md:text-lg font-medium hidden lg:block">

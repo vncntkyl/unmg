@@ -52,7 +52,7 @@ export default function MainOverview({ panel_type }) {
           )}
         </div>
         {/* BODY */}
-        <EmployeeTable quarter={quarter} panel_type={panel_type} />
+        <EmployeeTable quarter={quarter} panel_type={panel_type} onDashboard />
         {/* FOOTER */}
         <button className="bg-un-blue-light w-fit text-white py-1 px-2 rounded-md">
           More Information

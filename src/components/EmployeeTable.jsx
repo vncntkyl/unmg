@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { GrFormNext, GrFormPrevious, GrFormSearch } from "react-icons/gr";
-import { CiCircleMore } from "react-icons/ci";
 import { HiOutlineUserGroup, HiMenu } from "react-icons/hi";
 import { MdNavigateNext } from "react-icons/md";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import { useFunction } from "../context/FunctionContext";
 import { FaUserCircle } from "react-icons/fa";
+import Action from "./Action";
+import Modal from "../misc/Modal";
 
-export default function EmployeeTable({ quarter, panel_type }) {
+export default function EmployeeTable({ quarter, panel_type, onDashboard }) {
   const [employees, setEmployees] = useState([]);
+  const [employeeID, setEmployeeID] = useState(null);
   const [employeeSearch, setEmployeeSearch] = useState([]);
   const [onFilter, toggleFilter] = useState(false);
   const [actionsVisibility, setActionsVisibility] = useState(
@@ -31,26 +33,13 @@ export default function EmployeeTable({ quarter, panel_type }) {
     result: true,
     status: false,
   });
-  const [columnCount, setColumnCount] = useState(0);
   const [company, setCompany] = useState(-1);
   const [query, setQuery] = useState("");
+  const [modal, toggleModal] = useState("standby");
 
   const { companyList } = useAuth();
   const { splitKey } = useFunction();
 
-  const countUserData = () => {
-    let trueCount = 0;
-
-    for (const key in userdata) {
-      if (userdata.hasOwnProperty(key)) {
-        if (userdata[key] === true) {
-          trueCount++;
-        }
-      }
-    }
-
-    return trueCount;
-  };
   const toggleActions = (index) => {
     setActionsVisibility((prev) => {
       const updatedVisibility = [...prev];
@@ -59,6 +48,10 @@ export default function EmployeeTable({ quarter, panel_type }) {
       return updatedVisibility;
     });
   };
+
+  const handleAction = () => {
+    alert(employeeID);
+  }
 
   useEffect(() => {
     if (query.length > 0) {
@@ -80,15 +73,19 @@ export default function EmployeeTable({ quarter, panel_type }) {
         )
       );
     } else {
-      setEmployeeSearch([]);
+      setEmployeeSearch(employees);
     }
   }, [query]);
   useEffect(() => {
     let employeeURL = "../../api/employees.json";
+    //uncomment below if deploying
+    //let employeeURL = "../api/employees.json";
 
     if (panel_type !== "regular") {
       setCompany(-1);
       employeeURL = "../../api/probation.json";
+      //employeeURL = "../api/probation.json";
+
     }
 
     axios.get(employeeURL).then((res) => {
@@ -100,12 +97,10 @@ export default function EmployeeTable({ quarter, panel_type }) {
         setEmployees(res.data);
       }
     });
-
-    setColumnCount(countUserData());
   }, [quarter, company, panel_type, userdata]);
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-2">
+      <div className="flex flex-col lg:flex-row gap-2 py-2">
         {panel_type === "regular" && (
           <div className="flex flex-col gap-2 lg:w-1/2 xl:w-1/3">
             <div
@@ -265,11 +260,13 @@ export default function EmployeeTable({ quarter, panel_type }) {
                         )
                       );
                     })}
-                    <td
-                      className={`text-center w-1/2 bg-un-blue-light text-white p-1 px-2`}
-                    >
-                      Action
-                    </td>
+                    {!onDashboard && (
+                      <td
+                        className={`text-center w-1/2 bg-un-blue-light text-white p-1 px-2`}
+                      >
+                        Action
+                      </td>
+                    )}
                   </thead>
                   <tbody>
                     {employeeSearch.length > 0
@@ -296,36 +293,17 @@ export default function EmployeeTable({ quarter, panel_type }) {
                                   </td>
                                 )
                             )}
-                            <td className="relative flex items-center justify-center py-1">
-                              <button
-                                type="button"
-                                onClick={() => toggleActions(idx)}
-                                className=" outline-none cursor-pointer text-un-blue text-[1.5rem] hover:text-un-blue-light transition-all"
-                              >
-                                <CiCircleMore />
-                              </button>
-                              <div
-                                className={classNames(
-                                  actionsVisibility[idx]
-                                    ? "max-h-[500px] opacity-1 pointer-events-auto"
-                                    : "max-h-[0px] opacity-0 pointer-events-none",
-                                  "absolute top-1/4 right-1/2 text-[.9rem] min-w-max bg-white shadow-md rounded flex flex-col transition-all z-10 p-2 items-start"
-                                )}
-                              >
-                                <button className="p-1 hover:bg-gray w-full text-left rounded">
-                                  View Employee
-                                </button>
-                                <button className="p-1 hover:bg-gray w-full text-left rounded">
-                                  Edit Employee
-                                </button>
-                                <button className="p-1 hover:bg-gray w-full text-left rounded">
-                                  Deactivate Employee
-                                </button>
-                                <button className="p-1 hover:bg-gray w-full text-left rounded text-un-red">
-                                  Delete Employee
-                                </button>
-                              </div>
-                            </td>
+                            {/* ACTIONS */}
+                            {!onDashboard && (
+                              <Action
+                                idx={idx}
+                                toggleActions={toggleActions}
+                                actionsVisibility={actionsVisibility}
+                                emp={emp}
+                                setEmployeeID={setEmployeeID}
+                                toggleModal={toggleModal}
+                              />
+                            )}
                           </tr>
                         ))
                       : employees.map((emp, idx) => (
@@ -351,36 +329,17 @@ export default function EmployeeTable({ quarter, panel_type }) {
                                   </td>
                                 )
                             )}
-                            <td className="relative flex items-center justify-center py-1">
-                              <button
-                                type="button"
-                                onClick={() => toggleActions(idx)}
-                                className=" outline-none cursor-pointer text-un-blue text-[1.5rem] hover:text-un-blue-light transition-all"
-                              >
-                                <CiCircleMore />
-                              </button>
-                              <div
-                                className={classNames(
-                                  actionsVisibility[idx]
-                                    ? "max-h-[500px] opacity-1 pointer-events-auto"
-                                    : "max-h-[0px] opacity-0 pointer-events-none",
-                                  "absolute top-1/4 right-1/2 text-[.9rem] min-w-max bg-white shadow-md rounded flex flex-col transition-all z-10 p-2 items-start"
-                                )}
-                              >
-                                <button className="p-1 hover:bg-gray w-full text-left rounded">
-                                  View Employee
-                                </button>
-                                <button className="p-1 hover:bg-gray w-full text-left rounded">
-                                  Edit Employee
-                                </button>
-                                <button className="p-1 hover:bg-gray w-full text-left rounded">
-                                  Deactivate Employee
-                                </button>
-                                <button className="p-1 hover:bg-gray w-full text-left rounded text-un-red">
-                                  Delete Employee
-                                </button>
-                              </div>
-                            </td>
+                            {/* ACTIONS */}
+                            {!onDashboard && (
+                              <Action
+                                idx={idx}
+                                toggleActions={toggleActions}
+                                actionsVisibility={actionsVisibility}
+                                emp={emp}
+                                setEmployeeID={setEmployeeID}
+                                toggleModal={toggleModal}
+                              />
+                            )}
                           </tr>
                         ))}
                     <div
@@ -456,6 +415,32 @@ export default function EmployeeTable({ quarter, panel_type }) {
           )} */}
         </div>
       </div>
+      {employeeID && modal !== "standby" && (
+        <>
+          {modal === "view" ? (
+            <></>
+          ) : (
+            <Modal
+              title={"Account Deactivation"}
+              message={`Are you sure you want to ${modal} this account?`}
+              action={modal}
+              closeModal={toggleModal}
+              setEmployeeID={setEmployeeID}
+              handleContinue={handleAction}
+            />
+          )}
+          <div
+            className={classNames(
+              "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
+              employeeID === null && "z-[-1] hidden pointer-events-none"
+            )}  
+            onClick={() => {
+              toggleModal("standby");
+              setEmployeeID(null);
+            }}
+          />
+        </>
+      )}
     </>
   );
 }

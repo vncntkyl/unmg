@@ -79,6 +79,7 @@ export default function EmployeeAdd() {
                     label={splitKey(object_key)}
                     id={object_key}
                     set={setUserInformation}
+                    editable={true}
                     type={
                       object_key === "salutation"
                         ? "dropdown"
@@ -105,6 +106,7 @@ export default function EmployeeAdd() {
                     label={splitKey(object_key)}
                     id={object_key}
                     set={setJobInformation}
+                    editable={true}
                     type={
                       [
                         "company",
