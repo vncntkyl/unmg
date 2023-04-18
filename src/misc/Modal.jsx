@@ -7,8 +7,9 @@ export default function Modal({
   message,
   action,
   closeModal,
+  closeAction,
   setEmployeeID,
-  handleContinue
+  handleContinue,
 }) {
   const { capitalize } = useFunction();
   return (
@@ -20,7 +21,7 @@ export default function Modal({
           <button
             onClick={() => {
               closeModal("standby");
-              setEmployeeID(null);
+              if (setEmployeeID) setEmployeeID(null);
             }}
             className="text-[.7rem] px-1"
           >
@@ -31,23 +32,37 @@ export default function Modal({
         <div className="p-2">{message}</div>
         {/* FOOTER */}
         <div className="flex flex-row items-center justify-end gap-4 p-2">
-          <button
-            onClick={() => {
-              closeModal("standby");
-              setEmployeeID(null);
-            }}
-            className="text-gray border border-gray p-1 px-2 rounded-md text-[.9rem] hover:text-dark-gray hover:border-dark-gray"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              handleContinue();
-            }}
-            className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue"
-          >
-            {capitalize(action)}
-          </button>
+          {!closeAction ? (
+            <button
+              onClick={() => {
+                closeModal("standby");
+                if (setEmployeeID) setEmployeeID(null);
+              }}
+              className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-gray hover:border-gray"
+            >
+              Cancel
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                closeModal("standby");
+                if (setEmployeeID) setEmployeeID(null);
+              }}
+              className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-un-blue hover:border-un-blue"
+            >
+              Dismiss
+            </button>
+          )}
+          {action && (
+            <button
+              onClick={() => {
+                handleContinue();
+              }}
+              className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue"
+            >
+              {capitalize(action)}
+            </button>
+          )}
         </div>
       </div>
     </>
