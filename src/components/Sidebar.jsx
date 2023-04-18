@@ -58,8 +58,8 @@ export default function Sidebar({ sidebarToggler, className }) {
             />
             <div
               className={classNames(
-                "pl-4 scale-0 origin-top-left transition-all duration-200 bg-[#00000015] rounded-sm",
-                dropdown.forms ? "scale-100 max-h-[15rem]" : "max-h-[0rem]"
+                "pl-4 opacity-0 origin-top transition-all duration-300 bg-default rounded-md pointer-events-none",
+                dropdown.forms ? "opacity-100 max-h-[15rem] pointer-events-auto" : "max-h-[0rem]"
               )}
             >
               <NavButton
@@ -90,9 +90,9 @@ export default function Sidebar({ sidebarToggler, className }) {
             />
             <div
               className={classNames(
-                "pl-4 scale-0 origin-top-left transition-all duration-200 bg-[#00000015] rounded-sm",
+                "pl-4 opacity-0 origin-top transition-all duration-500 bg-default rounded-md pointer-events-none",
                 dropdown.administrator
-                  ? "scale-100 max-h-[30rem]"
+                  ? "opacity-100 max-h-[30rem] pointer-events-auto"
                   : "max-h-[0rem]"
               )}
             >

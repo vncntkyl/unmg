@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
 import { Route, Routes } from "react-router-dom";
-import { EmployeeTable, EmployeeAdd } from "../components/";
+import { EmployeeTable, EmployeeAdd } from "../components";
 import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
 
@@ -37,19 +37,19 @@ export default function EmployeeList() {
                 className={
                   getPath() !== ("/employees" || "/employees/")
                     ? "hidden"
-                    : "flex flex-row gap-4 items-center justify-evenly md:w-1/2 xl:w-1/3"
+                    : "flex flex-row gap-2 items-center justify-evenly md:w-1/2 xl:w-1/3"
                 }
               >
                 <button
                   type="button"
-                  className=" w-1/2 flex justify-center items-center gap-2 border border-un-blue rounded-md p-1 md:w-full"
+                  className=" w-1/2 flex justify-center items-center gap-2 bg-default hover:bg-default-dark rounded-md p-1 md:w-full"
                 >
                   <MdRefresh />
-                  <span className="text-[.8rem]">Refresh</span>
+                  <span className="text-[.8rem] md:text-[.9rem]">Refresh</span>
                 </button>
                 <a
                   href="/employees/add"
-                  className="w-1/2 flex items-center justify-center gap-2 border border-un-blue bg-un-blue rounded-md p-1 text-white md:w-full"
+                  className="w-1/2 flex items-center justify-center gap-2 border bg-un-blue-light hover:bg-un-blue rounded-md p-1 text-white md:w-full"
                 >
                   <AiOutlineUserAdd />
                   <span className="text-[.8rem] md:text-[.9rem]">
