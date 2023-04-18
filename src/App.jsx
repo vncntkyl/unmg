@@ -10,11 +10,16 @@ function App() {
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
     ) {
-      const url = "../public/logo_white.png";
-      //const url = "../logo_white.png"
+      const url = "../../public/logo_white.png";
+      //const url = "./../logo_white.png"
       document.head.querySelector("link").href = url;
     }
   }, []);
+  useEffect(() => {
+    if (!window.location.pathname.includes("profile/")) {
+      if (sessionStorage.getItem("user")) sessionStorage.removeItem("user");
+    }
+  }, [window.location]);
   return (
     <Router>
       <FunctionProvider>

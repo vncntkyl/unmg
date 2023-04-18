@@ -1,12 +1,13 @@
 <?php
 header("Access-Control-Allow-Origin: *");
+require "../config/userController.php";
+$user = new User();
 if (isset($_POST['username']) && isset($_POST['password'])) {
     session_start();
-    $_SESSION['currentuser'] = array([
-        "username" => $_POST['username'],
-        "password" => $_POST['password'],
-    ]);
-
-    echo json_encode($_SESSION['currentuser']);
+    $uName = $_POST['username'];
+    $pWord = md5($_POST['password']);
+    $json_user = $user->loginAccount($uName, $pWord);
+    $_SESSION['currentuser'] = $json_user;
+    echo json_encode($json_user);
 }
 ?>

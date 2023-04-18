@@ -6,11 +6,13 @@
 
 body {
     background-color: #EFEDF8;
+    position: relative;
 }
 
 * {
     -webkit-tap-highlight-color: transparent;
 }
+
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {

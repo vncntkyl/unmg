@@ -52,8 +52,10 @@ export default {
       "un-blue": "#183145",
       "un-blue-light": "#306088",
       "un-red": "#d22735",
-      "un-red-light": "#883030",
-      "bg-default": "#efedf8",
+      "un-red-light": "#d43953",
+      "un-red-dark": "#883030",
+      "default": "#efedf8",
+      "default-dark": "#dbd8eb",
     }),
     fontSize: {
       tooltip: "11px",
