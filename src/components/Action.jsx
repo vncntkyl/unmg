@@ -14,12 +14,12 @@ export default function Action({
   const { formatName } = useFunction();
   const viewUser = () => {
     sessionStorage.setItem("user", JSON.stringify(emp));
-    window.location.href = "/employees/profile/" + formatName(emp.name);
+    window.location.href = "/employees/profile/" + formatName(emp.first_name);
   };
   const editUser = () => {
     sessionStorage.setItem("user", JSON.stringify(emp));
     window.location.href =
-      "/employees/profile/" + formatName(emp.name) + "/edit";
+      "/employees/profile/" + formatName(emp.first_name) + "/edit";
   };
   return (
     <td className="relative flex items-center justify-center py-1">
@@ -50,19 +50,31 @@ export default function Action({
         >
           Edit Employee
         </button>
-        <button
-          className="p-1 hover:bg-gray w-full text-left rounded"
-          onClick={() => {
-            setEmployeeID(emp.id);
-            toggleModal("deactivate");
-          }}
-        >
-          Deactivate Employee
-        </button>
+        {emp.inactive > 0 ? (
+          <button
+            className="p-1 hover:bg-gray w-full text-left rounded"
+            onClick={() => {
+              setEmployeeID(emp.users_id);
+              toggleModal("activate");
+            }}
+          >
+            Re-activate Employee
+          </button>
+        ) : (
+          <button
+            className="p-1 hover:bg-gray w-full text-left rounded"
+            onClick={() => {
+              setEmployeeID(emp.users_id);
+              toggleModal("deactivate");
+            }}
+          >
+            Deactivate Employee
+          </button>
+        )}
         <button
           className="p-1 hover:bg-gray w-full text-left rounded text-un-red"
           onClick={() => {
-            setEmployeeID(emp.id);
+            setEmployeeID(emp.users_id);
             toggleModal("delete");
           }}
         >
