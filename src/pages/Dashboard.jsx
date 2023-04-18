@@ -3,7 +3,8 @@ import { Navbar, Sidebar } from "../components";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { Routes, Route } from "react-router-dom";
-import { DashboardOverview, EmployeeList } from "./";
+import { DashboardOverview, EmployeeList } from ".";
+import AccountSettings from "./AccountSettings";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
@@ -74,6 +75,7 @@ export default function Dashboard() {
         <Routes>
           <Route path="/" element={<DashboardOverview />} />
           <Route path="/employees/*" element={<EmployeeList />} />
+          <Route path="/account/*" element={<AccountSettings />} />
         </Routes>
       </div>
     </>
