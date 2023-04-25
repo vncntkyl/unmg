@@ -15,6 +15,8 @@ if(isset($_POST['submit']))
             array_push($fetchedFormID, $fetch);
             }
             $evalFormID = $fetchedFormID[0];
+            $latestCount = $control->pillarCount();
+            $count = $latestCount->Count;
             createEvalFormPillarsPart($formID,$pillarID,$pillarperc)
             if(isset($_POST['objectiveDesc']))
             {

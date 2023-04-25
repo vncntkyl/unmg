@@ -28,19 +28,19 @@ Class Companies extends Controller
     }
     function updateDepartment($departmentID,$companyID,$departmentName)
     {
-        $this->setStatement("UPDATE `hr_departments` SET company_id = ':companyid',department_name = ':departmentName' WHERE department_id = ':deptID'");
+        $this->setStatement("UPDATE `hr_departments` SET company_id = ':companyid',department_name = ':departmentName' WHERE department_id = :deptID");
         $this->statement->execute([':deptID' => $departmentID,':companyid' => $companyName, ':departmentName' => $departmentName]);
         return true;
     }
     function deactivateDepartment($departmentID)
     {
-        $this->setStatement("UPDATE `hr_departments` SET inactive = '1' WHERE department_id = ':deptID'");
+        $this->setStatement("UPDATE `hr_departments` SET inactive = '1' WHERE department_id = :deptID");
         $this->statement->execute([':deptID' => $departmentID]);
         return true;
     }
     function deleteDepartment($departmentID)
     {
-        $this->setStatement("UPDATE `hr_departments` SET deleted = '1'WHERE department_id = ':deptID'");
+        $this->setStatement("UPDATE `hr_departments` SET deleted = '1'WHERE department_id = :deptID");
         $this->statement->execute([':deptID' => $departmentID]);
         return true;
     }

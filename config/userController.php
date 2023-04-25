@@ -14,6 +14,17 @@ class User extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll(); 
     }
+    function insertNewUserType(,$userTypeDesc)
+    {
+        $this->setStatement("INSERT into `hr_usertype` (user_type_description) values (:userTypeDesc)");
+        return $this->statement->execute([':userTypeDesc'=>$userTypeDesc]);
+    }
+    function updateUserType($userType,$userTypeDesc)
+    {
+        $this->setStatement("UPDATE `hr_usertype` SET user_type_description = :userTypeDesc WHERE user_type = :usertype ");
+        $this->statement->execute([':usertype'=> $userType,':userTypeDesc'=>$userTypeDesc]);
+        return $this->statement->fetchAll(); 
+    }
     function retrieveDeletedUsers()
     {
         $this->setStatement("SELECT * FROM `hr_users` WHERE deleted = '1'");

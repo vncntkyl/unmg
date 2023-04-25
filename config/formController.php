@@ -7,6 +7,12 @@ Class formController extends Controller
         $this->setStatement("INSERT into `hr_pillars` (pillar_name) VALUES (:pillarName)'");
         return $this->statement->execute([':pillarName' => $pillarName]);
     }
+    function pillarCount()
+    {
+        $this->setStatement("SELECT COUNT(*) as `Count` FROM `hr_pillars`");
+        $this->statement->execute();
+        return $this->statement->fetch();
+    }
     function updatePillar($pillarID,$pillarName)
     {
         $this->setStatement("UPDATE `hr_pillars` SET pillar_name = :pillarName WHERE pillar_id = :pillarID");
