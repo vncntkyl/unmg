@@ -48,7 +48,7 @@ export default function Help({}) {
               </button>
               <div
                 className={classNames(
-                  "flex flex-col transition-all duration-200 lg:hidden",
+                  "flex flex-col transition-all duration-200 lg:hidden p-2",
                   links
                     ? "pointer-events-auto max-h-[500px] translate-y-[0%] opacity-100"
                     : "pointer-events-none max-h-[0px] translate-y-[-100%] opacity-0"

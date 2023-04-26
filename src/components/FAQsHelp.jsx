@@ -26,7 +26,7 @@ export default function FAQsHelp() {
                     }
                   }}
                   className={classNames(
-                    "w-full flex flex-row justify-between bg-white p-4 text-dark-gray rounded-md",
+                    "w-full flex flex-row justify-between items-center text-start gap-2 bg-white p-4 text-dark-gray rounded-md",
                     currentItemNumber === index && "rounded-b-none border-b-2 border-default-dark"
                   )}
                 >
