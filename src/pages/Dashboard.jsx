@@ -7,6 +7,7 @@ import { DashboardOverview, EmployeeList } from ".";
 import AccountSettings from "./AccountSettings";
 import CompanyList from "./CompanyList";
 import Roles from "./Roles";
+import Help from "./Help";
 export default function Dashboard() {
   if (!sessionStorage.getItem("currentUser")) {
     sessionStorage.setItem("redirect_to", window.location.pathname);
@@ -79,11 +80,18 @@ export default function Dashboard() {
         />
         {/* DASHBOARD MAIN */}
         <Routes>
-          <Route path="/" element={<DashboardOverview panel={panel} setPanel={setPanel} />} />
-          <Route path="/employees/*" element={<EmployeeList panel_type={panel} />} />
+          <Route
+            path="/"
+            element={<DashboardOverview panel={panel} setPanel={setPanel} />}
+          />
+          <Route
+            path="/employees/*"
+            element={<EmployeeList panel_type={panel} />}
+          />
           <Route path="/account/*" element={<AccountSettings />} />
           <Route path="/companies/*" element={<CompanyList />} />
           <Route path="/roles/*" element={<Roles />} />
+          <Route path="/help/*" element={<Help />} />
         </Routes>
       </div>
     </>

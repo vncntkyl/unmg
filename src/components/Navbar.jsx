@@ -14,7 +14,13 @@ export default function Navbar({
   sidebarToggler,
 }) {
   const { setCurrentUser } = useAuth();
-  const { getPath, capitalize, capitalizePath, formatName, capitalizeSentence } = useFunction();
+  const {
+    getPath,
+    capitalize,
+    capitalizePath,
+    formatName,
+    capitalizeSentence,
+  } = useFunction();
   const [imgProfile, setImgProfile] = useState(null);
   const [panel, togglePanel] = useState({
     notification: false,
@@ -64,7 +70,9 @@ export default function Navbar({
             <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
               Admin /{" "}
               <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">
-                {getPath() === "/" ? "Dashboard" : capitalizeSentence(capitalizePath(getPath()))}
+                {getPath() === "/"
+                  ? "Dashboard"
+                  : capitalizeSentence(capitalizePath(getPath()))}
               </span>
             </span>
           </div>
@@ -156,6 +164,13 @@ export default function Navbar({
                       }`}
                     >
                       Account Settings
+                    </a>
+                  </li>
+                  <li className="p-2 text-end">
+                    <a
+                      href="/help"
+                    >
+                      Help
                     </a>
                   </li>
                   <li className="p-2 text-end">
