@@ -7,7 +7,7 @@ export default function LazyImage({ src, alt, large, square }) {
   useEffect(() => {
     const loadImage = async () => {
       try {
-        const module = await import(/* @vite-ignore */"../" + src);
+        const module = await import(/* @vite-ignore */"./" + src);
         setImageSrc(module.default);
       } catch (error) {
         console.error(`Failed to load image: ${src}`, error);

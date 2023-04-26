@@ -135,7 +135,7 @@ export default function EmployeeProfile({ admin }) {
     }
     //get image
     if (user.picture) {
-      import("../" + user.picture)
+      import("./" + user.picture)
         .then((img) => {
           setImg(img.default);
         })

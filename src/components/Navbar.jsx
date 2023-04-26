@@ -38,7 +38,7 @@ export default function Navbar({
     const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
     const setImg = async () => {
       try {
-        const image = await import("./../" + currentUser["picture"]);
+        const image = await import("./" + currentUser["picture"]);
         setImgProfile(image.default);
       } catch (error) {
         console.log(error.message);
