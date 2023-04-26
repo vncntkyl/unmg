@@ -117,9 +117,23 @@ class User extends Controller
         $this->statement->execute([':usertype' => $userType, ':userTypeDesc' => $userTypeDesc]);
         return $this->statement->fetchAll();
     }
-    function updateUserRole($userID, $roleID){
+    function updateUserRole($userID, $roleID)
+    {
         $this->setStatement("UPDATE `hr_users` SET user_type = ? WHERE users_id = ?");
-        return $this->statement->execute([$roleID,$userID]);
+        return $this->statement->execute([$roleID, $userID]);
+    }
+    function removeUserRole($user_id)
+    {
+        $this->setStatement("UPDATE `hr_users` SET user_type = 0 WHERE users_id = ?");
+        return $this->statement->execute([$user_id]);
+    }
+    function deleteRole($role_id)
+    {
+        $this->setStatement("DELETE FROM `hr_usertype` WHERE user_type = ?");
+        if ($this->statement->execute([$role_id])) {
+            $this->setStatement("UPDATE `hr_users` SET user_type = 0 WHERE user_type = ?");
+            return $this->statement->execute([$role_id]);
+        }
     }
 }
 ?>

@@ -26,7 +26,39 @@ if (isset($_POST['action'])) {
                 }
             }
             break;
-            case "change":
+        case "update":
+            $role = $_POST['role_id'];
+            $user_id = $_POST['user_id'];
+
+            if ($user->updateUserRole($user_id, $role)) {
+                echo "success";
+            } else {
+                echo "error";
+            }
+            break;
+        case "remove":
+            $user_id = $_POST['user_id'];
+
+            if ($user->removeUserRole($user_id)) {
+                echo "success";
+            } else {
+                echo "error";
+            }
+            break;
+        case "delete":
+            $roleList = json_decode($_POST['roles']);
+
+            foreach ($roleList as $role) {
+                if (!$user->deleteRole($role)) {
+                    array_push($errors, 1);
+                }
+            }
+            
+            if (count($errors) === 0) {
+                echo "success";
+            } else {
+                echo "error";
+            }
             break;
     }
 }
