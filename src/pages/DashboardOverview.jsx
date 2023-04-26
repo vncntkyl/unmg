@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import classNames from "classnames";
 import { MainOverview, Overview } from "../components";
 
-export default function DashboardOverview() {
-  const [panel, setPanel] = useState("regular");
+export default function DashboardOverview({ panel, setPanel }) {
   return (
     <>
       {/* toggler */}

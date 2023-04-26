@@ -1,6 +1,7 @@
+import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 
-export default function LazyImage({ src, alt }) {
+export default function LazyImage({ src, alt, large, square }) {
   const [imageSrc, setImageSrc] = useState(null);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export default function LazyImage({ src, alt }) {
   }, [src]);
 
   return imageSrc ? (
-    <img src={imageSrc} alt={alt} className="max-w-[2rem] rounded-full object-cover aspect-square" />
+    <img src={imageSrc} alt={alt} className={classNames(large ? "w-[50%] max-w-[100px]" : "max-w-[2rem]","object-cover aspect-square", square ? "rounded-lg" : "rounded-full")} />
   ) : (
     <div>Loading...</div>
   );
