@@ -59,7 +59,9 @@ export default function Sidebar({ sidebarToggler, className }) {
             <div
               className={classNames(
                 "pl-4 opacity-0 origin-top transition-all duration-300 bg-default rounded-md pointer-events-none",
-                dropdown.forms ? "opacity-100 max-h-[15rem] pointer-events-auto" : "max-h-[0rem]"
+                dropdown.forms
+                  ? "opacity-100 max-h-[15rem] pointer-events-auto"
+                  : "max-h-[0rem]"
               )}
             >
               <NavButton
@@ -120,11 +122,6 @@ export default function Sidebar({ sidebarToggler, className }) {
                 icon={<RiLineChartLine />}
                 textLabel={"View Evaluations"}
                 slug={"view_evaluation"}
-              />
-              <NavButton
-                icon={<GrBarChart />}
-                textLabel={"Statistics"}
-                slug={"statistics"}
               />
               <NavButton
                 icon={<RxCounterClockwiseClock />}
