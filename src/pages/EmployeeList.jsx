@@ -6,7 +6,7 @@ import { EmployeeTable, EmployeeAdd } from "../components";
 import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
 
-export default function EmployeeList() {
+export default function EmployeeList({panel_type}) {
   const { getPath } = useFunction();
   const setHeader = (pathname) => {
     switch (pathname) {
@@ -61,7 +61,7 @@ export default function EmployeeList() {
             <Routes>
               <Route
                 path="*"
-                element={<EmployeeTable panel_type={"regular"} />}
+                element={<EmployeeTable panel_type={panel_type} />}
               />
               <Route path="/profile/:id" element={<EmployeeProfile />} />
               <Route path="/profile/:id/edit" element={<EmployeeProfile />} />

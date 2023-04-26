@@ -17,7 +17,6 @@ export default function Input({
   const { companyList, departmentList, headList, usertypeList } = useAuth();
   const { splitKey } = useFunction();
 
-  const salutationList = ["Mr.", "Miss", "Mrs."];
   const jobStatusList = ["Regular", "Probation", "Resigned"];
 
   return (
@@ -55,9 +54,9 @@ export default function Input({
                   : "N/A"
                 : id === "status"
                 ? jobStatusList[val]
-                : id === "user_type"
-                ? usertypeList.length > 0 &&
-                  usertypeList.find((type) => type.user_type === val)
+                : usertypeList.length > 0 &&
+                  usertypeList.find((u) => u.user_type == val)
+                ? usertypeList.find((u) => u.user_type == val)
                     .user_type_description
                 : val
               : ""
@@ -94,8 +93,8 @@ export default function Input({
 
           {dropdownOptions.map((opt, idx) => {
             if (val) {
-              return opt.company_id === val ||
-                opt.department_id === val ||
+              return (id === "company" && opt.company_id === val) ||
+                (id === "department" && opt.department_id === val) ||
                 opt.users_id === val ||
                 opt.user_type === val ||
                 opt === val ? (
@@ -110,8 +109,8 @@ export default function Input({
                 <option
                   key={idx}
                   value={
-                    opt.company_id ||
-                    opt.department_id ||
+                    (id === "company" && opt.company_id) ||
+                    (id === "department" && opt.department_id) ||
                     opt.users_id ||
                     opt.user_type ||
                     dropdownOptions.indexOf(opt)
@@ -129,8 +128,8 @@ export default function Input({
                 <option
                   key={idx}
                   value={
-                    opt.company_id ||
-                    opt.department_id ||
+                    (id === "company" && opt.company_id) ||
+                    (id === "department" && opt.department_id) ||
                     opt.users_id ||
                     opt.user_type ||
                     dropdownOptions.indexOf(opt)
