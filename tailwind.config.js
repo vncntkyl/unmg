@@ -2,6 +2,14 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
+    screens: {
+      xs: "425px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     extend: {
       transitionTimingFunction: {
         toggle: "cubic-bezier(0,.72,1,.52)",
@@ -54,7 +62,7 @@ export default {
       "un-red": "#d22735",
       "un-red-light": "#d43953",
       "un-red-dark": "#883030",
-      "default": "#efedf8",
+      default: "#efedf8",
       "default-dark": "#dbd8eb",
     }),
     fontSize: {
