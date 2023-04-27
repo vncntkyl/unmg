@@ -34,6 +34,7 @@ export default function EmployeeTable({ quarter, panel_type, onDashboard }) {
     job_description: false,
     supervisor: false,
     immediate_supervisor: false,
+    user_status: false,
     user_type: false,
   });
   const [company, setCompany] = useState(-1);
@@ -281,7 +282,8 @@ export default function EmployeeTable({ quarter, panel_type, onDashboard }) {
                 >
                   {Object.keys(userdata).map((data, index) => {
                     return (
-                      data !== "users_id" && (
+                      data !== "users_id" &&
+                      data !== "user_status" && (
                         <>
                           <div
                             key={index}
@@ -329,11 +331,11 @@ export default function EmployeeTable({ quarter, panel_type, onDashboard }) {
                         userdata[objKey] && (
                           <td
                             className={classNames(
-                              "text-center w-1/2 bg-un-blue-light text-white p-1 px-2",
+                              "text-center w-1/2 bg-un-blue-light text-white p-1 px-2 whitespace-nowrap",
                               !onFilter && "sticky top-0"
                             )}
                           >
-                            {splitKey(objKey)}
+                            {objKey === "picture" ? "" : splitKey(objKey)}
                           </td>
                         )
                       );
@@ -455,7 +457,7 @@ export default function EmployeeTable({ quarter, panel_type, onDashboard }) {
                                     ) : key === "department" ? (
                                       departmentList.find(
                                         (dept) =>
-                                          dept.department_id ===
+                                          dept.department_id ==
                                           emp.department_id
                                       ).department_name
                                     ) : key === "supervisor" ? (

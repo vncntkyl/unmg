@@ -34,7 +34,6 @@ export default function EmployeeAdd() {
     immediate_supervisor: "",
     job_description: "",
     job_status: "",
-    user_type: "",
   });
   const salutationList = ["Mr.", "Miss", "Mrs."];
   const jobStatusList = ["Regular", "Probation", "Resigned"];
@@ -143,8 +142,6 @@ export default function EmployeeAdd() {
                           ? headList.filter((head) => head.user_type === "6")
                           : object_key === "job_status"
                           ? jobStatusList
-                          : object_key === "user_type"
-                          ? usertypeList
                           : undefined
                       }
                     />

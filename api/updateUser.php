@@ -25,7 +25,6 @@ if ($data['params']) {
         $userdata['contact_no'],
         $userdata['address'],
         $job_desc,
-        $userdata['user_type'],
         $userdata['status'],
         $data['params']['id']
     );

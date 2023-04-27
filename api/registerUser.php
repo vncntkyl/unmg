@@ -28,7 +28,6 @@ if ($data['params']) {
         $userdata['username'],
         $userdata['password'],
         $userdata['job_description'],
-        $userdata['user_type'],
         $userdata['job_status']
     );
     if ($result) {

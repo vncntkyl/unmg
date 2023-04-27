@@ -21,6 +21,8 @@ export default function EmployeeProfile({ admin }) {
   } = useAuth();
   const { splitKey, reformatName, compareObjectArrays } = useFunction();
 
+  const redirect_back_link = sessionStorage.getItem("redirect_back_to");
+
   const [personalInfo, setPersonalInfo] = useState([]);
   const [jobInfo, setJobInfo] = useState([]);
   const [img, setImg] = useState(null);
@@ -74,7 +76,7 @@ export default function EmployeeProfile({ admin }) {
 
   const handleDismissal = () => {
     setModal("standby");
-  }
+  };
   const handleChange = (evt) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -133,7 +135,7 @@ export default function EmployeeProfile({ admin }) {
     }
     //get image
     if (user.picture) {
-      import("../" + user.picture)
+      import("./" + user.picture)
         .then((img) => {
           setImg(img.default);
         })
@@ -166,7 +168,11 @@ export default function EmployeeProfile({ admin }) {
     <>
       <div className="flex flex-col gap-2">
         <a
-          href="/employees"
+          href={redirect_back_link ? redirect_back_link : "/employees"}
+          onClick={() => {
+            if (!redirect_back_link) return;
+            sessionStorage.removeItem("redirect_back_to");
+          }}
           className="flex flex-row items-center gap-2 bg-un-blue w-fit text-white text-[.8rem] p-1 pr-2 rounded-md hover:bg-un-blue-light"
         >
           <IoChevronBack />
@@ -347,25 +353,25 @@ export default function EmployeeProfile({ admin }) {
         </form>
       </div>
       {modal === "success" && (
-          <>
-            <Modal
-              title={"Update Account"}
-              message={`Account has been updated!`}
-              closeModal={setModal}
-              action={"Dismiss"}
-              handleContinue={handleDismissal}
-            />
-          </>
+        <>
+          <Modal
+            title={"Update Account"}
+            message={`Account has been updated!`}
+            closeModal={setModal}
+            action={"Dismiss"}
+            handleContinue={handleDismissal}
+          />
+        </>
+      )}
+      <div
+        className={classNames(
+          "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
+          modal === "standby" && "z-[-1] hidden pointer-events-none"
         )}
-        <div
-          className={classNames(
-            "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
-            modal === "standby" && "z-[-1] hidden pointer-events-none"
-          )}
-          onClick={() => {
-            setModal("standby");
-          }}
-        />
+        onClick={() => {
+          setModal("standby");
+        }}
+      />
     </>
   ) : (
     <>Loading...</>

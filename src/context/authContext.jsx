@@ -26,7 +26,13 @@ export function AuthProvider({ children }) {
       .then((response) => {
         setCurrentUser(JSON.stringify(response.data));
         sessionStorage.setItem("currentUser", JSON.stringify(response.data));
-        nav("/");
+        if (sessionStorage.getItem("redirect_to")) {
+          const redirect_link = sessionStorage.getItem("redirect_to");
+          sessionStorage.removeItem("redirect_to");
+          nav(redirect_link);
+        } else {
+          nav("/");
+        }
       })
       .catch((e) => {
         console.log(e.message);
@@ -58,7 +64,7 @@ export function AuthProvider({ children }) {
       const response = await axios.post(url, {
         params: {
           userdata: userdata,
-          id: id
+          id: id,
         },
       });
       if (response.data === "success") {
@@ -69,25 +75,135 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const addCompany = async (companyData) => {
+    const url = "http://localhost/unmg_pms/api/manageCompany.php";
+    //const url = "../api/manageCompany.php";
+    const formData = new FormData();
+    formData.append("add_company", true);
+    formData.append("company_data", JSON.stringify(companyData));
+
+    try {
+      const response = await axios.post(url, formData);
+      if (response.data === "success") {
+        return true;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const addDepartment = async (companyID, department_list) => {
+    const url = "http://localhost/unmg_pms/api/manageCompany.php";
+    //const url = "../api/manageCompany.php";
+    const formData = new FormData();
+    formData.append("add_department", true);
+    formData.append("company_id", companyID);
+    formData.append("department_list", JSON.stringify(department_list));
+
+    try {
+      const response = await axios.post(url, formData);
+      if (response.data === "success") {
+        return true;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const deleteDepartment = async (departmentID) => {
+    const url = "http://localhost/unmg_pms/api/manageCompany.php";
+    //const url = "../api/manageCompany.php";
+    const formData = new FormData();
+    formData.append("delete_department", true);
+    formData.append("departmentID", departmentID);
+
+    try {
+      const response = await axios.post(url, formData);
+      console.log(response.data);
+      // if (response.data === "success") {
+      //   return true;
+      // }
+    } catch (e) {
+      console.log(e);
+    }
+  };
   const manageUser = async (action, id) => {
     const url = "http://localhost/unmg_pms/api/userActions.php";
     //const url = "../api/userActions.php";
     const formData = new FormData();
     formData.append("action", action);
-    formData.append("user_id", id)
-    
+    formData.append("user_id", id);
+
     try {
       const response = await axios.post(url, formData);
-      if(response.data === "success"){
+      if (response.data === "success") {
         return true;
       }
     } catch (e) {
-      console.log(e)
+      console.log(e.message);
     }
-  }
+  };
   const navigate = (location) => {
     nav(location);
   };
+
+  const registerRole = async (role_data) => {
+    const url = "http://localhost/unmg_pms/api/manageRoles.php";
+    //const url = "../api/manageRoles.php";
+    const formData = new FormData();
+    formData.append("action", "register");
+    formData.append("role_data", JSON.stringify(role_data));
+
+    try {
+      const response = await axios.post(url, formData);
+      return response.data === "success";
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  const updateUserRole = async (user_id, role_id) => {
+    const url = "http://localhost/unmg_pms/api/manageRoles.php";
+    //const url = "../api/manageRoles.php";
+    const formData = new FormData();
+    formData.append("action", "update");
+    formData.append("user_id", user_id);
+    formData.append("role_id", role_id);
+
+    try {
+      const response = await axios.post(url, formData);
+      return response.data === "success";
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const unassignUser = async (user_id) => {
+    const url = "http://localhost/unmg_pms/api/manageRoles.php";
+    //const url = "../api/manageRoles.php";
+    const formData = new FormData();
+    formData.append("action", "remove");
+    formData.append("user_id", user_id);
+
+    try {
+      const response = await axios.post(url, formData);
+      return response.data === "success";
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const deleteRole = async (roleList) => {
+    const url = "http://localhost/unmg_pms/api/manageRoles.php";
+    //const url = "../api/manageRoles.php";
+    const formData = new FormData();
+    formData.append("action", "delete");
+    formData.append("roles", JSON.stringify(roleList));
+
+    try {
+      const response = await axios.post(url, formData);
+      return response.data === "success";
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   useEffect(() => {
     if (sessionStorage.getItem("currentUser")) {
       setCurrentUser(sessionStorage.getItem("currentUser"));
@@ -154,18 +270,25 @@ export function AuthProvider({ children }) {
   }, [currentUser]);
 
   const value = {
+    departmentList,
+    usertypeList,
     currentUser,
     companyList,
-    departmentList,
     headList,
-    usertypeList,
     nav,
     navigate,
     manageUser,
     signInUser,
+    addCompany,
     updateUser,
+    deleteRole,
     registerUser,
+    registerRole,
+    unassignUser,
+    addDepartment,
+    updateUserRole,
     setCurrentUser,
+    deleteDepartment,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
