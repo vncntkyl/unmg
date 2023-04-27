@@ -28,10 +28,10 @@ Class formController extends Controller
         $this->setStatement("UPDATE `hr_pillars` SET deleted = '0' WHERE pillar_id = :pillarID");
         return $this->statement->execute([':pillarID' => $pillarID]);
     }
-    function insertGoals($evalFormID,$objDesc)
+    function insertGoals($evalFormID,$formPillarsID,$objDesc)
     {
-        $this->setStatement("INSERT into `hr_objectives` (hr_eval_form_id,objective) VALUES (:evalID,:objective)");
-        return $this->statement->execute([':evalID' => $evalFormID, ':objective' => $objDesc]);
+        $this->setStatement("INSERT into `hr_objectives` (hr_eval_form_id,	hr_eval_form_pillar_id ,objective) VALUES (:evalID,:formPillarID,:objective)");
+        return $this->statement->execute([':evalID' => $evalFormID,':formPillarID' => $formPillarsID ,':objective' => $objDesc]);
     }
     function GoalsCount($formID)
     {
@@ -39,10 +39,16 @@ Class formController extends Controller
         $this->statement->execute([':formID' => $formID]);
         return $this->statement->fetch();
     }
-    function insertKPI($kpiDesc, $weight)
+    function LastGoalsID()
     {
-        $this->setStatement("INSERT into `hr_kpi` (kpi_desc,kpi_weight) VALUES (:kpi_desc,:weight)'");
-        return $this->statement->execute([':kpi_desc' => $kpiDesc, ':weight' => $weight]);
+        $this->setStatement("SELECT objective_id FROM `hr_objectives` order by objective_id DESC LIMIT 1");;
+        $this->statement->execute();
+        return $this->statement->fetch();
+    }
+    function insertKPI($kpiDesc, $objectID,$weight)
+    {
+        $this->setStatement("INSERT into `hr_kpi` (kpi_desc,objective_id,kpi_weight) VALUES (:kpi_desc,:objectID,:weight)'");
+        return $this->statement->execute([':kpi_desc' => $kpiDesc, ':objectID' => $objectID,':weight' => $weight]);
     }
     function kpiCount($objID)
     {
@@ -61,15 +67,21 @@ Class formController extends Controller
         $this->statement->execute();
         return $this->statement->fetch();
     }
-    function createEvalFormFp($formID)
+    function createEvalFormFp($formID, $formPillarsID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_fp` (users_id) VALUES (:id)");
-        return $this->statement->execute([':id' => $ID]);
+        $this->setStatement("INSERT into `hr_eval_form_fp` (hr_eval_form_id,hr_eval_form_pillars_id) VALUES (:formID,:formPillarsID)");
+        return $this->statement->execute([':formID' => $formID, ':formPillarsID' => $formPillarsID]);
     }
     function createEvalFormPillarsPart($formID,$pillarID,$pillarperc)
     {
         $this->setStatement("INSERT into `hr_eval_form_fp` (hr_eval_form_id,pillar_id,pillar_percentage) VALUES (:formid,:pillarid,:pillarperc)");
         return $this->statement->execute([':formid' => $formID,':pillarid' => $pillarID,':pillarperc' => $pillarperc]);
+    }
+    function selectLastPillarFormID()
+    {
+        $this->setStatement("SELECT hr_eval_form_pillar_id FROM `hr_eval_form_pillars` order by hr_eval_form_pillar_id DESC LIMIT 1");
+        $this->statement->execute();
+        return $this->statement->fetch();
     }
 
     
