@@ -36,6 +36,7 @@ if(isset($_POST['submit']))
                     for($y = 0; $y <= $countOfKpi; $y++)
                     {
                         $formController->insertKPI($kpiDesc[$y], $objectID,$weight[$y]);
+                        
                     }
                 }
             }

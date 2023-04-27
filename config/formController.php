@@ -84,6 +84,12 @@ Class formController extends Controller
         return $this->statement->fetch();
     }
 
+    function retrievePillars()
+    {
+        $this->setStatement("SELECT * FROM `hr_pillars`");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
     
 
 
