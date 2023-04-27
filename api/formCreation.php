@@ -35,7 +35,7 @@ if(isset($_POST['submit']))
                     $objectID = $fetchGoalID->objective_id;
                     for($y = 0; $y <= $countOfKpi; $y++)
                     {
-                        $formController->insertKPI($kpiDesc[$y], $objectID,$weight[$y]);
+                        $formController->insertKPI($kpiDesc[$y], $objectID[$x],$weight[$y]);
                     }
                 }
             }
