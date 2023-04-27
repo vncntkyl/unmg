@@ -63,7 +63,7 @@ Class formController extends Controller
     }
     function createEvalFormFp($formID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_fp` (hr_eval_form_id) VALUES (:id)");
+        $this->setStatement("INSERT into `hr_eval_form_fp` (users_id) VALUES (:id)");
         return $this->statement->execute([':id' => $ID]);
     }
     function createEvalFormPillarsPart($formID,$pillarID,$pillarperc)

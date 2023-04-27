@@ -9,15 +9,16 @@ if(isset($_POST['submit']))
         if($formController->createEvalForm($userid))
         {
             $latestFormID = $formController->selectLastformID();
-            $fetchedFormID = array();
-            foreach($latestFormID as $fetch)
-            {
-            array_push($fetchedFormID, $fetch);
-            }
-            $evalFormID = $fetchedFormID[0];
+            $formID = $latestFormID->hr_eval_form_id;
             $latestCount = $control->pillarCount();
             $count = $latestCount->Count;
-            createEvalFormPillarsPart($formID,$pillarID,$pillarperc)
+            for($x = 1; $x<= $count; $x++)
+            {
+                $pillarID = $x;
+                $pillarperc = $_POST['pillarPerc'] //dito mo lagay yung from top to bottom na pillar percentages nya
+                createEvalFormPillarsPart($formID,$pillarID,$pillarperc);
+            }
+            
             if(isset($_POST['objectiveDesc']))
             {
                 $objDesc = $_POST['objectiveDesc'];
