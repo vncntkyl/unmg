@@ -2,6 +2,12 @@
 require_once 'controller.php';
 Class formController extends Controller
 {
+    function retrievePillars()
+    {
+        $this->setStatement("SELECT * FROM `hr_pillars`");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
     function insertPillar($pillarName)
     {
         $this->setStatement("INSERT into `hr_pillars` (pillar_name) VALUES (:pillarName)'");
@@ -56,6 +62,12 @@ Class formController extends Controller
         $this->statement->execute([':objID' => $objID]);
         return $this->statement->fetch();
     }
+    function LastKpiID()
+    {
+        $this->setStatement("SELECT kpi_id FROM `hr_kpi` order by kpi_id DESC LIMIT 1");;
+        $this->statement->execute();
+        return $this->statement->fetch();
+    }
     function createEvalForm($userid)
     {
         $this->setStatement("INSERT into `hr_eval_form` (hr_eval_form_id) VALUES (:id)");
@@ -83,12 +95,10 @@ Class formController extends Controller
         $this->statement->execute();
         return $this->statement->fetch();
     }
-
-    function retrievePillars()
+    function insertTargetMetrics($TMScore,$TMDesc,$kpiID)
     {
-        $this->setStatement("SELECT * FROM `hr_pillars`");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
+        $this->setStatement("INSERT into `hr_target_metrics` (target_metrics_score,target_metrics_desc,kpi_id) VALUES (:TMScore,:TMDesc,:kpiID)'");
+        return $this->statement->execute([':TMScore' => $TMScore, ':TMDesc' => $TMDesc,':kpiID' => $kpiID]);
     }
     
 

@@ -35,8 +35,16 @@ if(isset($_POST['submit']))
                     $objectID = $fetchGoalID->objective_id;
                     for($y = 0; $y <= $countOfKpi; $y++)
                     {
+                        $TMScore = $_POST['targMetScore'];
+                        $TMDesc = $_POST['targMetDesc'];
                         $formController->insertKPI($kpiDesc[$y], $objectID,$weight[$y]);
-                        
+                        $retrieveKpiID = $formController->LastKpiID();
+                        $kpiID = $retrieveKpiID->kpi_id;
+                        $countOfDescAndScore = count($TMScore)- 1;
+                        for($c = 0; $c <=$countOfDescAndScore; $c++)
+                        {
+                        $formController->insertTargetMetrics($TMScore[$c],$TMDesc[$c],$kpiID);
+                        }
                     }
                 }
             }
