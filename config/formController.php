@@ -79,6 +79,13 @@ Class formController extends Controller
         $this->statement->execute();
         return $this->statement->fetch();
     }
+    function selectFormIDForSpecUser($userID)
+    {
+        $this->setStatement("SELECT hr_eval_form_id FROM `hr_eval_form` WHERE users_id = :userID");
+        $this->statement->execute([':userID' => $userID]);
+        return $this->statement->fetch();
+    }
+    
     function createEvalFormFp($formID, $formPillarsID)
     {
         $this->setStatement("INSERT into `hr_eval_form_fp` (hr_eval_form_id,hr_eval_form_pillars_id) VALUES (:formID,:formPillarsID)");
@@ -100,8 +107,17 @@ Class formController extends Controller
         $this->setStatement("INSERT into `hr_target_metrics` (target_metrics_score,target_metrics_desc,kpi_id) VALUES (:TMScore,:TMDesc,:kpiID)'");
         return $this->statement->execute([':TMScore' => $TMScore, ':TMDesc' => $TMDesc,':kpiID' => $kpiID]);
     }
+    function insertFqEval($formID,$results,$remarks,$reviewDate)
+    {
+        $this->setStatement("INSERT into `hr_eval_form_sp_fq` (hr_eval_form_id,results,remarks,fq_review_date) VALUES (:formID,:results,:remarks,:revDate)'");
+        return $this->statement->execute([':formID' => $formID, ':results' => $results,':remarks' => $remarks,':revDate' => $reviewDate]);
+    }
+    function insertMyrEval($formID,$results,$status,$remarks,$reviewDate)
+    {
+        $this->setStatement("INSERT into `hr_eval_form_sp_fq` (hr_eval_form_id,results,status,remarks,fq_review_date) VALUES (:formID,:results,:status,:remarks,:revDate)'");
+        return $this->statement->execute([':formID' => $formID, ':results' => $results,':remarks' => $remarks,':status' => $status,':revDate' => $reviewDate]);
+    }
     
-
 
 
 }
