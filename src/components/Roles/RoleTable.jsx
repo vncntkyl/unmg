@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../../context/authContext";
 import axios from "axios";
 import { FaUser } from "react-icons/fa";
 import { GrFormSearch } from "react-icons/gr";

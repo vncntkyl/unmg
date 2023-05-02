@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import UnassignedEmployeeTable from "./UnassignedEmployeeTable";
-import { useAuth } from "../context/authContext";
+import UnassignedEmployeeTable from "../UnassignedEmployeeTable";
+import { useAuth } from "../../context/authContext";
 
 export default function RoleAdd() {
   const { usertypeList, registerRole } = useAuth();

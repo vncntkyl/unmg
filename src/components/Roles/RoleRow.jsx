@@ -1,10 +1,10 @@
 import React from "react";
 import { CiCircleMore } from "react-icons/ci";
 import { FaUserCircle } from "react-icons/fa";
-import LazyImage from "../misc/LazyImage";
+import LazyImage from "../../misc/LazyImage";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
-import { useFunction } from "../context/FunctionContext";
+import { useFunction } from "../../context/FunctionContext";
 
 export default function RoleRow({
   user,

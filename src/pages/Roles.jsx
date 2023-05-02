@@ -5,14 +5,13 @@ import { BsPersonAdd } from "react-icons/bs";
 import { MdOutlineKeyboardArrowLeft, MdRefresh } from "react-icons/md";
 import LazyImage from "../misc/LazyImage";
 import { useAuth } from "../context/authContext";
-import { RoleActions } from "../components/Action";
 import classNames from "classnames";
-import RoleTable from "../components/RoleTable";
 import { Route, Routes } from "react-router-dom";
 import UnassignedEmployeeTable from "../components/UnassignedEmployeeTable";
 import { useFunction } from "../context/FunctionContext";
 import RoleModal from "../misc/RoleModal";
-import RoleAdd from "../components/RoleAdd";
+import { RoleActions } from "../components/Action";
+import { RoleAdd, RoleTable } from "../components/Roles";
 import { GrCircleInformation } from "react-icons/gr";
 
 export default function Roles() {
