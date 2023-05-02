@@ -34,10 +34,15 @@ Class formController extends Controller
         $this->setStatement("UPDATE `hr_pillars` SET deleted = '0' WHERE pillar_id = :pillarID");
         return $this->statement->execute([':pillarID' => $pillarID]);
     }
-    function insertGoals($evalFormID,$formPillarsID,$objDesc)
+    function insertGoals($formPillarsID,$latestFpID,$objDesc)
     {
-        $this->setStatement("INSERT into `hr_objectives` (hr_eval_form_id,	hr_eval_form_pillar_id ,objective) VALUES (:evalID,:formPillarID,:objective)");
-        return $this->statement->execute([':evalID' => $evalFormID,':formPillarID' => $formPillarsID ,':objective' => $objDesc]);
+        $this->setStatement("INSERT into `hr_objectives` (hr_eval_form_pillar_id, hr_eval_form_fp_id ,objective) VALUES (:formPillarID,:formFpID,:objective)");
+        return $this->statement->execute([':formPillarID' => $formPillarsID ,':formFpID'=> $latestFpID,':objective' => $objDesc]);
+    }
+    function updateGoals($evalFpID,$formPillarsID,$objDesc)
+    {
+        $this->setStatement("UPDATE `hr_objectives` set objective = :objective WHERE hr_eval_form_pillar_id = :formPillarID and hr_eval_form_fp_id = :evalFpID");
+        return $this->statement->execute([':evalFpID' => $evalFpID,':formPillarID' => $formPillarsID ,':objective' => $objDesc]);
     }
     function GoalsCount($formID)
     {
@@ -51,10 +56,15 @@ Class formController extends Controller
         $this->statement->execute();
         return $this->statement->fetch();
     }
-    function insertKPI($kpiDesc, $objectID,$weight)
+    function insertKPI($kpiDesc,$objectID,$weight)
     {
-        $this->setStatement("INSERT into `hr_kpi` (kpi_desc,objective_id,kpi_weight) VALUES (:kpi_desc,:objectID,:weight)");
-        return $this->statement->execute([':kpi_desc' => $kpiDesc, ':objectID' => $objectID,':weight' => $weight]);
+        $this->setStatement("INSERT into `hr_kpi` (kpi_desc,objective_id,kpi_weight) VALUES (:kpi_desc,:objectID,:KPIweight)");
+        return $this->statement->execute([':kpi_desc' => $kpiDesc, ':objectID' => $objectID,':KPIweight' => $weight]);
+    }
+    function updateKPI($kpiDesc, $objectID,$weight)
+    {
+        $this->setStatement("UPDATE `hr_kpi` set kpi_desc = :kpi_desc, kpi_weight = :KPIweight  WHERE objective_id = :objectID");
+        return $this->statement->execute([':kpi_desc' => $kpiDesc, ':objectID' => $objectID,':KPIweight' => $weight]);
     }
     function kpiCount($objID)
     {
@@ -70,7 +80,7 @@ Class formController extends Controller
     }
     function createEvalForm($userid)
     {
-        $this->setStatement("INSERT into `hr_eval_form` (hr_eval_form_id) VALUES (:id)");
+        $this->setStatement("INSERT into `hr_eval_form` (users_id) VALUES (:id)");
         return $this->statement->execute([':id' => $userid]);
     }
     function selectLastformID()
@@ -86,20 +96,32 @@ Class formController extends Controller
         return $this->statement->fetch();
     }
     
-    function createEvalFormFp($formID, $formPillarsID)
+    function createEvalFormFp($formID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_fp` (hr_eval_form_id,hr_eval_form_pillars_id) VALUES (:formID,:formPillarsID)");
-        return $this->statement->execute([':formID' => $formID, ':formPillarsID' => $formPillarsID]);
+        $this->setStatement("INSERT into `hr_eval_form_fp` (eval_form_id) VALUES (:formID)");
+        return $this->statement->execute([':formID' => $formID]);
+    }
+    function selectLastEvalFormFpID()
+    {
+        $this->setStatement("SELECT hr_eval_form_fp_id FROM `hr_eval_form_fp` order by hr_eval_form_fp_id DESC LIMIT 1");
+        $this->statement->execute();
+        return $this->statement->fetch();
     }
     function createEvalFormSp($formID)
     {
         $this->setStatement("INSERT into `hr_eval_form_sp` (eval_form_id) VALUES (:formID)");
         return $this->statement->execute([':formID' => $formID]);
     }
-    function createEvalFormPillarsPart($formID,$pillarID,$pillarperc)
+    function selectLastEvalFormSpID()
     {
-        $this->setStatement("INSERT into `hr_eval_form_fp` (hr_eval_form_id,pillar_id,pillar_percentage) VALUES (:formid,:pillarid,:pillarperc)");
-        return $this->statement->execute([':formid' => $formID,':pillarid' => $pillarID,':pillarperc' => $pillarperc]);
+        $this->setStatement("SELECT hr_eval_form_sp_id FROM `hr_eval_form_sp` order by hr_eval_form_sp_id DESC LIMIT 1");
+        $this->statement->execute();
+        return $this->statement->fetch();
+    }
+    function createEvalFormPillarsPart($formID,$pillarID,$latestFpID,$pillarperc)
+    {
+        $this->setStatement("INSERT into `hr_eval_form_pillars` (hr_eval_form_id,pillar_id,hr_eval_form_fp_id,pillar_percentage) VALUES (:formid,:pillarid,:latestFpID,:pillarperc)");
+        return $this->statement->execute([':formid' => $formID,':pillarid' => $pillarID,':latestFpID'=> $latestFpID,':pillarperc' => $pillarperc]);
     }
     function selectLastPillarFormID()
     {
@@ -112,28 +134,61 @@ Class formController extends Controller
         $this->setStatement("INSERT into `hr_target_metrics` (target_metrics_score,target_metrics_desc,kpi_id) VALUES (:TMScore,:TMDesc,:kpiID)");
         return $this->statement->execute([':TMScore' => $TMScore, ':TMDesc' => $TMDesc,':kpiID' => $kpiID]);
     }
-    function insertFqEval($formID,$results,$remarks,$reviewDate)
+    function insertFqEval($formPillarID,$latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_fq` (hr_eval_form_id,results,remarks,fq_review_date) VALUES (:formID,:results,:remarks,:revDate)");
-        return $this->statement->execute([':formID' => $formID, ':results' => $results,':remarks' => $remarks,':revDate' => $reviewDate]);
+        $this->setStatement("INSERT into `hr_eval_form_sp_fq` (hr_eval_form_pillars_id,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
+        return $this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
     }
-    function insertMyrEval($formID,$results,$status,$remarks,$reviewDate,$actToAddress)
+    function insertMyrEval($formPillarID,$latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_myr` (eval_form_id,results,status,remarks,actions_to_address,myr_review_date) VALUES (:formID,:results,:status,:remarks,:actAddress,:revDate)");
-        return $this->statement->execute([':formID' => $formID, ':results' => $results,':remarks' => $remarks,':status' => $status,':actAddress'=>$actToAddress,':revDate' => $reviewDate]);
+        $this->setStatement("INSERT into `hr_eval_form_sp_myr` (hr_eval_form_pillars_id,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
+        return $this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
     }
-    function insertTqEval($formID,$results,$reVariance,$reviewDate)
+    function insertTqEval($formPillarID,$latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_tq` (eval_form_id,results,reason_for_variance,tq_review_date) VALUES (:formID,:results,:reVariance,:revDate)");
-        return $this->statement->execute([':formID' => $formID, ':results' => $results,':reVariance' => $reVariance,':revDate' => $reviewDate]);
+        $this->setStatement("INSERT into `hr_eval_form_sp_tq` (hr_eval_form_pillars_id,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
+        return $this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
     }
-    function insertYeEval($formID,$results,$remarks,$reviewDate)
+    function insertYeEval($formPillarID,$latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_yee` (eval_form_id,results,remarks,yee_review_date) VALUES (:formID,:results,:remarks,:revDate)");
-        return $this->statement->execute([':formID' => $formID, ':results' => $results,':remarks' => $remarks,':revDate' => $reviewDate]);
+        $this->setStatement("INSERT into `hr_eval_form_sp_yee` (hr_eval_form_pillars_id,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
+        return $this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
     }
-    
-
-
+    function InsertRatingForYearEndEvaluation($latestYearEndValID)
+    {
+        $this->setStatement("INSERT into `hr_eval_form_sp_yee_rating` (hr_eval_form_sp_yee_id) VALUES (:yearEndRateID");
+        return $this->statement->execute([':yearEndRateID' => $latestYearEndValID]);
+    }
+    function selectLastYearEndEvalID()
+    {
+        $this->setStatement("SELECT hr_eval_form_sp_yee_id  FROM `hr_eval_form_sp_yee` order by hr_eval_form_sp_yee_id DESC LIMIT 1");
+        $this->statement->execute();
+        return $this->statement->fetch();
+    }
+    function EvaluationForFirstQT($results,$remarks,$reviewDate,$formPillarID,$latestSpID)
+    {
+        $this->setStatement("UPDATE `hr_eval_form_sp_fq` SET results = :results, remarks = :remarks, fq_review_date = :revDate  WHERE hr_eval_form_pillars_id = :formPillarID and hr_eval_form_sp_id = :formSpID");
+        return $this->statement->execute([':results' => $results,':remarks' => $remarks,':revDate' => $reviewDate,':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
+    }
+    function EvaluationForMidyear($formPillarID,$results,$status,$remarks,$reviewDate,$actToAddress,$latestSpID)
+    {
+        $this->setStatement("UPDATE `hr_eval_form_sp_myr` SET results = :results, status = :status, remarks = :remarks, actions_to_address = :actAddress, myr_review_date = :revDate) WHERE hr_eval_form_pillars_id = :formPillarID and hr_eval_form_sp_id = :formSpID");
+        return $this->statement->execute([':results' => $results,':remarks' => $remarks,':status' => $status,':actAddress'=>$actToAddress,':revDate' => $reviewDate,':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
+    }
+    function EvaluationForThirdQT($formPillarID,$results,$reVariance,$reviewDate,$latestSpID)
+    {
+        $this->setStatement("UPDATE `hr_eval_form_sp_tq` SET results = :results, reason_for_variance = :reVariance, tq_review_date = :revDate) WHERE hr_eval_form_pillars_id = :formPillarID and hr_eval_form_sp_id = :formSpID");
+        return $this->statement->execute([':results' => $results,':reVariance' => $reVariance,':revDate' => $reviewDate,':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
+    }
+    function EvaluationForYearEnd($formPillarID,$results,$remarks,$reviewDate,$latestSpID)
+    {
+        $this->setStatement("UPDATE `hr_eval_form_sp_yee` SET results = :results, remarks = :remarks, yee_review_date = :revDate WHERE hr_eval_form_pillars_id = :formPillarID and hr_eval_form_sp_id = :formSpID");
+        return $this->statement->execute([':results' => $results,':remarks' => $remarks,':revDate' => $reviewDate,':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
+    }
+    function RatingForYearEndEvaluation($agreedRate,$weightedRating,$latestYearEndValID)
+    {
+        $this->setStatement("UPDATE `hr_eval_form_sp_yee_rating` SET agreed_rating = :agreedrating, wtd_rating = :weightedRate WHERE hr_eval_form_sp_yee_id  = :yearEndRateID");
+        return $this->statement->execute([':agreedrating' => $agreedRate,':weightedRate' => $weightedRating,':yearEndRateID' => $latestYearEndValID]);
+    }
 }
 ?>

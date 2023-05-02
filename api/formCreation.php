@@ -10,16 +10,29 @@ if(isset($_POST['submit']))
         {
             $latestFormID = $formController->selectLastformID();
             $formID = $latestFormID->hr_eval_form_id;
-            $latestCount = $control->pillarCount();
+            $latestCount = $formController->pillarCount();
             $count = $latestCount->Count;
-            for($x = 1; $x<= $count; $x++)
+            $formController->createEvalFormFp($formID);
+            $FetchFpFormID = $formController->selectLastEvalFormFpID();
+            $latestFpID = $FetchFpFormID->hr_eval_form_fp_id;
+            $formController->createEvalFormSp($formID);
+            $FetchSpFormID = $formController->selectLastEvalFormSpID();
+            $latestSpID = $FetchSpFormID->hr_eval_form_sp_id;
+            for($x = 0; $x <= $count - 1; $x++)
             {
-                $pillarID = $x;
-                $pillarperc = $_POST['pillarPerc'] //dito mo lagay yung from top to bottom na pillar percentages
-                $formController->createEvalFormPillarsPart($formID,$pillarID,$pillarperc[$x]);
+                $pillarID = $x + 1;
+                $pillarperc = $_POST['pillarPerc']; //dito mo lagay yung from top to bottom na pillar percentages
+                $formController->createEvalFormPillarsPart($formID,$pillarID,$latestFpID,$pillarperc[$x]);
                 $PillarFormID = $formController->selectLastPillarFormID();
                 $formPillarsID = $PillarFormID->hr_eval_form_pillar_id;
-                $formController->createEvalFormFp($formID, $formPillarsID);
+                $formPillarID = $formPillarsID;
+                $formController->insertFqEval($formPillarID,$latestSpID);
+                $formController->insertMyrEval($formPillarID,$latestSpID);
+                $formController->insertTqEval($formPillarID,$latestSpID);
+                $formController->insertYeEval($formPillarID,$latestSpID);
+                $fetchYeID = $formController->selectLastYearEndEvalID();
+                $latestYearEndValID = $fetchYeID->hr_eval_form_sp_yee_id;
+                $formController->InsertRatingForYearEndEvaluation($latestYearEndValID);
             }
             if(isset($_POST['objectiveDesc']))
             {
@@ -30,7 +43,7 @@ if(isset($_POST['submit']))
                 $countOfKpi = count($kpiDesc) - 1;
                 for($x = 0; $x <= $countOfObjective; $x++)
                 {
-                    $formController->insertGoals($formID,$formPillarsID,$objDesc[$x]);
+                    $formController->insertGoals($formID,$formPillarsID,$latestFpID,$objDesc[$x]);
                     $fetchGoalID = $formController->LastGoalsID();
                     $objectID = $fetchGoalID->objective_id;
                     for($y = 0; $y <= $countOfKpi; $y++)
@@ -66,10 +79,5 @@ if(isset($_POST['submit']))
 
 
 
-}
-
-
-
-
-
+}   
 ?>
