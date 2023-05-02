@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
-import RoleRow from "./RoleRow";
+import RoleRow from "./Roles/RoleRow";
 import { GrFormSearch } from "react-icons/gr";
 import { useFunction } from "../context/FunctionContext";
 

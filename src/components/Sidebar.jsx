@@ -66,8 +66,8 @@ export default function Sidebar({ sidebarToggler, className }) {
             >
               <NavButton
                 icon={<BsClipboard2Check />}
-                textLabel={"Main Objectives"}
-                slug={"main_objectives"}
+                textLabel={"Main Goals"}
+                slug={"main_goals"}
               />
               <NavButton
                 icon={<RiLineChartLine />}

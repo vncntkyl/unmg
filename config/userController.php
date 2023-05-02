@@ -67,7 +67,7 @@ class User extends Controller
     }
     function insertAcc($supervisor_id, $imm_supp_id, $lName, $fName, $mName, $compID, $deptID, $salutation, $email, $contactNo, $address, $uName, $pass, $jobDesc, $uStatus)
     {
-        $this->setStatement("INSERT into `hr_users` (supervisor_id,immediate_supervisor_id,last_name,first_name,middle_name,company_id,department_id,salutation,email,contact_no,address,username,password,job_description,user_status) VALUES (:supervisor,:immsupervisor,:lastname,:firstname,:middlename,:companyid,:departmentid,:salutation,:email,:contactno,:address,:username,:password,:jobdesc,:userstatus)");
+        $this->setStatement("INSERT into `hr_users` (supervisor_id,immediate_supervisor_id,last_name,   md5(:password),:jobdesc,:userstatus)");
         return $this->statement->execute([':supervisor' => $supervisor_id, ':immsupervisor' => $imm_supp_id, ':lastname' => $lName, ':firstname' => $fName, ':middlename' => $mName, ':companyid' => $compID, ':departmentid' => $deptID, ':salutation' => $salutation, ':email' => $email, ':contactno' => $contactNo, ':address' => $address, ':username' => $uName, ':password' => $pass, ':jobdesc' => $jobDesc, ':userstatus' => $uStatus]);
     }
     function updateAcc($supervisor_id, $imm_supp_id, $lName, $fName, $mName, $compID, $deptID, $salutation, $contactNo, $address, $jobDesc, $uStatus, $user_id)
