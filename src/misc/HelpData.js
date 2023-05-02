@@ -79,3 +79,19 @@ export const FAQs = [
       "Employees should contact their organization's support team if they encounter technical issues with the performance management system. The support team can help troubleshoot issues and provide guidance on how to resolve them.",
   },
 ];
+
+export const KPIInstructions = [
+  "Specify all the 'Key Performance Indicators' (KPI) expected from the ratee. Select the KPIs which most reflect one's performance. Employee cannot go beyond maximum of 3 KPIs per pillar.",
+  "Assign a percentage for each perspective as discussed with your staff. Percentage will vary depending on the nature of the job but it should fall within the range of: Highest 35%, Lowest=15%",
+  "Assign the equivalent 'Weight' per KPI in percentage. The weight should reflect the importance of the KPI in relation to the objective.",
+  "Set 'Target Metrics' where you calibrate the metrics into the 4 rating levels. Start first with 3 which is equivalent to 'meets expectation' and from there you can calibrate the rest of the levels.",
+  "Write achievement for applicable period under the 'Results' column. Under 'Remarks', provide reason for variance. For mid-year period, choose the equivalent 'Color Status' of your progress (see legend on the right).",
+  "For the year-end review, rate each KPI according to the ratee's total performance for the year applying the 4 point rating scale (see rating legend on the right).",
+];
+
+export const KPILegend = [
+  { point: 4, description: "Above Expected Target" },
+  { point: 3, description: "Achieved Expected Target or Target Range" },
+  { point: 2, description: "Below Expected Target or Target Range" },
+  { point: 1, description: "Far Below Acceptable Target Range" },
+];

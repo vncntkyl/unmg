@@ -78,8 +78,8 @@ export default function Help({}) {
               )}
             >
               <Routes>
-                <Route path="/*" element={<InstructionsHelp />} />
-                <Route path="/purpose" element={<PurposeHelp />} />
+                <Route path="/*" element={<PurposeHelp />} />
+                <Route path="/instructions" element={<InstructionsHelp />} />
                 <Route path="/FAQs" element={<FAQsHelp />} />
               </Routes>
             </div>
