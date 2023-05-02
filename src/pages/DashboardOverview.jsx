@@ -16,7 +16,7 @@ export default function DashboardOverview({ panel, setPanel }) {
           <button
             type="button"
             className={classNames(
-              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2",
+              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2 text-center",
               panel === "regular" ? "text-white" : "text-black"
             )}
             onClick={() => {
@@ -28,7 +28,7 @@ export default function DashboardOverview({ panel, setPanel }) {
           <button
             type="button"
             className={classNames(
-              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2 text-start",
+              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2 text-center",
               panel === "probation" ? "text-white" : "text-black"
             )}
             onClick={() => {

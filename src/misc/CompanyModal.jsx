@@ -160,7 +160,7 @@ export default function CompanyModal({
                               type="text"
                               className="p-1 rounded outline-none"
                               placeholder="Enter department name"
-                              defaultValue={dept.department_name}
+                              value={dept.department_name}
                               disabled={
                                 title === "add department" &&
                                 departmentList.find(

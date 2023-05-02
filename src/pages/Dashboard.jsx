@@ -8,6 +8,7 @@ import AccountSettings from "./AccountSettings";
 import CompanyList from "./CompanyList";
 import Roles from "./Roles";
 import Help from "./Help";
+import MainGoals from "./MainGoals";
 export default function Dashboard() {
   if (!sessionStorage.getItem("currentUser")) {
     sessionStorage.setItem("redirect_to", window.location.pathname);
@@ -92,6 +93,7 @@ export default function Dashboard() {
           <Route path="/companies/*" element={<CompanyList />} />
           <Route path="/roles/*" element={<Roles />} />
           <Route path="/help/*" element={<Help />} />
+          <Route path="/main_goals/*" element={<MainGoals />} />
         </Routes>
       </div>
     </>
