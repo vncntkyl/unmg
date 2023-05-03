@@ -10,6 +10,6 @@ foreach($evaluation as $evaluationIndex => $eval)
 $results = $eval->results;
 $remarks = $eval->remarks;
 $reviewDate = $eval->reviewDate;
-EvaluationForFirstQT($results, $remarks, $reviewDate, $formPillarID[$evaluationIndex], $latestSpID);
+EvaluationForYearEnd($formPillarID[$evaluationIndex], $results, $remarks, $reviewDate, $latestSpID);
 }
 ?>

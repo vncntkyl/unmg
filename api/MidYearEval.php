@@ -9,7 +9,9 @@ foreach($evaluation as $evaluationIndex => $eval)
 {
 $results = $eval->results;
 $remarks = $eval->remarks;
+$status = $eval->status;
 $reviewDate = $eval->reviewDate;
-EvaluationForFirstQT($results, $remarks, $reviewDate, $formPillarID[$evaluationIndex], $latestSpID);
+$actToAddress = $eval->actions_to_address;
+EvaluationForMidyear($formPillarID[$evaluationIndex], $results, $status, $remarks, $reviewDate, $actToAddress, $latestSpID);
 }
 ?>

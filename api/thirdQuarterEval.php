@@ -8,8 +8,8 @@ $latestSpID = $_POST['SpID'];
 foreach($evaluation as $evaluationIndex => $eval)
 {
 $results = $eval->results;
-$remarks = $eval->remarks;
+$reVariance = $eval->reason_for_variance;
 $reviewDate = $eval->reviewDate;
-EvaluationForFirstQT($results, $remarks, $reviewDate, $formPillarID[$evaluationIndex], $latestSpID);
+EvaluationForThirdQT($formPillarID[$evaluationIndex], $results, $reVariance, $reviewDate, $latestSpID);
 }
 ?>
