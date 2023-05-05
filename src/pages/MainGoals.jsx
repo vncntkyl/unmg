@@ -8,9 +8,7 @@ import axios from "axios";
 
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
-  const [employeeID, setEmployeeID] = useState(
-    JSON.parse(sessionStorage.getItem("currentUser")).users_id
-  );
+  const [employeeID, setEmployeeID] = useState();
   const [pillars, setPillars] = useState([]);
   const { getPath } = useFunction();
 
@@ -25,7 +23,11 @@ export default function MainGoals() {
         }
       case "/main_goals/create":
       case "/main_goals/create/":
-        return "Create Goals";
+        if (sessionStorage.getItem("edit_goal")) {
+          return "Edit Goals";
+        } else {
+          return "Create Goals";
+        }
     }
   };
 
@@ -47,6 +49,9 @@ export default function MainGoals() {
 
     getPillars();
   }, []);
+  useEffect(() => {
+    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
+  }, []);
   return (
     <>
       <section className="relative">
@@ -59,6 +64,11 @@ export default function MainGoals() {
                 {!["/main_goals/", "/main_goals"].includes(getPath()) && (
                   <a
                     href="/main_goals"
+                    onClick={() => {
+                      if (sessionStorage.getItem("edit_goal")) {
+                        sessionStorage.removeItem("edit_goal");
+                      }
+                    }}
                     className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
                   >
                     <MdOutlineKeyboardArrowLeft />
@@ -107,8 +117,14 @@ export default function MainGoals() {
               <Routes>
                 {panel === "My Goals" ? (
                   <>
-                    <Route path="/*" element={<Goals />} />
-                    <Route path="/:id" element={<Goals />} />
+                    <Route
+                      path="/*"
+                      element={<Goals user_id={employeeID} pillars={pillars} />}
+                    />
+                    <Route
+                      path="/:id"
+                      element={<Goals user_id={employeeID} pillars={pillars} />}
+                    />
                   </>
                 ) : (
                   <>

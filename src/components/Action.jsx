@@ -174,7 +174,6 @@ export function RoleActions({ modal, toggleModal, emp, setEmployee }) {
         >
           Re-assign Role
         </button>
-
       </div>
     </>
   );
