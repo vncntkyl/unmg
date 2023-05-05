@@ -151,5 +151,43 @@ class Form extends Controller
         $this->setStatement("UPDATE `hr_eval_form_sp_yee_rating` SET agreed_rating = :agreedrating, wtd_rating = :weightedRate WHERE hr_eval_form_sp_yee_id  = :yearEndRateID");
         return $this->statement->execute([':agreedrating' => $agreedRate, ':weightedRate' => $weightedRating, ':yearEndRateID' => $latestYearEndValID]);
     }
+
+    function selectUserPerformance()
+    {
+        $this->setStatement("SELECT hr_eval_form.users_id AS user,  hr_eval_form.hr_eval_form_id, hr_eval_form_fp.hr_eval_form_fp_id, hr_pillars.*, hr_eval_form_pillars.*,hr_objectives.*, hr_kpi.*, hr_target_metrics.*
+        FROM hr_eval_form
+        JOIN hr_eval_form_fp ON  hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+        JOIN hr_eval_form_pillars ON hr_eval_form_fp.hr_eval_form_fp_id = hr_eval_form_pillars.hr_eval_form_fp_id
+        JOIN hr_pillars ON hr_eval_form_pillars.pillar_id = hr_pillars.pillar_id
+        JOIN hr_objectives ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
+        JOIN hr_kpi ON hr_objectives.objective_id = hr_kpi.objective_id
+        JOIN hr_target_metrics ON hr_kpi.kpi_id = hr_target_metrics.kpi_id
+        WHERE users_id = '4'");
+        $this->statement->execute();
+        
+        return $this->statement->fetchAll();
+    }
+
+    function fetchPillars($evalID)
+    {
+        $this->setStatement("SELECT * FROM `hr_eval_form_pillars` WHERE hr_eval_form_id = ?");
+        $this->statement->execute([$evalID]);
+        return $this->statement->fetchAll();
+    }
+    function fetchObjectives($pillarID){
+        $this->setStatement("SELECT * FROM `hr_objectives` WHERE hr_eval_form_pillar_id = ?");
+        $this->statement->execute([$pillarID]);
+        return $this->statement->fetchAll();
+    }
+    function fetchKPIs($objectiveID){
+        $this->setStatement("SELECT * FROM `hr_kpi` WHERE objective_id = ?");
+        $this->statement->execute([$objectiveID]);
+        return $this->statement->fetchAll();
+    }
+    function fetchTargetMetrics($kpiID){
+        $this->setStatement("SELECT * FROM `hr_target_metrics` WHERE kpi_id = ? ORDER BY target_metrics_score DESC");
+        $this->statement->execute([$kpiID]);
+        return $this->statement->fetchAll();
+    }
 }
 ?>
