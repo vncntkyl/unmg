@@ -183,5 +183,16 @@ class Form extends Controller
         $this->setStatement("UPDATE `hr_eval_form` SET approved_by_2 = :approved_by2) WHERE hr_eval_form_id = :formID");
         return $this->statement->execute([':formID' => $formID, ':approved_by2' => $approved_by2]);
     }
+    function rateesComment($formID,$ratees_comment)
+    {
+         $this->setStatement("UPDATE `hr_eval_form` SET ratees_comment = :rateesComment) WHERE hr_eval_form_id = :formID");
+        return $this->statement->execute([':formID' => $formID, ':rateesComment' => $ratees_comment]);
+    }
+    function recommendation($formID,$recommendation)
+    {
+         $this->setStatement("UPDATE `hr_eval_form` SET recommendation = :recommendation) WHERE hr_eval_form_id = :formID");
+        return $this->statement->execute([':formID' => $formID, ':recommendation' => $recommendation]);
+    }
+
 }
 ?>

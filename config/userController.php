@@ -8,6 +8,12 @@ class User extends Controller
         $this->statement->execute([':username' => $uName, ':password' => $pWord]);
         return $this->statement->fetch(); 
     }
+    function retrieveSpecificUser($uID)
+    {
+        $this->setStatement("SELECT last_name,first_name,middle_name FROM `hr_users` WHERE users_id= ':uID");
+        $this->statement->execute([':uID' => $uID]);
+        return $this->statement->fetchAll(); 
+    }
     function retrieveUsers()
     {
         $this->setStatement("SELECT * FROM `hr_users`");
