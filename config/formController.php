@@ -173,9 +173,15 @@ class Form extends Controller
                 return $this->statement->execute([':userID' => $userID]);
                 return $this->statement->fetchAll();
     } 
-    function FirstApproveEvaluationForm($userID)
+    function FirstApproveEvaluationForm($formID,$approved_by)
     {
-
+         $this->setStatement("UPDATE `hr_eval_form` SET approved_by = :approved_by) WHERE hr_eval_form_id = :formID");
+        return $this->statement->execute([':formID' => $formID, ':approved_by' => $approved_by]);
+    }
+    function SecondApproveEvaluationForm($formID,$approved_by2)
+    {
+        $this->setStatement("UPDATE `hr_eval_form` SET approved_by_2 = :approved_by2) WHERE hr_eval_form_id = :formID");
+        return $this->statement->execute([':formID' => $formID, ':approved_by2' => $approved_by2]);
     }
 }
 ?>
