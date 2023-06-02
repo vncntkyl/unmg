@@ -6,11 +6,13 @@
 
 body {
     background-color: #EFEDF8;
+    position: relative;
 }
 
 * {
     -webkit-tap-highlight-color: transparent;
 }
+
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -28,10 +30,10 @@ input[type="number"] {
     content: "";
     top: 50%;
     left: 0;
-    width: 50%;
+    width: 47%;
     height: 30px;
     background-color: #d22735;
-    transform: translate(5%, -50%);
+    transform: translate(3%, -50%);
     border-radius: 10rem;
 }
 
@@ -41,7 +43,7 @@ input[type="number"] {
 }
 
 .toggle.on::before {
-    transform: translate(95%, -50%);
+    transform: translate(110%, -50%);
 }
 
 .overview_container::-webkit-scrollbar {

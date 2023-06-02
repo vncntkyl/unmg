@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import classNames from "classnames";
 import { MainOverview, Overview } from "../components";
 
-export default function DashboardOverview() {
-  const [panel, setPanel] = useState("regular");
+export default function DashboardOverview({ panel, setPanel }) {
   return (
     <>
       {/* toggler */}
@@ -17,7 +16,7 @@ export default function DashboardOverview() {
           <button
             type="button"
             className={classNames(
-              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2",
+              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2 text-center",
               panel === "regular" ? "text-white" : "text-black"
             )}
             onClick={() => {
@@ -29,7 +28,7 @@ export default function DashboardOverview() {
           <button
             type="button"
             className={classNames(
-              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2 text-start",
+              "toggle_text py-1 px-2 rounded-full text-[.9rem] z-[6] w-1/2 text-center",
               panel === "probation" ? "text-white" : "text-black"
             )}
             onClick={() => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/unmg_logo_plain.png";
 import { FaBell, FaUserCircle } from "react-icons/fa";
 import { BiDownArrow } from "react-icons/bi";
@@ -14,7 +14,14 @@ export default function Navbar({
   sidebarToggler,
 }) {
   const { setCurrentUser } = useAuth();
-  const {getPath, capitalize, capitalizePath} = useFunction();
+  const {
+    getPath,
+    capitalize,
+    capitalizePath,
+    formatName,
+    capitalizeSentence,
+  } = useFunction();
+  const [imgProfile, setImgProfile] = useState(null);
   const [panel, togglePanel] = useState({
     notification: false,
     user: false,
@@ -26,6 +33,19 @@ export default function Navbar({
     setCurrentUser([]);
     navigate("/login");
   };
+
+  useEffect(() => {
+    const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+    const setImg = async () => {
+      try {
+        const image = await import("./" + currentUser["picture"]);
+        setImgProfile(image.default);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    setImg();
+  }, []);
   return (
     user_data && (
       <>
@@ -50,16 +70,15 @@ export default function Navbar({
             <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
               Admin /{" "}
               <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">
-               {getPath() === "/" ? 'Dashboard' : capitalizePath(getPath())}
+                {getPath() === "/"
+                  ? "Dashboard"
+                  : capitalizeSentence(capitalizePath(getPath()))}
               </span>
             </span>
-            {/* <span className="hidden text-white text-[1.5rem] font-semibold">
-            Dashboard
-          </span> */}
           </div>
           <div className="nav_user relative col-[3/4] flex-shrink-0 flex items-center justify-end p-1 gap-2">
             <span className="text-white text-sm md:text-lg font-medium hidden lg:block">
-              Welcome {capitalize(user_data[0].username)}!
+              Welcome {capitalize(user_data.first_name)}!
             </span>
             <button
               onClick={() =>
@@ -103,19 +122,23 @@ export default function Navbar({
                   });
                 }}
               >
-                {user_data && user_data.image ? (
+                {user_data && imgProfile ? (
                   <>
-                    <img src="" alt="" className="h-8 w-8 rounded-full" />
+                    <img
+                      src={imgProfile}
+                      alt=""
+                      className="h-8 w-8 rounded-full"
+                    />
                   </>
                 ) : (
                   <>
                     <FaUserCircle className="text-un-blue text-[1.7rem] lg:text-white" />
                   </>
                 )}
-                {user_data && user_data[0].username && (
+                {user_data && user_data.username && (
                   <>
                     <span className="hidden text-[.9rem] group-hover/user:block lg:hidden group-hover/user:lg:hidden">
-                      {user_data[0].username}
+                      {user_data.username}
                     </span>
                   </>
                 )}
@@ -123,8 +146,8 @@ export default function Navbar({
                   className={classNames(
                     panel.user && "rotate-180",
                     "transition-all ease-in-out duration-300 hidden group-hover/user:block lg:hidden group-hover/user:lg:hidden"
-                    )}
-                    />
+                  )}
+                />
               </button>
               <div
                 className={classNames(
@@ -135,7 +158,20 @@ export default function Navbar({
               >
                 <ul>
                   <li className="p-2 text-end">
-                    <a href="/account-settings">Account Settings</a>
+                    <a
+                      href={`/account/${formatName(user_data.first_name)}_${
+                        user_data.last_name
+                      }`}
+                    >
+                      Account Settings
+                    </a>
+                  </li>
+                  <li className="p-2 text-end">
+                    <a
+                      href="/help"
+                    >
+                      Help
+                    </a>
                   </li>
                   <li className="p-2 text-end">
                     <button type="button" onClick={() => handleLogout()}>
@@ -145,20 +181,20 @@ export default function Navbar({
                 </ul>
               </div>
             </div>
-              <div
-                className={classNames(
-                  "bg-[#00000000] fixed h-full w-full z-[8] top-0 left-0 animate-fade pointer-events-auto",
-                  !panel.user &&
-                    !panel.notification &&
-                    "hidden pointer-events-none"
-                )}
-                onClick={() =>
-                  togglePanel({
-                    notification: false,
-                    user: false,
-                  })
-                }
-              />
+            <div
+              className={classNames(
+                "bg-[#00000000] fixed h-full w-full z-[8] top-0 left-0 animate-fade pointer-events-auto",
+                !panel.user &&
+                  !panel.notification &&
+                  "hidden pointer-events-none"
+              )}
+              onClick={() =>
+                togglePanel({
+                  notification: false,
+                  user: false,
+                })
+              }
+            />
           </div>
         </nav>
       </>

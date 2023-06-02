@@ -12,19 +12,19 @@ export default function MainOverview({ panel_type }) {
         {/* HEADER */}
         <div className="flex flex-col gap-2">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <span className="text-[1.1rem] font-semibold">Rating Overview</span>
+            <span className="text-[1.1rem] text-black font-semibold">Rating Overview</span>
             <span className="text-[.8rem] text-dark-gray">
               As of {format(startOfToday(), "EEEE, MMMM d, yyyy")}
             </span>
           </div>
-          <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
             <label htmlFor="quarterPicker" className="font-semibold">
               Select Quarter:
             </label>
             <select
               id="quarterPicker"
               onChange={(e) => setQuarter(e.target.value)}
-              className="shadow-sm bg-white text-un-blue rounded-md p-1 px-2 outline-none border border-gray"
+              className="bg-default text-black rounded-md p-1 px-2 outline-none"
             >
               <option value="First Quarter" defaultChecked>
                 First Quarter
@@ -35,14 +35,14 @@ export default function MainOverview({ panel_type }) {
             </select>
           </div>
           {panel_type !== "regular" && (
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
               <label htmlFor="quarterPicker" className="font-semibold">
                 Show Evaluations For:
               </label>
               <select
                 id="quarterPicker"
                 onChange={(e) => setEvaluation(e.target.value)}
-                className="shadow-sm bg-white text-un-blue rounded-md p-1 px-2 outline-none border border-gray"
+                className="bg-default text-black rounded-md p-1 px-2 outline-none"
               >
                 <option value="all" defaultChecked>
                   All
@@ -52,9 +52,9 @@ export default function MainOverview({ panel_type }) {
           )}
         </div>
         {/* BODY */}
-        <EmployeeTable quarter={quarter} panel_type={panel_type} />
+        <EmployeeTable quarter={quarter} panel_type={panel_type} onDashboard />
         {/* FOOTER */}
-        <button className="bg-un-blue-light w-fit text-white py-1 px-2 rounded-md">
+        <button className="bg-un-blue-light w-fit text-white py-1 px-2 rounded-md text-[.9rem]">
           More Information
         </button>
       </div>

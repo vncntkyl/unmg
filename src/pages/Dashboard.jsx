@@ -3,10 +3,19 @@ import { Navbar, Sidebar } from "../components";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { Routes, Route } from "react-router-dom";
-import { DashboardOverview, EmployeeList } from "./";
+import { DashboardOverview, EmployeeList } from ".";
+import AccountSettings from "./AccountSettings";
+import CompanyList from "./CompanyList";
+import Roles from "./Roles";
+import Help from "./Help";
+import MainGoals from "./MainGoals";
 export default function Dashboard() {
+  if (!sessionStorage.getItem("currentUser")) {
+    sessionStorage.setItem("redirect_to", window.location.pathname);
+  }
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
+  const [panel, setPanel] = useState("regular");
   const [loader, toggleLoader] = useState(true);
   const [user, setUser] = useState({});
   let xDown = null;
@@ -72,8 +81,19 @@ export default function Dashboard() {
         />
         {/* DASHBOARD MAIN */}
         <Routes>
-          <Route path="/" element={<DashboardOverview />} />
-          <Route path="/employees/*" element={<EmployeeList />} />
+          <Route
+            path="/"
+            element={<DashboardOverview panel={panel} setPanel={setPanel} />}
+          />
+          <Route
+            path="/employees/*"
+            element={<EmployeeList panel_type={panel} />}
+          />
+          <Route path="/account/*" element={<AccountSettings />} />
+          <Route path="/companies/*" element={<CompanyList />} />
+          <Route path="/roles/*" element={<Roles />} />
+          <Route path="/help/*" element={<Help />} />
+          <Route path="/main_goals/*" element={<MainGoals />} />
         </Routes>
       </div>
     </>

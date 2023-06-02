@@ -84,7 +84,7 @@ export default function Overview({ overview_type }) {
         {
           id: 5,
           title: "Submitted",
-          count: 1,
+          count: 0,
         },
       ]);
     }

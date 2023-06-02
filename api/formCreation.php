@@ -1,15 +1,16 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-session_start(); 
 require_once '../config/formController.php';
 $formController = new Form();
 if (isset($_POST['submit'])) {
     $goals = json_decode($_POST['goals']);
     if (isset($_POST['userID'])) {
         $userID = $_POST['userID'];
+
         if ($formID = $formController->createEvalForm($userID)) {
             $latestFpID = $formController->createEvalFormFp($formID);
             $latestSpID = $formController->createEvalFormSp($formID);
+
             foreach ($goals as $index => $goal) {
                 $pillarObjectives = $goal->objectives;
                 $pillarID = $index + 1;
