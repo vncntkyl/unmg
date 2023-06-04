@@ -156,7 +156,13 @@ class Form extends Controller
     {
         $this->setStatement("SELECT * FROM `hr_eval_form` WHERE users_id = ?");
         $this->statement->execute([$userID]);
-        return $this->statement->fetch()->hr_eval_form_id;
+        if($evalArr = $this->statement->fetch()){
+            if(!empty($evalArr)){
+                return $evalArr->hr_eval_form_id;
+            }else{
+                return 0;
+            }
+        }
     }
 
     function fetchPillars($evalID)

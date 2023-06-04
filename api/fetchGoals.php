@@ -23,14 +23,14 @@ if (isset($_POST['user_id'])) {
                 ]);
 
                 foreach ($formController->fetchKPIs($objective->objective_id) as $kpiIndex => $kpi) {
-                    $goal[$idx][$index]['objectives'][0]['kpi'] = array([
+                    array_push($goal[$idx][$index]['objectives'][0]['kpi'], array([
                         'kpi_description' => $kpi->kpi_desc,
                         'kpi_weight' => $kpi->kpi_weight,
                         'target_metrics' => array()
-                    ]);
+                    ]));
 
                     foreach ($formController->fetchTargetMetrics($kpi->kpi_id) as $metric_idx => $metric) {
-                        array_push($goal[$idx][$index]['objectives'][0]['kpi'][0]['target_metrics'], array([
+                        array_push($goal[$idx][$index]['objectives'][0]['kpi'][$kpiIndex][0]['target_metrics'], array([
                             'target_metrics_score' => $metric->target_metrics_score,
                             'target_metrics_desc' => $metric->target_metrics_desc
                         ]));

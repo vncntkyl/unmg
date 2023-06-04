@@ -8,7 +8,6 @@ import {
   AiOutlinePlus,
 } from "react-icons/ai";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
 export default function CreateGoals({ pillars = [], user_id }) {
   const [instructionsOpen, toggleInstructions] = useState(false);

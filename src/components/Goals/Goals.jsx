@@ -2,12 +2,16 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useParams } from "react-router-dom";
+import { useFunction } from "../../context/FunctionContext";
 
 export default function Goals({ user_id, pillars = [] }) {
   const { id } = useParams();
   const [hasSet, toggleSet] = useState(false);
   const [loading, setLoading] = useState(true);
   const [goalData, setGoalData] = useState([]);
+  const [currentPillar, setPillar] = useState(1);
+
+  const { removeSubText } = useFunction();
   useEffect(() => {
     if (!user_id) return;
 
@@ -19,10 +23,12 @@ export default function Goals({ user_id, pillars = [] }) {
       formData.append("user_id", user_id);
       try {
         const response = await axios.post(url, formData);
-        if (response.data) {
+        if (response.data != 0) {
+          console.log(response.data);
           setGoalData(response.data);
-
           toggleSet(true);
+          setLoading(false);
+        } else {
           setLoading(false);
         }
       } catch (e) {
@@ -58,8 +64,36 @@ export default function Goals({ user_id, pillars = [] }) {
           >
             Edit Goals
           </a>
-          <div className="overflow-x-scroll xl:overflow-hidden border border-un-blue-light rounded-lg">
-            <table className="w-full">
+          <div className="overflow-x-scroll xl:overflow-hidden border-no rounded-lg bg-default">
+            <div className="w-full p-2">
+              <select onChange={(e) => setPillar(e.target.value)}>
+                {pillars.map((pillar) => {
+                  return (
+                    <>
+                      <option value={pillar.pillar_id}>
+                        {removeSubText(pillar.pillar_name)}
+                      </option>
+                    </>
+                  );
+                })}
+              </select>
+              <p>{currentPillar}</p>
+            </div>
+            {/* <div className="w-full">
+              <div className="bg-un-blue-light text-white grid grid-cols-5">
+                {[
+                  ["Perspective", "(Pillar)"],
+                  ["Objectives", "(General)"],
+                  ["Key Performance Indicator", "(KPI)"],
+                  ["Weight", "%"],
+                  ["Target Metrics", "(1 - 4)"],
+                ].map((title) => {
+                  return <GoalTableHeader title={title} />;
+                })}
+              </div>
+              <div className="grid grid-cols-5"></div>
+            </div> */}
+            {/* <table className="w-full">
               <thead className="bg-un-blue-light text-white">
                 <tr>
                   <th className="font-normal whitespace-nowrap">
@@ -106,15 +140,12 @@ export default function Goals({ user_id, pillars = [] }) {
                             <td className="p-2 text-center">
                               {objData.objectives_description}
                             </td>
-                            {objData.kpi.map((kpi) => {
+                            {objData.kpi.map((kpis) => {
+                              const kpi = kpis[0];
                               return (
                                 <>
-                                  <td className="p-2 text-center">
-                                    {kpi.kpi_description}
-                                  </td>
-                                  <td className="p-2 text-center">
-                                    {kpi.kpi_weight}%
-                                  </td>
+                                  <td>{kpi.kpi_description}</td>
+                                  <td>{kpi.kpi_weight}</td>
                                   <td className="flex flex-col p-2">
                                     {kpi.target_metrics.map((metrics) => {
                                       return (
@@ -138,12 +169,21 @@ export default function Goals({ user_id, pillars = [] }) {
                           </>
                         );
                       })}
-                      {}
                     </tr>
                   );
                 })}
               </tbody>
-            </table>
+            </table> */}
+            <pre
+              style={{
+                whiteSpace: "pre-wrap",
+                fontFamily: "Courier New",
+                fontSize: "14px",
+                padding: "10px",
+              }}
+            >
+              {JSON.stringify(goalData, null, 2)}
+            </pre>
           </div>
         </div>
       )}
