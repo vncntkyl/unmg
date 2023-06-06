@@ -5,6 +5,7 @@ import { CreateGoals, EmployeeGoals, Goals } from "../components/Goals";
 import { useFunction } from "../context/FunctionContext";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import axios from "axios";
+import Toggle from "../components/Toggle";
 
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
@@ -78,39 +79,7 @@ export default function MainGoals() {
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
-              {["/main_goals/", "/main_goals"].includes(getPath()) && (
-                <div
-                  className={classNames(
-                    "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
-                    panel !== "My Goals" && "on"
-                  )}
-                >
-                  <button
-                    type="button"
-                    className={classNames(
-                      "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] text-center w-1/2 md:text-[.8rem]",
-                      panel === "My Goals" ? "text-white" : "text-black"
-                    )}
-                    onClick={() => {
-                      setPanel("My Goals");
-                    }}
-                  >
-                    My Goals
-                  </button>
-                  <button
-                    type="button"
-                    className={classNames(
-                      "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem]",
-                      panel === "Employee Goals" ? "text-white" : "text-black"
-                    )}
-                    onClick={() => {
-                      setPanel("Employee Goals");
-                    }}
-                  >
-                    Employee Goals
-                  </button>
-                </div>
-              )}
+              <Toggle paths={["/main_goals/", "/main_goals"]} panel={panel} panel_1={"My Goals"} setPanel={setPanel} panel_2={"Employee Goals"}/>
             </div>
             {/* BODY */}
             <div>
