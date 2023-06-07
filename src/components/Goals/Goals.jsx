@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 import { useFunction } from "../../context/FunctionContext";
+import GoalTableHeader from "./GoalTableHeader";
 
 export default function Goals({ user_id, pillars = [] }) {
   const { id } = useParams();
@@ -12,11 +13,71 @@ export default function Goals({ user_id, pillars = [] }) {
   const [currentPillar, setPillar] = useState(1);
 
   const { removeSubText } = useFunction();
+
+  const TableComponent = ({ data }) => {
+    let previousObjective = "";
+    let previousKpi = "";
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Objective</th>
+            <th>KPI</th>
+            <th>Weight</th>
+            <th>Target Metrics</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => {
+            const isFirstObjective = item.objective !== previousObjective;
+            const isFirstKpi = item.kpi_desc !== previousKpi;
+
+            previousObjective = item.objective;
+            previousKpi = item.kpi_desc;
+
+            return (
+              <tr key={index}>
+                {isFirstObjective && (
+                  <td
+                    rowSpan={
+                      data.filter((i) => i.objective === item.objective).length
+                    }
+                  >
+                    {item.objective}
+                  </td>
+                )}
+                {isFirstKpi && (
+                  <>
+                    <td
+                      rowSpan={
+                        data.filter((i) => i.kpi_desc === item.kpi_desc).length
+                      }
+                    >
+                      {item.kpi_desc}
+                    </td>
+                    <td
+                      rowSpan={
+                        data.filter((i) => i.kpi_desc === item.kpi_desc).length
+                      }
+                    >
+                      {item.kpi_weight}
+                    </td>
+                  </>
+                )}
+                <td>{item.target_metrics_desc}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
+  };
   useEffect(() => {
     if (!user_id) return;
 
     const retrieveUser = async () => {
-      const url = "http://localhost/unmg_pms/api/fetchGoals.php";
+      const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
       //const url = "../api/fetchGoals.php";
 
       const formData = new FormData();
@@ -24,7 +85,6 @@ export default function Goals({ user_id, pillars = [] }) {
       try {
         const response = await axios.post(url, formData);
         if (response.data != 0) {
-          console.log(response.data);
           setGoalData(response.data);
           toggleSet(true);
           setLoading(false);
@@ -65,8 +125,11 @@ export default function Goals({ user_id, pillars = [] }) {
             Edit Goals
           </a>
           <div className="overflow-x-scroll xl:overflow-hidden border-no rounded-lg bg-default">
-            <div className="w-full p-2">
-              <select onChange={(e) => setPillar(e.target.value)}>
+            <div className="w-full p-2 flex flex-col gap-2">
+              <select
+                onChange={(e) => setPillar(e.target.value)}
+                className="w-full outline-none"
+              >
                 {pillars.map((pillar) => {
                   return (
                     <>
@@ -77,7 +140,36 @@ export default function Goals({ user_id, pillars = [] }) {
                   );
                 })}
               </select>
-              <p>{currentPillar}</p>
+              <div className="bg-white rounded overflow-hidden w-full">
+                <TableComponent data={goalData} />
+                {/* {goalData[currentPillar - 1].map((pillar, pillar_index) => {
+                  return (
+                    <>
+                      <div className="flex flex-row items-center gap-2 justify-between font-semibold  bg-un-blue-light text-white p-1">
+                        <p>{pillar.pillar_name}</p>
+                        <span>{pillar.pillar_percentage}%</span>
+                      </div>
+                      <div className="p-2 overflow-x-scroll w-full">
+                        <table className="w-full">
+                          <thead>
+                            <tr>
+                              {[
+                                ["Objectives", "(General)"],
+                                ["Key Performance Indicator", "(KPI)"],
+                                ["Weight", "%"],
+                                ["Target Metrics", "(1 - 4)"],
+                              ].map((title) => {
+                                return <GoalTableHeader title={title} />;
+                              })}
+                            </tr>
+                          </thead>
+                          <tbody></tbody>
+                        </table>
+                      </div>
+                    </>
+                  );
+                })} */}
+              </div>
             </div>
             {/* <div className="w-full">
               <div className="bg-un-blue-light text-white grid grid-cols-5">
