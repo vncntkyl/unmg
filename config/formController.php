@@ -156,10 +156,10 @@ class Form extends Controller
     {
         $this->setStatement("SELECT * FROM `hr_eval_form` WHERE users_id = ?");
         $this->statement->execute([$userID]);
-        if($evalArr = $this->statement->fetch()){
-            if(!empty($evalArr)){
+        if ($evalArr = $this->statement->fetch()) {
+            if (!empty($evalArr)) {
                 return $evalArr->hr_eval_form_id;
-            }else{
+            } else {
                 return 0;
             }
         }
@@ -171,17 +171,20 @@ class Form extends Controller
         $this->statement->execute([$evalID]);
         return $this->statement->fetchAll();
     }
-    function fetchObjectives($pillarID){
+    function fetchObjectives($pillarID)
+    {
         $this->setStatement("SELECT * FROM `hr_objectives` WHERE hr_eval_form_pillar_id = ?");
         $this->statement->execute([$pillarID]);
         return $this->statement->fetchAll();
     }
-    function fetchKPIs($objectiveID){
+    function fetchKPIs($objectiveID)
+    {
         $this->setStatement("SELECT * FROM `hr_kpi` WHERE objective_id = ?");
         $this->statement->execute([$objectiveID]);
         return $this->statement->fetchAll();
     }
-    function fetchTargetMetrics($kpiID){
+    function fetchTargetMetrics($kpiID)
+    {
         $this->setStatement("SELECT * FROM `hr_target_metrics` WHERE kpi_id = ? ORDER BY target_metrics_score DESC");
         $this->statement->execute([$kpiID]);
         return $this->statement->fetchAll();
@@ -230,6 +233,25 @@ class Form extends Controller
         JOIN hr_kpi AS d ON d.objective_id = c.objective_id
         JOIN hr_target_metrics AS e ON e.kpi_id = d.kpi_id WHERE a.users_id = ?");
         $this->statement->execute([$user_id]);
+        return $this->statement->fetchAll();
+    }
+    function getEmployeeGoals()
+    {
+        $this->setStatement("SELECT
+        u.users_id,
+          CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
+          CASE
+            WHEN e.users_id IS NULL THEN 0
+            ELSE 1
+          END AS is_in_eval_form,
+          p.pillar_id,p.pillar_percentage
+        FROM
+          hr_users u
+        LEFT JOIN
+          hr_eval_form e ON u.users_id = e.users_id
+        LEFT JOIN
+          hr_eval_form_pillars p ON p.hr_eval_form_id = e.hr_eval_form_id");
+        $this->statement->execute();
         return $this->statement->fetchAll();
     }
 }

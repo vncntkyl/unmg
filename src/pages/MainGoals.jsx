@@ -97,7 +97,7 @@ export default function MainGoals() {
                   </>
                 ) : (
                   <>
-                    <Route path="/*" element={<EmployeeGoals />} />
+                    <Route path="/*" element={<EmployeeGoals pillars={pillars} />} />
                   </>
                 )}
 

@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 import { useFunction } from "../../context/FunctionContext";
-import GoalTableHeader from "./GoalTableHeader";
-
+import GoalTable from "./GoalTableHeader";
+import classNames from "classnames";
 export default function Goals({ user_id, pillars = [] }) {
   const { id } = useParams();
   const [hasSet, toggleSet] = useState(false);
@@ -14,65 +14,6 @@ export default function Goals({ user_id, pillars = [] }) {
 
   const { removeSubText } = useFunction();
 
-  const TableComponent = ({ data }) => {
-    let previousObjective = "";
-    let previousKpi = "";
-
-    return (
-      <table>
-        <thead>
-          <tr>
-            <th>Objective</th>
-            <th>KPI</th>
-            <th>Weight</th>
-            <th>Target Metrics</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => {
-            const isFirstObjective = item.objective !== previousObjective;
-            const isFirstKpi = item.kpi_desc !== previousKpi;
-
-            previousObjective = item.objective;
-            previousKpi = item.kpi_desc;
-
-            return (
-              <tr key={index}>
-                {isFirstObjective && (
-                  <td
-                    rowSpan={
-                      data.filter((i) => i.objective === item.objective).length
-                    }
-                  >
-                    {item.objective}
-                  </td>
-                )}
-                {isFirstKpi && (
-                  <>
-                    <td
-                      rowSpan={
-                        data.filter((i) => i.kpi_desc === item.kpi_desc).length
-                      }
-                    >
-                      {item.kpi_desc}
-                    </td>
-                    <td
-                      rowSpan={
-                        data.filter((i) => i.kpi_desc === item.kpi_desc).length
-                      }
-                    >
-                      {item.kpi_weight}
-                    </td>
-                  </>
-                )}
-                <td>{item.target_metrics_desc}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    );
-  };
   useEffect(() => {
     if (!user_id) return;
 
@@ -114,9 +55,9 @@ export default function Goals({ user_id, pillars = [] }) {
           </a>
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <a
-            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue mb-2"
             href="/main_goals/create"
             onClick={() => {
               sessionStorage.setItem("edit_goal", user_id);
@@ -124,11 +65,32 @@ export default function Goals({ user_id, pillars = [] }) {
           >
             Edit Goals
           </a>
-          <div className="overflow-x-scroll xl:overflow-hidden border-no rounded-lg bg-default">
+          <div className="hidden lg:flex flex-row">
+            {pillars.map((pillar) => {
+              return (
+                <>
+                  <button
+                    onClick={() => setPillar(pillar.pillar_id)}
+                    className={classNames(
+                      "p-2 rounded-t-lg",
+                      currentPillar === pillar.pillar_id && "bg-default font-semibold"
+                    )}
+                  >
+                    {removeSubText(pillar.pillar_name)}
+                    {currentPillar === pillar.pillar_id &&
+                      goalData.find((p) => p.pillar_id == currentPillar) &&
+                      goalData.find((p) => p.pillar_id == currentPillar)
+                        .pillar_percentage + "%"}
+                  </button>
+                </>
+              );
+            })}
+          </div>
+          <div className="overflow-x-scroll xl:overflow-hidden rounded-b-lg rounded-tr-lg bg-default">
             <div className="w-full p-2 flex flex-col gap-2">
               <select
                 onChange={(e) => setPillar(e.target.value)}
-                className="w-full outline-none"
+                className="w-full outline-none lg:hidden"
               >
                 {pillars.map((pillar) => {
                   return (
@@ -140,133 +102,21 @@ export default function Goals({ user_id, pillars = [] }) {
                   );
                 })}
               </select>
-              <div className="bg-white rounded overflow-hidden w-full">
-                <TableComponent data={goalData} />
-                {/* {goalData[currentPillar - 1].map((pillar, pillar_index) => {
-                  return (
-                    <>
-                      <div className="flex flex-row items-center gap-2 justify-between font-semibold  bg-un-blue-light text-white p-1">
-                        <p>{pillar.pillar_name}</p>
-                        <span>{pillar.pillar_percentage}%</span>
-                      </div>
-                      <div className="p-2 overflow-x-scroll w-full">
-                        <table className="w-full">
-                          <thead>
-                            <tr>
-                              {[
-                                ["Objectives", "(General)"],
-                                ["Key Performance Indicator", "(KPI)"],
-                                ["Weight", "%"],
-                                ["Target Metrics", "(1 - 4)"],
-                              ].map((title) => {
-                                return <GoalTableHeader title={title} />;
-                              })}
-                            </tr>
-                          </thead>
-                          <tbody></tbody>
-                        </table>
-                      </div>
-                    </>
-                  );
-                })} */}
+              <div className="overflow-hidden w-full">
+                <div className="font-semibold flex gap-2 items-center lg:hidden">
+                  <p>{pillars[currentPillar - 1].pillar_name}</p>
+                  <p>
+                    {goalData.find((p) => p.pillar_id == currentPillar)
+                      ? goalData.find((p) => p.pillar_id == currentPillar)
+                          .pillar_percentage
+                      : 0}
+                    %
+                  </p>
+                </div>
+                <GoalTable data={goalData} current={currentPillar} />
               </div>
             </div>
-            {/* <div className="w-full">
-              <div className="bg-un-blue-light text-white grid grid-cols-5">
-                {[
-                  ["Perspective", "(Pillar)"],
-                  ["Objectives", "(General)"],
-                  ["Key Performance Indicator", "(KPI)"],
-                  ["Weight", "%"],
-                  ["Target Metrics", "(1 - 4)"],
-                ].map((title) => {
-                  return <GoalTableHeader title={title} />;
-                })}
-              </div>
-              <div className="grid grid-cols-5"></div>
-            </div> */}
-            {/* <table className="w-full">
-              <thead className="bg-un-blue-light text-white">
-                <tr>
-                  <th className="font-normal whitespace-nowrap">
-                    Perspective
-                    <br />
-                    (Pillar)
-                  </th>
-                  <th className="font-normal whitespace-nowrap">
-                    Objectives
-                    <br />
-                    (General)
-                  </th>
-                  <th className="font-normal whitespace-nowrap">
-                    Key Performance Indicator
-                    <br />
-                    (KPI)
-                  </th>
-                  <th className="font-normal whitespace-nowrap">
-                    Weight
-                    <br />
-                    (%)
-                  </th>
-                  <th className="font-normal whitespace-nowrap">
-                    Target Metrics
-                    <br />
-                    (1 - 4)
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {goalData.map((goals) => {
-                  const goal = goals[0];
-                  return (
-                    <tr className="even:bg-default">
-                      <td className="p-2">
-                        <div className="flex flex-col items-center">
-                          <span>{goal.pillar_name}</span>
-                          <span>{goal.pillar_percentage}%</span>
-                        </div>
-                      </td>
-                      {goal.objectives.map((objData) => {
-                        return (
-                          <>
-                            <td className="p-2 text-center">
-                              {objData.objectives_description}
-                            </td>
-                            {objData.kpi.map((kpis) => {
-                              const kpi = kpis[0];
-                              return (
-                                <>
-                                  <td>{kpi.kpi_description}</td>
-                                  <td>{kpi.kpi_weight}</td>
-                                  <td className="flex flex-col p-2">
-                                    {kpi.target_metrics.map((metrics) => {
-                                      return (
-                                        <>
-                                          <div className="flex flex-row gap-2 p-1">
-                                            <span>
-                                              {metrics[0].target_metrics_score}
-                                            </span>{" "}
-                                            -{" "}
-                                            <p>
-                                              {metrics[0].target_metrics_desc}
-                                            </p>
-                                          </div>
-                                        </>
-                                      );
-                                    })}
-                                  </td>
-                                </>
-                              );
-                            })}
-                          </>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table> */}
-            <pre
+            {/* <pre
               style={{
                 whiteSpace: "pre-wrap",
                 fontFamily: "Courier New",
@@ -275,7 +125,7 @@ export default function Goals({ user_id, pillars = [] }) {
               }}
             >
               {JSON.stringify(goalData, null, 2)}
-            </pre>
+            </pre> */}
           </div>
         </div>
       )}

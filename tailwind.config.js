@@ -55,6 +55,7 @@ export default {
       white: colors.white,
       black: colors.black,
       gray: "#c1c1c1",
+      "mid-gray": "#818181",
       "dark-gray": "#515151",
       transparent: colors.transparent,
       "un-blue": "#183145",
