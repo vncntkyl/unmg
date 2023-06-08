@@ -1,240 +1,216 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../context/authContext";
 
 export default function SignOff() {
-    const [pillars, setPillars] = useState([]);
-    const [signOff, setSignOff] = useState([]);
+    const [pillarPercentage, setpillarPercentage] = useState([]);
+    const [finalUserPerformance, setfinalUserPerformance] = useState([]);
     const [selectedPillar, setSelectedPillar] = useState(0);
-    const uniqueValues = [...new Set(signOff.map(sign => ({ pillar_name: sign.pillar_name, pillar_percentage: sign.pillar_percentage })))];
-    const renderedValues = [];
-
-    // useEffect(() => {
-    //     const getPillar = async () => {
-    //         try {
-    //             const response = await axios.get("http://localhost/unmg_pms/api/retrievePillars.php", {
-    //                 params: {
-    //                     pillars: true
-    //                 }
-    //             });
-    //             setPillars(response.data)
-    //         } catch (error) {
-    //             console.log(error.message)
-    //         }
-    //     }        
-    //     const getSignOff = async () => {
-    //         try {
-    //             const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
-    //                 params: {
-    //                     sign: true
-    //                 }
-    //             });
-    //             setSignOff(response.data)
-    //         } catch (error) {
-    //             console.log(error.message)
-    //         }
-    //     }
-    //     getSignOff();
-    //     getPillar();
-    // }, []);
-
-    const { id } = useParams();
-    const [hasSet, toggleSet] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [goalData, setGoalData] = useState([]);
+    const [signOff, setSignOff] = useState([]);
+    const {headList} = useAuth();
     useEffect(() => {
-        if (!user_id) return;
-    
-        const retrieveUser = async () => {
-          const url = "http://localhost/unmg_pms/api/fetchGoals.php";
-          //const url = "../api/fetchGoals.php";
-    
-          const formData = new FormData();
-          formData.append("user_id", user_id);
-          try {
-            const response = await axios.post(url, formData);
-            if (response.data) {
-              setGoalData(response.data);
-    
-              toggleSet(true);
-              setLoading(false);
+        const getpillarPercentage = async () => {
+            try {
+                const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
+                    params: {
+                        userpillarpercentage: true
+                    }
+                });
+                setpillarPercentage(response.data)
+            } catch (error) {
+                console.log(error.message)
             }
-          } catch (e) {
-            console.log(e.message);
-          }
-        };
-        retrieveUser();
-      }, [user_id]);
-
-      return !loading ? (
-        <>
-          {!hasSet ? (
-            <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
-              <span>
-                Sorry, you haven&lsquo;t set your KPIs Objectives yet. Please click
-                the button to get started.
-              </span>
-              <a
-                href="/main_goals/create"
-                className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-              >
-                <AiOutlinePlus />
-                Create Goals
-              </a>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <a
-                className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
-                href="/main_goals/create"
-                onClick={() => {
-                  sessionStorage.setItem("edit_goal", user_id);
-                }}
-              >
-                Edit Goals
-              </a>
-              <div className="overflow-x-scroll xl:overflow-hidden border border-un-blue-light rounded-lg">
-                <table className="w-full">
-                  <thead className="bg-un-blue-light text-white">
-                    <tr>
-                      <th className="font-normal whitespace-nowrap">
-                        Perspective
-                        <br />
-                        (Pillar)
-                      </th>
-                      <th className="font-normal whitespace-nowrap">
-                        Objectives
-                        <br />
-                        (General)
-                      </th>
-                      <th className="font-normal whitespace-nowrap">
-                        Key Performance Indicator
-                        <br />
-                        (KPI)
-                      </th>
-                      <th className="font-normal whitespace-nowrap">
-                        Weight
-                        <br />
-                        (%)
-                      </th>
-                      <th className="font-normal whitespace-nowrap">
-                        Target Metrics
-                        <br />
-                        (1 - 4)
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {goalData.map((goals) => {
-                      const goal = goals[0];
-                      return (
-                        <tr className="even:bg-default">
-                          <td className="p-2">
-                            <div className="flex flex-col items-center">
-                              <span>{goal.pillar_name}</span>
-                              <span>{goal.pillar_percentage}%</span>
-                            </div>
-                          </td>
-                          {goal.objectives.map((objData) => {
-                            return (
-                              <>
-                                <td className="p-2 text-center">
-                                  {objData.objectives_description}
-                                </td>
-                                {objData.kpi.map((kpi) => {
-                                  return (
-                                    <>
-                                      <td className="p-2 text-center">
-                                        {kpi.kpi_description}
-                                      </td>
-                                      <td className="p-2 text-center">
-                                        {kpi.kpi_weight}%
-                                      </td>
-                                      <td className="flex flex-col p-2">
-                                        {kpi.target_metrics.map((metrics) => {
-                                          return (
-                                            <>
-                                              <div className="flex flex-row gap-2 p-1">
-                                                <span>
-                                                  {metrics[0].target_metrics_score}
-                                                </span>{" "}
-                                                -{" "}
-                                                <p>
-                                                  {metrics[0].target_metrics_desc}
-                                                </p>
-                                              </div>
-                                            </>
-                                          );
-                                        })}
-                                      </td>
-                                    </>
-                                  );
-                                })}
-                              </>
-                            );
-                          })}
-                          {}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-
-            {/* <div className="md:text-[.8rem]">
-                {pillars.map((pillar, index) => (
-                    <button key={index}
-                        className={`px-2 
-                        ${index > 0 ? 'border-1' : ''} 
-                        ${index < pillars.length - 1 ? 'border-r' : ''}
-                        ${selectedPillar !== index ? 'hover:border-b-2 border-b-un-red-light' : ''}
-                        ${selectedPillar === index ? 'border-b-4 border-b-un-red-light' : ''}
-                        `}
-                        onClick={() => setSelectedPillar(index)}
-                    >
-                        {pillar.pillar_name.split("(")[0]}
-                    </button>
-                ))}
-            </div>
-            <div className="bg-default">
-                {selectedPillar !== null && selectedPillar < pillars.length && (
-                    <div>
-                                            {uniqueValues.map(value => {
-                        if (renderedValues.includes(value.pillar_name)) {
-                            return null; // skip rendering if value has already been rendered
-                        }
-                        renderedValues.push(value.pillar_name); // add the value to the list of rendered values
-                        return (
-                            <div key={value.pillar_id}>
-                                <span className="text-black ml-2 md:text-[1rem]">{value.pillar_name}</span>
-                                <span className="text-black ml-2 md:text-[1rem] font-semibold">{value.pillar_percentage}%</span>
-                            </div>
-                        );
-                    })}
-                    <span className="text-black ml-2 md:text-[1rem]">
-                        {pillars[selectedPillar].pillar_name}
-                    </span>
-                    </div>
-                )}
-
-                <div className="p-4">
-                    <span>Objectives</span>
-                </div>
-                <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
-
-                    <span>
-                        Sorry Your Assessment has not
-                        been approved yet. Please wait for the
-                        approval of your supervisor.
-                    </span>
-                </div>
-                <div>
-                </div>
-            </div> */}
-        </>
-          ) : (
-            <>Loading...</>
-          );
         }
+        const getfinalUserPerformance = async () => {
+            try {
+                const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
+                    params: {
+                        userPerformance: true
+                    }
+                });
+                setfinalUserPerformance(response.data)
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+        const getSignForm = async() => {
+            try{
+                const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
+                    params: {
+                        userSignOff: true
+                    }
+                });
+                setSignOff(response.data);
+            } catch(error){
+                console.log(error.message)
+            }
+        }
+        getfinalUserPerformance();
+        getpillarPercentage();
+        getSignForm();
+    }, []);
+    const selectedPillarName = pillarPercentage[selectedPillar]?.pillar_name || '';
+    const selectedPillarNamePercentage = selectedPillar !== null && selectedPillar < pillarPercentage.length &&
+        selectedPillar >= 0 ? `${selectedPillarName} - ${pillarPercentage[selectedPillar].pillar_percentage}` : '';
+
+const ratedby = headList.filter((rtb) => rtb.user_type == 5 && rtb.users_id == signOff[0].supervisor_id);
+console.log(ratedby[0].full_name)
+
+    let previousObjective = null;
+
+    const Results = finalUserPerformance
+        .filter((performance1) => performance1.pillar_name === selectedPillarName)
+        .reduce((total, performance1) => total + Number(performance1.results), 0);
+    const Agreed = finalUserPerformance
+        .filter((performance2) => performance2.pillar_name === selectedPillarName)
+        .reduce((total, performance2) => total + Number(performance2.agreed_rating), 0);
+    const Weighted = finalUserPerformance
+        .filter((performance3) => performance3.pillar_name === selectedPillarName)
+        .reduce((total, performance3) => total + Number(performance3.wtd_rating), 0);
+    const Percentage = finalUserPerformance
+        .filter((performance4) => performance4.pillar_name === selectedPillarName)
+        .reduce((total, performance4) => total + Number(performance4.kpi_weight), 0);
+
+
+
+
+
+    const totalResults = finalUserPerformance
+        .reduce((total, performance1) => total + Number(performance1.results), 0);
+    const totalAgreed = finalUserPerformance
+        .reduce((total, performance2) => total + Number(performance2.agreed_rating), 0);
+    const totalWeighted = finalUserPerformance
+        .reduce((total, performance3) => total + Number(performance3.wtd_rating), 0);
+    const totalPercentage = finalUserPerformance
+        .reduce((total, performance4) => total + Number(performance4.kpi_weight), 0);
+    return (
+        <>
+            <div className="md:text-[.8rem]">
+                {
+                    pillarPercentage.map((pillar, index) => (
+                        <button key={index}
+                            className={`px-2 
+                                ${index > 0 ? 'border-1' : ''} 
+                                ${index < pillarPercentage.length - 1 ? 'border-r' : ''}
+                                ${selectedPillar !== index ? 'hover:border-b-2 border-b-un-red-light' : ''}
+                                ${selectedPillar === index ? 'border-b-4 border-b-un-red-light' : ''}
+                                `}
+                            onClick={() => setSelectedPillar(index)}
+                        >
+                            {pillar.pillar_name.split("(")[0]}
+                        </button>
+                    ))
+                }
+            </div>
+            <div className="bg-default px-2 pb-4 pt-2">
+                <span className="text-black ml-2 md:text-[1rem] font-bold block">
+                    {selectedPillarNamePercentage}%
+                </span>
+
+{ratedby.mapfull_name}
+
+                <div className="pt-10 w-full">
+                    {/* Header */}
+                    <div className="flex flex-row">
+                        <div className="w-[20%] px-2">
+                            <span className="px-4 font-semibold">Objectives</span>
+                        </div>
+                        <div className="bg-un-blue-light w-[60%] px-2 mx-2 rounded-t-lg flex">
+                            <span className="flex-1 px-4 text-white text-center">KPI</span>
+                            <span className="flex-1 px-2 text-white text-center">Weight</span>
+                            <span className="flex-1 px-2 text-white text-center">Results</span>
+                            <span className="flex-1 px-4 text-white text-center">Description</span>
+                            <span className="flex-1 px-4 text-white text-center">Remarks</span>
+                        </div>
+                        <div className="bg-un-blue-light w-[20%] px-2 mx-2 rounded-t-lg flex">
+                            <span className="flex-1 px-4 text-white text-center">Agreed</span>
+                            <span className="flex-1 px-4 text-white text-center">Weighted</span>
+                        </div>
+                    </div>
+
+                    {/* Body */}
+                    {
+                        finalUserPerformance
+                            .filter((performance) => performance.pillar_name === selectedPillarName)
+                            .map((performance) => {
+                                const objective = performance.objective === previousObjective ? <span className="flex-1 px-4 text-center flex items-center justify-center"></span> : performance.objective;
+                                previousObjective = performance.objective;
+
+                                return (
+                                    <div className="flex flex-row">
+                                        <div className="w-[20%] px-2 flex">
+                                            <span className="px-4 flex items-center justify-center">{objective}</span>
+                                        </div>
+                                        <div className="bg-white w-[60%] p-2 mx-2 flex">
+                                            <span className="flex-1 px-4 flex items-center justify-center">{performance.kpi_desc}</span>
+                                            <span className="flex-1 px-2 text-center flex items-center justify-center">{performance.kpi_weight}%</span>
+                                            <span className="flex-1 px-2 text-center flex items-center justify-center">{performance.results}</span>
+                                            <span className="flex-1 px-4 flex items-center justify-center">Lorem, ipsum dolor</span>
+                                            <span className="flex-1 px-4 flex items-center justify-center">{performance.remarks}</span>
+                                        </div>
+                                        <div className="bg-white w-[20%] p-2 mx-2 flex">
+                                            <span className="flex-1 px-4 text-center flex items-center justify-center">{performance.agreed_rating}</span>
+                                            <span className="flex-1 px-4 text-center flex items-center justify-center">{performance.wtd_rating}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                    }
+
+                    {/* Footer */}
+                    <div className="flex flex-row">
+                        <div className="w-[20%] px-2 pt-4">
+                        </div>
+                        <div className="bg-white w-[60%] px-2 pt-4 pb-2 mx-2 rounded-b-lg flex border-t-[1px] bt-black">
+                            <span className="flex-1 px-4 text-center font-semibold">Total:</span>
+                            <span className="flex-1 px-4 text-center font-semibold">{Percentage}%</span>
+                            <span className="flex-1 px-4 text-center font-semibold">{Results}</span>
+                            <span className="flex-1 px-4 text-center"></span>
+                            <span className="flex-1 px-4 text-center"></span>
+                        </div>
+                        <div className="bg-white w-[20%] px-2 pt-4 pb-2 mx-2 rounded-b-lg flex border-t-[1px] bt-black">
+                            <span className="flex-1 px-4 text-center font-semibold">{Agreed}</span>
+                            <span className="flex-1 px-4 text-center font-semibold">{Weighted}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white py-4 mt-4 flex rounded">
+
+                    <div className="w-[15%] px-2">
+                        <span className="block font-semibold">Overall Summary</span>
+                        <span className="block pl-4">Weight: {totalPercentage}%</span>
+                        <span className="block pl-4"> Results: {totalResults}</span>
+                        <span className="block pl-4">Agreed: {totalAgreed}</span>
+                        <span className="block pl-4">Weighted: {totalWeighted}</span>
+                    </div>
+
+                    <div className="w-[20%] px-2">
+                        <span className="block font-semibold">Rated By:</span>
+                        <span className="block pl-4">Aspan, John Vincent V.</span>
+                        <span className="block pl-4">Senior Backend Developer</span>
+                        <span className="block pl-4">06/08/2023</span>
+                    </div>
+                    <div className="w-[20%] px-2">
+                        <span className="block font-semibold">Noted By:</span>
+                        <span className="block pl-4">Tubigan, Edd Russel N.</span>
+                        <span className="block pl-4">Network Engineer</span>
+                        <span className="block pl-4">06/08/2023</span>
+                    </div>
+                    <div className="w-[20%] px-2">
+                        <span className="block font-semibold">Ratee:</span>
+                        <span className="block pl-4">Perez, Norvin Kyle B.</span>
+                        <span className="block pl-4">Web Developer</span>
+                        <span className="block pl-4">06/08/2023</span>
+                    </div>
+
+                    <div className="w-[25%] px-2">
+                        <span className="block font-semibold">Ratee's comment on evaluation:</span>
+                        <span className="block pl-4">Thank you for rating me fairly.</span>
+                    </div>
+                </div>
+
+            </div>
+        </>
+    )
+}

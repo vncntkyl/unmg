@@ -39,6 +39,7 @@ export default function MainGoals() {
             pillars: true,
           },
         });
+        console.log(response.data);
         setPillars(response.data);
       } catch (e) {
         console.log(e.message);
@@ -120,9 +121,11 @@ export default function MainGoals() {
                   path="/create/*"
                   element={
                     <CreateGoals pillars={pillars} user_id={employeeID} />
+                    
                   }
                 />
               </Routes>
+
             </div>
           </div>
         </div>

@@ -18,7 +18,8 @@ export default function EmployeeSignOff() {
                     },
                 });
                 setUsers(response.data)
-            } catch (error) {
+            } 
+            catch (error) {
                 console.log(error.message)
             }
         }

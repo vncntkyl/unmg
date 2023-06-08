@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { Route, Router, Routes } from "react-router-dom";
 import SignOff from "../components/Signoff/SignOff";
+import { BsFillTrash3Fill } from "react-icons/bs";
 import EmployeeSignOff from "../components/Signoff/EmployeeSignOff";
 
 
 
 export default function AgreementSignOff() {
+  if (!sessionStorage.getItem("currentUser")) {
+    sessionStorage.setItem("redirect_to", window.location.pathname);
+  }
   const [panel, setPanel] = useState("my evaluations");
   return (
     <>
@@ -53,18 +57,15 @@ export default function AgreementSignOff() {
               </div>
             </div>
             <div className="flex flex-row pt-4">
-              <button>
-
-              </button>
             </div>
-              <Routes>
-                {panel === "my evaluations" ? <Route
-                  path="/"
-                  element={<SignOff />}
-                /> : <Route
-                  path="/"
-                  element={<EmployeeSignOff />}
-                />}</Routes>
+            <Routes>
+              {panel === "my evaluations" ? <Route
+                path="/"
+                element={<SignOff />}
+              /> : <Route
+                path="/"
+                element={<EmployeeSignOff />}
+              />}</Routes>
           </div>
         </div>
       </section>
