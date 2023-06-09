@@ -12,6 +12,10 @@ export default function AgreementSignOff() {
     sessionStorage.setItem("redirect_to", window.location.pathname);
   }
   const [panel, setPanel] = useState("my evaluations");
+  const [employeeID, setEmployeeID] = useState([]);
+  useEffect(() => {
+    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
+  }, []);
   return (
     <>
       <section className="relative">
@@ -61,10 +65,10 @@ export default function AgreementSignOff() {
             <Routes>
               {panel === "my evaluations" ? <Route
                 path="/"
-                element={<SignOff />}
+                element={<SignOff users_id={employeeID}/>}
               /> : <Route
                 path="/"
-                element={<EmployeeSignOff />}
+                element={<EmployeeSignOff users_id={employeeID}/>}
               />}</Routes>
           </div>
         </div>

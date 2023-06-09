@@ -1,44 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/authContext";
-import { BiRightArrowAlt } from "react-icons/bi";
-import SignOffModal from "../../misc/SignOffModal";
 
-export default function SignOff(user_id) {
+export default function SignOff() {
     const [pillarPercentage, setpillarPercentage] = useState([]);
     const [finalUserPerformance, setfinalUserPerformance] = useState([]);
     const [selectedPillar, setSelectedPillar] = useState(0);
-    const [signModal, setsignModal] = useState(false)
     const [signOff, setSignOff] = useState([]);
-    const { headList } = useAuth();
-    const selectedPillarName = pillarPercentage[selectedPillar]?.pillar_name || '';
-    const selectedPillarNamePercentage = selectedPillar !== null && selectedPillar < pillarPercentage.length &&
-        selectedPillar >= 0 ? `${selectedPillarName} - ${pillarPercentage[selectedPillar].pillar_percentage}` : '';
-    const Results = finalUserPerformance
-        .filter((performance1) => performance1.pillar_name === selectedPillarName)
-        .reduce((total, performance1) => total + Number(performance1.results), 0);
-    const Agreed = finalUserPerformance
-        .filter((performance2) => performance2.pillar_name === selectedPillarName)
-        .reduce((total, performance2) => total + Number(performance2.agreed_rating), 0);
-    const Weighted = finalUserPerformance
-        .filter((performance3) => performance3.pillar_name === selectedPillarName)
-        .reduce((total, performance3) => total + Number(performance3.wtd_rating), 0);
-    const Percentage = finalUserPerformance
-        .filter((performance4) => performance4.pillar_name === selectedPillarName)
-        .reduce((total, performance4) => total + Number(performance4.kpi_weight), 0);
-    const totalResults = finalUserPerformance
-        .reduce((total, performance1) => total + Number(performance1.results), 0);
-    const totalAgreed = finalUserPerformance
-        .reduce((total, performance2) => total + Number(performance2.agreed_rating), 0);
-    const totalWeighted = finalUserPerformance
-        .reduce((total, performance3) => total + Number(performance3.wtd_rating), 0);
-    const totalPercentage = finalUserPerformance
-        .reduce((total, performance4) => total + Number(performance4.kpi_weight), 0);
-    const ratedby = headList.filter((rtb) => rtb.user_type == 5 && rtb.users_id == signOff[0]?.supervisor_id);
-    const notedby = headList.filter((rtb) => rtb.user_type == 6 && rtb.users_id == signOff[0]?.immediate_supervisor_id);
-
-    let previousObjective = null;
-
+    const {headList} = useAuth();
     useEffect(() => {
         const getpillarPercentage = async () => {
             try {
@@ -64,15 +33,15 @@ export default function SignOff(user_id) {
                 console.log(error.message)
             }
         }
-        const getSignForm = async () => {
-            try {
+        const getSignForm = async() => {
+            try{
                 const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
                     params: {
                         userSignOff: true
                     }
                 });
                 setSignOff(response.data);
-            } catch (error) {
+            } catch(error){
                 console.log(error.message)
             }
         }
@@ -80,8 +49,40 @@ export default function SignOff(user_id) {
         getpillarPercentage();
         getSignForm();
     }, []);
+    const selectedPillarName = pillarPercentage[selectedPillar]?.pillar_name || '';
+    const selectedPillarNamePercentage = selectedPillar !== null && selectedPillar < pillarPercentage.length &&
+        selectedPillar >= 0 ? `${selectedPillarName} - ${pillarPercentage[selectedPillar].pillar_percentage}` : '';
+
+        const ratedby = headList.filter((rtb) => rtb.user_type == 5 && rtb.users_id == signOff[0]?.supervisor_id);
+        const notedby = headList.filter((rtb) => rtb.user_type == 6 && rtb.users_id == signOff[0]?.immediate_supervisor_id);
+
+    let previousObjective = null;
+
+    const Results = finalUserPerformance
+        .filter((performance1) => performance1.pillar_name === selectedPillarName)
+        .reduce((total, performance1) => total + Number(performance1.results), 0);
+    const Agreed = finalUserPerformance
+        .filter((performance2) => performance2.pillar_name === selectedPillarName)
+        .reduce((total, performance2) => total + Number(performance2.agreed_rating), 0);
+    const Weighted = finalUserPerformance
+        .filter((performance3) => performance3.pillar_name === selectedPillarName)
+        .reduce((total, performance3) => total + Number(performance3.wtd_rating), 0);
+    const Percentage = finalUserPerformance
+        .filter((performance4) => performance4.pillar_name === selectedPillarName)
+        .reduce((total, performance4) => total + Number(performance4.kpi_weight), 0);
 
 
+
+
+
+    const totalResults = finalUserPerformance
+        .reduce((total, performance1) => total + Number(performance1.results), 0);
+    const totalAgreed = finalUserPerformance
+        .reduce((total, performance2) => total + Number(performance2.agreed_rating), 0);
+    const totalWeighted = finalUserPerformance
+        .reduce((total, performance3) => total + Number(performance3.wtd_rating), 0);
+    const totalPercentage = finalUserPerformance
+        .reduce((total, performance4) => total + Number(performance4.kpi_weight), 0);
     return (
         <>
             <div className="md:text-[.8rem]">
@@ -105,6 +106,10 @@ export default function SignOff(user_id) {
                 <span className="text-black ml-2 md:text-[1rem] font-bold block">
                     {selectedPillarNamePercentage}%
                 </span>
+
+
+
+
 
                 <div className="pt-10 w-full">
                     {/* Header */}
@@ -173,7 +178,7 @@ export default function SignOff(user_id) {
                 </div>
 
                 <div className="bg-white py-4 mt-4 flex rounded">
-                    {/* Summary without approvals */}
+
                     <div className="w-[15%] px-2">
                         <span className="block font-semibold">Overall Summary</span>
                         <span className="block pl-4">Weight: {totalPercentage}%</span>
@@ -184,43 +189,13 @@ export default function SignOff(user_id) {
 
                     <div className="w-[20%] px-2">
                         <span className="block font-semibold">Rated By:</span>
-                    </div>
-                    <div className="w-[20%] px-2">
-                        <span className="block font-semibold">Noted By:</span>
-                    </div>
-                    <div className="w-[45%] px-2 flex justify-end">
-                        <button type="button" className="px-2 flex items-center text-un-red text-right  group hover:font-semibold ease-in-out duration-200 hover:underline hover:underline-offset-1"
-                            onClick={() => {
-                                setsignModal(true);
-                            }}>
-                            Proceed to Sign Evaluation
-                            <span className="opacity-0 group-hover:opacity-100 group-hover:mx-2 transition-opacity ease-in-out duration-200">
-                                <BiRightArrowAlt className="text-[1.4rem]" />
-                            </span>
-                        </button>
-                        {signModal && <SignOffModal closeModal={setsignModal} />}
-                    </div>
-
-
-                    {/* Pop up need to be replaced by Modal */}
-
-
-
-
-
-
-
-
-                    {/* template for finished kpi
-                    <div className="w-[20%] px-2">
-                        <span className="block font-semibold">Rated By:</span>
-                        <span className="block pl-4">Perez, Norvin Kyle B.</span>
+                        <span className="block pl-4">{(ratedby.length > 0) ? ratedby[0].full_name : ''}</span>
                         <span className="block pl-4">Senior Backend Developer</span>
                         <span className="block pl-4">06/08/2023</span>
                     </div>
                     <div className="w-[20%] px-2">
                         <span className="block font-semibold">Noted By:</span>
-                        <span className="block pl-4">Perez, Norvin Kyle B.</span>
+                        <span className="block pl-4"></span>
                         <span className="block pl-4">Network Engineer</span>
                         <span className="block pl-4">06/08/2023</span>
                     </div>
@@ -234,7 +209,7 @@ export default function SignOff(user_id) {
                     <div className="w-[25%] px-2">
                         <span className="block font-semibold">Ratee's comment on evaluation:</span>
                         <span className="block pl-4">Thank you for rating me fairly.</span>
-                    </div> */}
+                    </div>
                 </div>
 
             </div>
