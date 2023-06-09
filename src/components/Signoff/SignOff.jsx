@@ -4,7 +4,7 @@ import { useAuth } from "../../context/authContext";
 import { BiRightArrowAlt } from "react-icons/bi";
 import SignOffModal from "../../misc/SignOffModal";
 
-export default function SignOff(user_id) {
+export default function SignOff({user_id}) {
     const [pillarPercentage, setpillarPercentage] = useState([]);
     const [finalUserPerformance, setfinalUserPerformance] = useState([]);
     const [selectedPillar, setSelectedPillar] = useState(0);
@@ -56,10 +56,12 @@ export default function SignOff(user_id) {
             try {
                 const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
                     params: {
-                        userPerformance: true
+                        userPerformance: true,
+                        userID : user_id
                     }
                 });
                 setfinalUserPerformance(response.data)
+                console.log(response.data);
             } catch (error) {
                 console.log(error.message)
             }
