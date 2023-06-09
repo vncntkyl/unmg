@@ -243,7 +243,7 @@ class Form extends Controller
           CASE
             WHEN e.users_id IS NULL THEN 0
             ELSE 1
-          END AS is_in_eval_form,
+          END AS has_eval,
           p.pillar_id,p.pillar_percentage
         FROM
           hr_users u
