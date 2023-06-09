@@ -27,8 +27,8 @@ export default function GoalTable({ data, current }) {
   }, [data, current]);
 
   return (
-    <div className="w-full overflow-x-scroll lg:overflow-auto bg-white">
-      <table className="border">
+    <div className="w-full overflow-x-scroll lg:overflow-auto bg-white rounded-md">
+      <table className="rounded-md overflow-hidden">
         <thead>
           <tr className="bg-un-blue-light text-white border border-un-blue-light">
             <th className="w-full md:w-1/4 p-1 text-center ">Objective</th>

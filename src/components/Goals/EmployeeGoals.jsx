@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { GrFormSearch } from "react-icons/gr";
-import { useFunction } from "../../context/FunctionContext";
 import axios from "axios";
+import DataTable from "./DataTable";
 
 export default function EmployeeGoals({ pillars = [] }) {
-  const { removeSubText } = useFunction();
   const [employees, setEmployees] = useState([]);
   const [loading, toggleLoading] = useState(true);
   const [approvalStatus, setStatus] = useState();
@@ -28,92 +27,6 @@ export default function EmployeeGoals({ pillars = [] }) {
     fetchUsers();
   }, []);
 
-  const DataTable = ({ data }) => {
-    const mergedData = {};
-
-    data.forEach((item) => {
-      const userKey = item.users_id;
-      if (!mergedData[userKey]) {
-        mergedData[userKey] = {
-          users_id: item.users_id,
-          full_name: item.full_name,
-          pillar_id_1:
-            item.pillar_id === 1 && item.is_in_eval_form
-              ? item.pillar_percentage
-              : "-",
-          pillar_id_2:
-            item.pillar_id === 2 && item.is_in_eval_form
-              ? item.pillar_percentage
-              : "-",
-          pillar_id_3:
-            item.pillar_id === 3 && item.is_in_eval_form
-              ? item.pillar_percentage
-              : "-",
-          pillar_id_4:
-            item.pillar_id === 4 && item.is_in_eval_form
-              ? item.pillar_percentage
-              : "-",
-        };
-      } else {
-        const existingUser = mergedData[userKey];
-        existingUser.pillar_id_1 =
-          existingUser.pillar_id_1 === "-" &&
-          item.pillar_id === 1 &&
-          item.is_in_eval_form
-            ? item.pillar_percentage
-            : existingUser.pillar_id_1;
-        existingUser.pillar_id_2 =
-          existingUser.pillar_id_2 === "-" &&
-          item.pillar_id === 2 &&
-          item.is_in_eval_form
-            ? item.pillar_percentage
-            : existingUser.pillar_id_2;
-        existingUser.pillar_id_3 =
-          existingUser.pillar_id_3 === "-" &&
-          item.pillar_id === 3 &&
-          item.is_in_eval_form
-            ? item.pillar_percentage
-            : existingUser.pillar_id_3;
-        existingUser.pillar_id_4 =
-          existingUser.pillar_id_4 === "-" &&
-          item.pillar_id === 4 &&
-          item.is_in_eval_form
-            ? item.pillar_percentage
-            : existingUser.pillar_id_4;
-      }
-    });
-
-    const mergedDataArray = Object.values(mergedData);
-
-    return (
-      <table className="w-full rounded-md overflow-hidden">
-        <thead className="bg-un-blue-light">
-          <tr>
-            <td align="center" className="p-2 text-white">Name</td>
-            {pillars.map((pillar) => {
-              return (
-                <td  align="center" className="whitespace-nowrap p-2 text-white">
-                  {removeSubText(pillar.pillar_name)}
-                </td>
-              );
-            })}
-            <td  align="center" className="p-2 text-white">Actions</td>
-          </tr>
-        </thead>
-        <tbody>
-          {mergedDataArray.map((item) => (
-            <tr key={item.full_name}>
-              <td align="center">{item.full_name}</td>
-              <td align="center">{item.pillar_id_1 !== '-' ? item.pillar_id_1 + '%' : item.pillar_id_1}</td>
-              <td align="center">{item.pillar_id_2 !== '-' ? item.pillar_id_2 + '%' : item.pillar_id_2}</td>
-              <td align="center">{item.pillar_id_3 !== '-' ? item.pillar_id_3 + '%' : item.pillar_id_3}</td>
-              <td align="center">{item.pillar_id_4 !== '-' ? item.pillar_id_4 + '%' : item.pillar_id_4}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
   return loading ? (
     "Loading..."
   ) : (
@@ -152,8 +65,8 @@ export default function EmployeeGoals({ pillars = [] }) {
             </select>
           </div>
         </div>
-        <div className="w-full overflow-x-scroll rounded-md">
-          <DataTable data={employees} />
+        <div className="w-full overflow-x-scroll lg:overflow-x-auto rounded-md">
+          <DataTable data={employees} pillars={pillars} />
         </div>
       </div>
     </>

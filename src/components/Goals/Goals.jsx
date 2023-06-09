@@ -116,16 +116,6 @@ export default function Goals({ user_id, pillars = [] }) {
                 <GoalTable data={goalData} current={currentPillar} />
               </div>
             </div>
-            {/* <pre
-              style={{
-                whiteSpace: "pre-wrap",
-                fontFamily: "Courier New",
-                fontSize: "14px",
-                padding: "10px",
-              }}
-            >
-              {JSON.stringify(goalData, null, 2)}
-            </pre> */}
           </div>
         </div>
       )}
