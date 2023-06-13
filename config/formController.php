@@ -195,9 +195,12 @@ class Form extends Controller
             "SELECT
             hr_users.users_id, 
             hr_pillars.pillar_id,
+            hr_objectives.objective_id,
             hr_objectives.objective,
+            hr_kpi.kpi_id,
             hr_kpi.kpi_desc,
             hr_kpi.kpi_weight,
+            hr_target_metrics.target_metrics_id,
             hr_target_metrics.target_metrics_score,
             hr_target_metrics.target_metrics_desc,
             hr_eval_form_pillars.pillar_percentage
@@ -253,6 +256,22 @@ class Form extends Controller
           hr_eval_form_pillars p ON p.hr_eval_form_id = e.hr_eval_form_id");
         $this->statement->execute();
         return $this->statement->fetchAll();
+    }
+
+    function updateObjectiveByID($objectiveID, $objective)
+    {
+        $this->setStatement("UPDATE `hr_objectives` SET `objective`= ? WHERE `objective_id` = ?");
+        return $this->statement->execute([$objective, $objectiveID]);
+    }
+    function updateKPIByID($kpiID, $kpi, $kpiWeight)
+    {
+        $this->setStatement("UPDATE `hr_kpi` SET `kpi_desc`= ?, `kpi_weight` = ? WHERE `kpi_id` = ?");
+        return $this->statement->execute([$kpi, $kpiWeight, $kpiID]);
+    }
+    function updateTargetMetricsByID($targetMetricsID, $targetMetrics)
+    {
+        $this->setStatement("UPDATE `hr_target_metrics` SET `target_metrics_desc`= ? WHERE `target_metrics_id` = ?");
+        return $this->statement->execute([$targetMetrics, $targetMetricsID]);
     }
 }
 ?>

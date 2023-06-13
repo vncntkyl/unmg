@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { KPIInstructions, KPILegend } from "../../misc/HelpData";
-import classNames from "classnames";
 import {
-  AiFillCaretDown,
-  AiFillCaretUp,
   AiOutlineMinus,
   AiOutlinePlus,
 } from "react-icons/ai";
 import axios from "axios";
+import GoalsInstructions from "./GoalsInstructions";
 
 export default function CreateGoals({ pillars = [], user_id }) {
-  const [instructionsOpen, toggleInstructions] = useState(false);
   const [goals, setGoals] = useState([]);
 
   const addObjective = (i) => {
@@ -221,59 +217,7 @@ export default function CreateGoals({ pillars = [], user_id }) {
   return (
     <>
       <div>
-        <div className="bg-default p-2 rounded-md overflow-hidden">
-          <button
-            type="button"
-            onClick={() => toggleInstructions((old) => !old)}
-            className="font-bold text-un-blue p-2 flex flex-row items-center gap-1 w-full"
-          >
-            Instructions
-            {instructionsOpen ? <AiFillCaretUp /> : <AiFillCaretDown />}
-          </button>
-          <div
-            className={classNames(
-              instructionsOpen
-                ? "max-h-[1000px] opacity-100"
-                : "max-h-[0px] opacity-0",
-              "transition-all duration-200 grid  md:grid-cols-[2fr_1fr] gap-4"
-            )}
-          >
-            <div>
-              {KPIInstructions.map((instruction, index) => {
-                return (
-                  <div className="flex flex-row gap-1 text-[.8rem] pl-3">
-                    <span>{index + 1}.</span>
-                    {instruction}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex flex-col justify-between gap-2">
-              <div>
-                <span className="font-bold text-un-blue">
-                  Rating Description
-                </span>
-                <div>
-                  {KPILegend.map((legend) => {
-                    return (
-                      <div className="flex flex-row gap-1 text-[.9rem] pl-3">
-                        <span className="font-semibold">{legend.point}</span>-{" "}
-                        {legend.description}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className="bg-default-dark p-2 rounded-md">
-                <span className="font-semibold text-dark-gray">Note: </span>
-                <span className="text-[.9rem]">
-                  Each pillar must have a total of twelve (12) Key Performance
-                  Indicators (KPI) ONLY.
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <GoalsInstructions />
         <form className="py-2 flex flex-col gap-2" onSubmit={handleSubmit}>
           {goals.length > 0 ? (
             goals.map((goal, index) => {

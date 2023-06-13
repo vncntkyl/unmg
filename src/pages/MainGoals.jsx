@@ -6,6 +6,7 @@ import { useFunction } from "../context/FunctionContext";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import axios from "axios";
 import Toggle from "../components/Toggle";
+import EditGoals from "../components/Goals/EditGoals";
 
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
@@ -24,11 +25,10 @@ export default function MainGoals() {
         }
       case "/main_goals/create":
       case "/main_goals/create/":
-        if (sessionStorage.getItem("edit_goal")) {
-          return "Edit Goals";
-        } else {
-          return "Create Goals";
-        }
+        return "Create Goals";
+      case "/main_goals/edit":
+      case "/main_goals/edit/":
+        return "Edit Goals";
     }
   };
 
@@ -65,11 +65,6 @@ export default function MainGoals() {
                 {!["/main_goals/", "/main_goals"].includes(getPath()) && (
                   <a
                     href="/main_goals"
-                    onClick={() => {
-                      if (sessionStorage.getItem("edit_goal")) {
-                        sessionStorage.removeItem("edit_goal");
-                      }
-                    }}
                     className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
                   >
                     <MdOutlineKeyboardArrowLeft />
@@ -79,7 +74,13 @@ export default function MainGoals() {
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
-              <Toggle paths={["/main_goals/", "/main_goals"]} panel={panel} panel_1={"My Goals"} setPanel={setPanel} panel_2={"Employee Goals"}/>
+              <Toggle
+                paths={["/main_goals/", "/main_goals"]}
+                panel={panel}
+                panel_1={"My Goals"}
+                setPanel={setPanel}
+                panel_2={"Employee Goals"}
+              />
             </div>
             {/* BODY */}
             <div>
@@ -97,7 +98,10 @@ export default function MainGoals() {
                   </>
                 ) : (
                   <>
-                    <Route path="/*" element={<EmployeeGoals pillars={pillars} />} />
+                    <Route
+                      path="/*"
+                      element={<EmployeeGoals pillars={pillars} />}
+                    />
                   </>
                 )}
 
@@ -106,6 +110,10 @@ export default function MainGoals() {
                   element={
                     <CreateGoals pillars={pillars} user_id={employeeID} />
                   }
+                />
+                <Route
+                  path="/edit/*"
+                  element={<EditGoals pillars={pillars} />}
                 />
               </Routes>
             </div>

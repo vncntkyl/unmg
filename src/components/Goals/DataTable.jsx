@@ -59,7 +59,7 @@ export default function DataTable({ data, pillars }) {
   }, []);
 
   return (
-    <table className="w-full rounded-md overflow-hidden bg-white">
+    <table className="w-full rounded-md bg-white">
       <thead className="bg-un-blue-light">
         <tr>
           <td align="center" className="p-2 text-white">

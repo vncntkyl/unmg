@@ -11,6 +11,7 @@ export default function Goals({ user_id, pillars = [] }) {
   const [loading, setLoading] = useState(true);
   const [goalData, setGoalData] = useState([]);
   const [currentPillar, setPillar] = useState(1);
+  const [tableData, setTableData] = useState([]);
 
   const { removeSubText } = useFunction();
 
@@ -27,6 +28,24 @@ export default function Goals({ user_id, pillars = [] }) {
         const response = await axios.post(url, formData);
         if (response.data != 0) {
           setGoalData(response.data);
+          let previousObjective = "";
+          let previousKpi = "";
+
+          const updatedTableData = response.data.map((item) => {
+            const isFirstObjective = item.objective !== previousObjective;
+            const isFirstKpi = item.kpi_desc !== previousKpi;
+
+            previousObjective = item.objective;
+            previousKpi = item.kpi_desc;
+
+            return {
+              ...item,
+              isFirstObjective,
+              isFirstKpi,
+            };
+          });
+
+          setTableData(updatedTableData);
           toggleSet(true);
           setLoading(false);
         } else {
@@ -58,9 +77,9 @@ export default function Goals({ user_id, pillars = [] }) {
         <div className="flex flex-col">
           <a
             className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue mb-2"
-            href="/main_goals/create"
+            href="/main_goals/edit"
             onClick={() => {
-              sessionStorage.setItem("edit_goal", user_id);
+              sessionStorage.setItem("goal_user", user_id);
             }}
           >
             Edit Goals
@@ -73,7 +92,8 @@ export default function Goals({ user_id, pillars = [] }) {
                     onClick={() => setPillar(pillar.pillar_id)}
                     className={classNames(
                       "p-2 rounded-t-lg",
-                      currentPillar === pillar.pillar_id && "bg-default font-semibold"
+                      currentPillar === pillar.pillar_id &&
+                        "bg-default font-semibold"
                     )}
                   >
                     {removeSubText(pillar.pillar_name)}
@@ -113,7 +133,10 @@ export default function Goals({ user_id, pillars = [] }) {
                     %
                   </p>
                 </div>
-                <GoalTable data={goalData} current={currentPillar} />
+                <GoalTable
+                  current={currentPillar}
+                  tableData={tableData}
+                />
               </div>
             </div>
           </div>
