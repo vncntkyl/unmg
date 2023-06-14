@@ -2,15 +2,52 @@ import React, { useEffect, useState } from "react";
 import { useFunction } from "../../context/FunctionContext";
 import { CiCircleMore } from "react-icons/ci";
 import OutsideTrigger from "../OutsideTrigger";
+import Badge from "../../misc/Badge";
 
-export default function DataTable({ data, pillars }) {
+export default function DataTable({ data, pillars, statusIdx }) {
   const { removeSubText } = useFunction();
   const [actionsVisibility, setActionsVisibility] = useState(
     Array(data.length).fill(false)
   );
   const [mergedDataArray, setDataArray] = useState([]);
+
+  const setUserStatus = (user) => {
+    if (user.created_by != null && user.approved_by != null) {
+      return "Approved";
+    } else if (
+      user.has_eval == 1 &&
+      (user.created_by == null || user.approved_by == null)
+    ) {
+      return "Pending Approval";
+    } else if (user.has_eval == 0) {
+      return "Awaiting Submission";
+    }
+  };
+  
   useEffect(() => {
-    const mergedData = data.reduce((acc, item) => {
+    let finalData = [];
+    switch (statusIdx) {
+      case 0:
+      default:
+        finalData = data;
+        break;
+      case 1:
+        finalData = data.filter(
+          (user) => user.created_by != null && user.approved_by != null
+        );
+        break;
+      case 2:
+        finalData = data.filter(
+          (user) =>
+            user.has_eval == 1 &&
+            (user.created_by == null || user.approved_by == null)
+        );
+        break;
+      case 3:
+        finalData = data.filter((user) => user.has_eval == 0);
+        break;
+    }
+    const mergedData = finalData.reduce((acc, item) => {
       const userKey = item.users_id;
       if (!acc[userKey]) {
         acc[userKey] = {
@@ -32,6 +69,7 @@ export default function DataTable({ data, pillars }) {
             item.pillar_id === 4 && item.has_eval
               ? item.pillar_percentage
               : "-",
+          status: setUserStatus(item),
         };
       } else {
         const currUser = acc[userKey];
@@ -51,12 +89,13 @@ export default function DataTable({ data, pillars }) {
           currUser[`p-4`] === "-" && item.pillar_id === 4 && item.has_eval
             ? item.pillar_percentage
             : currUser[`p-4`];
+        currUser[`status`] = currUser[`status`];
       }
       return acc;
     }, {});
 
     setDataArray(Object.values(mergedData));
-  }, []);
+  }, [statusIdx]);
 
   return (
     <table className="w-full rounded-md bg-white">
@@ -74,6 +113,11 @@ export default function DataTable({ data, pillars }) {
               {removeSubText(pillar.pillar_name)}
             </td>
           ))}
+          {statusIdx === 0 && (
+            <td align="center" className="p-2 text-white">
+              Status
+            </td>
+          )}
           <td align="center" className="p-2 text-white">
             Actions
           </td>
@@ -90,6 +134,20 @@ export default function DataTable({ data, pillars }) {
                 {item[`p-${i}`] !== "-" ? `${item[`p-${i}`]}%` : item[`p-${i}`]}
               </td>
             ))}
+            {statusIdx === 0 && (
+              <td align="center">
+                <Badge
+                  message={item.status}
+                  type={
+                    item.status === "Approved"
+                      ? "success"
+                      : item.status === "Pending Approval"
+                      ? "warning"
+                      : "default"
+                  }
+                />
+              </td>
+            )}
             <td align="center" className="text-[1.1rem] relative">
               <button
                 className="cursor-pointer"
@@ -151,7 +209,9 @@ export default function DataTable({ data, pillars }) {
                       <button className="hover:bg-default w-full px-2 text-start">
                         Approve Goals
                       </button>
-                      <button className="hover:bg-default w-full px-2 text-start">Delete</button>
+                      <button className="hover:bg-default w-full px-2 text-start">
+                        Delete
+                      </button>
                     </div>
                     {/* <button
                       onClick={() =>
@@ -171,6 +231,7 @@ export default function DataTable({ data, pillars }) {
           </tr>
         ))}
       </tbody>
+      {console.log(statusIdx)}
     </table>
   );
 }
