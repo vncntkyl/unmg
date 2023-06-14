@@ -26,7 +26,7 @@ export default function FAQsHelp() {
                     }
                   }}
                   className={classNames(
-                    "w-full flex flex-row justify-between items-center text-start gap-2 bg-white p-4 text-dark-gray rounded-md",
+                    "w-full flex flex-row justify-between items-center text-start gap-2 bg-white p-4 text-un-blue rounded-md",
                     currentItemNumber === index && "rounded-b-none border-b-2 border-default-dark"
                   )}
                 >
@@ -39,10 +39,10 @@ export default function FAQsHelp() {
                 </button>
                 <p
                   className={classNames(
-                    "transition-all duration-700 delay-0 overflow-hidden px-2 bg-white rounded-md rounded-t-none",
+                    "animate-fade overflow-hidden px-2 bg-white rounded-md rounded-t-none",
                     currentItemNumber === index
-                      ? "max-h-[1000px] py-2"
-                      : "max-h-[0px]"
+                      ? "block p-2"
+                      : "hidden"
                   )}
                 >
                   {faq.description}
