@@ -43,13 +43,18 @@ export default function EditGoals({ pillars = [] }) {
         currentGoal = tempData.find((goal) => goal.target_metrics_id === index);
         currentGoal.target_metrics_desc = event.target.value;
         break;
+      case "pillar percentage":
+        currentGoal = tempData.filter((goal) => goal.pillar_id === index);
+        currentGoal.forEach((goal) => {
+          goal.pillar_percentage = event.target.value;
+        });
     }
     setTableData(tempData);
   };
 
   const saveData = async () => {
     try {
-        console.log(tableData)
+      console.log(tableData);
       const formdata = new FormData();
       formdata.append("goalData", JSON.stringify(tableData));
 

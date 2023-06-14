@@ -247,13 +247,15 @@ class Form extends Controller
             WHEN e.users_id IS NULL THEN 0
             ELSE 1
           END AS has_eval,
-          p.pillar_id,p.pillar_percentage
+          p.pillar_id,p.pillar_percentage, f.created_by, f.approved_by
         FROM
           hr_users u
         LEFT JOIN
           hr_eval_form e ON u.users_id = e.users_id
         LEFT JOIN
-          hr_eval_form_pillars p ON p.hr_eval_form_id = e.hr_eval_form_id");
+          hr_eval_form_pillars p ON p.hr_eval_form_id = e.hr_eval_form_id
+                    LEFT JOIN
+          hr_eval_form_fp f ON e.hr_eval_form_id = f.eval_form_id");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }

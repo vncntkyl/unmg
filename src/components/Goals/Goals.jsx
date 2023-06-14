@@ -97,10 +97,6 @@ export default function Goals({ user_id, pillars = [] }) {
                     )}
                   >
                     {removeSubText(pillar.pillar_name)}
-                    {currentPillar === pillar.pillar_id &&
-                      goalData.find((p) => p.pillar_id == currentPillar) &&
-                      goalData.find((p) => p.pillar_id == currentPillar)
-                        .pillar_percentage + "%"}
                   </button>
                 </>
               );

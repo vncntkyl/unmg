@@ -6,7 +6,7 @@ import DataTable from "./DataTable";
 export default function EmployeeGoals({ pillars = [] }) {
   const [employees, setEmployees] = useState([]);
   const [loading, toggleLoading] = useState(true);
-  const [approvalStatus, setStatus] = useState();
+  const [approvalStatus, setStatus] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -50,15 +50,19 @@ export default function EmployeeGoals({ pillars = [] }) {
           </div>
           <div className="w-full flex flex-row items-center gap-2">
             <span>Status: </span>
-            <select className="w-full rounded-md md:w-[unset] h-full">
+            <select
+              className="w-full rounded-md md:w-[unset] h-full"
+              onChange={(e) => setStatus(parseInt(e.target.value))}
+            >
+              <option value="0" selected>
+                All
+              </option>
               {["Approved", "Pending Approval", "Awaiting Submission"].map(
                 (status, index) => {
                   return (
-                    <>
-                      <option value={index} key={index}>
-                        {status}
-                      </option>
-                    </>
+                    <option value={index + 1} key={index}>
+                      {status}
+                    </option>
                   );
                 }
               )}
@@ -66,7 +70,11 @@ export default function EmployeeGoals({ pillars = [] }) {
           </div>
         </div>
         <div className="w-full overflow-auto rounded-md">
-          <DataTable data={employees} pillars={pillars} />
+          <DataTable
+            data={employees}
+            pillars={pillars}
+            statusIdx={approvalStatus}
+          />
         </div>
       </div>
     </>
