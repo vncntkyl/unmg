@@ -13,7 +13,7 @@ export default function GoalTable({
   return (
     <>
       <div className="w-full overflow-x-scroll lg:overflow-x-auto rounded-md">
-        <div className="flex flex-row items-center gap-2 py-2">
+        <div className="hidden lg:flex flex-row items-center gap-2 py-2">
           <p className="font-semibold">Pillar Percentage: </p>
           {edit ? (
             <>
