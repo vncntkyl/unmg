@@ -8,7 +8,7 @@ if (isset($_POST['submit'])) {
         $userID = $_POST['userID'];
 
         if ($formID = $formController->createEvalForm($userID)) {
-            $latestFpID = $formController->createEvalFormFp($formID);
+            $latestFpID = $formController->createEvalFormFp($formID, $_POST['userID']);
             $latestSpID = $formController->createEvalFormSp($formID);
 
             foreach ($goals as $index => $goal) {

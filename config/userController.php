@@ -4,8 +4,10 @@ class User extends Controller
 {
     function loginAccount($uName, $pWord)
     {
-        $this->setStatement("SELECT * FROM `hr_users` WHERE username = :username AND password = :password");
-        $this->statement->execute([':username' => $uName, ':password' => $pWord]);
+        $status = "Active";
+        $this->setStatement("SELECT * FROM `hr_users` WHERE username = :username AND password = :password AND user_status = :u_status AND account_status = :a_status");
+        $this->statement->execute([':username' => $uName, ':password' => $pWord, ':u_status' => $status, ':a_status' => $status]);
+        //check statement if has rows returned;
         return $this->statement->fetch();
     }
     function retrieveUsers()

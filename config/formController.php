@@ -73,10 +73,10 @@ class Form extends Controller
         return $this->statement->fetch();
     }
 
-    function createEvalFormFp($formID)
+    function createEvalFormFp($formID, $user_id)
     {
-        $this->setStatement("INSERT into `hr_eval_form_fp` (eval_form_id) VALUES (:formID)");
-        if ($this->statement->execute([':formID' => $formID])) {
+        $this->setStatement("INSERT into `hr_eval_form_fp` (eval_form_id) VALUES (:formID, :created_by)");
+        if ($this->statement->execute([':formID' => $formID, ':created_by' => $user_id])) {
             return $this->connection->lastInsertId();
         }
     }
@@ -242,20 +242,27 @@ class Form extends Controller
     {
         $this->setStatement("SELECT
         u.users_id,
-          CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
-          CASE
-            WHEN e.users_id IS NULL THEN 0
+        CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
+        CASE
+            WHEN ef.users_id IS NULL THEN 0
             ELSE 1
-          END AS has_eval,
-          p.pillar_id,p.pillar_percentage, f.created_by, f.approved_by
-        FROM
-          hr_users u
-        LEFT JOIN
-          hr_eval_form e ON u.users_id = e.users_id
-        LEFT JOIN
-          hr_eval_form_pillars p ON p.hr_eval_form_id = e.hr_eval_form_id
-                    LEFT JOIN
-          hr_eval_form_fp f ON e.hr_eval_form_id = f.eval_form_id");
+        END AS has_eval,
+        MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
+        MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
+        MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
+        MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
+        CASE
+            WHEN fp.created_by <> '' AND fp.approved_by <> '' THEN '1'
+            WHEN fp.created_by <> '' OR fp.approved_by <> '' THEN '2'
+            ELSE '3'
+        END AS status
+    FROM
+        hr_users u
+        LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
+            LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
+        LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
+    GROUP BY
+    u.users_id");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
