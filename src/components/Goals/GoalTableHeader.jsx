@@ -80,8 +80,7 @@ export default function GoalTable({
                       <div className="w-full">
                         {edit ? (
                           <textarea
-                            className="w-full resize-y bg-default p-2 rounded-md h-[500px]"
-                            rows={10}
+                            className="w-full resize-y bg-default p-2 rounded-md min-h-[100px]"
                             value={item.objective}
                             onChange={(e) => {
                               updateData("objective", item.pillar_id, e);

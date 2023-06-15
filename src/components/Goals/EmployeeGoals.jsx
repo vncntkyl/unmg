@@ -7,6 +7,7 @@ export default function EmployeeGoals({ pillars = [] }) {
   const [employees, setEmployees] = useState([]);
   const [loading, toggleLoading] = useState(true);
   const [approvalStatus, setStatus] = useState(0);
+  const statusList = ["Approved", "Pending Approval", "Awaiting Submission"];
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -57,7 +58,7 @@ export default function EmployeeGoals({ pillars = [] }) {
               <option value="0" selected>
                 All
               </option>
-              {["Approved", "Pending Approval", "Awaiting Submission"].map(
+              {statusList.map(
                 (status, index) => {
                   return (
                     <option value={index + 1} key={index}>
@@ -74,6 +75,7 @@ export default function EmployeeGoals({ pillars = [] }) {
             data={employees}
             pillars={pillars}
             statusIdx={approvalStatus}
+            statusList={statusList}
           />
         </div>
       </div>
