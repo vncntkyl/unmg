@@ -1,18 +1,40 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/unmg_logo_colored.png";
 import logo_2 from "../assets/unmg_logo_plain_colored.png";
+import Alert from "../misc/Alert";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import classNames from "classnames";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [error, showError] = useState(null);
+  const [loginStatus, setLoginStatus] = useState(null);
   const { signInUser } = useAuth();
   const username = useRef();
   const password = useRef();
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    signInUser(username.current.value, password.current.value);
+    setLoginStatus("submitting");
+    const loginResponse = await signInUser(
+      username.current.value,
+      password.current.value
+    );
+    if (typeof loginResponse === "object") {
+      setCurrentUser(JSON.stringify(loginResponse));
+      sessionStorage.setItem("currentUser", JSON.stringify(loginResponse));
+      if (sessionStorage.getItem("redirect_to")) {
+        const redirectLink = sessionStorage.getItem("redirect_to");
+        sessionStorage.removeItem("redirect_to");
+        navigate(redirectLink);
+      } else {
+        navigate("/");
+      }
+    } else {
+      showError(loginResponse);
+    }
   };
 
   useEffect(() => {
@@ -60,12 +82,40 @@ export default function Login() {
             />
             <button
               type="submit"
-              className="bg-un-red text-white p-2 w-[80%] rounded"
+              className={classNames(
+                "bg-un-red hover:bg-un-red-dark text-white p-2 w-[80%] rounded flex items-center justify-center",
+                loginStatus === "submitting" &&
+                  "bg-mid-gray pointer-events-none"
+              )}
             >
-              Sign In
+              {loginStatus === null ? (
+                "Sign In"
+              ) : (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              )}
             </button>
           </form>
         </div>
+        {error && (
+          <>
+            <Alert
+              type="warning"
+              title={"Login Error"}
+              message={error}
+              onClose={() => {
+                showError(null);
+                setLoginStatus(null);
+              }}
+            />
+            <div
+              className="bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto"
+              onClick={() => {
+                showError(null);
+                setLoginStatus(null);
+              }}
+            />
+          </>
+        )}
       </div>
     </>
   );
