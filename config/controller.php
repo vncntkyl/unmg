@@ -24,7 +24,7 @@ function __construct()
         if($this->isConnectionSuccess){
             $this->statement = $this->connection->prepare($query);
         }else{
-            echo "ulul";
+            echo "";
         }
     }    
 }

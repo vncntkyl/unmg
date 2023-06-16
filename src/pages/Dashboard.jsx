@@ -9,6 +9,7 @@ import CompanyList from "./CompanyList";
 import Roles from "./Roles";
 import Help from "./Help";
 import MainGoals from "./MainGoals";
+import TrackingAssessment from "./TrackingAssessment";
 import AgreementSignOff from "./AgreementSignOff";
 export default function Dashboard() {
   if (!sessionStorage.getItem("currentUser")) {
@@ -95,6 +96,7 @@ export default function Dashboard() {
           <Route path="/roles/*" element={<Roles />} />
           <Route path="/help/*" element={<Help />} />
           <Route path="/main_goals/*" element={<MainGoals />} />
+          <Route path="/tracking_and_assement/*" element={<TrackingAssessment />} />
           <Route path="/sign_off/*" element={<AgreementSignOff />} />
         </Routes>
       </div>

@@ -152,40 +152,20 @@ class Form extends Controller
         return $this->statement->execute([':agreedrating' => $agreedRate, ':weightedRate' => $weightedRating, ':yearEndRateID' => $latestYearEndValID]);
     }
 
-
-    function selectUserPillarPercentage()
-    {
-        $this->setStatement("SELECT 
-    hr_eval_form.hr_eval_form_id,
-    hr_eval_form.users_id,
-    hr_pillars.pillar_id,
-    hr_pillars.pillar_name,
-    hr_eval_form_pillars.pillar_percentage
-    FROM 
-    hr_eval_form
-    JOIN 
-    hr_eval_form_pillars ON hr_eval_form.hr_eval_form_id = hr_eval_form_pillars.hr_eval_form_id
-    JOIN 
-    hr_pillars ON hr_eval_form_pillars.pillar_id = hr_pillars.pillar_id
-    WHERE 
-    hr_eval_form.users_id = 4");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
-    }
-
-
-    function selectUserPerformance()
+    function selectUserPerformance($userID)
     {
         $this->setStatement("SELECT 
         hr_eval_form.users_id, 
-        hr_eval_form.approved_by, 
-        hr_eval_form.approved_by_2, 
+        hr_eval_form.rater_1, 
+        hr_eval_form.rater_2,
+        hr_eval_form.rater_3,
         hr_eval_form.recipient_signatory, 
         hr_eval_form.users_id, 
         hr_objectives.hr_eval_form_pillar_id,
         hr_eval_form_pillars.pillar_id,
-        hr_eval_form_pillars.pillar_percentage,
         hr_pillars.pillar_name, 
+        hr_pillars.pillar_description,
+        hr_eval_form_pillars.pillar_percentage,
         hr_objectives.hr_eval_form_fp_id, 
         hr_objectives.objective, 
         hr_kpi.objective_id, 
@@ -194,9 +174,8 @@ class Form extends Controller
         hr_eval_form_sp_yee.results,
         hr_eval_form_sp_yee.remarks,
         hr_eval_form_sp_yee.hr_eval_form_kpi_id,
-        hr_eval_form_sp_yee_rating.hr_eval_form_sp_yee_id,
-        hr_eval_form_sp_yee_rating.agreed_rating,
-        hr_eval_form_sp_yee_rating.wtd_rating
+        hr_eval_form_sp_yee.agreed_rating,
+        hr_eval_form_sp_yee.wtd_rating
     FROM 
         hr_eval_form
     JOIN 
@@ -211,26 +190,13 @@ class Form extends Controller
         hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
     JOIN 
         hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
-    JOIN 
-        hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_yee_id = hr_eval_form_sp_yee.hr_eval_form_sp_yee_id
     WHERE 
-        hr_eval_form.users_id = '4'");
-        $this->statement->execute();
+        hr_eval_form.users_id = ?");
+        $this->statement->execute([$userID]);
 
         return $this->statement->fetchAll();
     }
 
-    function selectUserSignOff()
-    {
-        $this->setStatement("SELECT 
-        hr_eval_form.*, 
-        hr_users.supervisor_id, 
-        hr_users.immediate_supervisor_id 
-        FROM hr_eval_form
-        JOIN hr_users ON hr_users.users_id = hr_eval_form.users_id WHERE hr_users.users_id = '4'");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
-    }
     function fetchPillars($evalID)
     {
         $this->setStatement("SELECT * FROM `hr_eval_form_pillars` WHERE hr_eval_form_id = ?");

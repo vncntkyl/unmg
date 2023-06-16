@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { Route, Router, Routes } from "react-router-dom";
 import SignOff from "../components/Signoff/SignOff";
-import { BsFillTrash3Fill } from "react-icons/bs";
 import EmployeeSignOff from "../components/Signoff/EmployeeSignOff";
 
 
@@ -12,11 +11,11 @@ export default function AgreementSignOff() {
     sessionStorage.setItem("redirect_to", window.location.pathname);
   }
   const [panel, setPanel] = useState("my evaluations");
-  const [employeeID, setEmployeeID] = useState([]);
+  const [employeeID, setEmployeeID] = useState(-1);
   useEffect(() => {
     setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
   }, []);
-  return (
+  return employeeID !== -1 && (
     <>
       <section className="relative">
         <div className="w-full min-h-[175px] bg-un-blue" />

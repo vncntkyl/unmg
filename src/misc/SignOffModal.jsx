@@ -4,7 +4,7 @@ import { GrClose } from "react-icons/gr";
 export default function SignOffModal({ closeModal }) {
     return (
         <>
-        <div className='bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto' onClick={() => closeModal(false)}>
+        <div className='bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto'>
             <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
                 {/* TITLE */}
                 <div className="flex flex-row items-center justify-between border-b border-gray py-1">

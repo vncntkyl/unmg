@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     screens: {
       xs: "425px",
@@ -55,13 +59,19 @@ export default {
       white: colors.white,
       black: colors.black,
       gray: "#c1c1c1",
+      "mid-gray": "#818181",
       "dark-gray": "#515151",
       transparent: colors.transparent,
       "un-blue": "#183145",
       "un-blue-light": "#306088",
       "un-red": "#d22735",
       "un-red-light": "#d43953",
+      "un-red-light-1": "#FDB4B4",
       "un-red-dark": "#883030",
+      "un-yellow-light": "#fdf6b4",
+      "un-yellow-dark": "#807519",
+      "un-green-light": "#B5FDB4",
+      "un-green-dark": "#198065",
       default: "#efedf8",
       "default-dark": "#dbd8eb",
     }),
