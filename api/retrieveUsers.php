@@ -27,7 +27,7 @@ if (isset($_GET['usertype'])) {
     echo $json_head;
 }
 
-if(isset($_POST['super'])){
+if (isset($_POST['super'])) {
     echo json_encode($fetch->retrieveSuperAdmin(), JSON_UNESCAPED_UNICODE);
 }
 ?>

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { BsBuildingAdd } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
-import CompanyTable from "../components/CompanyTable";
+import CompanyTable from "../components/Company/CompanyTable";
 import { BiImport } from "react-icons/bi";
 import CompanyModal from "../misc/CompanyModal";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
+import Alert from "../misc/Alert";
 
 export default function CompanyList() {
   document.title =
@@ -14,9 +15,8 @@ export default function CompanyList() {
   const [modal, toggleModal] = useState("standby");
   const [companyData, setCompanyData] = useState(0);
   const [departmentID, setDepartmentID] = useState(null);
-  useEffect(() => {
-    
-  }, []);
+  const [successModal, showSuccessModal] = useState("");
+  useEffect(() => {}, []);
   return (
     <>
       <section className="relative">
@@ -63,6 +63,7 @@ export default function CompanyList() {
                 toggleModal={toggleModal}
                 setCompanyData={setCompanyData}
                 setDepartmentID={setDepartmentID}
+                success={successModal}
               />
             </div>
           </div>
@@ -75,17 +76,33 @@ export default function CompanyList() {
               closeModal={toggleModal}
               departmentID={departmentID}
               alert={modal === "delete"}
-              companyData={modal === "add department" || modal === "delete" ? companyData : null}
-              departmentList={
-                modal === "add department" || modal === "delete" ? departmentList : null
+              companyData={
+                modal === "add department" || modal === "delete"
+                  ? companyData
+                  : null
               }
+              departmentList={
+                modal === "add department" || modal === "delete"
+                  ? departmentList
+                  : null
+              }
+              toggleSuccessModal={showSuccessModal}
             />
             <div
               className={classNames(
-                "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
-                modal === "standby" && "z-[-1] hidden pointer-events-none"
+                "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto"
               )}
               onClick={() => toggleModal("standby")}
+            />
+          </>
+        )}
+        {successModal !== "" && (
+          <>
+            <Alert
+              type="success"
+              onClose={() => showSuccessModal("")}
+              title={"Congratulations!"}
+              message={successModal}
             />
           </>
         )}

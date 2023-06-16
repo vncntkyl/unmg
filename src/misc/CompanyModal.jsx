@@ -12,6 +12,7 @@ export default function CompanyModal({
   companyData,
   departmentID,
   departmentList,
+  toggleSuccessModal,
 }) {
   const { addCompany, addDepartment, deleteDepartment } = useAuth();
   const { capitalize, capitalizeSentence } = useFunction();
@@ -28,8 +29,9 @@ export default function CompanyModal({
   );
 
   const handleDelete = () => {
-    if(deleteDepartment(departmentID)){
-      //show success message then clear modals
+    if (deleteDepartment(departmentID)) {
+      closeModal("standby");
+      toggleSuccessModal("Department has been deleted successfully.");
     }
   };
   const handleContinue = () => {
@@ -43,20 +45,38 @@ export default function CompanyModal({
         ],
       };
       if (addCompany(company_data)) {
-        //show success message and close the modals
+        closeModal("standby");
+        toggleSuccessModal("Company has been added successfully.");
       }
     } else if (title === "add department") {
-      const departmentNamesToRemove = departmentList.map(
-        (item) => item.department_name
-      );
+      const companyDepartments = departments.map((d) => ({
+        department_name: d.department_name,
+        company_id: companyData.company_id,
+      }));
+      const departmentNamesToRemove = departmentList
+        .filter((item) => {
+          return item.company_id === companyData.company_id;
+        })
+        .map((item) => {
+          return {
+            department_name: item.department_name,
+            company_id: item.company_id,
+          };
+        });
 
-      const filteredDepartmentList = departments.filter(
-        (item) => !departmentNamesToRemove.includes(item.department_name)
-      );
+      const newDepartments = companyDepartments.filter((department) => {
+        return !departmentNamesToRemove.some(
+          (old) =>
+            old.department_name === department.department_name &&
+            old.company_id === department.company_id
+        );
+      });
+
       const company_id = companyData.company_id;
 
-      if (addDepartment(company_id, filteredDepartmentList)) {
-        //show success message and close modals
+      if (addDepartment(company_id, newDepartments)) {
+        closeModal("standby");
+        toggleSuccessModal("Department has been added successfully.");
       }
     }
   };
@@ -106,8 +126,8 @@ export default function CompanyModal({
                       (dept) => dept.department_id === departmentID
                     ).department_name
                   }
-                </span>
-                {" "}department ?
+                </span>{" "}
+                department ?
               </span>
             </>
           ) : (
@@ -165,7 +185,9 @@ export default function CompanyModal({
                                 title === "add department" &&
                                 departmentList.find(
                                   (d) =>
-                                    d.department_name === dept.department_name
+                                    d.department_name ===
+                                      dept.department_name &&
+                                    d.company_id === companyData.company_id
                                 )
                               }
                               onChange={(e) => {
@@ -187,7 +209,9 @@ export default function CompanyModal({
                                       departmentList.find(
                                         (d) =>
                                           d.department_name ===
-                                          dept.department_name
+                                            dept.department_name &&
+                                          d.company_id ===
+                                            companyData.company_id
                                       ) &&
                                       "hidden"
                                     }

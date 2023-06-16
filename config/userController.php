@@ -2,12 +2,12 @@
 require_once 'controller.php';
 class User extends Controller
 {
-    function loginAccount($username, $password)
+    function loginAccount($userlogin, $password)
     {
         $status = "active";
-        $this->setStatement("SELECT * FROM `hr_user_accounts` WHERE username = :username AND password = :password");
+        $this->setStatement("SELECT * FROM `hr_user_accounts` WHERE (username = :userlogin OR email_address = :userlogin) AND password = :password");
         try {
-            $this->statement->execute([':username' => $username, ':password' => $password]);
+            $this->statement->execute([':userlogin' => $userlogin, ':password' => $password]);
             if ($result = $this->statement->fetch()) {
                 if ($result->user_status === $status && $result->account_status === $status) {
                     $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id WHERE a.users_id = ?");
@@ -20,12 +20,12 @@ class User extends Controller
                 return "Incorrect username or password.";
             }
         } catch (\Throwable $th) {
-            return false;
+            return "Database Error! please contact IT Department. Thank you!";
         }
     }
     function retrieveUsers()
     {
-        $this->setStatement("SELECT * FROM `hr_users`");
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -151,3 +151,4 @@ class User extends Controller
         }
     }
 }
+?>

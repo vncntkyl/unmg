@@ -2,11 +2,11 @@
 header("Access-Control-Allow-Origin: *");
 require "../config/userController.php";
 $user = new User();
-if (isset($_POST['username']) && isset($_POST['password'])) {
+if (isset($_POST['user_login']) && isset($_POST['password'])) {
     session_start();
-    $username = $_POST['username'];
+    $user_login = $_POST['user_login'];
     $password = md5($_POST['password']);
-    $result = $user->loginAccount($username, $password);
+    $result = $user->loginAccount($user_login, $password);
     if(gettype($result) == 'object'){
         echo json_encode($result);
     }else{

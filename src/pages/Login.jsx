@@ -11,7 +11,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [error, showError] = useState(null);
   const [loginStatus, setLoginStatus] = useState(null);
-  const { signInUser } = useAuth();
+  const { signInUser,setCurrentUser } = useAuth();
   const username = useRef();
   const password = useRef();
 
@@ -45,7 +45,7 @@ export default function Login() {
   return (
     <>
       <div className="w-screen h-screen flex flex-col justify-center items-center drop-shadow-lg p-4">
-        <div className="overflow-hidden rounded-lg transition-all w-[90%] md:w-[50%] flex flex-col lg:flex-row">
+        <div className="overflow-hidden rounded-lg transition-all w-[90%] md:w-[50%] lg:w-[80%] xl:w-[50%] flex flex-col lg:flex-row">
           <div className="bg-white flex flex-row gap-2 justify-center items-center p-4 lg:w-1/2 lg:h-[500px]">
             <img
               src={logo_2}
@@ -71,7 +71,7 @@ export default function Login() {
             <input
               className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
               type="text"
-              placeholder="Username"
+              placeholder="Username or Email Address"
               ref={username}
             />
             <input
@@ -91,7 +91,7 @@ export default function Login() {
               {loginStatus === null ? (
                 "Sign In"
               ) : (
-                <AiOutlineLoading3Quarters className="animate-spin" />
+                <AiOutlineLoading3Quarters className="animate-spin text-[1.1rem]" />
               )}
             </button>
           </form>
