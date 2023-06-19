@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BiRightArrowAlt } from "react-icons/bi";
 
-export default function AssessmentTracking({ users_id }) {
+export default function AssessmentTracking({ users_id, quarter}) {
     const [finalUserPerformance, setfinalUserPerformance] = useState([]);
     const [pillarName, setPillarName] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,9 +13,9 @@ export default function AssessmentTracking({ users_id }) {
     useEffect(() => {
         const getfinalUserPerformance = async () => {
             try {
-                const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
+                const response = await axios.get("http://localhost/unmg_pms/api/retrieveTracking.php", {
                     params: {
-                        userPerformance: true,
+                        userTracking: true,
                         userID: users_id
                     }
                 });
@@ -47,8 +47,6 @@ export default function AssessmentTracking({ users_id }) {
 
     return !loading ? (
         <>
-
-
             <div className="md:text-[.8rem]">
                 {
                     pillarName.map((pillar, index) => (
@@ -75,7 +73,7 @@ export default function AssessmentTracking({ users_id }) {
                         {tabTitle.name} ({tabTitle.description}) {tabTitle.percentage}%
                     </span>
                 </div>
-
+{quarter}
                 <div className="pt-10 w-full">
                     {/* Header */}
                     <div className="flex flex-row">
@@ -105,9 +103,9 @@ export default function AssessmentTracking({ users_id }) {
                                     <div className="bg-white w-[80%] p-2 mx-2 flex">
                                         <span className="flex-1 px-4 flex items-center justify-center">{performance.kpi_desc}</span>
                                         <span className="flex-1 px-2 text-center flex items-center justify-center">{performance.kpi_weight}%</span>
-                                        <span className="flex-1 px-2 text-center flex items-center justify-center">{performance.results}</span>
-                                        <span className="flex-1 px-4 flex items-center justify-center">Lorem, ipsum dolor</span>
-                                        <span className="flex-1 px-4 flex items-center justify-center">{performance.remarks}</span>
+                                        <span className="flex-1 px-2 text-center flex items-center justify-center">{quarter == 1 ? performance.fq_results : quarter == 2 ? performance.myr_results : quarter == 3 ? performance.tq_results : performance.yee_results}</span>
+                                        <span className="flex-1 px-4 flex items-center justify-center">{performance.kpi_desc}</span>
+                                        <span className="flex-1 px-4 flex items-center justify-center">{performance.yee_remarks}</span>
                                     </div>
                                 </div>
                             );

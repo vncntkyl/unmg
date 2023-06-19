@@ -14,6 +14,7 @@ export default function TrackingAssessment() {
   }
   const [panel, setPanel] = useState("my assessment");
   const [employeeID, setEmployeeID] = useState(-1);
+  const [quarter, setQuarter] = useState("1");
   useEffect(() => {
     setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
   }, []);
@@ -61,21 +62,21 @@ export default function TrackingAssessment() {
                 </button>
               </div>
             </div>
-            <div className="flex flex-col gap-2 pt-4">
-              <div className="flex px-2 justify-between">
+            <div className="flex flex-col pt-4">
+              <div className="flex pb-2 px-2 justify-between">
                 <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
                   <label htmlFor="quarterPicker" className="font-semibold">
                     Select Quarter:
                   </label>
                   <select
-                    className="bg-default text-black rounded-md p-1 px-2 outline-none"
+                    className="bg-default text-black rounded-md p-1 px-2 outline-none" onChange={quart => setQuarter(quart.target.value)}
                   >
-                    <option value="First Quarter" defaultChecked>
+                    <option value="1" defaultChecked>
                       First Quarter
                     </option>
-                    <option value="Second Quarter">Second Quarter</option>
-                    <option value="Third Quarter">Third Quarter</option>
-                    <option value="Fourth Quarter">Fourth Quarter</option>
+                    <option value="2">Second Quarter</option>
+                    <option value="3">Third Quarter</option>
+                    <option value="4">Fourth Quarter</option>
                   </select>
                 </div>
                 <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
@@ -88,9 +89,9 @@ export default function TrackingAssessment() {
               <Routes>
                 {panel === "my assessment" ? <Route
                   path="/"
-                  element={<AssessmentTracking users_id={employeeID} />}
+                  element={<AssessmentTracking users_id={employeeID} quarter={quarter}/>}
                 /> : <Route
-                  path="/"
+                  path="/" 
                   element={<EmployeeAssessment users_id={employeeID} />}
                 />}</Routes>
             </div>
