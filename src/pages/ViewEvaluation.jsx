@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
-import EvalTable from "../components/Evaluations/ViewEvalTable";
+import EvalTable from "../components/ViewEvalTable";
 import { GrFormSearch } from "react-icons/gr";
 export default function ViewEvaluation({}) {
   const { companyList, departmentList } = useAuth();
