@@ -83,7 +83,7 @@ export default function Dashboard() {
         <Routes>
           <Route
             path="/"
-            element={<DashboardOverview panel={panel} setPanel={setPanel} />}
+            element={<DashboardOverview />}
           />
           <Route
             path="/employees/*"

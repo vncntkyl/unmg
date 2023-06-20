@@ -70,6 +70,7 @@ export default {
       "un-red-light-1": "#FDB4B4",
       "un-red-dark": "#883030",
       "un-red-dark-1": "#5c1c1c",
+      "un-yellow": "#f0d74c",
       "un-yellow-light": "#fdf6b4",
       "un-yellow-dark": "#807519",
       "un-green-light": "#B5FDB4",

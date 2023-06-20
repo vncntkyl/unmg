@@ -150,5 +150,29 @@ class User extends Controller
             return $this->statement->execute([$role_id]);
         }
     }
+    function getEmployeesForEvaluation($contract)
+    {
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id LEFT JOIN hr_eval_form ef ON ef.users_id = a.users_id LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id WHERE i.contract_type = ? AND i.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')");
+        $this->statement->execute([$contract]);
+        return $this->statement->fetchAll();
+    }
+    function getEmployeesForConsultation()
+    {
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.request_consult IS NOT NULL");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
+    function getEmployeeGroupForConsultation($request)
+    {
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.request_consult = ?");
+        $this->statement->execute([$request]);
+        return $this->statement->fetchAll();
+    }
+    function getEmployeesForRegularization()
+    {
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.for_regularization = 1");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
 }
 ?>
