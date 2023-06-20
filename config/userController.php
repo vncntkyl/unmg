@@ -19,7 +19,7 @@ class User extends Controller
             } else {
                 return "Incorrect username or password.";
             }
-        } catch (\Throwable $th) {
+        } catch (PDOException $e) {
             return "Database Error! please contact IT Department. Thank you!";
         }
     }
