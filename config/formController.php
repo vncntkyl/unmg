@@ -218,11 +218,13 @@ class Form extends Controller
         hr_eval_form.hr_eval_form_id,
 
         hr_eval_form_sp_fq.results AS fq_results,
+        hr_fq_desc.target_metrics_desc AS fq_desc,
         hr_eval_form_sp_fq.remarks AS fq_remarks,
         hr_eval_form_sp_fq.fq_review_date AS fq_review_date,
         hr_eval_form_sp_fq_rating.ratee_achievement AS fq_ratee_achievement,
         
         hr_eval_form_sp_myr.results AS myr_results,
+        hr_myr_desc.target_metrics_desc AS myr_desc,
         hr_eval_form_sp_myr.status AS myr_status,
         hr_eval_form_sp_myr.remarks AS myr_remarks,
         hr_eval_form_sp_myr.actions_to_address AS myr_address_action,
@@ -233,49 +235,70 @@ class Form extends Controller
         hr_eval_form_sp_myr_rating.rater_3 AS myr_rater3,
         
         hr_eval_form_sp_tq.results AS tq_results,
+        hr_tq_desc.target_metrics_desc AS tq_desc,
         hr_eval_form_sp_tq.remarks AS tq_remarks,
         hr_eval_form_sp_tq.tq_review_date AS tq_review_date,
         hr_eval_form_sp_tq_rating.ratee_achievement AS tq_ratee_achievement,
         
         hr_eval_form_sp_yee.results AS yee_results,
+        hr_yee_desc.target_metrics_desc AS yee_desc,
         hr_eval_form_sp_yee.remarks AS yee_remarks,
         hr_eval_form_sp_yee.agreed_rating,
         hr_eval_form_sp_yee.wtd_rating,
         hr_eval_form_sp_yee_rating.ratee_achievement AS yee_achievement
 
-    FROM 
-        hr_eval_form
-    JOIN 
-        hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
-    JOIN 
-        hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
-    JOIN 
-        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
-    JOIN
-        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
-    JOIN 
-        hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
-    JOIN
-        hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
-        
-    JOIN
-        hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id
-    JOIN
-        hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    JOIN
-        hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id
-    JOIN
-        hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
-    JOIN
-        hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
-    JOIN
-        hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
-    JOIN 
-        hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
-    JOIN
-        hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    WHERE 
-        hr_eval_form.users_id = ?");
+        FROM 
+            hr_eval_form
+        JOIN 
+            hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+        JOIN 
+            hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+        JOIN 
+            hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
+        JOIN
+            hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+        JOIN 
+            hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+        JOIN
+            hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+            
+        JOIN
+            hr_target_metrics AS hr_fq_desc ON hr_fq_desc.kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_target_metrics AS hr_myr_desc ON hr_myr_desc.kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_target_metrics AS hr_tq_desc ON hr_tq_desc.kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_target_metrics AS hr_yee_desc ON hr_yee_desc.kpi_id = hr_kpi.kpi_id
+            
+            
+        JOIN
+            hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+        JOIN
+            hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
+        JOIN
+            hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
+        JOIN 
+            hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+        WHERE 
+        hr_eval_form.users_id = ?
+        AND
+        hr_fq_desc.target_metrics_score = hr_eval_form_sp_fq.results
+        AND
+        hr_myr_desc.target_metrics_score = hr_eval_form_sp_myr.results
+        AND
+        hr_tq_desc.target_metrics_score = hr_eval_form_sp_tq.results
+        AND
+        hr_yee_desc.target_metrics_score = hr_eval_form_sp_yee.results
+        ");
         $this->statement->execute([$userID]);
         return $this->statement->fetchAll();
     }
