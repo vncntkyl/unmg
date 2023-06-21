@@ -5,12 +5,12 @@ import { CreateGoals, EmployeeGoals, Goals } from "../components/Goals";
 import { useFunction } from "../context/FunctionContext";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import axios from "axios";
+import Toggle from "../components/Toggle";
+import EditGoals from "../components/Goals/EditGoals";
 
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
-  const [employeeID, setEmployeeID] = useState(
-    JSON.parse(sessionStorage.getItem("currentUser")).users_id
-  );
+  const [employeeID, setEmployeeID] = useState();
   const [pillars, setPillars] = useState([]);
   const { getPath } = useFunction();
 
@@ -26,6 +26,9 @@ export default function MainGoals() {
       case "/main_goals/create":
       case "/main_goals/create/":
         return "Create Goals";
+      case "/main_goals/edit":
+      case "/main_goals/edit/":
+        return "Edit Goals";
     }
   };
 
@@ -39,7 +42,6 @@ export default function MainGoals() {
             pillars: true,
           },
         });
-        console.log(response.data);
         setPillars(response.data);
       } catch (e) {
         console.log(e.message);
@@ -47,6 +49,9 @@ export default function MainGoals() {
     };
 
     getPillars();
+  }, []);
+  useEffect(() => {
+    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
   }, []);
   return (
     <>
@@ -69,51 +74,34 @@ export default function MainGoals() {
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
-              {["/main_goals/", "/main_goals"].includes(getPath()) && (
-                <div
-                  className={classNames(
-                    "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
-                    panel !== "My Goals" && "on"
-                  )}
-                >
-                  <button
-                    type="button"
-                    className={classNames(
-                      "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] text-center w-1/2 md:text-[.8rem]",
-                      panel === "My Goals" ? "text-white" : "text-black"
-                    )}
-                    onClick={() => {
-                      setPanel("My Goals");
-                    }}
-                  >
-                    My Goals
-                  </button>
-                  <button
-                    type="button"
-                    className={classNames(
-                      "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem]",
-                      panel === "Employee Goals" ? "text-white" : "text-black"
-                    )}
-                    onClick={() => {
-                      setPanel("Employee Goals");
-                    }}
-                  >
-                    Employee Goals
-                  </button>
-                </div>
-              )}
+              <Toggle
+                paths={["/main_goals/", "/main_goals"]}
+                panel={panel}
+                panel_1={"My Goals"}
+                setPanel={setPanel}
+                panel_2={"Employee Goals"}
+              />
             </div>
             {/* BODY */}
             <div>
               <Routes>
                 {panel === "My Goals" ? (
                   <>
-                    <Route path="/*" element={<Goals />} />
-                    <Route path="/:id" element={<Goals />} />
+                    <Route
+                      path="/*"
+                      element={<Goals user_id={employeeID} pillars={pillars} />}
+                    />
+                    <Route
+                      path="/:id"
+                      element={<Goals user_id={employeeID} pillars={pillars} />}
+                    />
                   </>
                 ) : (
                   <>
-                    <Route path="/*" element={<EmployeeGoals />} />
+                    <Route
+                      path="/*"
+                      element={<EmployeeGoals pillars={pillars} />}
+                    />
                   </>
                 )}
 
@@ -121,11 +109,13 @@ export default function MainGoals() {
                   path="/create/*"
                   element={
                     <CreateGoals pillars={pillars} user_id={employeeID} />
-                    
                   }
                 />
+                <Route
+                  path="/edit/*"
+                  element={<EditGoals pillars={pillars} />}
+                />
               </Routes>
-
             </div>
           </div>
         </div>

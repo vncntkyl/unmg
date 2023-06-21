@@ -6,4 +6,8 @@ $userID = $_GET['userID'];
 if (isset($_GET['userTracking'])) {
     echo json_encode($form->selectUserAssessment($userID));
 }
+
+if (isset($_GET['trackingMetrics'])) {
+    echo json_encode($form->selectUserAssessmentMetrics($userID));
+}
 ?>

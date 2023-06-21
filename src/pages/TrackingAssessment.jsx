@@ -4,7 +4,7 @@ import { Route, Router, Routes } from "react-router-dom";
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
 import Badge from "../misc/Badge";
-import AssessmentInstructions from "../components/TrackingAssessment/AssessmentInstructions";
+import CreateAssessment from "../components/TrackingAssessment/CreateAssessment";
 
 
 
@@ -14,7 +14,6 @@ export default function TrackingAssessment() {
   }
   const [panel, setPanel] = useState("my assessment");
   const [employeeID, setEmployeeID] = useState(-1);
-  const [quarter, setQuarter] = useState("1");
   useEffect(() => {
     setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
   }, []);
@@ -93,9 +92,16 @@ export default function TrackingAssessment() {
                 /> : <Route
                   path="/" 
                   element={<EmployeeAssessment users_id={employeeID} />}
-                />}</Routes>
+                />}
+                <Route
+                  path="/create/*"
+                  element={
+                    <CreateAssessment user_id={employeeID} />
+                    
+                  }
+                />
+                </Routes>
             </div>
-            <AssessmentInstructions/>
           </div>
         </div>
       </section>
