@@ -11,6 +11,7 @@ export default function SignOff({ users_id }) {
     const [selectedPillar, setSelectedPillar] = useState(0);
     const [tabTitle, setTabTitle] = useState([]);
     const [signModal, setsignModal] = useState(false);
+    const [hasSet, setHasSet] = useState(false);
     let previousObjective = null;
 
     useEffect(() => {
@@ -22,6 +23,10 @@ export default function SignOff({ users_id }) {
                         userID: users_id
                     }
                 });
+                if (!response.data || response.data.length === 0) {
+                    setHasSet(true);
+                    return;
+                }
                 if (!response.data) return
                 setfinalUserPerformance(response.data);
 
@@ -72,8 +77,6 @@ export default function SignOff({ users_id }) {
 
     return !loading ? (
         <>
-
-
             <div className="md:text-[.8rem]">
                 {
                     pillarName.map((pillar, index) => (

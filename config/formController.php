@@ -281,15 +281,25 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
-    function selectUserAssessmentMetrics($userID)
+    function selectUserAssessmentScores($userID)
     {
         $this->setStatement("SELECT hr_eval_form.hr_eval_form_id, 
         hr_eval_form_fp.eval_form_id, 
         hr_objectives.hr_eval_form_fp_id, 
-        hr_kpi.objective_id, 
-        hr_target_metrics.kpi_id,
-        hr_target_metrics.target_metrics_score,
-        hr_target_metrics.target_metrics_desc
+        hr_kpi.objective_id,
+        
+        hr_eval_form_sp_fq.results AS fq_results,
+        hr_fq_desc.target_metrics_desc AS fq_desc,
+        
+        hr_eval_form_sp_myr.results AS myr_results,
+        hr_myr_desc.target_metrics_desc AS myr_desc,
+        
+        hr_eval_form_sp_tq.results AS tq_results,
+        hr_tq_desc.target_metrics_desc AS tq_desc,
+        
+        hr_eval_form_sp_yee.results AS yee_results,
+        hr_yee_desc.target_metrics_desc AS yee_desc
+        
         FROM `hr_eval_form` 
         JOIN
         hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
@@ -298,8 +308,31 @@ class Form extends Controller
         JOIN
         hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
         JOIN
-        hr_target_metrics ON hr_target_metrics.kpi_id = hr_kpi.kpi_id
+            hr_target_metrics AS hr_fq_desc ON hr_fq_desc.kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_target_metrics AS hr_myr_desc ON hr_myr_desc.kpi_id = hr_kpi.kpi_id    
+        JOIN
+            hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_target_metrics AS hr_tq_desc ON hr_tq_desc.kpi_id = hr_kpi.kpi_id
+        JOIN
+            hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id            
+        JOIN
+            hr_target_metrics AS hr_yee_desc ON hr_yee_desc.kpi_id = hr_kpi.kpi_id            
+        JOIN 
+            hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id            
         WHERE users_id = ?
+        AND
+        hr_fq_desc.target_metrics_score = hr_eval_form_sp_fq.results
+        AND
+        hr_myr_desc.target_metrics_score = hr_eval_form_sp_myr.results
+        AND
+        hr_tq_desc.target_metrics_score = hr_eval_form_sp_tq.results
+        AND
+        hr_yee_desc.target_metrics_score = hr_eval_form_sp_yee.results
+        
         ");
         $this->statement->execute([$userID]);
         return $this->statement->fetchAll();

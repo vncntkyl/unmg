@@ -14,29 +14,21 @@ export function AuthProvider({ children }) {
   const [departmentList, setDepartmentList] = useState([]);
   const nav = useNavigate();
 
-  const signInUser = (username, password) => {
+  const signInUser = async (username, password) => {
     const url = "http://localhost/unmg_pms/api/signInUser.php";
     //const url = "../api/signInUser.php";
     let formData = new FormData();
-    formData.append("username", username);
+    formData.append("user_login", username);
     formData.append("password", password);
 
-    axios
-      .post(url, formData)
-      .then((response) => {
-        setCurrentUser(JSON.stringify(response.data));
-        sessionStorage.setItem("currentUser", JSON.stringify(response.data));
-        if (sessionStorage.getItem("redirect_to")) {
-          const redirect_link = sessionStorage.getItem("redirect_to");
-          sessionStorage.removeItem("redirect_to");
-          nav(redirect_link);
-        } else {
-          nav("/");
-        }
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
+    try {
+      const response = await axios.post(url, formData);
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const registerUser = async (userdata) => {
@@ -74,7 +66,24 @@ export function AuthProvider({ children }) {
       console.log(e.message);
     }
   };
-
+  const fetchUsers = async () => {
+    let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
+    //let url = "../api/retrieveUsers.php";
+    try {
+      const response = await axios.get(url, {
+        params: {
+          users: "regular"
+        }
+      });
+      if (response.status === 200) {
+        return response.data;
+      }else{
+        return 1;
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
   const addCompany = async (companyData) => {
     const url = "http://localhost/unmg_pms/api/manageCompany.php";
     //const url = "../api/manageCompany.php";
@@ -123,6 +132,38 @@ export function AuthProvider({ children }) {
       // }
     } catch (e) {
       console.log(e);
+    }
+  };
+  const getBusinessUnits = async () => {
+    const url = "http://localhost/unmg_pms/api/conglomerate.php";
+    //const url = "../api/conglomerate.php";
+    try {
+      const response = await axios.get(url, {
+        params: {
+          company: true,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getDepartments = async () => {
+    const url = "http://localhost/unmg_pms/api/conglomerate.php";
+    //const url = "../api/conglomerate.php";
+    try {
+      const response = await axios.get(url, {
+        params: {
+          department: true,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
   const manageUser = async (action, id) => {
@@ -281,13 +322,16 @@ export function AuthProvider({ children }) {
     signInUser,
     addCompany,
     updateUser,
+    fetchUsers,
     deleteRole,
     registerUser,
     registerRole,
     unassignUser,
     addDepartment,
     updateUserRole,
+    getDepartments,
     setCurrentUser,
+    getBusinessUnits,
     deleteDepartment,
   };
 

@@ -4,7 +4,6 @@ import { Route, Router, Routes } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
 
 export default function AssessmentTrackingDetails(quarter) {
-    console.log(quarter);
     return (
         <>
             <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">

@@ -84,6 +84,11 @@ export function FunctionProvider({ children }) {
   
     return differences;
   }
+
+  function removeSubText(text){
+    const tempString = text.split("(");
+    return tempString[0];
+  }
   const value = {
     getPath,
     splitKey,
@@ -91,6 +96,7 @@ export function FunctionProvider({ children }) {
     capitalize,
     formatName,
     reformatName,
+    removeSubText,
     capitalizePath,
     areValuesFilled,
     capitalizeSentence,

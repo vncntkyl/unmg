@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import JSONCheck from "../../misc/JSONCheck";
+import JSONCheck from "../../misc/JSONCheck.jsx";
 import axios from "axios";
 import { useFunction } from "../../context/FunctionContext";
 import classNames from "classnames";

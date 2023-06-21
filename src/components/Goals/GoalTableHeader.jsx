@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import JSONCheck from "../../misc/JSONCheck";
+import JSONCheck from "../../misc/JSONCheck.jsx";
 import axios from "axios";
 import classNames from "classnames";
 

@@ -5,18 +5,55 @@ import AssessmentTracking from "../components/TrackingAssessment/AssessmentTrack
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
 import Badge from "../misc/Badge";
 import CreateAssessment from "../components/TrackingAssessment/CreateAssessment";
-
-
+import axios from "axios";
 
 export default function TrackingAssessment() {
+  const [panel, setPanel] = useState("My Assessment");
+  const [employeeID, setEmployeeID] = useState();
+  const [quarter, setQuarter] = useState("1");
+  const [scores, setScores] = useState([]);
   if (!sessionStorage.getItem("currentUser")) {
     sessionStorage.setItem("redirect_to", window.location.pathname);
   }
-  const [panel, setPanel] = useState("my assessment");
-  const [employeeID, setEmployeeID] = useState(-1);
   useEffect(() => {
-    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
+    const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+    const employeeID = currentUser ? currentUser.users_id : null;
+    setEmployeeID(employeeID);
   }, []);
+  console.log(employeeID)
+  const setHeader = (path) => {
+    switch (path) {
+      case "/tracking_and_assement":
+      case "/tracking_and_assement/":
+        if (panel === "My Assessment") {
+          return "Tracking & Assessment";
+        } else {
+          return "Employees' Tracking & Assessment";
+        }
+      case "/tracking_and_assement/create":
+      case "/tracking_and_assement/create/":
+        return "Create Assessment";
+    }
+  };
+useEffect(() => {
+  const getScores = async() => {
+    const url = "http://localhost/unmg_pms/api/retrieveTrackingScores.php";
+    try {
+      const response = await axios.get(url, {
+        params: {
+          trackingMetrics: true
+        },
+      });
+      setScores(response.data);
+      console.log(response.data)
+    }
+    catch (error){
+      console.log(error.message);
+    }
+  };
+  getScores();
+}, []);
+
   return employeeID !== -1 && (
     <>
       <section className="relative">
@@ -32,17 +69,17 @@ export default function TrackingAssessment() {
               <div
                 className={classNames(
                   "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
-                  panel !== "my assessment" && "on"
+                  panel !== "My Assessment" && "on"
                 )}
               >
                 <button
                   type="button"
                   className={classNames(
                     "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] text-center w-1/2 md:text-[.8rem]",
-                    panel === "my assessment" ? "text-white" : "text-black"
+                    panel === "My Assessment" ? "text-white" : "text-black"
                   )}
                   onClick={() => {
-                    setPanel("my assessment");
+                    setPanel("My Assessment");
                   }}
                 >
                   My Assessment
@@ -86,7 +123,7 @@ export default function TrackingAssessment() {
                 </div>
               </div>
               <Routes>
-                {panel === "my assessment" ? <Route
+                {panel === "My Assessment" ? <Route
                   path="/"
                   element={<AssessmentTracking users_id={employeeID} quarter={quarter}/>}
                 /> : <Route
