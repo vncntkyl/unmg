@@ -3,9 +3,30 @@ import classNames from "classnames";
 import axios from "axios";
 import Counter from "../misc/Counter";
 import { format, startOfToday } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 export default function Overview() {
   const [cards, setCards] = useState([]);
+  const navigate = useNavigate();
+
+  const onCardClick = (cardID) => {
+    console.log(cardID);
+    switch (cardID) {
+      case 0:
+        navigate("/employees");
+        break;
+      case 1:
+        sessionStorage.setItem("panel", "Employee Goals");
+        navigate("/main_goals");
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+    }
+  };
 
   useEffect(() => {
     const retrieveOverviewContent = async () => {
@@ -17,6 +38,7 @@ export default function Overview() {
       try {
         const response = await axios.post(url, formData);
         setCards(response.data);
+        console.log(response.data);
       } catch (e) {
         console.log(e);
       }
@@ -41,7 +63,9 @@ export default function Overview() {
             return (
               <div
                 key={index}
-                className="group/overview relative bg-white min-w-full flex flex-col text-center items-center justify-between rounded-md snap-start p-4 md:min-w-[49.5%] lg:min-w-[32.75%] xl:min-w-[19.7%] cursor-pointer hover:bg-default"
+                value={card.title}
+                onClick={() => onCardClick(index)}
+                className="group/overview relative select-none bg-white min-w-full flex flex-col text-center items-center justify-between rounded-md snap-start p-4 md:min-w-[49.5%] lg:min-w-[32.75%] xl:min-w-[19.7%] cursor-pointer hover:bg-default"
               >
                 <span className="text-[1rem] font-semibold text-black">
                   {card.title}
@@ -49,7 +73,9 @@ export default function Overview() {
                 <span className="text-[3rem] text-un-blue-light">
                   <Counter max={card.value} />
                 </span>
-                <span className="text-right w-full hidden group-hover/overview:block absolute bottom-2 right-4 animate-fade">View</span>
+                <span className="text-right w-full hidden group-hover/overview:block absolute bottom-2 right-4 animate-fade">
+                  View
+                </span>
               </div>
             );
           })}

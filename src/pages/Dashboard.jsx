@@ -67,7 +67,7 @@ export default function Dashboard() {
         user_data={user}
         sidebarToggler={toggleSidebar}
       />
-      <div className=" min-h-screen">
+      <div className="min-h-[(calc(100vh_-_76px))]">
         <Sidebar
           sidebarToggler={toggleSidebar}
           className={classNames(sidebar && "translate-x-[0%]")}

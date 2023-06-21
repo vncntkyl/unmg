@@ -85,7 +85,9 @@ export default function MainGoals() {
             {/* BODY */}
             <div>
               <Routes>
-                {panel === "My Goals" ? (
+                {sessionStorage.getItem("panel") &&
+                sessionStorage.getItem("panel") === "My Goals" &&
+                panel === "My Goals" ? (
                   <>
                     <Route
                       path="/*"

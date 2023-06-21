@@ -20,7 +20,7 @@ class User extends Controller
                 return "Incorrect username or password.";
             }
         } catch (PDOException $e) {
-            return "Database Error! please contact IT Department. Thank you!";
+            return $e->getMessage();
         }
     }
     function retrieveUsers()
@@ -29,16 +29,10 @@ class User extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
-    function retrieveRegularUsers()
+    function retrieveUsersByContract($contractID)
     {
-        $this->setStatement("SELECT * FROM `hr_users` WHERE user_status = 0");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
-    }
-    function retrieveProbationaryUsers()
-    {
-        $this->setStatement("SELECT * FROM `hr_users` WHERE user_status = 1");
-        $this->statement->execute();
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id WHERE user_status = ?");
+        $this->statement->execute([$contractID]);
         return $this->statement->fetchAll();
     }
     function retrieveDeletedUsers()
@@ -174,5 +168,23 @@ class User extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
+    function getEmployeesWithoutGoals()
+    {
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a 
+        JOIN hr_users i ON a.users_id = i.users_id
+        LEFT JOIN hr_eval_form as e ON a.users_id = e.users_id
+        WHERE e.users_id IS NULL");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
+    function getEmployeesWithApprovedMetrics()
+    {
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a 
+        JOIN hr_users i ON a.users_id = i.users_id
+        LEFT JOIN hr_eval_form e ON a.users_id = e.users_id
+        LEFT JOIN hr_eval_form_fp as fp ON fp.eval_form_id = e.hr_eval_form_id
+        WHERE fp.created_by IS NOT NULL AND fp.approved_by IS NOT NULL");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
 }
-?>

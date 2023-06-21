@@ -3,15 +3,17 @@ import React, { useEffect, useState } from "react";
 export default function Counter({ max }) {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (count === max) return;
+    if (max) {
+      const timer = setInterval(() => {
+        if (count !== max) {
+          setCount((prevCount) => prevCount + 1);
+        }
+      }, 25);
 
-      setCount((prevCount) => prevCount + 1);
-    }, 25);
-
-    return () => {
-      clearInterval(timer);
-    };
+      return () => {
+        clearInterval(timer);
+      };
+    }
   }, [count]);
   return <>{count}</>;
 }
