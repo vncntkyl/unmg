@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { error } from 'jquery';
 
-export default function CreateAssessment({ emp_id }) {
+export default function CreateEmployeeAssessment({ emp_id }) {
     const [finalUserPerformance, setfinalUserPerformance] = useState([]);
     const [quarterCheck, setQuarterCheck] = useState("");
     const [ifExists, setIfExists] = useState();

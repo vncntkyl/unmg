@@ -8,8 +8,8 @@ $form = new Form();
 // if (isset($_GET['userSignOff'])) {
 //     echo json_encode($form->selectUserSignOff());
 // }
-$userID = $_GET['userID'];
+$empID = $_GET['empID'];
 if (isset($_GET['userPerformance'])) {
-    echo json_encode($form->selectUserPerformance($userID));
+    echo json_encode($form->selectUserPerformance($empID));
 }
 ?>

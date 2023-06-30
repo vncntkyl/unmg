@@ -66,28 +66,45 @@ export function FunctionProvider({ children }) {
           differences.push({
             key: key,
             oldValue: obj1[key],
-            newValue: obj2[key]
+            newValue: obj2[key],
           });
         }
       }
     }
-  
+
     for (let key in obj2) {
       if (obj2.hasOwnProperty(key) && !obj1.hasOwnProperty(key)) {
         differences.push({
           key: key,
           oldValue: undefined,
-          newValue: obj2[key]
+          newValue: obj2[key],
         });
       }
     }
-  
+
     return differences;
   }
 
-  function removeSubText(text){
+  function removeSubText(text) {
     const tempString = text.split("(");
     return tempString[0];
+  }
+  function calculateGradeColor(grade) {
+    // Calculate the normalized value between 0 and 1 based on the grade range
+    const normalizedGrade = (grade - 1.0) / 3.0;
+
+    // Calculate the RGB components based on the normalized grade
+    const red = Math.round(255 * (1 - normalizedGrade));
+    const green = Math.round(255 * normalizedGrade);
+    const blue = 0;
+
+    // Convert RGB values to hexadecimal
+    const redHex = red.toString(16).padStart(2, "0");
+    const greenHex = green.toString(16).padStart(2, "0");
+    const blueHex = blue.toString(16).padStart(2, "0");
+
+    // Construct the hexadecimal color code
+    return `#${redHex}${greenHex}${blueHex}`;
   }
   const value = {
     getPath,
@@ -101,6 +118,7 @@ export function FunctionProvider({ children }) {
     areValuesFilled,
     capitalizeSentence,
     compareObjectArrays,
+    calculateGradeColor,
   };
 
   return (

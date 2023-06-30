@@ -13,7 +13,7 @@ export default function AgreementSignOff() {
   const [panel, setPanel] = useState("my evaluations");
   const [employeeID, setEmployeeID] = useState(-1);
   useEffect(() => {
-    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
+    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).emp_id);
   }, []);
   return employeeID !== -1 && (
     <>
@@ -64,10 +64,10 @@ export default function AgreementSignOff() {
             <Routes>
               {panel === "my evaluations" ? <Route
                 path="/"
-                element={<SignOff users_id={employeeID}/>}
+                element={<SignOff emp_id={employeeID}/>}
               /> : <Route
                 path="/"
-                element={<EmployeeSignOff users_id={employeeID}/>}
+                element={<EmployeeSignOff emp_id={employeeID}/>}
               />}</Routes>
           </div>
         </div>

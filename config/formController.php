@@ -152,9 +152,10 @@ class Form extends Controller
         return $this->statement->execute([':agreedrating' => $agreedRate, ':weightedRate' => $weightedRating, ':yearEndRateID' => $latestYearEndValID]);
     }
 
-    function selectUserPerformance($userID)
+    function selectUserPerformance($empID)
     {
-        $this->setStatement("SELECT 
+        $this->setStatement("SELECT
+        hr_users.emp_id,
         hr_eval_form.users_id, 
         hr_eval_form.rater_1, 
         hr_eval_form.rater_2,
@@ -177,7 +178,9 @@ class Form extends Controller
         hr_eval_form_sp_yee.wtd_rating
     FROM 
         hr_eval_form
-    JOIN 
+    JOIN
+            hr_users ON hr_users.users_id = hr_eval_form.users_id
+    JOIN
         hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
     JOIN 
         hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
@@ -190,16 +193,22 @@ class Form extends Controller
     JOIN 
         hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
     WHERE 
-        hr_eval_form.users_id = ?");
-        $this->statement->execute([$userID]);
+        hr_users.emp_id = ?");
+        $this->statement->execute([$empID]);
 
         return $this->statement->fetchAll();
     }
 
+    function insertUserAssessment($tbl_name, $formspID, $achievements)
+    {
+        $this->setStatement("UPDATE {$tbl_name} SET ratee_achievement = :ratee_achievement WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id");
+        return $this->statement->execute([':ratee_achievement' => $achievements, ':hr_eval_form_sp_id' => $formspID]);
+    }
 
-    function selectUserAssessment($userID)
+    function selectUserAssessment($empID)
     {
         $this->setStatement("SELECT 
+        hr_users.emp_id,
         hr_eval_form.users_id, 
         hr_eval_form.rater_1, 
         hr_eval_form.rater_2,
@@ -216,6 +225,7 @@ class Form extends Controller
         hr_kpi.kpi_desc, 
         hr_kpi.kpi_weight,
         hr_eval_form.hr_eval_form_id,
+        hr_eval_form_sp.hr_eval_form_sp_id,
 
         hr_eval_form_sp_fq.results AS fq_results,
         hr_eval_form_sp_fq.remarks AS fq_remarks,
@@ -241,10 +251,12 @@ class Form extends Controller
         hr_eval_form_sp_yee.remarks AS yee_remarks,
         hr_eval_form_sp_yee.agreed_rating,
         hr_eval_form_sp_yee.wtd_rating,
-        hr_eval_form_sp_yee_rating.ratee_achievement AS yee_achievement
+        hr_eval_form_sp_yee_rating.ratee_achievement AS yee_ratee_achievement
 
         FROM 
-            hr_eval_form
+            hr_eval_form 
+        JOIN
+            hr_users ON hr_users.users_id = hr_eval_form.users_id
         JOIN 
             hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
         JOIN 
@@ -275,15 +287,17 @@ class Form extends Controller
         JOIN
             hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
         WHERE 
-        hr_eval_form.users_id = ?
+        hr_users.emp_id = ?
         ");
-        $this->statement->execute([$userID]);
+        $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
 
-    function selectUserAssessmentScores($userID)
+    function selectUserAssessmentScores($empID)
     {
-        $this->setStatement("SELECT hr_eval_form.hr_eval_form_id, 
+        $this->setStatement("SELECT
+        hr_users.emp_id,
+        hr_eval_form.hr_eval_form_id, 
         hr_eval_form_fp.eval_form_id, 
         hr_objectives.hr_eval_form_fp_id, 
         hr_kpi.objective_id,
@@ -300,7 +314,9 @@ class Form extends Controller
         hr_eval_form_sp_yee.results AS yee_results,
         hr_yee_desc.target_metrics_desc AS yee_desc
         
-        FROM `hr_eval_form` 
+        FROM hr_eval_form
+        JOIN
+            hr_users ON hr_users.users_id = hr_eval_form.users_id
         JOIN
         hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
         JOIN
@@ -323,7 +339,7 @@ class Form extends Controller
             hr_target_metrics AS hr_yee_desc ON hr_yee_desc.kpi_id = hr_kpi.kpi_id            
         JOIN 
             hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id            
-        WHERE users_id = ?
+        WHERE hr_users.emp_id = ?
         AND
         hr_fq_desc.target_metrics_score = hr_eval_form_sp_fq.results
         AND
@@ -334,9 +350,37 @@ class Form extends Controller
         hr_yee_desc.target_metrics_score = hr_eval_form_sp_yee.results
         
         ");
-        $this->statement->execute([$userID]);
+        $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
+
+    function selectEmployeeAssessment($empID, $userStatus)
+    {
+        $this->setStatement("SELECT
+            employee.rater_1,
+            employee.rater_2,
+            employee.rater_3,
+            CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
+            CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
+            CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
+            CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
+            employee.emp_id,
+            employee.job_description
+        FROM hr_users AS employee
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.emp_id = employee.rater_1
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.emp_id = employee.rater_2
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.emp_id = employee.rater_3
+        WHERE 
+            employee.rater_1 = :rater_id
+        OR
+            employee.rater_2 = :rater_id
+        OR
+            employee.rater_3 = :rater_id
+                ");
+                $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
+                return $this->statement->fetchAll();
+    }
+
 
     function fetchPillars($evalID)
     {

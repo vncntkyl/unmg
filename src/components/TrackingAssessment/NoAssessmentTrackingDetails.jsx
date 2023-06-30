@@ -3,20 +3,19 @@ import axios from "axios";
 import { Route, Router, Routes } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
 
-export default function AssessmentTrackingDetails({ quarter }) {
-    const quarterName = quarter == 1 ? "First Quarter" : quarter == 2 ? "Mid Year Quarter" : quarter == 3 ? "Third Quarter" : "Year End Quarter";
+export default function NoAssessmentTrackingDetails() {
     return (
         <>
             <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
                 <span>
-                    Sorry, your supervisor has not yet graded your KPI for the {quarterName}.
+                    Sorry, you still haven’t created your Main Goals yet. Please proceed to the create goals tab.
                 </span>
                 <a
-                    href="/tracking_and_assement/create"
+                    href="/main_goals/create"
                     className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
                 >
                     <AiOutlinePlus />
-                    Add Quarter Evaluation
+                    Create Goals
                 </a>
             </div>
         </>

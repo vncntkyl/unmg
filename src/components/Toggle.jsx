@@ -27,6 +27,7 @@ export default function Toggle({
               panel === panel_1 ? "text-white" : "text-black"
             )}
             onClick={() => {
+              sessionStorage.setItem("panel", panel_1);
               setPanel(panel_1);
             }}
           >
@@ -39,6 +40,7 @@ export default function Toggle({
               panel === panel_2 ? "text-white" : "text-black"
             )}
             onClick={() => {
+              sessionStorage.setItem("panel", panel_2);
               setPanel(panel_2);
             }}
           >

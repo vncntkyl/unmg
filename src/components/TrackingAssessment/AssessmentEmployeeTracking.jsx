@@ -5,7 +5,7 @@ import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
 
-export default function AssessmentTracking({ emp_id }) {
+export default function AssessmentEmployeeTracking({ emp_id }) {
     const [finalUserPerformance, setfinalUserPerformance] = useState([]);
     const [pillarName, setPillarName] = useState([]);
     const [loading, setLoading] = useState(true);

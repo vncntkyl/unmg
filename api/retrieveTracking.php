@@ -2,11 +2,8 @@
 header("Access-Control-Allow-Origin: *");
 require_once '../config/formController.php';
 $form = new Form(); 
-$userID = $_GET['userID'];
+$empID = $_GET['empID'];
 if (isset($_GET['userTracking'])) {
-    echo json_encode($form->selectUserAssessment($userID));
-}
-if (isset($_GET['trackingMetrics'])) {
-    echo json_encode($form->selectUserAssessmentScores($userID));
+    echo json_encode($form->selectUserAssessment($empID));
 }
 ?>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { BiRightArrowAlt } from "react-icons/bi";
 import SignOffModal from "../../misc/SignOffModal";
 
-export default function SignOff({ users_id }) {
+export default function SignOff({ emp_id }) {
     const [finalUserPerformance, setfinalUserPerformance] = useState([]);
     const [pillarName, setPillarName] = useState([]);
     // const [results, setResults] = useState([]);
@@ -11,7 +11,6 @@ export default function SignOff({ users_id }) {
     const [selectedPillar, setSelectedPillar] = useState(0);
     const [tabTitle, setTabTitle] = useState([]);
     const [signModal, setsignModal] = useState(false);
-    const [hasSet, setHasSet] = useState(false);
     let previousObjective = null;
 
     useEffect(() => {
@@ -20,13 +19,9 @@ export default function SignOff({ users_id }) {
                 const response = await axios.get("http://localhost/unmg_pms/api/retrieveSignOff.php", {
                     params: {
                         userPerformance: true,
-                        userID: users_id
+                        empID: emp_id
                     }
                 });
-                if (!response.data || response.data.length === 0) {
-                    setHasSet(true);
-                    return;
-                }
                 if (!response.data) return
                 setfinalUserPerformance(response.data);
 
@@ -66,9 +61,9 @@ export default function SignOff({ users_id }) {
                 console.log(error.message)
             }
         }
-        if (!users_id) return;
+        if (!emp_id) return;
         getfinalUserPerformance();
-    }, [users_id, selectedPillar]);
+    }, [emp_id, selectedPillar]);
     useEffect(() => {
         const getResults = async () => {
 
@@ -77,6 +72,8 @@ export default function SignOff({ users_id }) {
 
     return !loading ? (
         <>
+
+
             <div className="md:text-[.8rem]">
                 {
                     pillarName.map((pillar, index) => (
