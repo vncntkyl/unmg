@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { Route, Router, Routes } from "react-router-dom";
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
+import EmployeeAssessmentTable from "../components/TrackingAssessment/EmployeeAssessmentTable";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
 import CreateAssessment from "../components/TrackingAssessment/CreateAssessment";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -27,7 +28,6 @@ export default function TrackingAssessment() {
         return "Create Assessment";
     }
   };
-
   if (!sessionStorage.getItem("currentUser")) {
     sessionStorage.setItem("redirect_to", window.location.pathname);
   }
@@ -73,15 +73,17 @@ export default function TrackingAssessment() {
                   element={<AssessmentTracking emp_id={employeeID}/>}
                 /> : <Route
                   path="/"
-                  element={<EmployeeAssessment emp_id={employeeID} />}
+                  element={<EmployeeAssessmentTable emp_id={employeeID} />}
                 />}
                 <Route
                   path="/create/*"
                   element={
                     <CreateAssessment emp_id={employeeID} />
-
                   }
                 />
+                <Route path="/employee_assessment/:id" element={<EmployeeAssessment />}/>
+                <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessment />}/>
+                <Route path="/employee_assessment/:id/approve" element={<EmployeeAssessment />}/>
               </Routes>
             </div>
           </div>

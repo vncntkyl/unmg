@@ -2,14 +2,19 @@
 header("Access-Control-Allow-Origin: *");
 require_once '../config/formController.php';
 $form = new Form();
-$empID = $_GET['empID']['emp_id'];
-$userStatus = $_GET['employeeType'];
 if (isset($_GET['employeeType'])) {
-    if ($userStatus === "0") {
-        echo json_encode($form->selectEmployeeAssessment($empID, $userStatus));
+    $empID = $_GET['empID']['emp_id'];
+
+    if ($_GET['employeeType'] === "0") {
+        $userStatus = 0;
+        $json_employee = json_encode($form->selectEmployeeAssessment($empID, $userStatus), JSON_UNESCAPED_UNICODE);
+        echo $json_employee;
+
     }
-    else {
-        echo json_encode($form->selectEmployeeAssessment($empID, $userStatus));
+    if ($_GET['employeeType'] === "1") {
+        $userStatus = 1;
+        $json_employee = json_encode($form->selectEmployeeAssessment($empID, $userStatus), JSON_UNESCAPED_UNICODE);
+        echo $json_employee;
     }
 }
 ?>
