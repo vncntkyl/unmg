@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useSearchParams } from "react-router-dom";
 import { EmployeeTable, EmployeeAdd } from "../components";
 import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
 
-export default function EmployeeList({panel_type}) {
+export default function EmployeeList() {
   const { getPath } = useFunction();
+  const searchParams = useSearchParams();
+
   const setHeader = (pathname) => {
     switch (pathname) {
       case "/employees":
@@ -61,7 +63,14 @@ export default function EmployeeList({panel_type}) {
             <Routes>
               <Route
                 path="*"
-                element={<EmployeeTable panel_type={panel_type} />}
+                element={
+                  <EmployeeTable
+                    filters={{
+                      company: searchParams[0].get("company"),
+                      department: searchParams[0].get("department"),
+                    }}
+                  />
+                }
               />
               <Route path="/profile/:id" element={<EmployeeProfile />} />
               <Route path="/profile/:id/edit" element={<EmployeeProfile />} />

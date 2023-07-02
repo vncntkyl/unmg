@@ -3,16 +3,15 @@ import classNames from "classnames";
 import { useAuth } from "../../context/authContext";
 import { GrFormNext, GrFormPrevious, GrFormSearch } from "react-icons/gr";
 import { AiOutlineEdit } from "react-icons/ai";
-import { CompanyAction } from "../Action";
 import OutsideTrigger from "../OutsideTrigger";
+import { MdDelete } from "react-icons/md";
 export default function CompanyTable({
   toggleModal,
   setCompanyData,
   setDepartmentID,
   success,
 }) {
-  const { getBusinessUnits, getDepartments, fetchUsers, departmentList } =
-    useAuth();
+  const { getBusinessUnits, getDepartments, fetchUsers } = useAuth();
 
   const [departments, setDepartments] = useState([]);
   const [businessUnits, setBusinessUnits] = useState([]);
@@ -20,21 +19,7 @@ export default function CompanyTable({
   const [currentCompany, setCurrentCompany] = useState("");
   const [query, setQuery] = useState("");
   const [onEdit, toggleEdit] = useState(false);
-  const [actionsVisibility, setActionsVisibility] = useState(
-    Array(
-      departments.filter((dept) => dept.company_id === company).length
-    ).fill(false)
-  );
   const [users, setUsers] = useState([]);
-
-  const toggleActions = (index) => {
-    setActionsVisibility((prev) => {
-      const updatedVisibility = [...prev];
-      updatedVisibility.fill(false);
-      updatedVisibility[index] = !prev[index];
-      return updatedVisibility;
-    });
-  };
 
   useEffect(() => {
     const setup = async () => {
@@ -180,8 +165,7 @@ export default function CompanyTable({
                           <th
                             key={i}
                             className={classNames(
-                              "text-center bg-un-blue-light text-white p-1 px-2 font-normal whitespace-nowrap",
-                              i === 0 ? "w-1/2" : "w-full"
+                              "text-center bg-un-blue-light text-white p-1 px-2 font-normal whitespace-nowrap w-full"
                             )}
                           >
                             {header}
@@ -207,40 +191,40 @@ export default function CompanyTable({
                             {department.department_name}
                           </td>
                           <td>
-                            {
+                            {console.log(users)}
+                            {users.filter(
+                              (user) =>
+                                user.department === department.department_id
+                            ).length > 0 ? (
+                              <a
+                                href={`/employees?company=${department.company_id}&department=${department.department_id}`}
+                                className="text-un-blue-light underline"
+                              >
+                                {
+                                  users.filter(
+                                    (user) =>
+                                      user.department ===
+                                      department.department_id
+                                  ).length
+                                }
+                              </a>
+                            ) : (
                               users.filter(
                                 (user) =>
                                   user.department === department.department_id
                               ).length
-                            }
+                            )}
                           </td>
-                          {console.log(
-                            actionsVisibility,
-                            company,
-                            Array(
-                              departmentList.filter(
-                                (dept) => dept.company_id === company
-                              ).length
-                            ).fill(false)
-                          )}
-                          <OutsideTrigger
-                            onOutsideClick={() => setActionsVisibility([])}
-                          >
-                            {/* <CompanyAction
-                              toggleActions={toggleActions}
-                              actionsVisibility={actionsVisibility}
-                              idx={departments.indexOf(
-                                departments.find(
-                                  (dept) =>
-                                    dept.department_id ===
-                                    department.department_id
-                                )
-                              )}
-                              toggleModal={toggleModal}
-                              deptID={department.department_id}
-                              setDepartmentID={setDepartmentID}
-                            /> */}
-                          </OutsideTrigger>
+                          <td>
+                            <button
+                              onClick={() => {
+                                setDepartmentID(department.department_id);
+                                toggleModal("delete");
+                              }}
+                            >
+                              <MdDelete className="text-un-red-light" />
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}

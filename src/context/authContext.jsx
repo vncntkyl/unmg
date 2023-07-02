@@ -34,16 +34,15 @@ export function AuthProvider({ children }) {
   const registerUser = async (userdata) => {
     try {
       const url = "http://localhost/unmg_pms/api/registerUser.php";
-      //const url = "../api/registerUser.php";
-      const response = await axios.post(url, {
-        params: {
-          userdata: userdata,
-        },
-      });
 
-      if (response.data === "success") {
-        return true;
-      }
+      let fd = new FormData();
+      fd.append("userdata", JSON.stringify(userdata));
+      //const url = "../api/registerUser.php";
+      const response = await axios.post(url, fd);
+      console.log(response.data);
+      // if (response.data === "success") {
+      //   return true;
+      // }
     } catch (e) {
       console.log(e.message);
     }
@@ -72,12 +71,12 @@ export function AuthProvider({ children }) {
     try {
       const response = await axios.get(url, {
         params: {
-          users: "regular"
-        }
+          users: true,
+        },
       });
       if (response.status === 200) {
         return response.data;
-      }else{
+      } else {
         return 1;
       }
     } catch (e) {

@@ -7,6 +7,7 @@ import CompanyModal from "../misc/CompanyModal";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import Alert from "../misc/Alert";
+import { useNavigate } from "react-router-dom";
 
 export default function CompanyList() {
   document.title =
@@ -16,7 +17,7 @@ export default function CompanyList() {
   const [companyData, setCompanyData] = useState(0);
   const [departmentID, setDepartmentID] = useState(null);
   const [successModal, showSuccessModal] = useState("");
-  useEffect(() => {}, []);
+  const navigate = useNavigate();
   return (
     <>
       <section className="relative">
@@ -100,7 +101,9 @@ export default function CompanyList() {
           <>
             <Alert
               type="success"
-              onClose={() => showSuccessModal("")}
+              onClose={() => {
+                navigate(0);
+              }}
               title={"Congratulations!"}
               message={successModal}
             />

@@ -50,16 +50,16 @@ class User extends Controller
 
     function retrieveHeadUsers()
     {
-        $this->setStatement("SELECT users_id, CONCAT(last_name, ', ', first_name, ' ', LEFT(middle_name, 1), '.') AS full_name, user_type
-        FROM hr_users
-        WHERE user_type = '5' || user_type = '6'");
+        $this->setStatement("SELECT u.employee_id, CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.') AS full_name, a.user_type
+        FROM hr_users u LEFT JOIN hr_user_accounts a ON u.users_id = a.users_id
+        WHERE a.user_type != 6");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
 
     function retrieveUserTypes()
     {
-        $this->setStatement("SELECT * FROM hr_usertype");
+        $this->setStatement("SELECT * FROM hr_user_level");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -74,10 +74,71 @@ class User extends Controller
         $this->setStatement("UPDATE `hr_users` SET deleted = 1 WHERE users_id=:uID");
         return $this->statement->execute([':uID' => $uID]);
     }
-    function insertAcc($supervisor_id, $imm_supp_id, $lName, $fName, $mName, $compID, $deptID, $salutation, $email, $contactNo, $address, $uName, $pass, $jobDesc, $uStatus)
+    function insertAcc($u)
     {
-        $this->setStatement("INSERT into `hr_users` (supervisor_id,immediate_supervisor_id,last_name,   md5(:password),:jobdesc,:userstatus)");
-        return $this->statement->execute([':supervisor' => $supervisor_id, ':immsupervisor' => $imm_supp_id, ':lastname' => $lName, ':firstname' => $fName, ':middlename' => $mName, ':companyid' => $compID, ':departmentid' => $deptID, ':salutation' => $salutation, ':email' => $email, ':contactno' => $contactNo, ':address' => $address, ':username' => $uName, ':password' => $pass, ':jobdesc' => $jobDesc, ':userstatus' => $uStatus]);
+        $salutations = ['Mr.', 'Miss', 'Mrs.'];
+        $employee_ID = intval($u->employee_id);
+        $company_ID = intval($u->company);
+        $salutation = $salutations[intval($u->salutation)];
+        $department_ID = intval($u->department);
+        $job_level = intval($u->job_level);
+        $password = md5($u->password);
+        $employment_type = intval($u->employment_type) === 0 ? "LOCAL" : "EXPAT";
+        $primary_evaluator = intval($u->primary_evaluator);
+        $secondary_evaluator = $u->secondary_evaluator != NULL ? intval($u->secondary_evaluator) : NULL;
+        $tertiary_evaluator = $u->secondary_evaluator != NULL ? intval($u->tertiary_evaluator) : NULL;
+        $status = 1;
+
+        try {
+
+            $this->setStatement("BEGIN;
+    
+            INSERT INTO hr_users (employee_id, salutation, last_name, first_name, middle_name, suffix, nickname, company, department, team, 
+            job_description, contract_type, contact_no, address, primary_evaluator, secondary_evaluator, tertiary_evaluator, 
+            employment_category, nationality, hire_date) 
+            VALUES (:employee_ID, :salutation, :last_name,:first_name, :middle_name, :suffix,
+            :nickname, :company_ID, :department_ID, :team, :job_description, :contract_type, :contact_no,
+            :address, :primary_evaluator, :secondary_evaluator, :tertiary_evaluator, :employment_type, :nationality,:hire_date);
+            SET @generated_id = LAST_INSERT_ID();
+            INSERT INTO hr_user_accounts (users_id, username, password, email_address, user_type, user_status, account_status) 
+            VALUES (@generated_id, :username, :password, :email, :user_type, :user_status, :account_status);
+            
+            COMMIT;");
+            if ($this->statement->execute([
+                ':employee_ID' => $employee_ID,
+                ':salutation' => $salutation,
+                ':last_name' => $u->last_name,
+                ':first_name' => $u->first_name,
+                ':middle_name' => $u->middle_name,
+                ':suffix' => $u->suffix,
+                ':nickname' =>  $u->nickname,
+                ':company_ID' => $company_ID,
+                ':department_ID' => $department_ID,
+                ':team' => $u->team,
+                ':job_description' => $u->job_description,
+                ':contract_type' => $u->contract_type,
+                ':contact_no' => $u->contact_no,
+                ':address' => $u->address,
+                ':primary_evaluator' => $primary_evaluator,
+                ':secondary_evaluator' => $secondary_evaluator,
+                ':tertiary_evaluator' => $tertiary_evaluator,
+                ':employment_type' => $employment_type,
+                ':nationality' => $u->nationality,
+                ':hire_date' =>  $u->hire_date,
+                ':username' => $u->username,
+                ':password' => $password,
+                ':email' => $u->email,
+                ':user_type' => $job_level,
+                ':user_status' => $status,
+                ':account_status' =>  $status,
+            ])) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } catch (PDOException $e) {
+            return $e->getMessage();
+        }
     }
     function updateAcc($supervisor_id, $imm_supp_id, $lName, $fName, $mName, $compID, $deptID, $salutation, $contactNo, $address, $jobDesc, $uStatus, $user_id)
     {

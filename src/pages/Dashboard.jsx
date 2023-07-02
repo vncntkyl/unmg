@@ -15,7 +15,6 @@ export default function Dashboard() {
   }
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
-  const [panel, setPanel] = useState("regular");
   const [loader, toggleLoader] = useState(true);
   const [user, setUser] = useState({});
   let xDown = null;
@@ -81,14 +80,10 @@ export default function Dashboard() {
         />
         {/* DASHBOARD MAIN */}
         <Routes>
-          <Route
-            path="/"
-            element={<DashboardOverview />}
-          />
-          <Route
-            path="/employees/*"
-            element={<EmployeeList panel_type={panel} />}
-          />
+          <Route path="/" element={<DashboardOverview />} />
+          <Route path="/employees/*" element={<EmployeeList />} />
+          {/* <Route path="/employees/:company_id/*" element={<EmployeeList />} />
+          <Route path="/employees/:company_id/:department_id/*" element={<EmployeeList />} /> */}
           <Route path="/account/*" element={<AccountSettings />} />
           <Route path="/companies/*" element={<CompanyList />} />
           <Route path="/roles/*" element={<Roles />} />

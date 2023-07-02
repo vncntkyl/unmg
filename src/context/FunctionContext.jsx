@@ -44,7 +44,7 @@ export function FunctionProvider({ children }) {
   }
 
   function areValuesFilled(obj) {
-    const keysToSkip = ["middle_name", "immediate_supervisor"];
+    const keysToSkip = ["middle_name", "suffix", "secondary_evaluator", "tertiary_evaluator"];
     const values = Object.keys(obj)
       .filter((key) => !keysToSkip.includes(key))
       .map((key) => obj[key]);
