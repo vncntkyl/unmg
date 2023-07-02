@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
-import EvalTable from "../components/ViewEvalTable";
+import EvalTable from "../components/Evaluations/ViewEvalTable";
 import { GrFormSearch } from "react-icons/gr";
 export default function ViewEvaluation({}) {
   const { companyList, departmentList } = useAuth();
@@ -73,7 +73,7 @@ export default function ViewEvaluation({}) {
                     employeeType === "probation" ? "text-white" : "text-black"
                   )}
                   onClick={() => {
-                    setEmployeeType("probation");
+                    setEmployeeType("probationary");
                   }}
                 >
                   Probation
@@ -98,7 +98,7 @@ export default function ViewEvaluation({}) {
                           <option value="First_Quarter">First Quarter</option>
                           <option value="Second_Quarter">Second Quarter</option>
                           <option value="Third_Quarter">Third Quarter</option>
-                          <option value="Fourth_Quarter">Fourth Quarter</option>
+                          <option value="Fifth_Quarter">Year End</option>
                         </select>
                       </>
                     ) : (
@@ -115,8 +115,7 @@ export default function ViewEvaluation({}) {
                           <option value="Second_Quarter">Second Quarter</option>
                           <option value="Third_Quarter">Third Quarter</option>
                           <option value="Fourth_Quarter">Fourth Quarter</option>
-                          <option value="Fifth_Quarter">Fifth Quarter</option>
-                          <option value="Year_End">Year-End</option>
+                          <option value="Fifth_Quarter">Year-End</option>
                         </select>
                       </>
                     )}
@@ -173,7 +172,7 @@ export default function ViewEvaluation({}) {
                           onChange={handleDepartmentChange}
                         >
                           <option value="All">All</option>
-                          {departmentList.map((dept) => {
+                          {departments.map((dept) => {
                             return (
                               <option
                                 key={dept.department_id}
