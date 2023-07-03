@@ -24,16 +24,19 @@ export default function TrackingAction({
   const { formatName } = useFunction();
   const viewUserAssessment = () => {
     sessionStorage.setItem("assessment_id", employee_id);
+    sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate("/tracking_and_assement/employee_assessment/" + formatName(first_name));
   };
 
   const gradeUserAssessment = () => {
     sessionStorage.setItem("assessment", employee_id);
+    sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate("/tracking_and_assement/employee_assessment/" + employee_id + "/grade_edit");
   };
 
   const approveUserAssessment = () => {
     sessionStorage.setItem("assessment", employee_id);
+    sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate("/tracking_and_assement/employee_assessment/" + employee_id + "/approve");
   };
 
