@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useFunction } from "../context/FunctionContext";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
-import axios from "axios";
 
 export default function Input({
   id,
@@ -49,8 +48,8 @@ export default function Input({
                     .department_name
                 : id.includes("evaluator")
                 ? headList.length > 0 &&
-                  headList.find((head) => head.users_id === val)
-                  ? headList.find((head) => head.users_id === val).full_name
+                  headList.find((head) => head.employee_id === val)
+                  ? headList.find((head) => head.employee_id === val).full_name
                   : "N/A"
                 : id === "status"
                 ? jobStatusList[val]

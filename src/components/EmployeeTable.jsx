@@ -279,7 +279,7 @@ export default function EmployeeTable({ filters = [] }) {
             </div>
           </div>
           {/* BODY */}
-          <div className="max-w-full max-h-[400px] shadow-md rounded-md bg-white overflow-x-auto mx-2 mt-1">
+          <div className="max-w-full max-h-[400px] shadow-md rounded-md bg-white overflow-x-scroll mx-2 mt-1">
             <table>
               <thead>
                 <tr>

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { developmentAPIs as url } from "./apiList";
 import axios from "axios";
 const AuthContext = React.createContext();
 
@@ -15,14 +16,12 @@ export function AuthProvider({ children }) {
   const nav = useNavigate();
 
   const signInUser = async (username, password) => {
-    const url = "http://localhost/unmg_pms/api/signInUser.php";
-    //const url = "../api/signInUser.php";
     let formData = new FormData();
     formData.append("user_login", username);
     formData.append("password", password);
 
     try {
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url.login, formData);
       if (response.status === 200) {
         return response.data;
       }
@@ -33,12 +32,9 @@ export function AuthProvider({ children }) {
 
   const registerUser = async (userdata) => {
     try {
-      const url = "http://localhost/unmg_pms/api/registerUser.php";
-
       let fd = new FormData();
       fd.append("userdata", JSON.stringify(userdata));
-      //const url = "../api/registerUser.php";
-      const response = await axios.post(url, fd);
+      const response = await axios.post(url.register, fd);
       console.log(response.data);
       // if (response.data === "success") {
       //   return true;
@@ -50,9 +46,7 @@ export function AuthProvider({ children }) {
 
   const updateUser = async (userdata, id) => {
     try {
-      const url = "http://localhost/unmg_pms/api/updateUser.php";
-      //const url = "../api/updateUser.php";
-      const response = await axios.post(url, {
+      const response = await axios.post(url.updateUser, {
         params: {
           userdata: userdata,
           id: id,
@@ -244,6 +238,30 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const uploadProfilePicture = async () => {
+    const imageURL = `../images/profile_${
+      JSON.parse(sessionStorage.getItem("user")).users_id
+    }.${file.name.split(".")[file.name.split(".").length - 1]}`;
+
+    const formdata = new FormData();
+    formdata.append("imageFile", file);
+    formdata.append(
+      "user_id",
+      JSON.parse(sessionStorage.getItem("user")).users_id
+    );
+    formdata.append("imageURL", imageURL);
+    try {
+      const response = await axios.post(url.uploadProfilePicture, formdata);
+      if (response.data === "success") {
+        // const tempUser = JSON.parse(sessionStorage.getItem("user"));
+        // tempUser.picture = imageURL;
+        // sessionStorage.setItem("user", JSON.stringify(tempUser));
+        return imageURL;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
     if (sessionStorage.getItem("currentUser")) {
       setCurrentUser(sessionStorage.getItem("currentUser"));
@@ -332,6 +350,7 @@ export function AuthProvider({ children }) {
     setCurrentUser,
     getBusinessUnits,
     deleteDepartment,
+    uploadProfilePicture,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

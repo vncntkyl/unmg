@@ -14,7 +14,7 @@ export default function EmployeeAdd() {
     getBusinessUnits,
     getDepartments,
   } = useAuth();
-  const { splitKey, areValuesFilled } = useFunction();
+  const { splitKey, areValuesFilled, capitalizeSentence } = useFunction();
   const [businessUnits, setBusinessUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [modal, setModal] = useState("standby");
@@ -157,11 +157,20 @@ export default function EmployeeAdd() {
                         : object_key.includes("evaluator")
                         ? headList
                         : object_key === "job_level"
-                        ? usertypeList
+                        ? usertypeList.map((type) => {
+                            return {
+                              ...type,
+                              job_level_name: capitalizeSentence(
+                                type.job_level_name
+                              ),
+                            };
+                          })
                         : object_key === "employment_type"
                         ? ["LOCAL", "EXPAT"]
                         : object_key === "contract_type"
-                        ? contractList
+                        ? contractList.map((contract) => {
+                            return capitalizeSentence(contract);
+                          })
                         : undefined
                     }
                   />

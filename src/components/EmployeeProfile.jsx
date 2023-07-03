@@ -9,28 +9,33 @@ import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
 import Modal from "../misc/Modal";
+import { format } from "date-fns";
 export default function EmployeeProfile({ admin }) {
   const { id } = useParams();
   const {
-    companyList,
-    departmentList,
+    getBusinessUnits,
+    getDepartments,
     headList,
     usertypeList,
     updateUser,
     navigate,
   } = useAuth();
-  const { splitKey, reformatName, compareObjectArrays } = useFunction();
+  const { splitKey, reformatName, compareObjectArrays, capitalizeSentence } =
+    useFunction();
 
   const redirect_back_link = sessionStorage.getItem("redirect_back_to");
 
   const [personalInfo, setPersonalInfo] = useState([]);
   const [jobInfo, setJobInfo] = useState([]);
+  const [businessUnits, setBusinessUnits] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [img, setImg] = useState(null);
   const [file, setFile] = useState(null);
   const [editable, setEditable] = useState(false);
   const [modal, setModal] = useState("standby");
+  const employment_type = ["LOCAL", "EXPAT"];
   const salutationList = ["Mr.", "Miss", "Mrs."];
-  const jobStatusList = ["Regular", "Probation", "Resigned"];
+  const contractList = ["regular", "probation", "project based", "consultant"];
 
   const handleSubmit = (e) => {
     const user = JSON.parse(sessionStorage.getItem("user"));
@@ -143,25 +148,40 @@ export default function EmployeeProfile({ admin }) {
           console.error("Failed to load image:", error);
         });
     }
+    const setup = async () => {
+      const companyList = await getBusinessUnits();
+      setBusinessUnits(companyList);
+      const departmentList = await getDepartments();
+      setDepartments(departmentList);
+    };
+    setup();
 
     setPersonalInfo({
-      first_name: user["first_name"],
-      middle_name: user["middle_name"],
-      last_name: user["last_name"],
-      salutation: user["salutation"],
-      email: user["email"],
-      contact_no: user["contact_no"],
-      address: user["address"],
-      username: user["username"],
+      first_name: user.first_name,
+      middle_name: user.middle_name,
+      last_name: user.last_name,
+      suffix: user.suffix || "N/A",
+      nickname: user.nickname,
+      salutation: user.salutation,
+      email: user.email_address,
+      contact_no: user.contact_no,
+      address: user.address,
+      nationality: user.nationality,
+      username: user.username,
     });
     setJobInfo({
-      company: user["company_id"],
-      department: user["department_id"],
-      supervisor: user["supervisor_id"],
-      immediate_supervisor: user["immediate_supervisor_id"],
-      job_description: user["job_description"],
-      status: user["user_status"],
-      user_type: user["user_type"],
+      employee_id: user.employee_id,
+      company: user.company,
+      department: user.department,
+      team: user.team,
+      job_description: user.job_description,
+      job_level: user.user_type,
+      employment_type: user.employment_category,
+      contract_type: user.contract_type,
+      primary_evaluator: user.primary_evaluator,
+      secondary_evaluator: user.secondary_evaluator || "N/A",
+      tertiary_evaluator: user.tertiary_evaluator || "N/A",
+      hire_date: user.hire_date,
     });
   }, []);
   return personalInfo ? (
@@ -289,36 +309,62 @@ export default function EmployeeProfile({ admin }) {
                     withLabel={true}
                     label={splitKey(object_key)}
                     id={object_key}
-                    val={jobInfo[object_key]}
+                    val={
+                      object_key === "job_level"
+                        ? usertypeList.find(
+                            (usertype) =>
+                              usertype.job_level_id === jobInfo.job_level
+                          ).job_level_name
+                        : object_key === "hire_date"
+                        ? format(new Date(jobInfo.hire_date), "MMM d, yyyy")
+                        : jobInfo[object_key]
+                    }
                     set={setJobInfo}
                     editable={editable}
                     type={
                       [
                         "company",
                         "department",
-                        "supervisor",
-                        "immediate_supervisor",
-                        "status",
-                        "user_type",
+                        "primary_evaluator",
+                        "secondary_evaluator",
+                        "tertiary_evaluator",
+                        "contract_type",
+                        "employment_type",
+                        "job_level",
                       ].includes(object_key)
                         ? editable
                           ? "dropdown"
+                          : "text"
+                        : object_key === "hire_date"
+                        ? editable
+                          ? "date"
                           : "text"
                         : "text"
                     }
                     dropdownOptions={
                       object_key === "company"
-                        ? companyList
+                        ? businessUnits
                         : object_key === "department"
-                        ? departmentList
-                        : object_key === "supervisor"
-                        ? headList.filter((head) => head.user_type === "5")
-                        : object_key === "immediate_supervisor"
-                        ? headList.filter((head) => head.user_type === "6")
-                        : object_key === "status"
-                        ? jobStatusList
-                        : object_key === "user_type"
-                        ? usertypeList
+                        ? departments.filter(
+                            (dept) => dept.company_id == jobInfo.company
+                          )
+                        : object_key.includes("evaluator")
+                        ? headList
+                        : object_key === "job_level"
+                        ? usertypeList.map((type) => {
+                            return {
+                              ...type,
+                              job_level_name: capitalizeSentence(
+                                type.job_level_name
+                              ),
+                            };
+                          })
+                        : object_key === "contract_type"
+                        ? contractList.map((contract) => {
+                            return capitalizeSentence(contract);
+                          })
+                        : object_key === "employment_type"
+                        ? employment_type
                         : undefined
                     }
                   />
