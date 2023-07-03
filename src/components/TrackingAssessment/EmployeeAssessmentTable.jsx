@@ -7,6 +7,7 @@ export default function EmployeeAssessmentTable(emp_id) {
   const [employeeType, setEmployeeType] = useState("0");
   const [employeesRecords, setEmployeesRecords] = useState([]);
   const [actionVisibility, setActionVisibility] = useState(false);
+
   const toggleActionVisibility = () => {
     setActionVisibility((prev) => !prev);
   };
@@ -54,6 +55,7 @@ export default function EmployeeAssessmentTable(emp_id) {
           return {
             employee_id: item.employee_id,
             first_name: item.first_name,
+            employee_name: item.employee_name,
             fq_achievements:
               item.fq_achievements !== "" && item.fq_achievements !== null,
             myr_achievements:
@@ -363,7 +365,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                       first_name={employee.first_name}
                       />
                       </td>
-                    </>
+                    </> 
                   ) : (
                     <>
                       <td></td>

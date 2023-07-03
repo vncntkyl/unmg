@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CiCircleMore } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import { useFunction } from "../../context/FunctionContext";
 
 export default function TrackingAction({ 
   employee_id,
@@ -20,6 +21,7 @@ export default function TrackingAction({
       setDropdownVisible(false);
     }
   };
+  const { formatName } = useFunction();
   const viewUserAssessment = () => {
     sessionStorage.setItem("assessment_id", employee_id);
     navigate("/tracking_and_assement/employee_assessment/" + formatName(first_name));
