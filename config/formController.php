@@ -282,5 +282,48 @@ class Form extends Controller
         $this->setStatement("UPDATE `hr_target_metrics` SET `target_metrics_desc`= ? WHERE `target_metrics_id` = ?");
         return $this->statement->execute([$targetMetrics, $targetMetricsID]);
     }
+    function fetchAllEvaluations()
+    {
+        $this->setStatement("SELECT CONCAT(hr_users.last_name,',', ' ',hr_users.first_name,' ',hr_users.middle_name) AS 'Name',company,department,hr_users.job_description AS 'Job_Title',
+        hr_eval_form_sp_pillar_ratings.firstQuarterTotalResult as 'First_Quarter', 
+        hr_eval_form_sp_pillar_ratings.midYearTotalResult as 'Second_Quarter', 
+        hr_eval_form_sp_pillar_ratings.ThirdQuarterTotalResult as 'Third_Quarter', 
+        hr_eval_form_sp_pillar_ratings.fourthQuarterTotalResult as 'Fourth_Quarter',
+        hr_eval_form_sp_pillar_ratings.YearEndTotalResult as 'Fifth_Quarter',
+        hr_eval_form_sp_quarterly_ratings.FirstQuarterRating as 'FirstQuarterRating',
+        hr_eval_form_sp_quarterly_ratings.MidYearRating as 'MidYearRating',
+        hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating as 'ThirdQuarterRating',
+        hr_eval_form_sp_quarterly_ratings.FourthQuarterRating as 'FourthQuarterRating',
+        hr_eval_form_sp_quarterly_ratings.YearEndRating as 'YearEndRating',
+        hr_eval_form_pillars.pillar_id AS 'EvalPillarID', 
+        hr_eval_form.hr_eval_form_id as 'MainFormId',
+        hr_eval_form_pillars.hr_eval_form_id as 'ComparedFormId',
+        hr_eval_form_pillars.pillar_id, 
+        contract_type
+        FROM hr_eval_form
+        JOIN hr_users ON hr_eval_form.users_id = hr_users.users_id
+        JOIN hr_eval_form_pillars ON hr_eval_form.hr_eval_form_id = hr_eval_form_pillars.hr_eval_form_id
+        JOIN hr_eval_form_sp_pillar_ratings ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_eval_form_sp_pillar_ratings.eval_form_pillars_id
+        JOIN hr_eval_form_sp_quarterly_ratings ON hr_eval_form.hr_eval_form_id = hr_eval_form_sp_quarterly_ratings.eval_form_id;");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
+    function fetchPillarPercentageAndKPIDesc()
+    {
+        $this->setStatement("SELECT CONCAT(hr_users.last_name,',', ' ',hr_users.first_name,' ',hr_users.middle_name) AS 'Name',employee_id,company,department,hr_users.job_description AS 'Job_Title',
+        hr_eval_form_pillars.pillar_percentage,
+        hr_eval_form_pillars.pillar_id AS 
+        'EvalPillarID', 
+        hr_eval_form_pillars.pillar_id, 
+        contract_type,
+        hr_objectives.objective as 'objective'
+        FROM hr_eval_form
+        JOIN hr_users ON hr_eval_form.users_id = hr_users.users_id
+        JOIN hr_eval_form_pillars ON hr_eval_form.hr_eval_form_id = hr_eval_form_pillars.hr_eval_form_id
+        JOIN hr_objectives ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
+        ");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
 }
 ?>
