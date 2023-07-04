@@ -7,24 +7,22 @@ require "../config/userController.php";
 $user = new User();
 
 if (isset($_FILES["imageFile"]) && $_FILES["imageFile"]["error"] === UPLOAD_ERR_OK) {
-    $file = $_FILES["imageFile"];
+  $file = $_FILES["imageFile"];
 
-    // Get file information
-    $fileName = $file["name"];
-    $fileTmpName = $file["tmp_name"];
-    $fileSize = $file["size"];
-    $fileType = $file["type"];
+  // Get file information
+  $fileName = $file["name"];
+  $fileTmpName = $file["tmp_name"];
+  $fileSize = $file["size"];
+  $fileType = $file["type"];
 
-    $targetPath = $_POST['imageURL'];
+  $targetPath = $_POST['imageURL'];
+  try {
     if (move_uploaded_file($fileTmpName, $targetPath)) {
-      
-        if($user->insertPicture($_POST['user_id'],$targetPath)){
-            echo "success";
-        }
+      echo $user->insertPicture($_POST['user_id'], "..".substr($targetPath,6));
     } else {
       echo "Failed to upload file.";
     }
-  } else {
+  } catch (Exception $e) {
     echo "Error uploading file: " . $_FILES["imageFile"]["error"];
   }
-?>
+}

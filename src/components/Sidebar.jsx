@@ -121,7 +121,7 @@ export default function Sidebar({ sidebarToggler, className }) {
               <NavButton
                 icon={<RiLineChartLine />}
                 textLabel={"View Evaluations"}
-                slug={"view_evaluation"}
+                slug={"view_evaluations"}
               />
               <NavButton
                 icon={<RxCounterClockwiseClock />}

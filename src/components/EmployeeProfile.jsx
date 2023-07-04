@@ -19,6 +19,7 @@ export default function EmployeeProfile({ admin }) {
     usertypeList,
     updateUser,
     navigate,
+    uploadProfilePicture,
   } = useAuth();
   const { splitKey, reformatName, compareObjectArrays, capitalizeSentence } =
     useFunction();
@@ -33,6 +34,7 @@ export default function EmployeeProfile({ admin }) {
   const [file, setFile] = useState(null);
   const [editable, setEditable] = useState(false);
   const [modal, setModal] = useState("standby");
+
   const employment_type = ["LOCAL", "EXPAT"];
   const salutationList = ["Mr.", "Miss", "Mrs."];
   const contractList = ["regular", "probation", "project based", "consultant"];
@@ -91,32 +93,6 @@ export default function EmployeeProfile({ admin }) {
       setFile(evt.target.files[0]);
     };
     reader.readAsDataURL(evt.target.files[0]);
-  };
-
-  const handleUpload = async () => {
-    let url = "http://localhost/unmg_pms/api/uploadImage.php";
-    //let url = "../api/uploadImage.php";
-    const imageURL = `../images/profile_${
-      JSON.parse(sessionStorage.getItem("user")).users_id
-    }.${file.name.split(".")[file.name.split(".").length - 1]}`;
-
-    const formdata = new FormData();
-    formdata.append("imageFile", file);
-    formdata.append(
-      "user_id",
-      JSON.parse(sessionStorage.getItem("user")).users_id
-    );
-    formdata.append("imageURL", imageURL);
-    try {
-      const response = await axios.post(url, formdata);
-      if (response.data === "success") {
-        const tempUser = JSON.parse(sessionStorage.getItem("user"));
-        tempUser.picture = imageURL;
-        sessionStorage.setItem("user", JSON.stringify(tempUser));
-      }
-    } catch (e) {
-      console.log(e.message);
-    }
   };
 
   useEffect(() => {
@@ -248,7 +224,12 @@ export default function EmployeeProfile({ admin }) {
             {file && (
               <div>
                 <button
-                  onClick={() => handleUpload()}
+                  onClick={() => {
+                    if (uploadProfilePicture(file)) {
+                      setModal("success upload");
+                      setFile(null)
+                    }
+                  }}
                   type="button"
                   className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed animate-fade"
                 >
@@ -351,7 +332,7 @@ export default function EmployeeProfile({ admin }) {
                         : object_key.includes("evaluator")
                         ? headList
                         : object_key === "job_level"
-                        ? usertypeList.map((type) => {
+                        ? usertypeList && usertypeList.map((type) => {
                             return {
                               ...type,
                               job_level_name: capitalizeSentence(
@@ -403,6 +384,17 @@ export default function EmployeeProfile({ admin }) {
           <Modal
             title={"Update Account"}
             message={`Account has been updated!`}
+            closeModal={setModal}
+            action={"Dismiss"}
+            handleContinue={handleDismissal}
+          />
+        </>
+      )}
+      {modal === "success upload" && (
+        <>
+          <Modal
+            title={"Update Profile Picture"}
+            message={`Profile picture has been updated!`}
             closeModal={setModal}
             action={"Dismiss"}
             handleContinue={handleDismissal}

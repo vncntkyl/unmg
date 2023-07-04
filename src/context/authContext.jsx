@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { developmentAPIs as url } from "./apiList";
 import axios from "axios";
+import { format } from "date-fns";
 const AuthContext = React.createContext();
 
 export function useAuth() {
@@ -238,10 +239,12 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const uploadProfilePicture = async () => {
-    const imageURL = `../images/profile_${
-      JSON.parse(sessionStorage.getItem("user")).users_id
-    }.${file.name.split(".")[file.name.split(".").length - 1]}`;
+  const uploadProfilePicture = async (file) => {
+    const imageURL = `../src/assets/images/profile_${
+      JSON.parse(sessionStorage.getItem("user")).employee_id
+    }_${format(new Date(), "T")}.${
+      file.name.split(".")[file.name.split(".").length - 1]
+    }`;
 
     const formdata = new FormData();
     formdata.append("imageFile", file);
@@ -252,11 +255,11 @@ export function AuthProvider({ children }) {
     formdata.append("imageURL", imageURL);
     try {
       const response = await axios.post(url.uploadProfilePicture, formdata);
-      if (response.data === "success") {
-        // const tempUser = JSON.parse(sessionStorage.getItem("user"));
-        // tempUser.picture = imageURL;
-        // sessionStorage.setItem("user", JSON.stringify(tempUser));
-        return imageURL;
+      if (response.data) {
+        const tempUser = JSON.parse(sessionStorage.getItem("user"));
+        tempUser.picture = ".." + imageURL.substring(6);
+        sessionStorage.setItem("user", JSON.stringify(tempUser));
+        return 1;
       }
     } catch (e) {
       console.log(e);

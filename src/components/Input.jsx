@@ -94,7 +94,7 @@ export default function Input({
               return (id === "company" && opt.company_id === val) ||
                 (id === "department" && opt.department_id === val) ||
                 opt.employee_id === val ||
-                opt.job_level === val ||
+                opt.job_level_id === val ||
                 opt === val ? (
                 <option key={idx} value={val} selected>
                   {opt.company_name ||

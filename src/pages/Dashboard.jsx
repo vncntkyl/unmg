@@ -9,6 +9,8 @@ import CompanyList from "./CompanyList";
 import Roles from "./Roles";
 import Help from "./Help";
 import MainGoals from "./MainGoals";
+import ViewEvaluation from "./ViewEvaluation";
+import CompanyPlans from "./CompanyPlans";
 export default function Dashboard() {
   if (!sessionStorage.getItem("currentUser")) {
     sessionStorage.setItem("redirect_to", window.location.pathname);
@@ -82,13 +84,13 @@ export default function Dashboard() {
         <Routes>
           <Route path="/" element={<DashboardOverview />} />
           <Route path="/employees/*" element={<EmployeeList />} />
-          {/* <Route path="/employees/:company_id/*" element={<EmployeeList />} />
-          <Route path="/employees/:company_id/:department_id/*" element={<EmployeeList />} /> */}
           <Route path="/account/*" element={<AccountSettings />} />
           <Route path="/companies/*" element={<CompanyList />} />
           <Route path="/roles/*" element={<Roles />} />
           <Route path="/help/*" element={<Help />} />
           <Route path="/main_goals/*" element={<MainGoals />} />
+          <Route path="/view_evaluations/*" element={<ViewEvaluation />} />
+          <Route path="/company_plans/*" element={<CompanyPlans />} />
         </Routes>
       </div>
     </>
