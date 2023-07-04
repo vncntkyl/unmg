@@ -374,8 +374,8 @@ class Form extends Controller
         (employee.rater_1 = :rater_id OR employee.rater_2 = :rater_id OR employee.rater_3 = :rater_id)
         AND employee.user_status = :user_status
                 ");
-                $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
-                return $this->statement->fetchAll();
+        $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
+        return $this->statement->fetchAll();
     }
 
     function selectEmployeeAssessment($empID, $userStatus)
@@ -458,6 +458,38 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
+    function selectAchievements($empID)
+    {
+        $this->setStatement("
+        SELECT 
+    hr_users.emp_id,
+    CONCAT(hr_users.first_name, ' ', LEFT(hr_users.middle_name, 1), '. ', hr_users.last_name) AS employee_name,
+    hr_eval_form_fp.hr_eval_form_fp_id AS first_part_id,
+    hr_eval_form_sp_fq_rating.ratee_achievement AS fq_ratee_achievement,
+    hr_eval_form_sp_myr_rating.ratee_achievement AS myr_ratee_achievement,
+    hr_eval_form_sp_tq_rating.ratee_achievement AS tq_ratee_achievement,
+    hr_eval_form_sp_yee_rating.ratee_achievement AS yee_ratee_achievement
+FROM 
+    hr_users
+LEFT JOIN
+    hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+LEFT JOIN
+    hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+LEFT JOIN
+    hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+LEFT JOIN
+    hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+LEFT JOIN
+    hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
+LEFT JOIN
+    hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
+LEFT JOIN
+    hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+WHERE 
+    hr_users.emp_id = ?");
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
 
     function fetchPillars($evalID)
     {

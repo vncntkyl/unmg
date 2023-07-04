@@ -9,21 +9,53 @@ import EmployeeAssessmentGrade from "./EmployeeAssessmentGrade";
 export default function EmployeeAssessment() {
   const employee_id = sessionStorage.getItem("assessment_id");
   const [panel, setPanel] = useState("Achievements");
+  const [quarter, setQuarter] = useState(0);
+  const [achievements, setAchievements] = useState([]);
+  const [checkAchievements, setCheckAchievements] = useState([]);
+
+  useEffect(() => {
+    const getAchievements = async () => {
+      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      try {
+        const response = await axios.get(url, {
+          params: {
+            userTrackingAchievements: true,
+            empID: employee_id
+          },
+        });
+        setAchievements(response.data);
+        const quarterlyAchievements = response.data.map((item) => {
+          return {
+            first_part_id: item.first_part_id !== "" && item.first_part_id !== null,
+            fq_ratee_achievement: item.fq_ratee_achievement !== "" && item.fq_ratee_achievement !== null,
+            myr_ratee_achievement: item.myr_ratee_achievement !== "" && item.myr_ratee_achievement !== null,
+            tq_ratee_achievement: item.tq_ratee_achievement !== "" && item.tq_ratee_achievement !== null,
+            yee_ratee_achievement: item.yee_ratee_achievement !== "" && item.yee_ratee_achievement !== null,
+          };
+        })
+        setCheckAchievements(quarterlyAchievements);
+      }
+      catch (error) {
+        console.log(error.message);
+      }
+    }
+    getAchievements();
+  }, [employee_id]);
 
   return (
     <>
       <div className="flex pb-2 px-2 justify-between">
         <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
           <label className="font-semibold">Employee Name:</label>
-          <label>Norvin Perez</label>
+          <label>{achievements.map((achieve) => achieve.employee_name)}</label>
         </div>
         <Toggle
           paths={[
             "/tracking_and_assement/employee_assessment/" +
-              sessionStorage.getItem("assessment_name"),
+            sessionStorage.getItem("assessment_name"),
             "/tracking_and_assement/employee_assessment/" +
-              sessionStorage.getItem("assessment_name") +
-              "/",
+            sessionStorage.getItem("assessment_name") +
+            "/",
           ]}
           panel={panel}
           panel_1={"Achievements"}
@@ -36,14 +68,15 @@ export default function EmployeeAssessment() {
           <label htmlFor="quarterPicker" className="font-semibold">
             Select Quarter:
           </label>
-          <select className="bg-default text-black rounded-md p-1 px-2 outline-none">
-            <option value="" defaultChecked disabled>
-              Select Quarter
-            </option>
-            <option value="1">First Quarter</option>
-            <option value="2">Second Quarter</option>
-            <option value="3">Third Quarter</option>
-            <option value="4">Fourth Quarter</option>
+          <select className="bg-default text-black rounded-md p-1 px-2 outline-none"
+            onChange={quart => setQuarter(quart.target.value)}
+            value={quarter}
+          >
+            <option value={0} disabled>Select Quarter</option>
+            <option value={1}>First Quarter</option>
+            <option value={2}>Second Quarter</option>
+            <option value={3}>Third Quarter</option>
+            <option value={4}>Fourth Quarter</option>
           </select>
         </div>
         <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
@@ -57,49 +90,85 @@ export default function EmployeeAssessment() {
       {/* Achievements */}
       {panel === "Achievements" && (
         <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
-          <div className="w-full">
-            <span className="font-semibold text-dark-gray">
-              Employee Achievements:
-            </span>
-          </div>
-          <div className="w-full pt-4 pl-4">
-            <span className=" text-black">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a
-              facilisis eros. Morbi gravida sit amet ligula accumsan
-              ullamcorper. Proin nec felis ac tellus gravida tristique ut vitae
-              ex. Proin pretium, orci vel vestibulum gravida, turpis lacus
-              congue nibh, dignissim fermentum nunc leo eu ante. Duis vitae
-              auctor felis. Maecenas nisl sapien, posuere at finibus sed,
-              finibus eget augue. Vivamus eu venenatis nisl. Nunc vel leo nisi.
-              Suspendisse ac pharetra ipsum, facilisis porttitor justo. In
-              tristique, nunc in mattis iaculis, nibh nisl malesuada odio, id
-              iaculis arcu risus consequat magna. Nunc massa ipsum, hendrerit
-              nec erat a, euismod blandit quam. Pellentesque sed elit in lectus
-              laoreet molestie. Pellentesque id purus quam. Donec cursus erat
-              fringilla sapien mattis, quis fringilla ex scelerisque. Aliquam eu
-              semper odio. Aenean justo justo, ultrices quis ex quis, faucibus
-              vehicula est.
-            </span>
-          </div>
+          {/* checkAchievements */}
+          {checkAchievements.map((check) => (
+            <>
+              {check.first_part_id ? (
+                <>
+                  <div className="w-full">
+                    <span className="font-semibold text-dark-gray">
+                      Employee Achievements:
+                    </span>
+                  </div>
+                  <div className="w-full pt-4 pl-4">
+                    {achievements.map((ach) => (
+
+                      <span className="text-black">
+                        {quarter == 0 || quarter == 1 ?
+                          (<>
+                            {check.fq_ratee_achievement ? (ach.fq_ratee_achievement)
+                              : (
+                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                  <span>
+                                    Sorry, the employee have not yet submitted their <a className="font-bold">First Quarter</a> achievements
+                                  </span>
+                                </div>
+                              )}
+                          </>)
+                          : quarter == 2 ? 
+                          (<>
+                            {check.myr_ratee_achievement ? (ach.myr_ratee_achievement)
+                              : (
+                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                  <span>
+                                    Sorry, the employee have not yet submitted their <a className="font-bold">Mid Year Quarter</a> achievements
+                                  </span>
+                                </div>
+                              )}
+                          </>)
+                          : quarter == 3 ? 
+                          (<>
+                            {check.tq_ratee_achievement ? (ach.tq_ratee_achievement)
+                              : (
+                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                  <span>
+                                    Sorry, the employee have not yet submitted their <a className="font-bold">Third Quarter</a> achievements
+                                  </span>
+                                </div>
+                              )}
+                          </>)
+                          : quarter == 4 ? 
+                          (<>
+                            {check.yee_ratee_achievement ? (ach.yee_ratee_achievement)
+                              : (
+                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                  <span>
+                                    Sorry, the employee have not yet submitted their <a className="font-bold">Year End Quarter</a> achievements
+                                  </span>
+                                </div>
+                              )}
+                          </>)
+                          : (<>
+                          Loading...
+                          </>)}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                  <span>
+                    Sorry, the employee have not yet created their main goals yet
+                  </span>
+                </div>
+              )}
+            </>
+          ))}
         </div>
       )}
       {/* Grades */}
 
-      {panel === "Grades" && (<EmployeeAssessmentGrade/>)}
-
-      {/* <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
-    <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                    <span>
-                        Sorry, the employee have not yet created their main goals yet
-                    </span>
-                    <a
-                        href="/main_goals/create"
-                        className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-                    >
-                        Create Goals
-                    </a>
-                </div>
-      </div> */}
+      {panel === "Grades" && (<EmployeeAssessmentGrade employee_id={employee_id} quarter={quarter}/>)}
     </>
   );
 }

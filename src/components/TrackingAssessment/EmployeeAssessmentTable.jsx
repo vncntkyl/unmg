@@ -35,7 +35,7 @@ export default function EmployeeAssessmentTable(emp_id) {
   const yeeagreedisColumnAllFalse =
     employeesRecords.length > 0 &&
     employeesRecords.every(
-      (employee) => !employee.agreed_rating && !employee.yee_results
+      (employee) => !employee.agreed_rating &&  !employee.yee_results
     );
   useEffect(() => {
     const getemployeesRecords = async () => {
