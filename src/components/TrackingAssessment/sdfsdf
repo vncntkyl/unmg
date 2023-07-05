@@ -1,0 +1,75 @@
+                          <div className="pl-4 overflow-hidden">
+                            <span>Objectives</span>
+                          </div>
+                          <div className="flex overflow-x-auto w-500">
+                            <div className="bg-default-dark flex-none bg-gray-200 p-2 m-2 w-[35rem] rounded-md">
+                              <div className="pb-2">
+                                <span className="whitespace-normal">
+                                  {grade.objective}
+                                </span>
+                              </div>
+                              <div className="bg-white rounded-md shadow">
+                                <table className="w-full">
+                                  <thead>
+                                    <tr>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          KPIs
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          Results
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          Description
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          Remarks
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>
+                                        <div className="whitespace-normal p-2">
+                                          {grade.kpi_desc}
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="p-2 flex items-center justify-center">
+                                          {grade.results}
+                                          {/* <select className="bg-default rounded-md px-4">
+                                  <option value="0" default></option>
+                                  <option value="1">1</option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
+                                </select> */}
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="whitespace-normal p-2">
+                                          {grade.metrics_desc === ""
+                                            ? "N/A"
+                                            : grade.metrics_desc}
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="whitespace-normal p-2">
+                                          {grade.remarks === ""
+                                            ? "N/A"
+                                            : grade.remarks}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
