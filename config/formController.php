@@ -209,7 +209,7 @@ class Form extends Controller
     {
         $this->setStatement("SELECT 
         hr_users.emp_id,
-        hr_eval_form.users_id, 
+        hr_eval_form.users_id AS eval_user_id,
         hr_eval_form.rater_1, 
         hr_eval_form.rater_2,
         hr_eval_form.rater_3,
@@ -252,39 +252,38 @@ class Form extends Controller
         hr_eval_form_sp_yee.agreed_rating,
         hr_eval_form_sp_yee.wtd_rating,
         hr_eval_form_sp_yee_rating.ratee_achievement AS yee_ratee_achievement
-
-        FROM 
-            hr_eval_form 
-        JOIN
-            hr_users ON hr_users.users_id = hr_eval_form.users_id
-        JOIN 
+FROM 
+            hr_users
+        LEFT JOIN
+            hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+        LEFT JOIN 
             hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
-        JOIN 
+        LEFT JOIN 
             hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
-        JOIN 
+        LEFT JOIN 
             hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
-        JOIN
+        LEFT JOIN
             hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
-        JOIN 
+        LEFT JOIN 
             hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
             
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id 
-        JOIN 
+        LEFT JOIN 
             hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
         WHERE 
         hr_users.emp_id = ?
@@ -292,6 +291,8 @@ class Form extends Controller
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
+
+
 
     function selectUserAssessmentScores($empID)
     {
@@ -304,40 +305,44 @@ class Form extends Controller
         
         hr_eval_form_sp_fq.results AS fq_results,
         hr_fq_desc.target_metrics_desc AS fq_desc,
+        hr_fq_desc.kpi_id AS fq_kpi_id,
         
         hr_eval_form_sp_myr.results AS myr_results,
         hr_myr_desc.target_metrics_desc AS myr_desc,
+        hr_myr_desc.kpi_id AS myr_kpi_id,
         
         hr_eval_form_sp_tq.results AS tq_results,
         hr_tq_desc.target_metrics_desc AS tq_desc,
+        hr_tq_desc.kpi_id AS tq_kpi_id,
         
         hr_eval_form_sp_yee.results AS yee_results,
-        hr_yee_desc.target_metrics_desc AS yee_desc
+        hr_yee_desc.target_metrics_desc AS yee_desc,
+        hr_yee_desc.kpi_id AS yee_kpi_id
         
-        FROM hr_eval_form
-        JOIN
-            hr_users ON hr_users.users_id = hr_eval_form.users_id
-        JOIN
+        FROM hr_users
+        LEFT JOIN
+        hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+        LEFT JOIN
         hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
-        JOIN
+        LEFT JOIN
         hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
-        JOIN
+        LEFT JOIN
         hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
-        JOIN
+        LEFT JOIN
             hr_target_metrics AS hr_fq_desc ON hr_fq_desc.kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_target_metrics AS hr_myr_desc ON hr_myr_desc.kpi_id = hr_kpi.kpi_id    
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_target_metrics AS hr_tq_desc ON hr_tq_desc.kpi_id = hr_kpi.kpi_id
-        JOIN
+        LEFT JOIN
             hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id            
-        JOIN
+        LEFT JOIN
             hr_target_metrics AS hr_yee_desc ON hr_yee_desc.kpi_id = hr_kpi.kpi_id            
-        JOIN 
+        LEFT JOIN 
             hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id            
         WHERE hr_users.emp_id = ?
         AND
@@ -487,6 +492,66 @@ LEFT JOIN
     hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
 WHERE 
     hr_users.emp_id = ?");
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
+
+
+    function selectTrackingGrading($table_name_results, $table_name_rating, $empID)
+    {
+        $this->setStatement("
+        SELECT 
+        hr_users.emp_id,
+        hr_eval_form.users_id AS eval_user_id,
+        hr_eval_form.rater_1, 
+        hr_eval_form.rater_2,
+        hr_eval_form.rater_3,
+        hr_eval_form.recipient_signatory, 
+        hr_objectives.hr_eval_form_pillar_id,
+        hr_eval_form_pillars.pillar_id,
+        hr_pillars.pillar_name, 
+        hr_pillars.pillar_description,
+        hr_eval_form_pillars.pillar_percentage,
+        hr_objectives.hr_eval_form_fp_id, 
+        hr_objectives.objective, 
+        hr_kpi.objective_id, 
+        hr_kpi.kpi_desc, 
+        hr_kpi.kpi_weight,
+        hr_eval_form.hr_eval_form_id,
+        hr_eval_form_sp.hr_eval_form_sp_id,
+
+        {$table_name_results}.results AS {$table_name_results}results,
+        hr_metrics_desc.target_metrics_desc AS metrics_desc,
+        {$table_name_results}.remarks AS {$table_name_results}remarks,
+        {$table_name_rating}.ratee_achievement AS {$table_name_rating}ratee_achievement
+        FROM 
+            hr_users
+        LEFT JOIN
+            hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+        LEFT JOIN 
+            hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+        LEFT JOIN 
+            hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+        LEFT JOIN 
+            hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
+        LEFT JOIN
+            hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+        LEFT JOIN 
+            hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+        LEFT JOIN
+            hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+            
+        LEFT JOIN
+            {$table_name_results} ON {$table_name_results}.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        LEFT JOIN
+            {$table_name_rating} ON {$table_name_rating}.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+        LEFT JOIN
+            hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id
+        WHERE 
+        hr_users.emp_id = ?
+        AND
+        hr_metrics_desc.target_metrics_score = {$table_name_results}.results
+        ");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }

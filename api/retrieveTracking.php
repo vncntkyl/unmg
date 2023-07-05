@@ -12,5 +12,34 @@ if (isset($_GET['empID'])) {
     if (isset($_GET['userTrackingAchievements'])) {
         echo json_encode($form->selectAchievements($empID));
     }
+
+    if (isset($_GET['userGrading'])) {
+        $quarter = $_GET['quarter'];
+        if($quarter == 0 || $quarter == 1)
+        {
+            $table_name_results = "hr_eval_form_sp_fq";
+            $table_name_rating = "hr_eval_form_sp_fq_rating";
+            $retrieveGrading = json_encode($form->selectTrackingGrading($table_name_results, $table_name_rating, $empID));
+        }
+        else if($quarter == 2)
+        {
+            $table_name_results = "hr_eval_form_sp_myr";
+            $table_name_rating = "hr_eval_form_sp_myr_rating";
+            $retrieveGrading = json_encode($form->selectTrackingGrading($table_name_results, $table_name_rating, $empID));
+        }
+        else if($quarter == 3)
+        {
+            $table_name_results = "hr_eval_form_sp_tq";
+            $table_name_rating = "hr_eval_form_sp_tq_rating";
+            $retrieveGrading = json_encode($form->selectTrackingGrading($table_name_results, $table_name_rating, $empID));
+        }
+        else if($quarter == 2)
+        {
+            $table_name_results = "hr_eval_form_sp_yee";
+            $table_name_rating = "hr_eval_form_sp_yee_rating";
+            $retrieveGrading = json_encode($form->selectTrackingGrading($table_name_results, $table_name_rating, $empID));
+        }
+        echo $retrieveGrading;
+    }
 }
 ?>
