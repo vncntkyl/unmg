@@ -500,26 +500,42 @@ WHERE
     function selectTrackingGrading($table_name_results, $table_name_rating, $empID)
     {
         $this->setStatement("
-    SELECT 
+        SELECT 
         hr_users.emp_id,
-        hr_eval_form.users_id AS eval_user_id,
-        hr_eval_form.rater_1, 
-        hr_eval_form.rater_2,
-        hr_eval_form.rater_3,
-        hr_eval_form.recipient_signatory, 
-        hr_objectives.hr_eval_form_pillar_id,
-        hr_eval_form_pillars.pillar_id,
-        hr_pillars.pillar_name, 
-        hr_pillars.pillar_description,
-        hr_eval_form_pillars.pillar_percentage,
-        hr_objectives.hr_eval_form_fp_id, 
-        hr_objectives.objective, 
-        hr_kpi.objective_id, 
-        hr_kpi.kpi_desc, 
-        hr_kpi.kpi_weight,
-        hr_eval_form.hr_eval_form_id,
-        hr_eval_form_sp.hr_eval_form_sp_id,
         
+
+        hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
+        hr_pillars.pillar_id AS pillar_id,
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_name ORDER BY hr_pillars.pillar_name) = 1
+                THEN hr_pillars.pillar_name
+            ELSE ''
+        END AS pillar_name,
+        
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_description ORDER BY hr_pillars.pillar_description) = 1
+                THEN hr_pillars.pillar_description
+            ELSE ''
+        END AS pillar_description,
+        
+        hr_eval_form_pillars.pillar_percentage,
+
+
+
+        hr_objectives.objective_id AS obj_objective_id,
+        hr_objectives.hr_eval_form_pillar_id AS obj_eval_pillar_id,
+
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_objectives.objective ORDER BY hr_objectives.objective) = 1
+                THEN hr_objectives.objective
+            ELSE ''
+        END AS obj_objective,
+
+
+        hr_kpi.objective_id AS kpi_objective_id,
+        hr_kpi.kpi_desc,
+        hr_kpi.kpi_weight,
+
         {$table_name_results}.results AS results,
         hr_metrics_desc.target_metrics_desc AS metrics_desc,
         {$table_name_results}.remarks AS remarks,
@@ -549,6 +565,7 @@ WHERE
         AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
     WHERE 
         hr_users.emp_id = ?
+        ORDER BY hr_pillars.pillar_id ASC
         ");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();

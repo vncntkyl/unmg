@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import AssessmentInstructions from "./AssessmentInstructions";
 import axios from "axios";
 import classNames from "classnames";
+import { hr } from "date-fns/locale";
 
-export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
+export default function EmployeeAssessmentGradeEdit({ employee_id, quarter }) {
   const [grades, setGrades] = useState([]);
   const [checkForm, setcheckForm] = useState();
   const [checkScores, setCheckScores] = useState();
@@ -39,7 +40,6 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
           if (!existingPillar) {
             uniquePillars.push({
               eval_pillar_id: item.eval_pillar_id,
-              pillar_id: item.pillar_id,
               pillar_name: item.pillar_name,
               pillar_description: item.pillar_description,
               pillar_percentage: item.pillar_percentage,
@@ -51,15 +51,15 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
         setPillars(pillars);
 
         const obj = response.data.reduce((uniqueObjectives, item) => {
-          if (item.obj_objective.trim() !== '') {
+          if (item.objective.trim() !== '') {
             const existingObjective = uniqueObjectives.find(
-              (objective) => objective.obj_objective === item.obj_objective
+              (objective) => objective.objective === item.objective
             );
             if (!existingObjective) {
               uniqueObjectives.push({
-                obj_objective_id: item.obj_objective_id,
-                obj_eval_pillar_id: item.obj_eval_pillar_id,
-                obj_objective: item.obj_objective
+                objectives_objective_id: item.objectives_objective_id,
+                hr_eval_form_pillar_id: item.hr_eval_form_pillar_id,
+                objective: item.objective
               });
             }
           }
@@ -120,15 +120,15 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
                         </span>
                       </div>
                       <div className="px-4">
-                        <span>Objectives</span>
-                        {/* {objectives.filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id).length} */}
+                        <span>Objectives: {objectives.filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id).length}</span>
                       </div>
+
                       <div className="flex gap-2 p-2 overflow-x-auto w-full">
                         {objectives
-                          .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
+                          .filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id)
                           .map((object) => (
                             <div
-                              key={object.obj_eval_pillar_id}
+                              key={object.objective}
                               className={classNames(
                                 "bg-default-dark",
                                 "flex-none",
@@ -136,8 +136,8 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
                                 "p-2",
                                 "rounded-md",
                                 {
-                                  "w-[50%]": objectives.filter((obj) => obj.obj_eval_pillar_id === pillar.eval_pillar_id).length > 1,
-                                  "w-[100%]": objectives.filter((obj) => obj.obj_eval_pillar_id === pillar.eval_pillar_id).length <= 1
+                                  "w-[50%]": objectives.filter((obj) => obj.hr_eval_form_pillar_id === pillar.eval_pillar_id).length > 1,
+                                  "w-[100%]": objectives.filter((obj) => obj.hr_eval_form_pillar_id === pillar.eval_pillar_id).length <= 1
                                 }
                               )}
                             >
@@ -179,7 +179,7 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
                                     </tr>
                                   </thead>
                                   {grades
-                                    .filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
+                                    .filter((grade) => grade.kpi_objective_id === object.objectives_objective_id)
                                     .map((grade) => (
                                       <tbody key={grade.kpi_objective_id}
                                       >

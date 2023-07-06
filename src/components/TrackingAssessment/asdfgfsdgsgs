@@ -1,0 +1,306 @@
+<div className="bg-white w-full rounded-md p-2 mb-4">
+    <div className="w-full">
+      <span className="text-black font-semibold">
+        Financial/Bottomline(Performance Excellence) - 25%
+      </span>
+    </div>
+    <div className="px-4">
+      <span>Objectives</span>
+    </div>
+    <div className="flex gap-2 p-2 overflow-x-auto w-full">
+      <div className="bg-default-dark flex-none bg-gray-200 p-2 w-[50%] rounded-md">
+        <div className="pb-2">
+          <span className="whitespace-normal">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+            Voluptates reprehenderit debitis architecto eveniet facilis
+            odio aperiam velit ipsum nobis. Commodi.
+          </span>
+        </div>
+        <div className="bg-white rounded-md shadow">
+          <table className="w-full">
+            <thead>
+              <tr>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">KPIs</div>
+                </td>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">Weight</div>
+                </td>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">Results</div>
+                </td>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">Description</div>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+                <td>
+                  <div className="p-2 flex items-center justify-center">
+                    20%
+                  </div>
+                </td>
+                <td>
+                  <div className="p-2">
+                    <select className="bg-default rounded-md px-4">
+                      <option value="0" default></option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+                                    <td>
+                  <div className="p-2 flex items-center justify-center">
+                    20%
+                  </div>
+                </td>
+                <td>
+                  <div className="p-2">
+                    <select className="bg-default rounded-md px-4">
+                      <option value="0" default></option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="bg-default-dark flex-none bg-gray-200 p-2 w-[50%] rounded-md">
+        <div className="pb-2">
+          <span className="whitespace-normal">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+            Voluptates reprehenderit debitis architecto eveniet facilis
+            odio aperiam velit ipsum nobis. Commodi.
+          </span>
+        </div>
+        <div className="bg-white rounded-md shadow">
+          <table className="w-full">
+            <thead>
+              <tr>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">KPIs</div>
+                </td>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">Weight</div>
+                </td>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">Results</div>
+                </td>
+                <td>
+                  <div className="flex justify-center p-2 font-semibold">Description</div>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+                <td>
+                  <div className="p-2 flex items-center justify-center">
+                    20%
+                  </div>
+                </td>
+                <td>
+                  <div className="p-2">
+                    <select className="bg-default rounded-md px-4">
+                      <option value="0" default></option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+                                    <td>
+                  <div className="p-2 flex items-center justify-center">
+                    20%
+                  </div>
+                </td>
+                <td>
+                  <div className="p-2">
+                    <select className="bg-default rounded-md px-4">
+                      <option value="0" default></option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <div className="whitespace-normal p-2">
+                    Lorem ipsum dolor sit amet, cu agam ullamcorper
+                    delicatissimi
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+        <div className="flex">
+          <div className="bg-default-dark flex-none bg-gray-200 p-2 w-full rounded-md">
+            <div className="pb-2">
+              <span className="whitespace-normal">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                Voluptates reprehenderit debitis architecto eveniet facilis
+                odio aperiam velit ipsum nobis. Commodi.
+              </span>
+            </div>
+            <div className="bg-white rounded-md shadow">
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <td>
+                      <div className="flex justify-center p-2 font-semibold">KPIs</div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center p-2 font-semibold">Weight</div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center p-2 font-semibold">Results</div>
+                    </td>
+                    <td>
+                      <div className="flex justify-center p-2 font-semibold">Description</div>
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div className="whitespace-normal p-2">
+                        Lorem ipsum dolor sit amet, cu agam ullamcorper
+                        delicatissimi
+                      </div>
+                    </td>
+                    <td>
+                      <div className="p-2 flex items-center justify-center">
+                        20%
+                      </div>
+                    </td>
+                    <td>
+                      <div className="p-2">
+                        <select className="bg-default rounded-md px-4">
+                          <option value="0" default></option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                        </select>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="whitespace-normal p-2">
+                        Lorem ipsum dolor sit amet, cu agam ullamcorper
+                        delicatissimi
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className="whitespace-normal p-2">
+                        Lorem ipsum dolor sit amet, cu agam ullamcorper
+                        delicatissimi
+                      </div>
+                    </td>
+                                        <td>
+                      <div className="p-2 flex items-center justify-center">
+                        20%
+                      </div>
+                    </td>
+                    <td>
+                      <div className="p-2">
+                        <select className="bg-default rounded-md px-4">
+                          <option value="0" default></option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                        </select>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="whitespace-normal p-2">
+                        Lorem ipsum dolor sit amet, cu agam ullamcorper
+                        delicatissimi
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
