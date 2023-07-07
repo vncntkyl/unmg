@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AssessmentInstructions from "./AssessmentInstructions";
 import axios from "axios";
 import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
 
 export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
   const [grades, setGrades] = useState([]);
@@ -9,7 +10,11 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
   const [checkScores, setCheckScores] = useState();
   const [pillars, setPillars] = useState([]);
   const [objectives, setObjectives] = useState([]);
-
+const navigate = useNavigate();
+const edit = () => {
+  sessionStorage.setItem("assessment_quarter", quarter);
+  navigate("/tracking_and_assement/employee_assessment/" + sessionStorage.getItem("assessment_name") + "/grade_edit");
+}
 
   useEffect(() => {
     const getGrades = async () => {
@@ -24,7 +29,7 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
         });
         setGrades(response.data);
 
-        const ColumnAllFalse = response.data.some((item) => item.pillar_id === null && item.objective === null);
+        const ColumnAllFalse = response.data.some((item) => item.pillar_id === null);
         setcheckForm(ColumnAllFalse);
 
 
@@ -98,9 +103,11 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
                 </div>
               </div>
               <div className="w-full flex justify-end pt-4">
-                <a className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed">
+                <button className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                onClick={() => edit()}
+                >
                   Grade Employee
-                </a>
+                </button>
               </div>
             </>
           ) : (
@@ -143,7 +150,7 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
                             >
                               <div className="pb-2">
                                 <span className="whitespace-normal">
-                                  {object.objective}
+                                  {object.obj_objective}
                                 </span>
                               </div>
 
@@ -191,7 +198,7 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
                                           </td>
                                           <td>
                                             <div className="p-2 flex items-center justify-center">
-                                              {grade.kpi_weight}
+                                              {grade.kpi_weight}%
                                             </div>
                                           </td>
                                           <td>
@@ -240,9 +247,11 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
               </div>
               <AssessmentInstructions />
               <div className="w-full flex justify-end pt-4">
-                <a className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed">
+                <button className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                onClick={() => edit()}
+                >
                   Edit
-                </a>
+                </button>
               </div>
             </>
           )}

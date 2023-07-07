@@ -7,6 +7,7 @@ export default function EmployeeAssessmentTable(emp_id) {
   const [employeeType, setEmployeeType] = useState("0");
   const [employeesRecords, setEmployeesRecords] = useState([]);
   const [actionVisibility, setActionVisibility] = useState(false);
+  sessionStorage.setItem("assessment_quarter", 0);
   const toggleActionVisibility = () => {
     setActionVisibility((prev) => !prev);
   };

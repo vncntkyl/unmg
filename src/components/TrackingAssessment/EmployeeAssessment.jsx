@@ -5,6 +5,8 @@ import Badge from "../../misc/Badge";
 import classNames from "classnames";
 import Toggle from "../Toggle";
 import EmployeeAssessmentGrade from "./EmployeeAssessmentGrade";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export default function EmployeeAssessment() {
   const employee_id = sessionStorage.getItem("assessment_id");
@@ -12,6 +14,7 @@ export default function EmployeeAssessment() {
   const [quarter, setQuarter] = useState(0);
   const [achievements, setAchievements] = useState([]);
   const [checkAchievements, setCheckAchievements] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getAchievements = async () => {
@@ -44,6 +47,12 @@ export default function EmployeeAssessment() {
 
   return (
     <>
+      <button className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md mb-4"
+        onClick={() => navigate(-1)}
+      >
+        <MdOutlineKeyboardArrowLeft />
+        <span>Back</span>
+      </button>
       <div className="flex pb-2 px-2 justify-between">
         <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
           <label className="font-semibold">Employee Name:</label>
@@ -91,8 +100,8 @@ export default function EmployeeAssessment() {
       {panel === "Achievements" && (
         <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
           {/* checkAchievements */}
-          {checkAchievements.map((check) => (
-            <>
+          {checkAchievements.map((check, index) => (
+            <div key={index}>
               {check.first_part_id ? (
                 <>
                   <div className="w-full">
@@ -115,42 +124,42 @@ export default function EmployeeAssessment() {
                                 </div>
                               )}
                           </>)
-                          : quarter == 2 ? 
-                          (<>
-                            {check.myr_ratee_achievement ? (ach.myr_ratee_achievement)
-                              : (
-                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                                  <span>
-                                    Sorry, the employee have not yet submitted their <a className="font-bold">Mid Year Quarter</a> achievements
-                                  </span>
-                                </div>
-                              )}
-                          </>)
-                          : quarter == 3 ? 
-                          (<>
-                            {check.tq_ratee_achievement ? (ach.tq_ratee_achievement)
-                              : (
-                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                                  <span>
-                                    Sorry, the employee have not yet submitted their <a className="font-bold">Third Quarter</a> achievements
-                                  </span>
-                                </div>
-                              )}
-                          </>)
-                          : quarter == 4 ? 
-                          (<>
-                            {check.yee_ratee_achievement ? (ach.yee_ratee_achievement)
-                              : (
-                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                                  <span>
-                                    Sorry, the employee have not yet submitted their <a className="font-bold">Year End Quarter</a> achievements
-                                  </span>
-                                </div>
-                              )}
-                          </>)
-                          : (<>
-                          Loading...
-                          </>)}
+                          : quarter == 2 ?
+                            (<>
+                              {check.myr_ratee_achievement ? (ach.myr_ratee_achievement)
+                                : (
+                                  <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                    <span>
+                                      Sorry, the employee have not yet submitted their <a className="font-bold">Mid Year Quarter</a> achievements
+                                    </span>
+                                  </div>
+                                )}
+                            </>)
+                            : quarter == 3 ?
+                              (<>
+                                {check.tq_ratee_achievement ? (ach.tq_ratee_achievement)
+                                  : (
+                                    <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                      <span>
+                                        Sorry, the employee have not yet submitted their <a className="font-bold">Third Quarter</a> achievements
+                                      </span>
+                                    </div>
+                                  )}
+                              </>)
+                              : quarter == 4 ?
+                                (<>
+                                  {check.yee_ratee_achievement ? (ach.yee_ratee_achievement)
+                                    : (
+                                      <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                        <span>
+                                          Sorry, the employee have not yet submitted their <a className="font-bold">Year End Quarter</a> achievements
+                                        </span>
+                                      </div>
+                                    )}
+                                </>)
+                                : (<>
+                                  Loading...
+                                </>)}
                       </span>
                     ))}
                   </div>
@@ -162,13 +171,13 @@ export default function EmployeeAssessment() {
                   </span>
                 </div>
               )}
-            </>
+            </div>
           ))}
         </div>
       )}
       {/* Grades */}
 
-      {panel === "Grades" && (<EmployeeAssessmentGrade employee_id={employee_id} quarter={quarter}/>)}
+      {panel === "Grades" && (<EmployeeAssessmentGrade employee_id={employee_id} quarter={quarter} />)}
     </>
   );
 }

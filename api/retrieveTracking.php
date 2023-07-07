@@ -41,5 +41,9 @@ if (isset($_GET['empID'])) {
         }
         echo $retrieveGrading;
     }
+    if (isset($_GET['metrics']))
+    {
+        echo json_encode($form->selectTrackingGradingMetrics($empID));
+    }
 }
 ?>

@@ -1,186 +1,203 @@
-<div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
-  <div className="w-full pb-4">
-    <span className="font-bold text-dark-gray">
-      Employee Grades:
-    </span>
-  </div>
-
-  {pillarNames.map((pillar) => (
-    <div
-      key={pillarNames}
-      className="bg-white w-full rounded-md p-2 mb-4"
-    >
-      <div className="w-full">
-        <span className="text-black font-semibold">
-          {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
-        </span>
+<button className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
+        onClick={() => navigate(-1)}
+      >
+        <MdOutlineKeyboardArrowLeft />
+        <span>Back</span>
+      </button>
+      <div className="flex pb-2 px-2 justify-between">
+        <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
+          <label className="font-semibold">Employee Name:</label>
+          <label>{name}</label>
+        </div>
       </div>
-      <div className="pl-4 overflow-hidden">
-        <span>Objectives</span>
+      <div className="flex pb-2 px-2 justify-between">
+        <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
+          <label htmlFor="quarterPicker" className="font-semibold">
+            Select Quarter:
+          </label>
+          <select className="bg-default text-black rounded-md p-1 px-2 outline-none"
+            onChange={(event) => {
+              const selectedQuarter = event.target.value;
+              setQuarter(selectedQuarter);
+              sessionStorage.setItem("assessment_quarter", selectedQuarter);
+            }}
+            value={quarter}
+          >
+            <option value={0} disabled>Select Quarter</option>
+            <option value={1}>First Quarter</option>
+            <option value={2}>Second Quarter</option>
+            <option value={3}>Third Quarter</option>
+            <option value={4}>Fourth Quarter</option>
+          </select>
+        </div>
       </div>
-
-      <div className="flex overflow-x-auto w-500">
-        {grades.map((grade) => {
-          if (grade.pillar_name === pillar.pillar_name) {
-            return (
-              <>
-                <div className="bg-default-dark flex-none bg-gray-200 p-2 m-2 w-[35rem] rounded-md">
-                  <div className="pb-2">
-                    <span className="whitespace-normal">
-                      objective here
-                    </span>
-                  </div>
-                </div>
-              </>
-            );
-          }
-        })}
-      </div>
-    </div>
-  ))}
-</div>
-<AssessmentInstructions />
-<div className="w-full flex justify-end pt-4">
-  <a className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed">
-    Edit
-  </a>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{pillars.map((pillar) => (
-  <>
-    <div className="bg-white w-full rounded-md p-2 mb-4">
-      <div className="w-full">
-        <span className="text-black font-semibold">
-          {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
-        </span>
-      </div>
-      <div className="pl-4 overflow-hidden">
-        <span>Objectives: {objectives.filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id).length}</span>
-      </div>
-
-      <div className="flex overflow-x-auto w-500">
-        {objectives
-          .filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id)
-          .map((object) => (
-            <div key={object.objective}>
-              <div className="bg-default-dark flex-none bg-gray-200 p-2 m-2 w-[35rem] rounded-md">
-                <div className="pb-2">
-                  <span className="whitespace-normal">
-                    {object.objective}
+      {checkForm === true ? (
+        <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
+          <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+            <span>
+              Sorry, the employee have not yet created their main goals yet.
+            </span>
+          </div>
+        </div>
+      ) : (
+        <>
+          {checkScores === true ? (
+            <>
+              <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
+                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                  <span>
+                    Sorry, the employee has not been graded in this quarter.
                   </span>
                 </div>
+              </div>
+              <div className="w-full flex justify-end pt-4">
+                <a className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed">
+                  Grade Employee
+                </a>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                <div className="w-full pb-4">
+                  <span className="font-bold text-dark-gray">
+                    Employee Grades:
+                  </span>
+                </div>
+                {pillars.map((pillar) => (
+                  <>
+                    <div className="bg-white w-full rounded-md p-2 mb-4">
+                      <div className="w-full">
+                        <span className="text-black font-semibold">
+                          {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                        </span>
+                      </div>
+                      <div className="px-4">
+                        <span>Objectives: {objectives.filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id).length}</span>
+                      </div>
 
-                <div className="bg-white rounded-md shadow">
-                  <table className="w-full">
-                    <thead>
-                      <tr>
-                        <td>
-                          <div className="flex justify-center p-2 font-semibold">
-                            KPIs
-                          </div>
-                        </td>
-                        <td>
-                          <div className="flex justify-center p-2 font-semibold">
-                            Weight
-                          </div>
-                        </td>
-                        <td>
-                          <div className="flex justify-center p-2 font-semibold">
-                            Results
-                          </div>
-                        </td>
-                        <td>
-                          <div className="flex justify-center p-2 font-semibold">
-                            Description
-                          </div>
-                        </td>
-                        <td>
-                          <div className="flex justify-center p-2 font-semibold">
-                            Remarks
-                          </div>
-                        </td>
-                      </tr>
-                    </thead>
-                    {grades
-                      .filter((grade) => grade.kpi_objective_id === object.objectives_objective_id)
-                      .map((grade) => (
-                        <tbody key={grade.kpi_objective_id}
-                        >
-                          <tr>
-                            <td>
-                              <div className="whitespace-normal p-2">
-                                {grade.kpi_desc}
+                      <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                        {objectives
+                          .filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id)
+                          .map((object) => (
+                            <div
+                              key={object.objective}
+                              className={classNames(
+                                "bg-default-dark",
+                                "flex-none",
+                                "bg-gray-200",
+                                "p-2",
+                                "rounded-md",
+                                {
+                                  "w-[50%]": objectives.filter((obj) => obj.hr_eval_form_pillar_id === pillar.eval_pillar_id).length > 1,
+                                  "w-[100%]": objectives.filter((obj) => obj.hr_eval_form_pillar_id === pillar.eval_pillar_id).length <= 1
+                                }
+                              )}
+                            >
+                              <div className="pb-2">
+                                <span className="whitespace-normal">
+                                  {object.objective}
+                                </span>
                               </div>
-                            </td>
-                            <td>
-                              <div className="p-2 flex items-center justify-center">
-                                {grade.kpi_weight}
-                              </div>
-                            </td>
-                            <td>
-                              <div className="p-2 flex items-center justify-center">
-                                {grade.results}
-                                {/* <select className="bg-default rounded-md px-4">
+
+                              <div className="bg-white rounded-md shadow">
+                                <table className="w-full">
+                                  <thead>
+                                    <tr>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          KPIs
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          Weight
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          Results
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          Description
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div className="flex justify-center p-2 font-semibold">
+                                          Remarks
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </thead>
+                                  {grades
+                                    .filter((grade) => grade.kpi_objective_id === object.objectives_objective_id)
+                                    .map((grade) => (
+                                      <tbody key={grade.kpi_objective_id}
+                                      >
+                                        <tr>
+                                          <td>
+                                            <div className="whitespace-normal p-2">
+                                              {grade.kpi_desc}
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div className="p-2 flex items-center justify-center">
+                                              {grade.kpi_weight}
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div className="p-2 flex items-center justify-center">
+                                              {grade.results}
+                                              {/* <select className="bg-default rounded-md px-4">
                                       <option value="0" default></option>
                                       <option value="1">1</option>
                                       <option value="2">2</option>
                                       <option value="3">3</option>
                                       <option value="4">4</option>
                                     </select> */}
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div className="whitespace-normal p-2">
+                                              {grade.metrics_desc === ""
+                                                ? "N/A"
+                                                : grade.metrics_desc}
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <div className="whitespace-normal p-2">
+                                              {grade.remarks === ""
+                                                ? "N/A"
+                                                : grade.remarks}
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    ))
+                                  }
+                                </table>
                               </div>
-                            </td>
-                            <td>
-                              <div className="whitespace-normal p-2">
-                                {grade.metrics_desc === ""
-                                  ? "N/A"
-                                  : grade.metrics_desc}
-                              </div>
-                            </td>
-                            <td>
-                              <div className="whitespace-normal p-2">
-                                {grade.remarks === ""
-                                  ? "N/A"
-                                  : grade.remarks}
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      ))
-                    }
-                  </table>
-                </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </>
+                ))}
+
+
+
+
+
               </div>
-            </div>
-          ))}
-      </div>
-    </div>
-  </>
-))}
+              <AssessmentInstructions />
+              <div className="w-full flex justify-end pt-4">
+                <a className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed">
+                  Submit
+                </a>
+              </div>
+            </>
+          )}
+        </>
+      )}

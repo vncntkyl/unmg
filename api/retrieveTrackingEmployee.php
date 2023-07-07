@@ -16,5 +16,6 @@ if (isset($_GET['employeeType'])) {
         $json_employee = json_encode($form->selectEmployeeAssessment($empID, $userStatus), JSON_UNESCAPED_UNICODE);
         echo $json_employee;
     }
+
 }
 ?>

@@ -502,7 +502,7 @@ WHERE
         $this->setStatement("
         SELECT 
         hr_users.emp_id,
-        
+        CONCAT(hr_users.first_name, ' ', LEFT(hr_users.middle_name, 1), '. ', hr_users.last_name) AS employee_name,
 
         hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
         hr_pillars.pillar_id AS pillar_id,
@@ -531,7 +531,7 @@ WHERE
             ELSE ''
         END AS obj_objective,
 
-
+        hr_kpi.kpi_id AS kpi_kpi_id,
         hr_kpi.objective_id AS kpi_objective_id,
         hr_kpi.kpi_desc,
         hr_kpi.kpi_weight,
@@ -566,6 +566,37 @@ WHERE
     WHERE 
         hr_users.emp_id = ?
         ORDER BY hr_pillars.pillar_id ASC
+        ");
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
+
+
+    function selectTrackingGradingMetrics($empID)
+    {
+        $this->setStatement("
+        SELECT 
+        hr_objectives.objective_id,
+        hr_kpi.kpi_id,
+        hr_kpi.kpi_desc,
+        hr_kpi.kpi_weight,
+        hr_target_metrics.target_metrics_id,
+        hr_target_metrics.target_metrics_score,
+        hr_target_metrics.target_metrics_desc,
+        hr_target_metrics.kpi_id AS metric_kpi_id
+        FROM hr_users
+        LEFT JOIN
+            hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+        LEFT JOIN 
+            hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+        LEFT JOIN 
+             hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+        LEFT JOIN 
+            hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+        LEFT JOIN 
+            hr_target_metrics ON hr_target_metrics.kpi_id = hr_kpi.kpi_id
+        WHERE
+        hr_users.emp_id = ?
         ");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();

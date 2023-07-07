@@ -8,6 +8,7 @@ import CreateAssessment from "../components/TrackingAssessment/CreateAssessment"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useFunction } from "../context/FunctionContext";
 import Toggle from "../components/Toggle";
+import EmployeeAssessmentGradeEdit from "../components/TrackingAssessment/EmployeeAssessmentGradeEdit";
 
 export default function TrackingAssessment() {
   const [panel, setPanel] = useState("My Assessment");
@@ -46,7 +47,7 @@ export default function TrackingAssessment() {
             {/* HEADER */}
             <div className="flex flex-col items-center justify-between md:flex-row">
               <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
-                {!["/tracking_and_assement/", "/tracking_and_assement"].includes(getPath()) && (
+                {["/tracking_and_assement/create", "/tracking_and_assement/create/"].includes(getPath()) && (
                   <a
                     href="/tracking_and_assement"
                     className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
@@ -54,7 +55,8 @@ export default function TrackingAssessment() {
                     <MdOutlineKeyboardArrowLeft />
                     <span>Back</span>
                   </a>
-                )}
+                )
+              }
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
@@ -66,7 +68,7 @@ export default function TrackingAssessment() {
                 panel_2={"Employee Assessment"}
               />
             </div>
-            <div className="flex flex-col pt-4">
+            <div className="flex flex-col">
               <Routes>
                 {panel === "My Assessment" ? <Route
                   path="/"
@@ -78,11 +80,11 @@ export default function TrackingAssessment() {
                 <Route
                   path="/create/*"
                   element={
-                    <CreateAssessment emp_id={employeeID} />
+                    <CreateAssessment emp_id={employeeID} /> 
                   }
                 />
                 <Route path="/employee_assessment/:id" element={<EmployeeAssessment />}/>
-                <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessment />}/>
+                <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessmentGradeEdit />}/>
                 <Route path="/employee_assessment/:id/approve" element={<EmployeeAssessment />}/>
               </Routes>
             </div>
