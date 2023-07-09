@@ -12,8 +12,14 @@ export function FunctionProvider({ children }) {
   function capitalizeSentence(sentence) {
     let splitSentence = sentence.split(" ");
     let joined = [];
+    const wordsToSkip = ["and", "to", "with"];
     splitSentence.forEach((word) => {
-      joined.push(capitalize(word));
+      word = word.toLowerCase();
+      if (!wordsToSkip.includes(word)) {
+        joined.push(capitalize(word));
+      } else {
+        joined.push(word);
+      }
     });
     return joined.join(" ");
   }
