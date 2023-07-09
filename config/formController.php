@@ -536,6 +536,7 @@ WHERE
         hr_kpi.kpi_desc,
         hr_kpi.kpi_weight,
 
+        {$table_name_results}.ID AS table_id,
         {$table_name_results}.results AS results,
         hr_metrics_desc.target_metrics_desc AS metrics_desc,
         {$table_name_results}.remarks AS remarks,
