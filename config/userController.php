@@ -79,12 +79,12 @@ class User extends Controller
         $salutations = ['Mr.', 'Miss', 'Mrs.'];
         $employee_ID = intval($u->employee_id);
         $company_ID = intval($u->company);
-        $salutation = $salutations[intval($u->salutation)];
+        $salutation = isset($u->salutation) ? $salutations[intval($u->salutation)] : null;
         $department_ID = intval($u->department);
         $job_level = intval($u->job_level);
         $password = md5($u->password);
         $employment_type = intval($u->employment_type) === 0 ? "LOCAL" : "EXPAT";
-        $primary_evaluator = intval($u->primary_evaluator);
+        $primary_evaluator = $u->primary_evaluator != NULL ? intval($u->primary_evaluator) : NULL;
         $secondary_evaluator = $u->secondary_evaluator != NULL ? intval($u->secondary_evaluator) : NULL;
         $tertiary_evaluator = $u->secondary_evaluator != NULL ? intval($u->tertiary_evaluator) : NULL;
         $status = 1;

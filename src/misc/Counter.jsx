@@ -8,7 +8,7 @@ export default function Counter({ max }) {
         if (count !== max) {
           setCount((prevCount) => prevCount + 1);
         }
-      }, 25);
+      }, 5);
 
       return () => {
         clearInterval(timer);

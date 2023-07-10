@@ -20,6 +20,8 @@ export default function Overview() {
         navigate("/main_goals");
         break;
       case 2:
+        sessionStorage.setItem("user_type", "probationary");
+        navigate("/employees");
         break;
       case 3:
         break;

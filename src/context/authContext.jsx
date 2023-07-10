@@ -265,6 +265,18 @@ export function AuthProvider({ children }) {
       console.log(e);
     }
   };
+  const uploadUsers = async (data) => {
+    try {
+      const fd = new FormData();
+      fd.append("employees", data);
+
+      const response = await axios.post(url.uploadBatchUsers, fd);
+      return response.data;
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   useEffect(() => {
     if (sessionStorage.getItem("currentUser")) {
       setCurrentUser(sessionStorage.getItem("currentUser"));
@@ -341,6 +353,7 @@ export function AuthProvider({ children }) {
     manageUser,
     signInUser,
     addCompany,
+    uploadUsers,
     updateUser,
     fetchUsers,
     deleteRole,

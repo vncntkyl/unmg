@@ -104,7 +104,11 @@ export default function EmployeeTable({ filters = [] }) {
         (employee) => employee.employee_id === data.primary_evaluator
       );
 
-      return evaluator.last_name + ", " + evaluator.first_name;
+      if (evaluator) {
+        return evaluator.last_name + ", " + evaluator.first_name;
+      }else{
+        return "";
+      }
     } else if (key === "user_type") {
       return capitalizeSentence(
         usertypeList.find((type) => type.job_level_id === data[key])

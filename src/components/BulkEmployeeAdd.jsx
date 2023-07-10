@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { IoChevronBack } from "react-icons/io5";
 import * as xlsx from "xlsx";
@@ -10,14 +10,14 @@ import { format } from "date-fns";
 export default function BulkEmployeeAdd() {
   const [file, setFile] = useState([]);
   const [fileHeaders, setFileHeaders] = useState([]);
+
   const [fileName, setFileName] = useState([]);
   const { capitalizeSentence } = useFunction();
-  const { usertypeList } = useAuth();
+  const { usertypeList, uploadUsers } = useAuth();
 
   const handleFileSubmit = (e) => {
     e.preventDefault();
     if (e.target.files) {
-      console.log(e.target.files);
       setFileName(e.target.files[0]["name"]);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -31,8 +31,13 @@ export default function BulkEmployeeAdd() {
           employees.map((item) => {
             const newItem = {};
             for (let key in item) {
-              newItem[key.toLowerCase()] = capitalizeSentence(item[key]);
+              try {
+                newItem[key.toLowerCase()] = capitalizeSentence(item[key]);
+              } catch (e) {
+                newItem[key.toLowerCase()] = item[key];
+              }
             }
+
             return newItem;
           })
         );
@@ -89,7 +94,7 @@ export default function BulkEmployeeAdd() {
               return (
                 <>
                   <option
-                    value={head["employee id"]}
+                    value={getFullName(head)}
                     selected={getFullName(head) === approverName}
                   >
                     {getFullName(head)}
@@ -118,14 +123,19 @@ export default function BulkEmployeeAdd() {
   };
 
   const getFullName = (user) => {
-    return (
-      user["last name"] +
-      ", " +
-      user["first name"] +
-      " " +
-      user["middle name"].substring(0, 1) +
-      "."
-    );
+    const middle_name = user["middle_name"];
+    if (middle_name === ".") {
+      return user["last name"] + ", " + user["first name"];
+    } else {
+      return (
+        user["last name"] +
+        ", " +
+        user["first name"] +
+        " " +
+        user["middle name"].substring(0, 1) +
+        "."
+      );
+    }
   };
 
   const handleInputChange = (e, emp, header) => {
@@ -138,13 +148,76 @@ export default function BulkEmployeeAdd() {
     const tempEmployees = [...file];
     const currentEmployee = tempEmployees.find((employee) => employee === emp);
     currentEmployee[header] = e.target.value;
-    setFile(tempEmployees)
+    setFile(tempEmployees);
   };
   const handleDateChange = (e, emp, header) => {
     const tempEmployees = [...file];
     const currentEmployee = tempEmployees.find((employee) => employee === emp);
     currentEmployee[header] = format(new Date(e.target.value), "MM/dd/yyyy");
     setFile(tempEmployees);
+  };
+  const handleImportUsers = async () => {
+    const employees = [...file];
+    const registeredEmployees = [];
+    const modifiedHeaders = fileHeaders.map((header) => {
+      return header.split(" ").join("_");
+    });
+    employees.forEach((e, i) => {
+      const registeredEmployee = {}; // Create an empty object for each user
+
+      fileHeaders.forEach((header, idx) => {
+        switch (header) {
+          case "first approver":
+            try {
+              registeredEmployee["primary_evaluator"] =
+                e[header] !== undefined
+                  ? employees.find((emp) => getFullName(emp) === e[header])[
+                      "employee id"
+                    ]
+                  : e[header];
+            } catch (error) {
+              console.log(e[header]);
+            }
+            break;
+          case "second approver":
+            try {
+              registeredEmployee["secondary_evaluator"] =
+                e[header] !== undefined
+                  ? employees.find((emp) => getFullName(emp) === e[header])[
+                      "employee id"
+                    ]
+                  : e[header];
+            } catch (error) {
+              console.log(e[header]);
+            }
+            break;
+          case "third approver":
+            try {
+              registeredEmployee["tertiary_evaluator"] =
+                e[header] !== undefined
+                  ? employees.find((emp) => getFullName(emp) === e[header])[
+                      "employee id"
+                    ]
+                  : e[header];
+            } catch (error) {
+              console.log(e[header]);
+            }
+            break;
+          case "business unit":
+            registeredEmployee["company"] = e[header];
+            break;
+          default:
+            registeredEmployee[modifiedHeaders[idx]] = e[header];
+            break;
+        }
+      });
+
+      registeredEmployees.push(registeredEmployee);
+    });
+
+    const data = JSON.stringify(registeredEmployees);
+    const response = await uploadUsers(data);
+    console.log(response);
   };
   return (
     <>
@@ -159,7 +232,7 @@ export default function BulkEmployeeAdd() {
         <div className=" text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2">
           <BatchEmployeeInstructions />
 
-          <form encType="multipart/form-data">
+          <form encType="multipart/form-data" className="flex flex-col gap-2">
             <label
               htmlFor="batch"
               className="m-auto cursor-pointer w-fit text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
@@ -175,7 +248,7 @@ export default function BulkEmployeeAdd() {
               onChange={handleFileSubmit}
             />
             <p>{fileName}</p>
-            <div className="overflow-auto max-h-[66.5vh]">
+            <div className="overflow-auto max-h-[60vh]">
               {file && (
                 <table className="bg-white">
                   <thead>
@@ -256,6 +329,15 @@ export default function BulkEmployeeAdd() {
                 </table>
               )}
             </div>
+            {file && (
+              <button
+                type="button"
+                onClick={() => handleImportUsers()}
+                className="bg-un-blue-light text-white w-fit p-1 px-2 ml-auto rounded-md"
+              >
+                Register Employees
+              </button>
+            )}
           </form>
         </div>
       </div>

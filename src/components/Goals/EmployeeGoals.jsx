@@ -70,7 +70,7 @@ export default function EmployeeGoals({ pillars = [] }) {
             </select>
           </div>
         </div>
-        <div className="w-full overflow-auto rounded-md">
+        <div className="w-full overflow-auto rounded-md max-h-[60vh]">
           <DataTable
             data={employees}
             pillars={pillars}

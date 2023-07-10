@@ -3,6 +3,7 @@ export const developmentAPIs = {
   register: "http://localhost/unmg_pms/api/registerUser.php",
   updateUser: "http://localhost/unmg_pms/api/updateUser.php",
   uploadProfilePicture: "http://localhost/unmg_pms/api/uploadImage.php",
+  uploadBatchUsers: "http://localhost/unmg_pms/api/batchUpload.php",
 };
 
 export const releaseAPIs = {
@@ -10,4 +11,5 @@ export const releaseAPIs = {
   register: "../api/registerUser.php",
   updateUser: "../api/updateUser.php",
   uploadProfilePicture: "../api/uploadImage.php",
+  uploadBatchUsers: "../api/batchUpload.php",
 };

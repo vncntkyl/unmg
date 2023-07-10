@@ -14,6 +14,16 @@ class Companies extends Controller
         $this->statement->execute([':companyName' => $companyName]);
         return $this->connection->lastInsertId();
     }
+    function insertCompanies($companyData)
+    {
+        try {
+            $sqlQuery = "INSERT INTO `hr_company` (company_name) VALUES " . $companyData;
+            $this->setStatement($sqlQuery);
+            return $this->statement->execute();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
     function retrieveDepartments()
     {
         $this->setStatement("SELECT * FROM `hr_departments`");
@@ -24,6 +34,16 @@ class Companies extends Controller
     {
         $this->setStatement("INSERT into `hr_departments` (company_id,department_name) VALUES (:companyid,:departmentName)");
         return $this->statement->execute([':companyid' => $companyID, ':departmentName' => $departmentName]);
+    }
+    function insertDepartments($departmentData)
+    {
+        try {
+            $sqlQuery = "INSERT INTO `hr_departments` (company_id, department_name) VALUES " . $departmentData;
+            $this->setStatement($sqlQuery);
+            return $this->statement->execute();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
     }
     function updateDepartment($departmentID, $companyID, $departmentName)
     {
@@ -43,4 +63,3 @@ class Companies extends Controller
         return $this->statement->execute([$departmentID]);
     }
 }
-?>
