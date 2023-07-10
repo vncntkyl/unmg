@@ -103,11 +103,11 @@ export default function Sidebar({ sidebarToggler, className }) {
                 textLabel={"List of Employees"}
                 slug={"employees"}
               />
-              <NavButton
+              {/* <NavButton
                 icon={<BsPersonGear />}
                 textLabel={"Roles"}
                 slug={"roles"}
-              />
+              /> */}
               <NavButton
                 icon={<BsBuildings />}
                 textLabel={"Companies"}
