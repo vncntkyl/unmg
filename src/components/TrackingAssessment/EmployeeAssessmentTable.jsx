@@ -166,7 +166,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                               ) : employee.fq_achievements &&
                                 !employee.fq_results ? (
                                 <Badge
-                                  message={"Submitted"}
+                                  message={"Achievements Submitted"}
                                   type="warning"
                                   className={"text-[.8rem] px-1"}
                                 />
@@ -210,7 +210,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                               ) : employee.myr_achievements &&
                                 !employee.myr_results ? (
                                 <Badge
-                                  message={"Submitted"}
+                                  message={"Achievements Submitted"}
                                   type="warning"
                                   className={"text-[.8rem] px-1"}
                                 />
@@ -254,7 +254,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                               ) : employee.tq_achievements &&
                                 !employee.tq_results ? (
                                 <Badge
-                                  message={"Submitted"}
+                                  message={"Achievements Submitted"}
                                   type="warning"
                                   className={"text-[.8rem] px-1"}
                                 />
@@ -298,7 +298,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                               ) : employee.yee_achievements &&
                                 !employee.yee_results ? (
                                 <Badge
-                                  message={"Submitted"}
+                                  message={"Achievements Submitted"}
                                   type="warning"
                                   className={"text-[.8rem] px-1"}
                                 />

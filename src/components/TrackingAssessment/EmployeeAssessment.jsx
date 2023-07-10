@@ -110,9 +110,11 @@ export default function EmployeeAssessment() {
                     </span>
                   </div>
                   <div className="w-full pt-4 pl-4">
-                    {achievements.map((ach) => (
+                    {achievements.map((ach, use) => (
 
-                      <span className="text-black">
+                      <span 
+                      key={use}
+                      className="text-black">
                         {quarter == 0 || quarter == 1 ?
                           (<>
                             {check.fq_ratee_achievement ? (ach.fq_ratee_achievement)

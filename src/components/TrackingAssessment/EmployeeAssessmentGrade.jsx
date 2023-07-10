@@ -10,6 +10,11 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
   const [checkScores, setCheckScores] = useState();
   const [pillars, setPillars] = useState([]);
   const [objectives, setObjectives] = useState([]);
+  let pCounter,
+    oCounter,
+    kCounter = 1;
+
+
 const navigate = useNavigate();
 const edit = () => {
   sessionStorage.setItem("assessment_quarter", quarter);
@@ -33,9 +38,9 @@ const edit = () => {
         setcheckForm(ColumnAllFalse);
 
 
-        const scores = response.data.some((item) => item.results === 0);
-        setCheckScores(scores);
+        const scores = response.data.every((item) => item.results === 0 || item.metrics_desc === null);
 
+        setCheckScores(scores);
 
         const pillars = response.data.reduce((uniquePillars, item) => {
           const existingPillar = uniquePillars.find(
@@ -119,7 +124,9 @@ const edit = () => {
                   </span>
                 </div>
                 {pillars.map((pillar) => (
-                  <>
+                  <React.Fragment
+                  key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+                  >
                     <div className="bg-white w-full rounded-md p-2 mb-4">
                       <div className="w-full">
                         <span className="text-black font-semibold">
@@ -128,14 +135,17 @@ const edit = () => {
                       </div>
                       <div className="px-4">
                         <span>Objectives</span>
-                        {/* {objectives.filter((object) => object.hr_eval_form_pillar_id === pillar.eval_pillar_id).length} */}
                       </div>
                       <div className="flex gap-2 p-2 overflow-x-auto w-full">
                         {objectives
                           .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
                           .map((object) => (
                             <div
-                              key={object.obj_eval_pillar_id}
+                                key={
+                                  "objective - " +
+                                  object.obj_objective_id +
+                                  oCounter++
+                                }
                               className={classNames(
                                 "bg-default-dark",
                                 "flex-none",
@@ -185,12 +195,11 @@ const edit = () => {
                                       </td>
                                     </tr>
                                   </thead>
+                                  <tbody>
                                   {grades
                                     .filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
                                     .map((grade) => (
-                                      <tbody key={grade.kpi_objective_id}
-                                      >
-                                        <tr>
+                                        <tr key={"kpi - " + grade.kpi_kpi_id + kCounter++}>
                                           <td>
                                             <div className="whitespace-normal p-2">
                                               {grade.kpi_desc}
@@ -204,13 +213,6 @@ const edit = () => {
                                           <td>
                                             <div className="p-2 flex items-center justify-center">
                                               {grade.results}
-                                              {/* <select className="bg-default rounded-md px-4">
-                                      <option value="0" default></option>
-                                      <option value="1">1</option>
-                                      <option value="2">2</option>
-                                      <option value="3">3</option>
-                                      <option value="4">4</option>
-                                    </select> */}
                                             </div>
                                           </td>
                                           <td>
@@ -228,22 +230,17 @@ const edit = () => {
                                             </div>
                                           </td>
                                         </tr>
-                                      </tbody>
                                     ))
                                   }
+                                  </tbody>
                                 </table>
                               </div>
                             </div>
                           ))}
                       </div>
                     </div>
-                  </>
+                  </React.Fragment>
                 ))}
-
-
-
-
-
               </div>
               <AssessmentInstructions />
               <div className="w-full flex justify-end pt-4">

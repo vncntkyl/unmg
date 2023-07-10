@@ -24,10 +24,10 @@ export default function AssessmentInstructions() {
         )}
       >
         <div>
-          {KPIInstructions.map((instruction, index) => {
+          {KPIInstructions.map((instruction, instruct) => {
             return (
               <div className="flex flex-row gap-1 text-[.8rem] pl-3">
-                <span>{index + 1}.</span>
+                <span>{instruct + 1}.</span>
                 {instruction}
               </div>
             );
