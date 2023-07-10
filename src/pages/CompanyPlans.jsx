@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import ViewCompanyPlans from "../components/ViewCompanyPlans";
+import DateRangePicker from "../components/DateRangePicker";
 import { GrFormSearch, GrUnorderedList } from "react-icons/gr";
 export default function CompanyPlans({}) {
   const currentYear = new Date().getFullYear();
@@ -14,12 +15,14 @@ export default function CompanyPlans({}) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPillarOrObjectives, setselectedPillarOrObjectives] = useState("Pillar Percentage");
-  const dropdownRef = useRef(null); 
-  
+  const dropdownRef = useRef(null);
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
+  const [showPicker, setShowPicker] = useState(false);
+  const togglePicker = () => {
+    setShowPicker(!showPicker);
+  };
   const handleOptionSelect = (option) => {
     setselectedPillarOrObjectives(option);
     setIsOpen(false);
@@ -50,7 +53,7 @@ export default function CompanyPlans({}) {
 
     fetchCompanyDepartments();
   }, [selectedCompanyID]);
-  
+
   return (
     <>
       <section className="relative">
@@ -62,8 +65,18 @@ export default function CompanyPlans({}) {
               <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
                 Company Plans
               </span>
+
+              {(
+                <button type="button" onClick={togglePicker}>
+                  <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
+                    Add Work Year
+                  </span>
+                </button>
+              )}
+              {showPicker && <DateRangePicker />}
+
               {/* TOGGLE */}
-              <div
+              {(<div
                 className={classNames(
                   "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
                   employeeType !== "regular" && "on"
@@ -85,7 +98,9 @@ export default function CompanyPlans({}) {
                   type="button"
                   className={classNames(
                     "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem] col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2]  ",
-                    employeeType === "probationary" ? "text-white" : "text-black"
+                    employeeType === "probationary"
+                      ? "text-white"
+                      : "text-black"
                   )}
                   onClick={() => {
                     setEmployeeType("probationary");
@@ -93,7 +108,7 @@ export default function CompanyPlans({}) {
                 >
                   Probation
                 </button>
-              </div>
+              </div>)}
             </div>
             <div className="gap-2 items-center md:gap-1">
               <div className="grid grid-cols-2">
@@ -117,38 +132,40 @@ export default function CompanyPlans({}) {
                     </>
                   </span>
                   <div className="relative" ref={dropdownRef}>
-                  <button
-                    className="py-2 px-4 rounded border border-gray-300 bg-white text-gray-800 shadow-sm"
-                    onClick={toggleDropdown}
-                  >
-                    <GrUnorderedList />
-                  </button>
-                  {isOpen && (
-                    <div className="absolute mt-2 py-2 bg-white border border-gray-300 shadow-sm">
-                      {isOpen && (
-                        <div className="absolute top-0 mt-2 py-2 bg-white border border-gray-300 shadow-sm">
-                          <ul>
-                            <li
-                              className="cursor-pointer hover:bg-gray-100 py-2 px-4 whitespace-nowrap"
-                              onClick={() => handleOptionSelect("Pillar Percentage")}
-                            >
-                              Pillar Percentage
-                            </li>
-                            <li
-                              className="cursor-pointer hover:bg-gray-100 py-2 px-4 whitespace-nowrap"
-                              onClick={() => handleOptionSelect("Objectives")}
-                            >
-                              Objectives
-                            </li>
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    <button
+                      className="py-2 px-4 rounded border border-gray-300 bg-white text-gray-800 shadow-sm"
+                      onClick={toggleDropdown}
+                    >
+                      <GrUnorderedList />
+                    </button>
+                    {isOpen && (
+                      <div className="absolute mt-2 py-2 bg-white border border-gray-300 shadow-sm">
+                        {isOpen && (
+                          <div className="absolute top-0 mt-2 py-2 bg-white border border-gray-300 shadow-sm">
+                            <ul>
+                              <li
+                                className="cursor-pointer hover:bg-gray-100 py-2 px-4 whitespace-nowrap"
+                                onClick={() =>
+                                  handleOptionSelect("Pillar Percentage")
+                                }
+                              >
+                                Pillar Percentage
+                              </li>
+                              <li
+                                className="cursor-pointer hover:bg-gray-100 py-2 px-4 whitespace-nowrap"
+                                onClick={() => handleOptionSelect("Objectives")}
+                              >
+                                Objectives
+                              </li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
                 {/* SEARCH */}
-                <div className="col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2] flex flex-row items-center gap-2 p-1 bg-default rounded-md">
+                {(<div className="col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2] flex flex-row items-center gap-2 p-1 bg-default rounded-md">
                   <label htmlFor="search">
                     <GrFormSearch className="text-[1.3rem]" />
                   </label>
@@ -165,9 +182,9 @@ export default function CompanyPlans({}) {
                     }}
                     className="w-full lg:min-w-[350px] outline-none bg-transparent placeholder:text-[.9rem] placeholder:md:text-[1rem]"
                   />
-                </div>
+                </div>)}
               </div>
-              <div className="grid grid-cols-2">
+              {(<div className="grid grid-cols-2">
                 <div className="p-2 flex flex-row gap-2 rounded-lg">
                   <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6 col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2]">
                     Company:
@@ -187,39 +204,59 @@ export default function CompanyPlans({}) {
                       })}
                     </select>
                   </span>
-                  {selectedCompanyID === "All" || departments.length !== 0 ? (
+                  {departments.length !== 0 ? (
                     <>
-                      <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6">
-                        Department:
-                        <select
-                          id="departmentPicker"
-                          className="border rounded-md w-full flex flex-row md:max-w-250px"
-                          value={selectedDepartmentID}
-                          onChange={handleDepartmentChange}
-                        >
-                          <option value="All">All</option>
-                          {departments.map((dept) => {
-                            return (
-                              <option
-                                key={dept.department_id}
-                                value={dept.department_id}
-                              >
-                                {dept.department_name}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </span>
+                      {selectedCompanyID === "All" ? (
+                        <>
+                          <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6">
+                            Select Company
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6">
+                            Department:
+                            <select
+                              id="departmentPicker"
+                              className="border rounded-md w-full flex flex-row md:max-w-250px"
+                              value={selectedDepartmentID}
+                              onChange={handleDepartmentChange}
+                            >
+                              <option value="All">All</option>
+                              {departments.map((dept) => {
+                                return (
+                                  <option
+                                    key={dept.department_id}
+                                    value={dept.department_id}
+                                  >
+                                    {dept.department_name}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </span>
+                        </>
+                      )}
                     </>
                   ) : (
                     <>
-                      <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6">
-                        No Departments
-                      </span>
+                      {selectedCompanyID === "All" ? (
+                        <>
+                          <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6">
+                            Select Company
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6">
+                            No Departments
+                          </span>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
-              </div>
+              </div>)}
             </div>
             <ViewCompanyPlans
               filterSelectedObjectiveOrPillar={selectedPillarOrObjectives}
