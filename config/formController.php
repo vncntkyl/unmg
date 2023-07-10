@@ -325,5 +325,10 @@ class Form extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
+    function insertKpiDuration($fromDate, $toDate)
+    {
+        $this->setStatement("INSERT into `hr_kpi_year_duration` (from_date,to_date) VALUES (:fromDate,:toDate)");
+        return $this->statement->execute([':fromDate' => $fromDate, ':toDate' => $toDate]);
+    }
 }
 ?>

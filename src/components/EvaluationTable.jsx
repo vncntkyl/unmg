@@ -7,6 +7,9 @@ export default function EvaluationTable({
   selectedDepartmentID,
   employeeType,
   query,
+  currentUserContractType,
+  currentUserType,
+  currentEmployeeID,
 }) {
   const uniqueEntries = [];
   const processedData = [];
@@ -29,9 +32,9 @@ export default function EvaluationTable({
           const batch = extractedEvaluations.slice(i, i + 5);
           extractedFirstQuarterRate.push(batch);
         }
-
         setEvaluations(extractedFirstQuarterRate);
         setAllEvaluations(extractedEvaluations);
+        console.log(employeeType);
       } catch (error) {
         console.log(error.message);
       }
@@ -41,146 +44,311 @@ export default function EvaluationTable({
   }, [selectedQuarter]);
 
   const RenderTable = () => {
-    if (selectedQuarter === "All" && employeeType === "regular") {
-      return (
-        <table className="table-auto w-full">
-          <thead className="bg-un-blue-light text-white">
-            <tr>
-              {[
-                "Name",
-                "Job Title",
-                "1st Quarter",
-                "Mid Year",
-                "3rd Quarter",
-                "Year-End",
-                "Remarks",
-              ].map((header, index) => (
-                <th key={index} className="text-center bg-gray-200 px-4 py-2">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {allEvaluations
-              .filter(
-                (row) =>
-                  row.contract_type == employeeType &&
-                  (row.company == selectedCompanyID ||
-                    selectedCompanyID == "All") &&
-                  (row.department == selectedDepartmentID ||
-                    selectedDepartmentID == "All") &&
-                  row.Name.toLowerCase().includes(query)
-              )
-              .reduce((uniqueEvals, evals) => {
-                const isEvalExist = uniqueEvals.find(
-                  (item) =>
-                    item.Name === evals.Name &&
-                    item.Job_Title === evals.Job_Title
-                );
-                if (!isEvalExist) {
-                  uniqueEvals.push(evals);
-                }
-                return uniqueEvals;
-              }, [])
-              .map((evals) => (
-                <tr key={evals.id}>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.Name}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.Job_Title}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.FirstQuarterRating}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.MidYearRating}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.ThirdQuarterRating}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.YearEndRating}
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      );
+    if (currentUserType == "6" && currentUserContractType == "regular") {
+      if (employeeType === "regular" && selectedQuarter === "All") {
+        return (
+          <table className="table-auto w-full">
+            <thead className="bg-un-blue-light text-white">
+              <tr>
+                {[
+                  "Name",
+                  "Job Title",
+                  "1st Quarter",
+                  "Mid Year",
+                  "3rd Quarter",
+                  "Year-End",
+                  "Remarks",
+                ].map((header, index) => (
+                  <th key={index} className="text-center bg-gray-200 px-4 py-2">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {allEvaluations
+                .filter(
+                  (row) =>
+                    row.contract_type == employeeType &&
+                    (row.company == selectedCompanyID ||
+                      selectedCompanyID == "All") &&
+                    (row.department == selectedDepartmentID ||
+                      selectedDepartmentID == "All") &&
+                    row.Name.toLowerCase().includes(query)
+                )
+                .reduce((uniqueEvals, evals) => {
+                  const isEvalExist = uniqueEvals.find(
+                    (item) =>
+                      item.Name === evals.Name &&
+                      item.Job_Title === evals.Job_Title
+                  );
+                  if (!isEvalExist) {
+                    uniqueEvals.push(evals);
+                  }
+                  return uniqueEvals;
+                }, [])
+                .map((evals) => (
+                  <tr key={evals.id}>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Name}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Job_Title}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.FirstQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.MidYearRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.ThirdQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.YearEndRating}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        );
+      }
     }
-    if (selectedQuarter === "All" && employeeType === "probationary") {
-      return (
-        <table className="table-auto w-full">
-          <thead className="bg-un-blue-light text-white">
-            <tr>
-              {[
-                "Name",
-                "Job Title",
-                "1st Quarter",
-                "Mid Year",
-                "3rd Quarter",
-                "4th Quarter",
-                "Year End",
-                "Remarks",
-              ].map((header, index) => (
-                <th key={index} className="text-center bg-gray-200 px-4 py-2">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {allEvaluations
-              .filter(
-                (row) =>
-                  row.contract_type == employeeType &&
-                  (row.company == selectedCompanyID ||
-                    selectedCompanyID == "All") &&
-                  (row.department == selectedDepartmentID ||
-                    selectedDepartmentID == "All") &&
-                  row.Name.toLowerCase().includes(query)
-              )
-              .reduce((uniqueEvals, evals) => {
-                const isEvalExist = uniqueEvals.find(
-                  (item) =>
-                    item.Name === evals.Name &&
-                    item.Job_Title === evals.Job_Title
-                );
-                if (!isEvalExist) {
-                  uniqueEvals.push(evals);
-                }
-                return uniqueEvals;
-              }, [])
-              .map((evals) => (
-                <tr key={evals.id}>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.Name}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.Job_Title}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.FirstQuarterRating}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.MidYearRating}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.ThirdQuarterRating}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.FourthQuarterRating}
-                  </td>
-                  <td className="text-center bg-gray-200 px-4 py-2">
-                    {evals.YearEndRating}
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      );
+    if (currentUserType == "6" && currentUserContractType == "probationary") {
+      if (employeeType === "probationary" && selectedQuarter === "All") {
+        return (
+          <table className="table-auto w-full">
+            <thead className="bg-un-blue-light text-white">
+              <tr>
+                {[
+                  "Name",
+                  "Job Title",
+                  "1st Quarter",
+                  "Mid Year",
+                  "3rd Quarter",
+                  "4th Quarter",
+                  "Year End",
+                  "Remarks",
+                ].map((header, index) => (
+                  <th key={index} className="text-center bg-gray-200 px-4 py-2">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {allEvaluations
+                .filter(
+                  (row) =>
+                    row.contract_type == employeeType &&
+                    (row.company == selectedCompanyID ||
+                      selectedCompanyID == "All") &&
+                    (row.department == selectedDepartmentID ||
+                      selectedDepartmentID == "All") &&
+                    row.Name.toLowerCase().includes(query)
+                )
+                .reduce((uniqueEvals, evals) => {
+                  const isEvalExist = uniqueEvals.find(
+                    (item) =>
+                      item.Name === evals.Name &&
+                      item.Job_Title === evals.Job_Title
+                  );
+                  if (!isEvalExist) {
+                    uniqueEvals.push(evals);
+                  }
+                  return uniqueEvals;
+                }, [])
+                .map((evals) => (
+                  <tr key={evals.id}>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Name}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Job_Title}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.FirstQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.MidYearRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.ThirdQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.FourthQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.YearEndRating}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        );
+      }
     }
+
+    if (
+      currentUserType <= 6 &&
+      currentUserType >= 2 &&
+      currentUserContractType == "regular"
+    ) {
+      if (employeeType === "regular" && selectedQuarter === "All") {
+        return (
+          <table className="table-auto w-full">
+            <thead className="bg-un-blue-light text-white">
+              <tr>
+                {[
+                  "Name",
+                  "Job Title",
+                  "1st Quarter",
+                  "Mid Year",
+                  "3rd Quarter",
+                  "Year-End",
+                  "Remarks",
+                ].map((header, index) => (
+                  <th key={index} className="text-center bg-gray-200 px-4 py-2">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {allEvaluations
+                .filter(
+                  (row) =>
+                    (row.primary_evaluator == currentEmployeeID ||
+                      row.secondary_evaluator == currentEmployeeID ||
+                      row.tertiary_evaluator == currentEmployeeID) &&
+                    row.contract_type == employeeType &&
+                    (row.company == selectedCompanyID ||
+                      selectedCompanyID == "All") &&
+                    (row.department == selectedDepartmentID ||
+                      selectedDepartmentID == "All") &&
+                    row.Name.toLowerCase().includes(query)
+                )
+                .reduce((uniqueEvals, evals) => {
+                  const isEvalExist = uniqueEvals.find(
+                    (item) =>
+                      item.Name === evals.Name &&
+                      item.Job_Title === evals.Job_Title
+                  );
+                  if (!isEvalExist) {
+                    uniqueEvals.push(evals);
+                  }
+                  return uniqueEvals;
+                }, [])
+                .map((evals) => (
+                  <tr key={evals.id}>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Name}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Job_Title}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.FirstQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.MidYearRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.ThirdQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.YearEndRating}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        );
+      }
+    }
+    if (
+      
+      currentUserType <= 6 &&
+      currentUserType >= 2 &&
+      currentUserContractType == "probationary"
+    ) {
+      if (employeeType === "probationary" && selectedQuarter === "All") {
+        return (
+          <table className="table-auto w-full">
+            <thead className="bg-un-blue-light text-white">
+              <tr>
+                {[
+                  "Name",
+                  "Job Title",
+                  "1st Quarter",
+                  "Mid Year",
+                  "3rd Quarter",
+                  "4th Quarter",
+                  "Year End",
+                  "Remarks",
+                ].map((header, index) => (
+                  <th key={index} className="text-center bg-gray-200 px-4 py-2">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {allEvaluations
+                .filter(
+                  (row) =>
+                    (row.primary_evaluator == currentEmployeeID ||
+                      row.secondary_evaluator == currentEmployeeID ||
+                      row.tertiary_evaluator == currentEmployeeID) &&
+                    row.contract_type == employeeType &&
+                    (row.company == selectedCompanyID ||
+                      selectedCompanyID == "All") &&
+                    (row.department == selectedDepartmentID ||
+                      selectedDepartmentID == "All") &&
+                    row.Name.toLowerCase().includes(query)
+                )
+                .reduce((uniqueEvals, evals) => {
+                  const isEvalExist = uniqueEvals.find(
+                    (item) =>
+                      item.Name === evals.Name &&
+                      item.Job_Title === evals.Job_Title
+                  );
+                  if (!isEvalExist) {
+                    uniqueEvals.push(evals);
+                  }
+                  return uniqueEvals;
+                }, [])
+                .map((evals) => (
+                  <tr key={evals.id}>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Name}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.Job_Title}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.FirstQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.MidYearRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.ThirdQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.FourthQuarterRating}
+                    </td>
+                    <td className="text-center bg-gray-200 px-4 py-2">
+                      {evals.YearEndRating}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        );
+      }
+    }
+
     return (
       <table className="table-auto w-full">
         <thead className="bg-un-blue-light text-white">
