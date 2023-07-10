@@ -44,10 +44,8 @@ const ViewCompanyPlans = ({
               break;
             }
           }
-          
           extractedObjectivesOrPillar.push(uniqueBatch);
         }
-  
         setFetchedPillarOrObjectives(extractedObjectivesOrPillar);
       } catch (error) {
         console.log(error.message);
