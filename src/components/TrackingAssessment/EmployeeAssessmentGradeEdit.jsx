@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-//import AssessmentInstructions from "./AssessmentInstructions";
+import AssessmentInstructions from "./AssessmentInstructions";
 import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,8 @@ export default function EmployeeAssessmentGradeEdit() {
   const [remarks, setRemarks] = useState([]);
   //Submit form
   const handleSubmit = () => { };
-
+  // Usage
+  const tbl_name = getTableName(quarter);
 
   useEffect(() => {
     //Whole Grades
@@ -156,7 +157,7 @@ export default function EmployeeAssessmentGradeEdit() {
         axios.post(url, fData)
           .then(response => alert(response.data))
           .catch(error => alert(error));
-          navigate(-1);
+        navigate(-1);
       }
 
     }
@@ -184,9 +185,23 @@ export default function EmployeeAssessmentGradeEdit() {
     }
     return tbl_name;
   }
-  // Usage
-  const tbl_name = getTableName(quarter);
 
+  function coloring(met) {
+    let color = "";
+    if (met === "4") {
+      color = "bg-border-un-green-light";
+    }
+    else if (met === "3") {
+      color = "bg-border-un-green-light";
+    }
+    else if (met === "2") {
+      color = "bg-border-un-yellow-light";
+    }
+    else if (met === "1") {
+      color = "bg-border-un-red-light-1";
+    }
+    return color;
+  }
 
   //functions for handling select and textarea
   function handleSelectChange(event, pillarIndex, objectIndex, gradeIndex) {
@@ -430,7 +445,7 @@ export default function EmployeeAssessmentGradeEdit() {
                                                 )
                                               } // event handler
                                             >
-                                              <option value="0">
+                                              <option value="0" disabled>
                                                 Choose a Metric
                                               </option>
                                               {metrics
@@ -444,6 +459,15 @@ export default function EmployeeAssessmentGradeEdit() {
                                                     key={metric.target_metrics_id}
                                                     value={
                                                       metric.target_metrics_score
+                                                    }
+                                                    className={
+                                                      metric.target_metrics_score === 1
+                                                        ? 'bg-un-red-light-1'
+                                                        : metric.target_metrics_score === 2
+                                                        ? 'bg-border-un-yellow-light'
+                                                        : metric.target_metrics_score === 3 || metric.target_metrics_score === 4
+                                                        ? 'bg-border-un-green-light'
+                                                        : ''
                                                     }
                                                   >
                                                     {metric.target_metrics_score}
@@ -511,9 +535,11 @@ export default function EmployeeAssessmentGradeEdit() {
                         ))}
                     </div>
                   </div>
+
                 </React.Fragment>
               ))}
             </div>
+            <AssessmentInstructions />
             <div className="w-full flex justify-end pt-4">
               <button
                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
