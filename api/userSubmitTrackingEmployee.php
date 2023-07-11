@@ -22,7 +22,7 @@ if (isset($_POST['submit'])) {
             $result = $submitGrade->updateUserAssessment($tbl_name, $formspID, $currentMetric, $currentRemarks, $id);
         }
         if ($result) {
-            echo "You have submitted your achievements successfully!";
+            echo "You have graded this employee successfully!";
         } else {
             echo "error";
         }
