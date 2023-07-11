@@ -6,14 +6,11 @@ session_start();
 require "../config/userController.php";
 $user = new User();
 
-$requestBody = file_get_contents('php://input');
-// Decode JSON data
-$data = json_decode($requestBody, true);
 
-if ($data['params']) {
-    $userdata = $data['params']['userdata'];
-    $imm_sup = $userdata['immediate_supervisor'] ? $userdata['immediate_supervisor'] : NULL;
-    $job_desc = $userdata['job_description'] ? $userdata['job_description'] : "N/A";
+if (isset($_POST['userdata'])) {
+    $userdata = $_POST['userdata'];
+    $imm_sup = isset($userdata['immediate_supervisor']) ? $userdata['immediate_supervisor'] : NULL;
+    $job_desc = isset($userdata['job_description']) ? $userdata['job_description'] : "N/A";
     $result = $user->updateAcc(
         $userdata['supervisor'],
         $imm_sup,
@@ -33,4 +30,3 @@ if ($data['params']) {
         echo 'success';
     }
 }
-?>

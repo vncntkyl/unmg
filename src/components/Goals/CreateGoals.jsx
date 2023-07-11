@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  AiOutlineMinus,
-  AiOutlinePlus,
-} from "react-icons/ai";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import axios from "axios";
 import GoalsInstructions from "./GoalsInstructions";
 
 export default function CreateGoals({ pillars = [], user_id }) {
   const [goals, setGoals] = useState([]);
+  const [user, setUser] = useState();
 
   const addObjective = (i) => {
     const objectiveTemplate = {
@@ -212,6 +210,12 @@ export default function CreateGoals({ pillars = [], user_id }) {
         };
       })
     );
+    if (localStorage.getItem("create_goal")) {
+      setUser(localStorage.getItem("create_goal"));
+      localStorage.removeItem("create_goal");
+    } else {
+      setUser(user_id);
+    }
   }, [pillars]);
 
   return (

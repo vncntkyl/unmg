@@ -24,10 +24,10 @@ export default function Login() {
     );
     if (typeof loginResponse === "object") {
       setCurrentUser(JSON.stringify(loginResponse));
-      sessionStorage.setItem("currentUser", JSON.stringify(loginResponse));
-      if (sessionStorage.getItem("redirect_to")) {
-        const redirectLink = sessionStorage.getItem("redirect_to");
-        sessionStorage.removeItem("redirect_to");
+      localStorage.setItem("currentUser", JSON.stringify(loginResponse));
+      if (localStorage.getItem("redirect_to")) {
+        const redirectLink = localStorage.getItem("redirect_to");
+        localStorage.removeItem("redirect_to");
         navigate(redirectLink);
       } else {
         navigate("/");
@@ -38,7 +38,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (sessionStorage.getItem("currentUser")) {
+    if (localStorage.getItem("currentUser")) {
       navigate("/");
     }
   }, []);

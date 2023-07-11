@@ -41,7 +41,7 @@ export default function EmployeeAdd() {
     job_level: "",
     employment_type: "",
     contract_type: "",
-    primary_evaluator: "",
+    primary_evaluator: null,
     secondary_evaluator: null,
     tertiary_evaluator: null,
     hire_date: "",

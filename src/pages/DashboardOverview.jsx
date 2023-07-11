@@ -1,5 +1,4 @@
-import React from "react";
-import data from "../misc/unmg_kpi_sample.json";
+import React, { useEffect, useState } from "react";
 import { Overview } from "../components";
 import {
   Bar,
@@ -12,19 +11,88 @@ import {
   YAxis,
 } from "recharts";
 import Graph from "../components/Graph";
+import classNames from "classnames";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import classNames from "classnames";
 
 export default function DashboardOverview() {
+  const [performanceData, setPerformanceData] = useState([]);
+  const [employeeCount, setEmployeeCount] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
   const onPerformanceStatusClick = (e) => {
-    const employeeFilter = e;
-    console.log(employeeFilter);
-    // sessionStorage.setItem("employeeFilter", employeeFilter);
-    // navigate("/employees");
+    const employeeFilter = e.activeLabel;
+    switch (employeeFilter) {
+      case "Awaiting Submission":
+        localStorage.setItem("goalstatus", 3);
+        navigate("/main_goals");
+        break;
+      case "Pending Approval":
+        localStorage.setItem("goalstatus", 2);
+        navigate("/main_goals");
+        break;
+      case "Awaiting Evaluation":
+        // localStorage.setItem("goalstatus", 3);
+        // navigate("/main_goals");
+        break;
+      case "Approved Evaluation":
+        // localStorage.setItem("goalstatus", 3);
+        // navigate("/main_goals");
+        break;
+    }
   };
 
-  return (
+  useEffect(() => {
+    const fetchGoals = async () => {
+      let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
+      //let url = "../api/retrieveUsers.php";
+      try {
+        const response = await axios.get(url, {
+          params: {
+            employee_goals: true,
+            count: true,
+          },
+        });
+        setPerformanceData(response.data);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    const countUsers = async () => {
+      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
+      //let url = "../api/retrieveUsers.php";
+      try {
+        const response = await axios.get(url, {
+          params: {
+            count_employees: true,
+          },
+        });
+        setEmployeeCount(response.data);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    const fetchUsers = async () => {
+      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
+      //let url = "../api/retrieveUsers.php";
+      try {
+        const response = await axios.get(url, {
+          params: {
+            get_grades: true,
+          },
+        });
+        setData(response.data);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    fetchGoals();
+    countUsers();
+    fetchUsers();
+    setLoading(false);
+  }, []);
+  return !loading ? (
     <>
       {/* overview */}
       <Overview />
@@ -39,14 +107,16 @@ export default function DashboardOverview() {
               onClick={(e) => onPerformanceStatusClick(e)}
               data={[
                 {
-                  name: "Not Yet Started",
-                  [`Regular Employees`]: 150,
-                  [`Probationary Employees`]: 30,
+                  name: "Awaiting Submission",
+                  [`Regular Employees`]: performanceData.waiting_regular,
+                  [`Probationary Employees`]:
+                    performanceData.waiting_probationary,
                 },
                 {
-                  name: "Approved Metrics",
-                  [`Regular Employees`]: 64,
-                  [`Probationary Employees`]: 24,
+                  name: "Pending Approval",
+                  [`Regular Employees`]: performanceData.pending_regular,
+                  [`Probationary Employees`]:
+                    performanceData.pending_probationary,
                 },
                 {
                   name: "Awaiting Evaluation",
@@ -82,22 +152,22 @@ export default function DashboardOverview() {
                 data={[
                   {
                     name: "Regular",
-                    value: 219,
+                    value: employeeCount.regular,
                     fill: "#306088",
                   },
                   {
                     name: "Probationary",
-                    value: 38,
+                    value: employeeCount.probationary,
                     fill: "#d22735",
                   },
                   {
                     name: "Project Based",
-                    value: 25,
+                    value: employeeCount.project_based,
                     fill: "#b4d3fd",
                   },
                   {
                     name: "Consultant",
-                    value: 18,
+                    value: employeeCount.consultant,
                     fill: "#FDB4B4",
                   },
                 ]}
@@ -123,17 +193,17 @@ export default function DashboardOverview() {
                 data={[
                   {
                     name: "Goal Setting",
-                    value: 27,
+                    value: 1,
                     fill: "#306088",
                   },
                   {
                     name: "Annual Evaluation",
-                    value: 12,
+                    value: 0,
                     fill: "#d22735",
                   },
                   {
                     name: "Third Month Evaluation",
-                    value: 19,
+                    value: 0,
                     fill: "#b4d3fd",
                   },
                 ]}
@@ -199,5 +269,7 @@ export default function DashboardOverview() {
         />
       </div>
     </>
+  ) : (
+    <>Loading...</>
   );
 }

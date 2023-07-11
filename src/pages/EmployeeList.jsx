@@ -6,9 +6,11 @@ import { EmployeeTable, EmployeeAdd } from "../components";
 import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
 import BulkEmployeeAdd from "../components/BulkEmployeeAdd";
+import { useAuth } from "../context/authContext";
 
 export default function EmployeeList() {
   const { getPath } = useFunction();
+  const { currentUser } = useAuth();
   const searchParams = useSearchParams();
 
   const setHeader = (pathname) => {
@@ -73,21 +75,37 @@ export default function EmployeeList() {
               </div>
             </div>
             <Routes>
-              <Route
-                path="*"
-                element={
-                  <EmployeeTable
-                    filters={{
-                      company: searchParams[0].get("company"),
-                      department: searchParams[0].get("department"),
-                    }}
+              {JSON.parse(currentUser).user_type < 2 ? (
+                <>
+                  <Route
+                    path="*"
+                    element={
+                      <EmployeeTable
+                        filters={{
+                          company: searchParams[0].get("company"),
+                          department: searchParams[0].get("department"),
+                        }}
+                      />
+                    }
                   />
-                }
-              />
-              <Route path="/profile/:id" element={<EmployeeProfile />} />
-              <Route path="/profile/:id/edit" element={<EmployeeProfile />} />
-              <Route path="/add" element={<EmployeeAdd />} />
-              <Route path="/batch_add" element={<BulkEmployeeAdd />} />
+
+                  <Route path="/profile/:id" element={<EmployeeProfile />} />
+                  <Route
+                    path="/profile/:id/edit"
+                    element={<EmployeeProfile />}
+                  />
+                  <Route path="/add" element={<EmployeeAdd />} />
+                  <Route path="/batch_add" element={<BulkEmployeeAdd />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/profile/:id" element={<EmployeeProfile />} />
+                  <Route
+                    path="/profile/:id/edit"
+                    element={<EmployeeProfile />}
+                  />
+                </>
+              )}
             </Routes>
           </div>
         </div>

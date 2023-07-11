@@ -4,7 +4,13 @@ import { CiCircleMore } from "react-icons/ci";
 import OutsideTrigger from "../OutsideTrigger";
 import Badge from "../../misc/Badge";
 
-export default function DataTable({ data, pillars, statusIdx, statusList }) {
+export default function DataTable({
+  data,
+  pillars,
+  statusIdx,
+  statusList,
+  usertype,
+}) {
   const { removeSubText } = useFunction();
   const [sortedEmployees, sortEmployees] = useState([]);
   const [actionsVisibility, setActionsVisibility] = useState(
@@ -29,6 +35,11 @@ export default function DataTable({ data, pillars, statusIdx, statusList }) {
     }
   }, [statusIdx]);
 
+  const filterEmployees = (employees) => {
+    if (usertype === "all") return employees;
+
+    return employees.filter((emp) => emp.contract_type === usertype);
+  };
   return (
     <table className="w-full rounded-md bg-white">
       <thead className="bg-un-blue-light">
@@ -56,7 +67,7 @@ export default function DataTable({ data, pillars, statusIdx, statusList }) {
         </tr>
       </thead>
       <tbody>
-        {sortedEmployees.map((item, index) => (
+        {filterEmployees(sortedEmployees).map((item, index) => (
           <tr key={item.users_id} className="hover:bg-default">
             <td align="center" className="whitespace-nowrap p-2">
               {item.full_name}
@@ -119,33 +130,43 @@ export default function DataTable({ data, pillars, statusIdx, statusList }) {
                     }
                   >
                     <div className="flex flex-col gap-2 p-2 absolute top-[10%] right-[75%] whitespace-nowrap items-start text-[.9rem] bg-white z-[1] shadow-lg rounded animate-fade">
-                      <a
-                        href={`/main_goals/${item.users_id}`}
-                        className="hover:bg-default w-full px-2 text-start"
-                      >
-                        View Goals
-                      </a>
-                      <a
-                        href={`/main_goals/create/${item.users_id}`}
-                        className="hover:bg-default w-full px-2 text-start"
-                        onClick={() => {
-                          sessionStorage.setItem("edit_goal", item.user_id);
-                        }}
-                      >
-                        Edit Goals
-                      </a>
-                      <a
-                        href={`/main_goals/create/${item.users_id}`}
-                        className="hover:bg-default w-full px-2 text-start"
-                      >
-                        Create Goals
-                      </a>
-                      <button className="hover:bg-default w-full px-2 text-start">
-                        Approve Goals
-                      </button>
-                      <button className="hover:bg-default w-full px-2 text-start">
-                        Delete
-                      </button>
+                      {item.status === 1 || item.status === 2 ? (
+                        <>
+                          <a
+                            href={`/main_goals/${item.users_id}`}
+                            className="hover:bg-default w-full px-2 text-start"
+                          >
+                            View Goals
+                          </a>
+                          <a
+                            href={`/main_goals/edit`}
+                            className="hover:bg-default w-full px-2 text-start"
+                            onClick={() => {
+                              localStorage.setItem("goal_user", item.user_id);
+                            }}
+                          >
+                            Edit Goals
+                          </a>
+                          {item.status === 2 && (
+                            <button className="hover:bg-default w-full px-2 text-start">
+                              Approve Goals
+                            </button>
+                          )}
+                          <button className="hover:bg-default w-full px-2 text-start">
+                            Delete
+                          </button>
+                        </>
+                      ) : (
+                        <a
+                          href={`/main_goals/create`}
+                          className="hover:bg-default w-full px-2 text-start"
+                          onClick={() => {
+                            localStorage.setItem("create_goal", item.user_id);
+                          }}
+                        >
+                          Create Goals
+                        </a>
+                      )}
                     </div>
                   </OutsideTrigger>
                 </>

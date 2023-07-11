@@ -54,6 +54,7 @@ export function FunctionProvider({ children }) {
     const keysToSkip = [
       "middle_name",
       "suffix",
+      "primary_evaluator",
       "secondary_evaluator",
       "tertiary_evaluator",
     ];

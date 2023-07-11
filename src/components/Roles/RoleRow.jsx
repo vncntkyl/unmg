@@ -101,11 +101,11 @@ export default function RoleRow({
                         <button
                           className="p-1 hover:bg-gray w-full text-left rounded text-black"
                           onClick={() => {
-                            sessionStorage.setItem(
+                            localStorage.setItem(
                               "user",
                               JSON.stringify(user)
                             );
-                            sessionStorage.setItem(
+                            localStorage.setItem(
                               "redirect_back_to",
                               getPath()
                             );

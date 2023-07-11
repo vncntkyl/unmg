@@ -7,12 +7,14 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import axios from "axios";
 import Toggle from "../components/Toggle";
 import EditGoals from "../components/Goals/EditGoals";
+import { useAuth } from "../context/authContext";
 
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
   const [employeeID, setEmployeeID] = useState();
   const [pillars, setPillars] = useState([]);
   const { getPath } = useFunction();
+  const { currentUser } = useAuth();
 
   const setHeader = (path) => {
     switch (path) {
@@ -51,7 +53,11 @@ export default function MainGoals() {
     getPillars();
   }, []);
   useEffect(() => {
-    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).users_id);
+    const user = JSON.parse(currentUser);
+    setEmployeeID(user.users_id);
+    if (user.user_type == 3) {
+      setPanel("Employee Goals");
+    }
   }, []);
   return (
     <>
@@ -74,20 +80,20 @@ export default function MainGoals() {
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
-              <Toggle
-                paths={["/main_goals/", "/main_goals"]}
-                panel={panel}
-                panel_1={"My Goals"}
-                setPanel={setPanel}
-                panel_2={"Employee Goals"}
-              />
+              {JSON.parse(currentUser).user_type != 3 && (
+                <Toggle
+                  paths={["/main_goals/", "/main_goals"]}
+                  panel={panel}
+                  panel_1={"My Goals"}
+                  setPanel={setPanel}
+                  panel_2={"Employee Goals"}
+                />
+              )}
             </div>
             {/* BODY */}
             <div>
               <Routes>
-                {sessionStorage.getItem("panel") &&
-                sessionStorage.getItem("panel") === "My Goals" &&
-                panel === "My Goals" ? (
+                {panel === "My Goals" ? (
                   <>
                     <Route
                       path="/*"

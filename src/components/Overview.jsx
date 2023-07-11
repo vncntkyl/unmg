@@ -16,12 +16,12 @@ export default function Overview() {
         navigate("/employees");
         break;
       case 1:
-        sessionStorage.setItem("panel", "Employee Goals");
+        localStorage.setItem("usertype", "regular");
         navigate("/main_goals");
         break;
       case 2:
-        sessionStorage.setItem("user_type", "probationary");
-        navigate("/employees");
+        localStorage.setItem("usertype", "probationary");
+        navigate("/main_goals");
         break;
       case 3:
         break;

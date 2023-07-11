@@ -12,7 +12,7 @@ if (isset($_POST['getCount'])) {
         case "all":
             $employees = count($user_controller->retrieveUsers());
             $annualEval = count($user_controller->getEmployeesForEvaluation("regular"));
-            $thirdMonthEval = count($user_controller->getEmployeesForEvaluation("probation"));
+            $thirdMonthEval = count($user_controller->getEmployeesForEvaluation("probationary"));
             $discussion = count($user_controller->getEmployeesForConsultation());
             $regularization = count($user_controller->getEmployeesForRegularization());
 
@@ -44,4 +44,3 @@ if (isset($_POST['getCount'])) {
             break;
     }
 }
-?>

@@ -70,7 +70,7 @@ export default function EditGoals({ pillars = [] }) {
   };
 
   useEffect(() => {
-    if (!sessionStorage.getItem("goal_user")) {
+    if (!localStorage.getItem("goal_user")) {
       navigate("/main_goals");
     }
 
@@ -79,7 +79,7 @@ export default function EditGoals({ pillars = [] }) {
       //const url = "../api/fetchGoals.php";
 
       const formData = new FormData();
-      formData.append("user_id", sessionStorage.getItem("goal_user"));
+      formData.append("user_id", localStorage.getItem("goal_user"));
       try {
         const response = await axios.post(url, formData);
         if (response.data != 0) {

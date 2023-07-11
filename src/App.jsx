@@ -17,7 +17,7 @@ function App() {
   }, []);
   useEffect(() => {
     if (!window.location.pathname.includes("profile/")) {
-      if (sessionStorage.getItem("user")) sessionStorage.removeItem("user");
+      if (localStorage.getItem("user")) localStorage.removeItem("user");
     }
   }, [window.location]);
   return (

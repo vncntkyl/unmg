@@ -15,12 +15,15 @@ import { GrUserAdmin, GrBarChart } from "react-icons/gr";
 import { TbCalendarStats } from "react-icons/tb";
 import { RiLineChartLine, RiLogoutCircleLine } from "react-icons/ri";
 import NavButton from "./NavButton";
+import { useAuth } from "../context/authContext";
 
 export default function Sidebar({ sidebarToggler, className }) {
   const [dropdown, toggleDropdown] = useState({
     forms: false,
     administrator: false,
   });
+
+  const { currentUser } = useAuth();
 
   return (
     <>
@@ -72,7 +75,7 @@ export default function Sidebar({ sidebarToggler, className }) {
               <NavButton
                 icon={<RiLineChartLine />}
                 textLabel={"Tracking & Assessment"}
-                slug={"tracking_and_assement"}
+                slug={"tracking_and_assessment"}
               />
               <NavButton
                 icon={<FaSignature />}
@@ -81,55 +84,57 @@ export default function Sidebar({ sidebarToggler, className }) {
               />
             </div>
           </div>
-          <div className="flex flex-col">
-            <NavButton
-              isDropdown={true}
-              dropdown={dropdown}
-              icon={<GrUserAdmin />}
-              textLabel={"Administration"}
-              code={"admin"}
-              onClick={toggleDropdown}
-            />
-            <div
-              className={classNames(
-                "pl-4 opacity-0 origin-top transition-all duration-500 bg-default rounded-md pointer-events-none",
-                dropdown.administrator
-                  ? "opacity-100 max-h-[30rem] pointer-events-auto"
-                  : "max-h-[0rem]"
-              )}
-            >
+          {JSON.parse(currentUser).user_type <= 2 && (
+            <div className="flex flex-col">
               <NavButton
-                icon={<BsPeople />}
-                textLabel={"List of Employees"}
-                slug={"employees"}
+                isDropdown={true}
+                dropdown={dropdown}
+                icon={<GrUserAdmin />}
+                textLabel={"Administration"}
+                code={"admin"}
+                onClick={toggleDropdown}
               />
-              {/* <NavButton
+              <div
+                className={classNames(
+                  "pl-4 opacity-0 origin-top transition-all duration-500 bg-default rounded-md pointer-events-none",
+                  dropdown.administrator
+                    ? "opacity-100 max-h-[30rem] pointer-events-auto"
+                    : "max-h-[0rem]"
+                )}
+              >
+                <NavButton
+                  icon={<BsPeople />}
+                  textLabel={"List of Employees"}
+                  slug={"employees"}
+                />
+                {/* <NavButton
                 icon={<BsPersonGear />}
                 textLabel={"Roles"}
                 slug={"roles"}
               /> */}
-              <NavButton
-                icon={<BsBuildings />}
-                textLabel={"Companies"}
-                slug={"companies"}
-              />
-              <NavButton
-                icon={<BsJournalCheck />}
-                textLabel={"Company Plans"}
-                slug={"company_plans"}
-              />
-              <NavButton
-                icon={<RiLineChartLine />}
-                textLabel={"View Evaluations"}
-                slug={"view_evaluations"}
-              />
-              <NavButton
-                icon={<RxCounterClockwiseClock />}
-                textLabel={"Logs"}
-                slug={"logs"}
-              />
+                <NavButton
+                  icon={<BsBuildings />}
+                  textLabel={"Companies"}
+                  slug={"companies"}
+                />
+                <NavButton
+                  icon={<BsJournalCheck />}
+                  textLabel={"Company Plans"}
+                  slug={"company_plans"}
+                />
+                <NavButton
+                  icon={<RiLineChartLine />}
+                  textLabel={"View Evaluations"}
+                  slug={"view_evaluations"}
+                />
+                <NavButton
+                  icon={<RxCounterClockwiseClock />}
+                  textLabel={"Logs"}
+                  slug={"logs"}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </section>
       </section>
     </>

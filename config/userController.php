@@ -248,4 +248,23 @@ class User extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
+
+    function countEmployeesByContract()
+    {
+        $this->setStatement('SELECT 
+        COUNT(CASE WHEN contract_type = "regular" THEN 1 END) AS regular,
+        COUNT(CASE WHEN contract_type = "probationary" THEN 1 END) AS probationary,
+        COUNT(CASE WHEN contract_type = "project based" THEN 1 END) AS project_based,
+        COUNT(CASE WHEN contract_type = "consultant" THEN 1 END) AS consultant 
+        FROM 
+        (SELECT * FROM hr_users)  AS subquery');
+        $this->statement->execute();
+        return $this->statement->fetch();
+    }
+    function getEmployeeGrades()
+    {
+        $this->setStatement("SELECT CONCAT(last_name, ', ', ' ', first_name, ' ', SUBSTRING(middle_name, 1, 1), '.') AS name, (DAY(hire_date) / 31 * 4) AS grade FROM hr_users;");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
 }

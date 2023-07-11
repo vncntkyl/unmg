@@ -20,11 +20,12 @@ export default function EmployeeProfile({ admin }) {
     updateUser,
     navigate,
     uploadProfilePicture,
+    currentUser,
   } = useAuth();
   const { splitKey, reformatName, compareObjectArrays, capitalizeSentence } =
     useFunction();
 
-  const redirect_back_link = sessionStorage.getItem("redirect_back_to");
+  const redirect_back_link = localStorage.getItem("redirect_back_to");
 
   const [personalInfo, setPersonalInfo] = useState([]);
   const [jobInfo, setJobInfo] = useState([]);
@@ -40,40 +41,54 @@ export default function EmployeeProfile({ admin }) {
   const contractList = ["regular", "probation", "project based", "consultant"];
 
   const handleSubmit = (e) => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
     e.preventDefault();
+    let user = [];
+    if (localStorage.getItem("user")) {
+      user = JSON.parse(localStorage.getItem("user"));
+    } else {
+      user = JSON.parse(currentUser);
+    }
     const userdata = { ...personalInfo, ...jobInfo };
     setTimeout(() => {
       if (updateUser(userdata, user.users_id)) {
         setEditable(false);
         const changes = compareObjectArrays(user, {
-          address: userdata.address,
-          company_id: userdata.company,
-          contact_no: userdata.contact_no,
-          deleted: user.deleted,
-          department_id: userdata.department,
-          email: userdata.email,
-          first_name: userdata.first_name,
-          immediate_supervisor_id: userdata.immediate_supervisor,
-          inactive: user.inactive,
-          job_description: userdata.job_description,
-          last_name: userdata.last_name,
-          middle_name: userdata.middle_name,
-          password: user.password,
-          picture: user.picture,
-          salutation: userdata.salutation,
-          supervisor_id: userdata.supervisor,
-          user_status: userdata.status,
-          user_type: userdata.user_type,
-          username: userdata.username,
           users_id: user.users_id,
+          username: user.username,
+          first_name: userdata.first_name,
+          middle_name: userdata.middle_name,
+          last_name: userdata.last_name,
+          suffix: userdata.suffix || "N/A",
+          nickname: userdata.nickname,
+          salutation: userdata.salutation,
+          email: userdata.email_address,
+          contact_no: userdata.contact_no,
+          address: userdata.address,
+          nationality: userdata.nationality,
+          username: userdata.username,
+          employee_id: user.employee_id,
+          company: userdata.company,
+          department: userdata.department,
+          team: userdata.team,
+          job_description: userdata.job_description,
+          job_level: userdata.user_type,
+          employment_type: userdata.employment_category,
+          contract_type: userdata.contract_type,
+          primary_evaluator: userdata.primary_evaluator || "N/A",
+          secondary_evaluator: userdata.secondary_evaluator || "N/A",
+          tertiary_evaluator: userdata.tertiary_evaluator || "N/A",
+          hire_date: userdata.hire_date,
         });
 
         if (changes.length > 0) {
           changes.forEach((change) => {
             user[change.key] = change.newValue;
           });
-          sessionStorage.setItem("user", JSON.stringify(user));
+          if (localStorage.getItem("user")) {
+            localStorage.setItem("user", JSON.stringify(user));
+          } else {
+            localStorage.setItem("currentUser", JSON.stringify(user));
+          }
         }
         navigate(`/employees/profile/${id}`);
         setModal("success");
@@ -102,17 +117,17 @@ export default function EmployeeProfile({ admin }) {
 
     let user = [];
     if (!admin) {
-      if (!sessionStorage.getItem("user")) {
+      if (!localStorage.getItem("user")) {
         window.location.href = "/employees";
         return;
       }
-      user = JSON.parse(sessionStorage.getItem("user"));
+      user = JSON.parse(localStorage.getItem("user"));
     } else {
-      if (!sessionStorage.getItem("currentUser")) {
+      if (!localStorage.getItem("currentUser")) {
         window.location.href = "/";
         return;
       }
-      user = JSON.parse(sessionStorage.getItem("currentUser"));
+      user = JSON.parse(localStorage.getItem("currentUser"));
     }
     //get image
     if (user.picture) {
@@ -167,7 +182,7 @@ export default function EmployeeProfile({ admin }) {
           href={redirect_back_link ? redirect_back_link : "/employees"}
           onClick={() => {
             if (!redirect_back_link) return;
-            sessionStorage.removeItem("redirect_back_to");
+            localStorage.removeItem("redirect_back_to");
           }}
           className="flex flex-row items-center gap-2 bg-un-blue w-fit text-white text-[.8rem] p-1 pr-2 rounded-md hover:bg-un-blue-light"
         >
@@ -227,7 +242,7 @@ export default function EmployeeProfile({ admin }) {
                   onClick={() => {
                     if (uploadProfilePicture(file)) {
                       setModal("success upload");
-                      setFile(null)
+                      setFile(null);
                     }
                   }}
                   type="button"
@@ -332,7 +347,8 @@ export default function EmployeeProfile({ admin }) {
                         : object_key.includes("evaluator")
                         ? headList
                         : object_key === "job_level"
-                        ? usertypeList && usertypeList.map((type) => {
+                        ? usertypeList &&
+                          usertypeList.map((type) => {
                             return {
                               ...type,
                               job_level_name: capitalizeSentence(

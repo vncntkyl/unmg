@@ -28,3 +28,9 @@ if (isset($_GET['usertype'])) {
 if (isset($_POST['super'])) {
     echo json_encode($fetch->retrieveSuperAdmin(), JSON_UNESCAPED_UNICODE);
 }
+if(isset($_GET['count_employees'])){
+    echo json_encode($fetch->countEmployeesByContract(),JSON_UNESCAPED_UNICODE);
+}
+if(isset($_GET['get_grades'])){
+    echo json_encode($fetch->getEmployeeGrades(),JSON_UNESCAPED_UNICODE);
+}

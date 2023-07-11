@@ -79,7 +79,7 @@ export default function Goals({ user_id, pillars = [] }) {
             className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue mb-2"
             href="/main_goals/edit"
             onClick={() => {
-              sessionStorage.setItem("goal_user", user_id);
+              localStorage.setItem("goal_user", user_id);
             }}
           >
             Edit Goals

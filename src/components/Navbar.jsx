@@ -29,13 +29,13 @@ export default function Navbar({
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     setCurrentUser([]);
     navigate("/login");
   };
 
   useEffect(() => {
-    const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const setImg = async () => {
       try {
         const image = await import("./" + currentUser["picture"]);

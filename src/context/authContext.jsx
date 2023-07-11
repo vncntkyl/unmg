@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
   const [headList, setHeadList] = useState([]);
   const [usertypeList, setUsertypeList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
+  const [kpiDurations, setKpiDurations] = useState([]);
   const nav = useNavigate();
 
   const signInUser = async (username, password) => {
@@ -47,12 +48,11 @@ export function AuthProvider({ children }) {
 
   const updateUser = async (userdata, id) => {
     try {
-      const response = await axios.post(url.updateUser, {
-        params: {
-          userdata: userdata,
-          id: id,
-        },
-      });
+      const fd = new FormData();
+      fd.append("userdata", JSON.stringify(userdata));
+      fd.append("id", id);
+
+      const response = await axios.post(url.updateUser, fd);
       if (response.data === "success") {
         return true;
       }
@@ -241,7 +241,7 @@ export function AuthProvider({ children }) {
 
   const uploadProfilePicture = async (file) => {
     const imageURL = `../src/assets/images/profile_${
-      JSON.parse(sessionStorage.getItem("user")).employee_id
+      JSON.parse(localStorage.getItem("user")).employee_id
     }_${format(new Date(), "T")}.${
       file.name.split(".")[file.name.split(".").length - 1]
     }`;
@@ -250,15 +250,15 @@ export function AuthProvider({ children }) {
     formdata.append("imageFile", file);
     formdata.append(
       "user_id",
-      JSON.parse(sessionStorage.getItem("user")).users_id
+      JSON.parse(localStorage.getItem("user")).users_id
     );
     formdata.append("imageURL", imageURL);
     try {
       const response = await axios.post(url.uploadProfilePicture, formdata);
       if (response.data) {
-        const tempUser = JSON.parse(sessionStorage.getItem("user"));
+        const tempUser = JSON.parse(localStorage.getItem("user"));
         tempUser.picture = ".." + imageURL.substring(6);
-        sessionStorage.setItem("user", JSON.stringify(tempUser));
+        localStorage.setItem("user", JSON.stringify(tempUser));
         return 1;
       }
     } catch (e) {
@@ -278,8 +278,8 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    if (sessionStorage.getItem("currentUser")) {
-      setCurrentUser(sessionStorage.getItem("currentUser"));
+    if (localStorage.getItem("currentUser")) {
+      setCurrentUser(localStorage.getItem("currentUser"));
     }
     const url = "http://localhost/unmg_pms/api/conglomerate.php";
     //const url = "../api/conglomerate.php";
@@ -338,6 +338,20 @@ export function AuthProvider({ children }) {
         console.log(e.message);
       }
     };
+    const retrieveKPIYear = async () => {
+      try {
+        const url = "http://localhost/unmg_pms/api/fetchKpiDuration.php";
+        const response = await axios.get(url, {
+          params: {
+            kpiDuration: true,
+          },
+        });
+        setKpiDurations(response.data);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    retrieveKPIYear();
     fetchHeads();
     retrieveUserTypes();
   }, [currentUser]);
@@ -345,6 +359,7 @@ export function AuthProvider({ children }) {
   const value = {
     departmentList,
     usertypeList,
+    kpiDurations,
     currentUser,
     companyList,
     headList,
