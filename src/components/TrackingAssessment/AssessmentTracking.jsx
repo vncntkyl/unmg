@@ -32,12 +32,10 @@ export default function AssessmentTracking({ emp_id }) {
         );
 
         setUserPerformance(response.data);
-        console.table(response.data);
         const form = response.data.some(
           (item) => item.hr_eval_form_id !== null
         );
         setcheckForm(form);
-
         const scores = response.data.every(
           (item) => item.results !== 0 && item.metrics_desc !== null
         );

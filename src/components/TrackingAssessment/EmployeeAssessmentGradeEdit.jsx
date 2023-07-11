@@ -10,7 +10,6 @@ export default function EmployeeAssessmentGradeEdit() {
   const [checkForm, setcheckForm] = useState();
   const [pillars, setPillars] = useState([]);
   const [objectives, setObjectives] = useState([]);
-  const [selectedValues, setSelectedValues] = useState([]);
   const [quarter, setQuarter] = useState(
     sessionStorage.getItem("assessment_quarter") || 0
   );
@@ -20,13 +19,12 @@ export default function EmployeeAssessmentGradeEdit() {
   let pCounter,
     oCounter,
     kCounter = 1;
-
   //Form
-  const [score, setScore] = useState([]);
+  const [selectedValues, setSelectedValues] = useState([]);
   const [remarks, setRemarks] = useState([]);
-
   //Submit form
-  const handleSubmit = () => {};
+  const handleSubmit = () => { };
+
 
   useEffect(() => {
     //Whole Grades
@@ -40,6 +38,7 @@ export default function EmployeeAssessmentGradeEdit() {
             empID: sessionStorage.getItem("assessment_id"),
           },
         });
+        console.table(response.data)
         setGrades(response.data);
         //if pillar id is not found
         const ColumnAllFalse = response.data.some(
@@ -116,10 +115,9 @@ export default function EmployeeAssessmentGradeEdit() {
     getMetrics();
     getGrades();
   }, [quarter]);
-
+  //submit
   const Submit = (e) => {
     e.preventDefault();
-
     const totalGrades = pillars.reduce((accumulator, pillar) => {
       const objectiveGrades = objectives
         .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
@@ -132,13 +130,65 @@ export default function EmployeeAssessmentGradeEdit() {
 
       return accumulator + objectiveGrades;
     }, 0);
-    console.log(totalGrades);
 
-    const selectedValuesString = selectedValues.join(",");
-    alert(`Submitted with values: ${selectedValuesString}`);
+    const totalsubmitted = selectedValues.length;
+
+    if (totalGrades === totalsubmitted) {
+      if (tbl_name.length === 0) {
+        alert("Please select an available quarter!");
+      }
+      else {
+
+        const formspID = grades.find((item) => item.hr_eval_form_sp_id).hr_eval_form_sp_id;
+        const grade_id = [];
+        grades.forEach((grade) => grade_id.push(grade.table_id));
+        const metric = selectedValues.flat(Infinity);
+        const rem = remarks.flat(Infinity);
+        console.log(rem);
+        const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";
+        let fData = new FormData();
+        fData.append("submit", true);
+        fData.append('tbl_name', tbl_name);
+        fData.append("formspID", formspID);
+        fData.append('grade_id', JSON.stringify(grade_id));
+        fData.append('metric', JSON.stringify(metric));
+        fData.append('remarks', JSON.stringify(rem));
+        axios.post(url, fData)
+          .then(response => alert(response.data))
+          .catch(error => alert(error));
+          navigate(-1);
+      }
+
+    }
+    else {
+      alert('Please complete all the required fields');
+    }
+
+
   };
+  //getting table name
+  function getTableName(quarter) {
+    let tbl_name = "";
+
+    if (quarter === "1") {
+      tbl_name = "hr_eval_form_sp_fq";
+    } else if (quarter === "2") {
+      tbl_name = "hr_eval_form_sp_myr";
+    } else if (quarter === "3") {
+      tbl_name = "hr_eval_form_sp_tq";
+    } else if (quarter === "4") {
+      tbl_name = "hr_eval_form_sp_yee";
+    }
+    else {
+      tbl_name = "";
+    }
+    return tbl_name;
+  }
+  // Usage
+  const tbl_name = getTableName(quarter);
 
 
+  //functions for handling select and textarea
   function handleSelectChange(event, pillarIndex, objectIndex, gradeIndex) {
     const selectedValue = event.target.value;
     if (selectedValue === "4") {
@@ -150,12 +200,19 @@ export default function EmployeeAssessmentGradeEdit() {
     updatedValues[pillarIndex][objectIndex] =
       updatedValues[pillarIndex][objectIndex] || [];
     updatedValues[pillarIndex][objectIndex][gradeIndex] = selectedValue;
-  
+
     setSelectedValues(updatedValues);
   }
 
-
-
+  function handleRemarksChange(event, pillarIndex, objectIndex, gradeIndex) {
+    // Update the selected values array
+    const updatedRemark = [...remarks];
+    updatedRemark[pillarIndex] = updatedRemark[pillarIndex] || [];
+    updatedRemark[pillarIndex][objectIndex] =
+      updatedRemark[pillarIndex][objectIndex] || [];
+    updatedRemark[pillarIndex][objectIndex][gradeIndex] = event.target.value;
+    setRemarks(updatedRemark);
+  }
   // const defaultSelectedValues = pillars.map((pillar) =>
   // objectives
   // .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
@@ -176,15 +233,15 @@ export default function EmployeeAssessmentGradeEdit() {
   //     )
   // );
 
-  const flatArray = [1, 2, 3, 4];
-  const chunkSize = 1; // Number of elements in each nested array
+  // const flatArray = [1, 2, 3, 4];
+  // const chunkSize = 1; // Number of elements in each nested array
 
-  const nestedArray = [];
+  // const nestedArray = [];
 
-  for (let i = 0; i < flatArray.length; i += chunkSize) {
-    const chunk = flatArray.slice(i, i + chunkSize);
-    nestedArray.push(chunk);
-  }
+  // for (let i = 0; i < flatArray.length; i += chunkSize) {
+  //   const chunk = flatArray.slice(i, i + chunkSize);
+  //   nestedArray.push(chunk);
+  // }
 
   // console.log(
   //   pillars.map((pillar) => (
@@ -193,10 +250,6 @@ export default function EmployeeAssessmentGradeEdit() {
   //       grades.filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
   //       .map((grade) => grade.results)))))
   //   )
-
-  // const hasEmptyMetrics = selectedValues.some((pillar) => pillar.some((object) => object.some((grade) => grade === "0")));
-  // console.log(hasEmptyMetrics);
-
   return (
     <>
       <button
@@ -338,14 +391,14 @@ export default function EmployeeAssessmentGradeEdit() {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                {grades
-                              .filter(
-                                (grade) =>
-                                  grade.kpi_objective_id ===
-                                  object.obj_objective_id
-                              )
-                              .map((grade, gradeIndex) => (
-                              <tr key={"kpi - " + grade.kpi_kpi_id + kCounter++}>
+                                  {grades
+                                    .filter(
+                                      (grade) =>
+                                        grade.kpi_objective_id ===
+                                        object.obj_objective_id
+                                    )
+                                    .map((grade, gradeIndex) => (
+                                      <tr key={"kpi - " + grade.kpi_kpi_id + kCounter++}>
                                         <td>
                                           <div className="whitespace-normal p-2">
                                             {grade.kpi_desc}
@@ -358,45 +411,45 @@ export default function EmployeeAssessmentGradeEdit() {
                                         </td>
                                         <td>
                                           <div className="p-2 flex items-center justify-center">
-                                          <select
-                                          className="bg-default rounded-md px-4 flex content-center"
-                                          value={
-                                            selectedValues[pillarIndex]?.[
-                                              objectIndex
-                                            ]?.[gradeIndex] ||
-                                            (grade.results !== 0
-                                              ? grade.results
-                                              : "")
-                                          } // value from state
-                                          onChange={(event) =>
-                                            handleSelectChange(
-                                              event,
-                                              pillarIndex,
-                                              objectIndex,
-                                              gradeIndex
-                                            )
-                                          } // event handler
-                                        >
-                                          <option value="0">
-                                            Choose a Metric
-                                          </option>
-                                          {metrics
-                                            .filter(
-                                              (metric) =>
-                                                metric.metric_kpi_id ===
-                                                grade.kpi_kpi_id
-                                            )
-                                            .map((metric) => (
-                                              <option
-                                                key={metric.target_metrics_id}
-                                                value={
-                                                  metric.target_metrics_score
-                                                }
-                                              >
-                                                {metric.target_metrics_score}
+                                            <select
+                                              className="bg-default rounded-md px-4 flex content-center"
+                                              value={
+                                                selectedValues[pillarIndex]?.[
+                                                objectIndex
+                                                ]?.[gradeIndex] ||
+                                                (grade.results !== 0
+                                                  ? grade.results
+                                                  : "")
+                                              } // value from state
+                                              onChange={(event) =>
+                                                handleSelectChange(
+                                                  event,
+                                                  pillarIndex,
+                                                  objectIndex,
+                                                  gradeIndex
+                                                )
+                                              } // event handler
+                                            >
+                                              <option value="0">
+                                                Choose a Metric
                                               </option>
-                                            ))}
-                                        </select>
+                                              {metrics
+                                                .filter(
+                                                  (metric) =>
+                                                    metric.metric_kpi_id ===
+                                                    grade.kpi_kpi_id
+                                                )
+                                                .map((metric) => (
+                                                  <option
+                                                    key={metric.target_metrics_id}
+                                                    value={
+                                                      metric.target_metrics_score
+                                                    }
+                                                  >
+                                                    {metric.target_metrics_score}
+                                                  </option>
+                                                ))}
+                                            </select>
 
                                           </div>
                                         </td>
@@ -432,17 +485,25 @@ export default function EmployeeAssessmentGradeEdit() {
                                             <textarea
                                               id="message"
                                               rows="4"
+                                              required
                                               className="bg-default block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-md resize-none"
-                                              value={remarks}
-                                              defaultValue={grade.remarks}
-                                              onChange={(e) =>
-                                                setRemarks(e.target.value)
+                                              value={
+                                                remarks[pillarIndex]?.[objectIndex]?.[gradeIndex] || (grade.remarks !== null ? grade.remarks : "")
+                                              }
+                                              defaultValue={grade.remarks || "N/A"}
+                                              onChange={(event) =>
+                                                handleRemarksChange(
+                                                  event,
+                                                  pillarIndex,
+                                                  objectIndex,
+                                                  gradeIndex
+                                                )
                                               }
                                             ></textarea>
                                           </div>
                                         </td>
-                              </tr>
-                              ))}
+                                      </tr>
+                                    ))}
                                 </tbody>
                               </table>
                             </div>

@@ -199,12 +199,6 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
-    function insertUserAssessment($tbl_name, $formspID, $achievements)
-    {
-        $this->setStatement("UPDATE {$tbl_name} SET ratee_achievement = :ratee_achievement WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id");
-        return $this->statement->execute([':ratee_achievement' => $achievements, ':hr_eval_form_sp_id' => $formspID]);
-    }
-
     function selectUserAssessment($table_name_results, $table_name_rating, $empID)
     {
         $this->setStatement("
@@ -455,6 +449,7 @@ WHERE
         hr_kpi.objective_id AS kpi_objective_id,
         hr_kpi.kpi_desc,
         hr_kpi.kpi_weight,
+        hr_eval_form_sp.hr_eval_form_sp_id,
 
         {$table_name_results}.ID AS table_id,
         {$table_name_results}.results AS results,
@@ -521,6 +516,18 @@ WHERE
         ");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
+    }
+//submit achievement of user on quarter
+    function insertUserAssessment($tbl_name, $formspID, $achievements)
+    {
+        $this->setStatement("UPDATE {$tbl_name} SET ratee_achievement = :ratee_achievement WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id");
+        return $this->statement->execute([':ratee_achievement' => $achievements, ':hr_eval_form_sp_id' => $formspID]);
+    }
+    //Grade user based on quarter
+    function updateUserAssessment($tbl_name, $formspID, $currentMetric, $currentRemarks, $id)
+    {
+        $this->setStatement("UPDATE {$tbl_name} SET results = :results, remarks = :remarks WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id AND ID = :tbl_id");
+        return $this->statement->execute([':results' => $currentMetric, ':remarks' => $currentRemarks, ':tbl_id' => $id, ':hr_eval_form_sp_id' => $formspID]);
     }
 
     function fetchPillars($evalID)
