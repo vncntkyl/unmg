@@ -4,7 +4,7 @@ import { useAuth } from "../context/authContext";
 import EvaluationTable from "../components/EvaluationTable";
 import { GrFormSearch } from "react-icons/gr";
 export default function ViewEvaluation() {
-  const { companyList, departmentList } = useAuth();
+  const { companyList, departmentList, kpiDurations } = useAuth();
   const [selectedQuarter, setSelectedQuarter] = useState("All");
   const [selectedCompanyID, setSelectedCompanyID] = useState("All");
   const [departments, completeDepartments] = useState([]);
@@ -13,30 +13,33 @@ export default function ViewEvaluation() {
   const [query, setQuery] = useState("");
   const [currentUserType, setCurrentUserType] = useState("");
   const [currentUserContractType, setCurrentUserContractType] = useState("");
-  const [defaultState, setDefaultState] = useState();
   const [currentEmployeeID, setCurrentEmployeeID] = useState();
-  const [showFeature] = useState(defaultState);
+  const [selectedKpiDuration, setSelectedKpiDuration] = useState("All");
+  const [showFeature] = useState(currentUserType != 6);
   useEffect(() => {
     const currentUser = sessionStorage.getItem("currentUser");
     if (currentUser) {
       const userId = JSON.parse(currentUser);
       setCurrentUserType(userId.user_type);
       setCurrentUserContractType(userId.contract_type);
-      setCurrentEmployeeID(userId.employee_id);
-      setDefaultState(currentUserType != 6);
-    }
+      setCurrentEmployeeID(userId.employee_id)
+      }
   }, []);
   const handleChange = (event) => {
     setSelectedQuarter(event.target.value);
   };
+  const handleYearChange = (event) =>{
+    setSelectedKpiDuration(event.target.value);
+  }
   const handleCompanyChange = (event) => {
     setSelectedCompanyID(event.target.value);
   };
   const handleDepartmentChange = (event) => {
     setSelectedDepartmentID(event.target.value);
   };
-  
+
   useEffect(() => {
+  
     const fetchCompanyDepartments = async () => {
       if (selectedCompanyID === "All") {
         completeDepartments(departmentList);
@@ -63,8 +66,7 @@ export default function ViewEvaluation() {
                 Evaluations
               </span>
               {/* TOGGLE */}
-              {showFeature && (
-                <div
+               <div
                   className={classNames(
                     "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
                     employeeType !== "regular" && "on"
@@ -95,8 +97,42 @@ export default function ViewEvaluation() {
                     Probation
                   </button>
                 </div>
-              )}
             </div>
+            <div className="grid grid-cols-2">
+              <div className="p-2 flex flex-row gap-2 rounded-lg">
+                <span className="text-un-blue text-[1.2rem] font-semibold text-start whitespace-nowrap w-[63%] flex flex-row items-center gap-6 col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2]">
+                  Select Duration
+                  <select
+                    id="yearPicker"
+                    key={selectedKpiDuration}
+                    className="border rounded-md w-full flex flex-row md:max-w-250px"
+                    value={selectedKpiDuration}
+                    onChange={handleYearChange}
+                  >
+                    <option value="All">All</option>
+                    {kpiDurations.map((kpiDur) => {
+                      const fromDate = new Date(kpiDur.from_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      });
+                      const toDate = new Date(kpiDur.to_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      });
+                      return (
+                        <option value={kpiDur.kpi_year_duration_id}>
+                          {fromDate} to {toDate}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </span>
+
+              </div>
+            </div>
+
             <div className="gap-2 items-center md:gap-1">
               <div className="grid grid-cols-2">
                 <div className="p-2 flex flex-row gap-2 rounded-lg">
@@ -139,7 +175,7 @@ export default function ViewEvaluation() {
                   </span>
                 </div>
                 {/* SEARCH */}
-                {showFeature && (
+                {showFeature && currentUserContractType != "probationary" && (
                   <div className="col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2] flex flex-row items-center gap-2 p-1 bg-default rounded-md">
                     <label htmlFor="search">
                       <GrFormSearch className="text-[1.3rem]" />
@@ -160,7 +196,7 @@ export default function ViewEvaluation() {
                   </div>
                 )}
               </div>
-              {showFeature && (
+              {showFeature && currentUserType <= 3 && (
                 <div className="grid grid-cols-2">
                   <div className="p-2 flex flex-row gap-2 rounded-lg">
                     <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-6 col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2]">
@@ -242,9 +278,10 @@ export default function ViewEvaluation() {
               selectedDepartmentID={selectedDepartmentID}
               employeeType={employeeType}
               query={query}
-              currentUserContractType={currentUserContractType}
               currentUserType={currentUserType}
               currentEmployeeID={currentEmployeeID}
+              currentUserContractType={currentUserContractType}
+              selectedKpiDuration={selectedKpiDuration}
             />
           </div>
         </div>
