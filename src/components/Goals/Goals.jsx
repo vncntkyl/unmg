@@ -5,7 +5,14 @@ import { useParams } from "react-router-dom";
 import { useFunction } from "../../context/FunctionContext";
 import GoalTable from "./GoalTableHeader";
 import classNames from "classnames";
-export default function Goals({ user_id, pillars = [] }) {
+import { format } from "date-fns";
+export default function Goals({
+  user_id,
+  pillars = [],
+  kpiYears = [],
+  workYear,
+  setKpiDuration,
+}) {
   const { id } = useParams();
   const [hasSet, toggleSet] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -21,12 +28,14 @@ export default function Goals({ user_id, pillars = [] }) {
     const retrieveUser = async () => {
       const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
       //const url = "../api/fetchGoals.php";
-
+      console.log(workYear);
       const formData = new FormData();
       formData.append("user_id", user_id);
+      formData.append("work_year", workYear);
       try {
         const response = await axios.post(url, formData);
-        if (response.data != 0) {
+        console.log(response.data);
+        if (response.data) {
           setGoalData(response.data);
           let previousObjective = "";
           let previousKpi = "";
@@ -49,6 +58,7 @@ export default function Goals({ user_id, pillars = [] }) {
           toggleSet(true);
           setLoading(false);
         } else {
+          toggleSet(false);
           setLoading(false);
         }
       } catch (e) {
@@ -56,10 +66,40 @@ export default function Goals({ user_id, pillars = [] }) {
       }
     };
     retrieveUser();
-  }, [user_id]);
+  }, [user_id, workYear]);
   return !loading ? (
-    <>
-      {!hasSet ? (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-row gap-2 items-center">
+        <label htmlFor="workyear"> Select Work Year:</label>
+        <select
+          id="workyear"
+          className="bg-default rounded-md p-1 px-2"
+          onChange={(e) => {
+            setKpiDuration(parseInt(e.target.value));
+          }}
+        >
+          <option value="-1" disabled selected={workYear === -1}>
+            --Select Year--
+          </option>
+          {kpiYears.length > 0 &&
+            kpiYears.map((year) => {
+              return (
+                <option value={year.kpi_year_duration_id}>
+                  {format(new Date(year.from_date), "MMM d, yyyy") +
+                    " - " +
+                    format(new Date(year.to_date), "MMM d, yyyy")}
+                </option>
+              );
+            })}
+        </select>
+      </div>
+      {workYear === -1 ? (
+        <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
+          <span>
+            Please select a work year to show your goals.
+          </span>
+        </div>
+      ) : !hasSet ? (
         <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
           <span>
             Sorry, you haven&lsquo;t set your KPIs Objectives yet. Please click
@@ -80,6 +120,7 @@ export default function Goals({ user_id, pillars = [] }) {
             href="/main_goals/edit"
             onClick={() => {
               localStorage.setItem("goal_user", user_id);
+              localStorage.setItem("work_year", workYear);
             }}
           >
             Edit Goals
@@ -129,16 +170,13 @@ export default function Goals({ user_id, pillars = [] }) {
                     %
                   </p>
                 </div>
-                <GoalTable
-                  current={currentPillar}
-                  tableData={tableData}
-                />
+                <GoalTable current={currentPillar} tableData={tableData} />
               </div>
             </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   ) : (
     <>Loading...</>
   );

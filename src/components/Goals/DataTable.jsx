@@ -3,6 +3,7 @@ import { useFunction } from "../../context/FunctionContext";
 import { CiCircleMore } from "react-icons/ci";
 import OutsideTrigger from "../OutsideTrigger";
 import Badge from "../../misc/Badge";
+import { useAuth } from "../../context/authContext";
 
 export default function DataTable({
   data,
@@ -10,12 +11,15 @@ export default function DataTable({
   statusIdx,
   statusList,
   usertype,
+  workYear,
 }) {
   const { removeSubText } = useFunction();
   const [sortedEmployees, sortEmployees] = useState([]);
+  const [kpiYear, setKPIYear] = useState(-1);
   const [actionsVisibility, setActionsVisibility] = useState(
     Array(data.length).fill(false)
   );
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     switch (statusIdx) {
@@ -33,7 +37,7 @@ export default function DataTable({
         sortEmployees(data.filter((user) => user.status == 3));
         break;
     }
-  }, [statusIdx]);
+  }, [statusIdx,data]);
 
   const filterEmployees = (employees) => {
     if (usertype === "all") return employees;
@@ -61,9 +65,11 @@ export default function DataTable({
               Status
             </td>
           )}
-          <td align="center" className="p-2 text-white">
-            Actions
-          </td>
+          {JSON.parse(currentUser).users_id != 1 && (
+            <td align="center" className="p-2 text-white">
+              Actions
+            </td>
+          )}
         </tr>
       </thead>
       <tbody>
@@ -80,98 +86,107 @@ export default function DataTable({
               </td>
             ))}
             {statusIdx === 0 && (
-              <td align="center">
+              <td align="center" className="p-2">
                 <Badge
-                  message={statusList[item.status - 1]}
-                  type={
-                    item.status == 1
-                      ? "success"
-                      : item.status == 2
-                      ? "warning"
-                      : "default"
-                  }
-                />
+                    message={statusList[item.status - 1]}
+                    type={
+                      parseInt(item.status) === 1
+                        ? "success"
+                        : parseInt(item.status) === 2
+                        ? "warning"
+                        : "default"
+                    }
+                  />
               </td>
             )}
-            <td align="center" className="text-[1.1rem] relative">
-              <button
-                className="cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (actionsVisibility[index] === true) {
-                    setActionsVisibility((prevVisibility) => {
-                      const updatedVisibility = Array(
-                        prevVisibility.length
-                      ).fill(false);
-                      return updatedVisibility;
-                    });
-                  } else {
-                    setActionsVisibility((prevVisibility) => {
-                      const updatedVisibility = Array(
-                        prevVisibility.length
-                      ).fill(false);
-                      updatedVisibility[index] = true;
-                      return updatedVisibility;
-                    });
-                  }
-                }}
-              >
-                <CiCircleMore />
-              </button>
-              {actionsVisibility[index] && (
-                <>
-                  <OutsideTrigger
-                    onOutsideClick={() =>
+            {JSON.parse(currentUser).users_id != 1 && (
+              <td align="center" className="text-[1.1rem] relative">
+                <button
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (actionsVisibility[index] === true) {
                       setActionsVisibility((prevVisibility) => {
-                        const updatedVisibility = [...prevVisibility];
-                        updatedVisibility[index] = false;
+                        const updatedVisibility = Array(
+                          prevVisibility.length
+                        ).fill(false);
                         return updatedVisibility;
-                      })
+                      });
+                    } else {
+                      setActionsVisibility((prevVisibility) => {
+                        const updatedVisibility = Array(
+                          prevVisibility.length
+                        ).fill(false);
+                        updatedVisibility[index] = true;
+                        return updatedVisibility;
+                      });
                     }
-                  >
-                    <div className="flex flex-col gap-2 p-2 absolute top-[10%] right-[75%] whitespace-nowrap items-start text-[.9rem] bg-white z-[1] shadow-lg rounded animate-fade">
-                      {item.status === 1 || item.status === 2 ? (
-                        <>
+                  }}
+                >
+                  <CiCircleMore />
+                </button>
+                {actionsVisibility[index] && (
+                  <>
+                    <OutsideTrigger
+                      onOutsideClick={() =>
+                        setActionsVisibility((prevVisibility) => {
+                          const updatedVisibility = [...prevVisibility];
+                          updatedVisibility[index] = false;
+                          return updatedVisibility;
+                        })
+                      }
+                    >
+                      <div className="flex flex-col gap-2 p-2 absolute top-[10%] right-[75%] whitespace-nowrap items-start text-[.9rem] bg-white z-[1] shadow-lg rounded animate-fade">
+                        {item.status == 1 || item.status == 2 ? (
+                          <>
+                            <a
+                              href={`/main_goals/${item.users_id}`}
+                              className="hover:bg-default w-full px-2 text-start"
+                            >
+                              View Goals
+                            </a>
+                            <a
+                              href={`/main_goals/edit`}
+                              className="hover:bg-default w-full px-2 text-start"
+                              onClick={() => {
+                                localStorage.setItem(
+                                  "goal_user",
+                                  item.users_id
+                                );
+                                localStorage.setItem("work_year", workYear);
+                              }}
+                            >
+                              Edit Goals
+                            </a>
+                            {item.status === 2 && (
+                              <button className="hover:bg-default w-full px-2 text-start">
+                                Approve Goals
+                              </button>
+                            )}
+                            <button className="hover:bg-default w-full px-2 text-start">
+                              Delete
+                            </button>
+                          </>
+                        ) : (
                           <a
-                            href={`/main_goals/${item.users_id}`}
-                            className="hover:bg-default w-full px-2 text-start"
-                          >
-                            View Goals
-                          </a>
-                          <a
-                            href={`/main_goals/edit`}
+                            href={`/main_goals/create`}
                             className="hover:bg-default w-full px-2 text-start"
                             onClick={() => {
-                              localStorage.setItem("goal_user", item.user_id);
+                              localStorage.setItem(
+                                "create_goal",
+                                item.users_id
+                              );
                             }}
                           >
-                            Edit Goals
+                            Create Goals
                           </a>
-                          {item.status === 2 && (
-                            <button className="hover:bg-default w-full px-2 text-start">
-                              Approve Goals
-                            </button>
-                          )}
-                          <button className="hover:bg-default w-full px-2 text-start">
-                            Delete
-                          </button>
-                        </>
-                      ) : (
-                        <a
-                          href={`/main_goals/create`}
-                          className="hover:bg-default w-full px-2 text-start"
-                          onClick={() => {
-                            localStorage.setItem("create_goal", item.user_id);
-                          }}
-                        >
-                          Create Goals
-                        </a>
-                      )}
-                    </div>
-                  </OutsideTrigger>
-                </>
-              )}
-            </td>
+                        )}
+                      </div>
+                    </OutsideTrigger>
+                  </>
+                )}
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

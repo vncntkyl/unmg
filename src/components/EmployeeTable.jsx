@@ -107,7 +107,7 @@ export default function EmployeeTable({ filters = [] }) {
       if (evaluator) {
         return evaluator.last_name + ", " + evaluator.first_name;
       }else{
-        return "";
+        return "--";
       }
     } else if (key === "user_type") {
       return capitalizeSentence(

@@ -79,9 +79,14 @@ export default function EditGoals({ pillars = [] }) {
       //const url = "../api/fetchGoals.php";
 
       const formData = new FormData();
-      formData.append("user_id", localStorage.getItem("goal_user"));
+      const goal_owner = localStorage.getItem("goal_user");
+      const work_year = localStorage.getItem("work_year");
+
+      formData.append("user_id", goal_owner);
+      formData.append("work_year", work_year);
       try {
         const response = await axios.post(url, formData);
+        console.log(response.data)
         if (response.data != 0) {
           setGoalData(response.data);
           let previousObjective = "";

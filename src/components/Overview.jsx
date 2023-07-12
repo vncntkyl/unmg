@@ -40,7 +40,6 @@ export default function Overview() {
       try {
         const response = await axios.post(url, formData);
         setCards(response.data);
-        console.log(response.data);
       } catch (e) {
         console.log(e);
       }

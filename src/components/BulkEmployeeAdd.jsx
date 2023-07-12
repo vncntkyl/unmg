@@ -123,7 +123,7 @@ export default function BulkEmployeeAdd() {
   };
 
   const getFullName = (user) => {
-    const middle_name = user["middle_name"];
+    const middle_name = user["middle name"];
     if (middle_name === ".") {
       return user["last name"] + ", " + user["first name"];
     } else {

@@ -25,26 +25,14 @@ class User extends Controller
     }
     function retrieveUsers()
     {
-        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id");
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id WHERE i.users_id != 1");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
     function retrieveUsersByContract($contractID)
     {
-        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id WHERE user_status = ?");
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id WHERE user_status = ? WHERE i.users_id != 1");
         $this->statement->execute([$contractID]);
-        return $this->statement->fetchAll();
-    }
-    function retrieveDeletedUsers()
-    {
-        $this->setStatement("SELECT * FROM `hr_users` WHERE deleted = '1'");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
-    }
-    function retrieveDeactivatedUsers()
-    {
-        $this->setStatement("SELECT * FROM `hr_users` WHERE inactive = '1'");
-        $this->statement->execute();
         return $this->statement->fetchAll();
     }
 
@@ -52,7 +40,7 @@ class User extends Controller
     {
         $this->setStatement("SELECT u.employee_id, CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.') AS full_name, a.user_type
         FROM hr_users u LEFT JOIN hr_user_accounts a ON u.users_id = a.users_id
-        WHERE a.user_type != 6");
+        WHERE a.user_type != 6 AND u.users_id != 1");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -83,10 +71,10 @@ class User extends Controller
         $department_ID = intval($u->department);
         $job_level = intval($u->job_level);
         $password = md5($u->password);
-        $employment_type = intval($u->employment_type) === 0 ? "LOCAL" : "EXPAT";
-        $primary_evaluator = $u->primary_evaluator != NULL ? intval($u->primary_evaluator) : NULL;
-        $secondary_evaluator = $u->secondary_evaluator != NULL ? intval($u->secondary_evaluator) : NULL;
-        $tertiary_evaluator = $u->secondary_evaluator != NULL ? intval($u->tertiary_evaluator) : NULL;
+        $employment_type = intval($u->employment_type) == 0 ? "LOCAL" : "EXPAT";
+        $primary_evaluator = isset($u->primary_evaluator) ? intval($u->primary_evaluator) : NULL;
+        $secondary_evaluator = isset($u->secondary_evaluator)? intval($u->secondary_evaluator) : NULL;
+        $tertiary_evaluator = isset($u->secondary_evaluator) ? intval($u->tertiary_evaluator) : NULL;
         $status = 1;
 
         try {
@@ -170,7 +158,7 @@ class User extends Controller
     function retrieveSuperAdmin()
     {
         $usertype = 1;
-        $this->setStatement("SELECT * FROM `hr_users` WHERE user_type = ?");
+        $this->setStatement("SELECT * FROM `hr_user_accounts` WHERE user_type = ?");
         $this->statement->execute([$usertype]);
         return $this->statement->fetch();
     }
@@ -207,25 +195,25 @@ class User extends Controller
     }
     function getEmployeesForEvaluation($contract)
     {
-        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id LEFT JOIN hr_eval_form ef ON ef.users_id = a.users_id LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id WHERE i.contract_type = ? AND i.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')");
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id LEFT JOIN hr_eval_form ef ON ef.users_id = a.users_id LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id WHERE i.contract_type = ? AND i.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30') AND i.users_id != 1");
         $this->statement->execute([$contract]);
         return $this->statement->fetchAll();
     }
     function getEmployeesForConsultation()
     {
-        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.request_consult IS NOT NULL");
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.request_consult IS NOT NULL AND i.users_id != 1");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
     function getEmployeeGroupForConsultation($request)
     {
-        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.request_consult = ?");
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.request_consult = ? AND i.users_id != 1");
         $this->statement->execute([$request]);
         return $this->statement->fetchAll();
     }
     function getEmployeesForRegularization()
     {
-        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.for_regularization = 1");
+        $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a JOIN hr_users i ON a.users_id = i.users_id  WHERE i.for_regularization = 1 AND i.users_id != 1");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -234,7 +222,7 @@ class User extends Controller
         $this->setStatement("SELECT a.username, a.email_address, a.user_type, i.* FROM hr_user_accounts as a 
         JOIN hr_users i ON a.users_id = i.users_id
         LEFT JOIN hr_eval_form as e ON a.users_id = e.users_id
-        WHERE e.users_id IS NULL");
+        WHERE e.users_id IS NULL AND i.users_id != 1");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -244,7 +232,7 @@ class User extends Controller
         JOIN hr_users i ON a.users_id = i.users_id
         LEFT JOIN hr_eval_form e ON a.users_id = e.users_id
         LEFT JOIN hr_eval_form_fp as fp ON fp.eval_form_id = e.hr_eval_form_id
-        WHERE fp.created_by IS NOT NULL AND fp.approved_by IS NOT NULL");
+        WHERE fp.created_by IS NOT NULL AND fp.approved_by IS NOT NULL AND i.users_id != 1");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -257,13 +245,13 @@ class User extends Controller
         COUNT(CASE WHEN contract_type = "project based" THEN 1 END) AS project_based,
         COUNT(CASE WHEN contract_type = "consultant" THEN 1 END) AS consultant 
         FROM 
-        (SELECT * FROM hr_users)  AS subquery');
+        (SELECT * FROM hr_users WHERE users_id != 1)  AS subquery');
         $this->statement->execute();
         return $this->statement->fetch();
     }
     function getEmployeeGrades()
     {
-        $this->setStatement("SELECT CONCAT(last_name, ', ', ' ', first_name, ' ', SUBSTRING(middle_name, 1, 1), '.') AS name, (DAY(hire_date) / 31 * 4) AS grade FROM hr_users;");
+        $this->setStatement("SELECT CONCAT(last_name, ', ', ' ', first_name, ' ', SUBSTRING(middle_name, 1, 1), '.') AS name, (DAY(hire_date) / 31 * 4) AS grade FROM hr_users WHERE users_id != 1;");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }

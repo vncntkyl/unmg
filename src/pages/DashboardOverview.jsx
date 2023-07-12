@@ -82,6 +82,7 @@ export default function DashboardOverview() {
             get_grades: true,
           },
         });
+        console.log(response.data);
         setData(response.data);
       } catch (e) {
         console.log(e.message);
@@ -120,13 +121,13 @@ export default function DashboardOverview() {
                 },
                 {
                   name: "Awaiting Evaluation",
-                  [`Regular Employees`]: 45,
-                  [`Probationary Employees`]: 15,
+                  [`Regular Employees`]: performanceData.pending_regular,
+                  [`Probationary Employees`]: performanceData.pending_probationary,
                 },
                 {
                   name: "Approved Evaluation",
-                  [`Regular Employees`]: 30,
-                  [`Probationary Employees`]: 10,
+                  [`Regular Employees`]: performanceData.pending_regular,
+                  [`Probationary Employees`]: performanceData.pending_probationary,
                 },
               ]}
             >
@@ -160,16 +161,6 @@ export default function DashboardOverview() {
                     value: employeeCount.probationary,
                     fill: "#d22735",
                   },
-                  {
-                    name: "Project Based",
-                    value: employeeCount.project_based,
-                    fill: "#b4d3fd",
-                  },
-                  {
-                    name: "Consultant",
-                    value: employeeCount.consultant,
-                    fill: "#FDB4B4",
-                  },
                 ]}
                 dataKey="value"
                 nameKey="name"
@@ -193,7 +184,7 @@ export default function DashboardOverview() {
                 data={[
                   {
                     name: "Goal Setting",
-                    value: 1,
+                    value: 0,
                     fill: "#306088",
                   },
                   {
@@ -224,45 +215,47 @@ export default function DashboardOverview() {
           chart={
             <>
               <div className="h-[600px] overflow-y-auto rounded-md shadow-md">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-un-blue-light text-white sticky top-0 shadow-md">
-                      <th>Employee</th>
-                      <th>Grade</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data
-                      .sort((a, b) => b.grade - a.grade)
-                      .map((employee, index) => {
-                        return (
-                          <tr key={index} className="hover:bg-default">
-                            <td className="p-2">{employee.name}</td>
-                            <td align="center">
-                              <div
-                                className={classNames(
-                                  "w-3/4 p-1 rounded-md font-semibold",
-                                  employee.grade <= 4.0 &&
-                                    employee.grade >= 3.26
-                                    ? "bg-un-green-light text-un-green-dark"
-                                    : employee.grade <= 3.25 &&
-                                      employee.grade >= 2.51
-                                    ? "bg-un-yellow-light text-un-yellow-dark"
-                                    : employee.grade <= 2.5 &&
-                                      employee.grade >= 1.76
-                                    ? "bg-un-orange-light text-un-orange-dark"
-                                    : "bg-un-red-light-1 text-un-red-dark"
-                                )}
-                              >
-                                {employee.grade}
-                                {console.log()}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
+                {data !== [] && (
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-un-blue-light text-white sticky top-0 shadow-md">
+                        <th>Employee</th>
+                        <th>Grade</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data
+                        .sort((a, b) => b.grade - a.grade)
+                        .map((employee, index) => {
+                          return (
+                            <tr key={index} className="hover:bg-default">
+                              <td className="p-2">{employee.name}</td>
+                              <td align="center">
+                                <div
+                                  className={classNames(
+                                    "w-3/4 p-1 rounded-md font-semibold",
+                                    employee.grade <= 4.0 &&
+                                      employee.grade >= 3.26
+                                      ? "bg-un-green-light text-un-green-dark"
+                                      : employee.grade <= 3.25 &&
+                                        employee.grade >= 2.51
+                                      ? "bg-un-yellow-light text-un-yellow-dark"
+                                      : employee.grade <= 2.5 &&
+                                        employee.grade >= 1.76
+                                      ? "bg-un-orange-light text-un-orange-dark"
+                                      : "bg-un-red-light-1 text-un-red-dark"
+                                  )}
+                                >
+                                  {employee.grade}
+                                  {console.log()}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </>
           }

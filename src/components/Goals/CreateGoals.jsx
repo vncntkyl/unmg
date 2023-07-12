@@ -2,10 +2,21 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import axios from "axios";
 import GoalsInstructions from "./GoalsInstructions";
+import { useAuth } from "../../context/authContext";
+import { format } from "date-fns";
+import { useFunction } from "../../context/FunctionContext";
 
-export default function CreateGoals({ pillars = [], user_id }) {
+export default function CreateGoals({
+  pillars = [],
+  user_id,
+  kpi_work_year = null,
+}) {
   const [goals, setGoals] = useState([]);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState("");
+  const [duration, setDuration] = useState();
+  const [users, setUsers] = useState([]);
+  const { kpiDurations, fetchUsers } = useAuth();
+  const { capitalizeSentence } = useFunction();
 
   const addObjective = (i) => {
     const objectiveTemplate = {
@@ -138,6 +149,22 @@ export default function CreateGoals({ pillars = [], user_id }) {
     return 1;
   };
 
+  const showGoalsOwner = () => {
+    if (users.length > 0) {
+      const owner = users.find(
+        (u) => u.users_id == (user.length != 0 ? user : user_id)
+      );
+      const owner_name =
+        owner.last_name +
+        ", " +
+        owner.first_name +
+        " " +
+        (owner.middle_name != "." && owner.middle_name.substring(0, 1) + ".");
+      return owner_name;
+    } else {
+      return "Loading...";
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const pillarPercentage = checkPillarPercentage(goals);
@@ -162,8 +189,10 @@ export default function CreateGoals({ pillars = [], user_id }) {
       //const url = "../api/formCreation.php";
       const formData = new FormData();
       formData.append("submit", true);
-      formData.append("userID", user_id);
+      formData.append("userID", user.length != 0 ? user : user_id);
+      formData.append("current_user_id",user_id);
       formData.append("goals", JSON.stringify(goals));
+      formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
       const response = await axios.post(url, formData);
 
       alert(response.data);
@@ -210,19 +239,48 @@ export default function CreateGoals({ pillars = [], user_id }) {
         };
       })
     );
+  }, [pillars]);
+  useEffect(() => {
+    const setup = async () => {
+      setUsers(await fetchUsers());
+    };
     if (localStorage.getItem("create_goal")) {
       setUser(localStorage.getItem("create_goal"));
       localStorage.removeItem("create_goal");
-    } else {
-      setUser(user_id);
     }
-  }, [pillars]);
+    setup();
+  }, []);
 
   return (
     <>
-      <div>
+      <div className="flex flex-col gap-2">
         <GoalsInstructions />
-        <form className="py-2 flex flex-col gap-2" onSubmit={handleSubmit}>
+        <div>Create goals for: {showGoalsOwner()}</div>
+        {user !== "" && (
+          <div className="flex flex-row gap-2 items-center">
+            <label htmlFor="workyear"> Select Work Year:</label>
+            <select
+              id="workyear"
+              className="bg-default rounded-md p-1 px-2"
+              onChange={(e) => setDuration(e.target.valueAsNumber)}
+            >
+              <option value="" disabled>
+                --Select Year--
+              </option>
+              {kpiDurations.length > 0 &&
+                kpiDurations.map((year) => {
+                  return (
+                    <option value={year.kpi_year_duration_id}>
+                      {format(new Date(year.from_date), "MMM d, yyyy") +
+                        " - " +
+                        format(new Date(year.to_date), "MMM d, yyyy")}
+                    </option>
+                  );
+                })}
+            </select>
+          </div>
+        )}
+        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
           {goals.length > 0 ? (
             goals.map((goal, index) => {
               return (
@@ -262,7 +320,7 @@ export default function CreateGoals({ pillars = [], user_id }) {
                                   <span>{objIndex + 1}</span>
                                   <textarea
                                     required
-                                    className="p-1 rounded-md"
+                                    className="p-1 rounded-md w-[400px]"
                                     value={obj.objective_description}
                                     onChange={(e) => {
                                       const text = e.target.value;
@@ -298,7 +356,7 @@ export default function CreateGoals({ pillars = [], user_id }) {
                                           <div className="flex flex-row items-center gap-2 justify-start">
                                             <textarea
                                               required
-                                              className="p-1 rounded-md"
+                                              className="p-1 rounded-md w-[300px]"
                                               value={kpi.kpi_description}
                                               onChange={(e) => {
                                                 const text = e.target.value;
@@ -386,7 +444,7 @@ export default function CreateGoals({ pillars = [], user_id }) {
                                                     <span>{metrics.point}</span>
                                                     <textarea
                                                       required
-                                                      className="p-1 rounded-md"
+                                                      className="p-1 rounded-md w-[300px]"
                                                       value={
                                                         metrics.metric_description
                                                       }

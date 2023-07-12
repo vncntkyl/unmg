@@ -9,11 +9,13 @@ if (isset($_GET['employee_goals'])) {
         echo json_encode($formController->getEmployeeGoalsData());
     } else {
         if (isset($_GET['evaluator'])) {
-            // echo $_GET['evaluator'];
-            echo json_encode($formController->getEvaluatorEmployeeGoals($_GET['evaluator']));
+            if (isset($_GET['is_count'])) {
+                echo json_encode($formController->getEvaluatorEmployeeGoals($_GET['evaluator'], true, $_GET['work_year']));
+            } else {
+                echo json_encode($formController->getEvaluatorEmployeeGoals($_GET['evaluator'], false, $_GET['work_year']));
+            }
         } else {
             echo json_encode($formController->getEmployeeGoals());
         }
     }
 }
-?>

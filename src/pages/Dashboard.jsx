@@ -85,13 +85,19 @@ export default function Dashboard() {
         />
         {/* DASHBOARD MAIN */}
         <Routes>
-          <Route path="/" element={<DashboardOverview />} />
+          {user.user_type > 2 ? (
+            <Route path="/" element={<MainGoals />} />
+          ) : (
+            <Route path="/" element={<DashboardOverview />} />
+          )}
           {user.user_type < 2 && (
-            <Route path="/employees/*" element={<EmployeeList />} />
+            <>
+              <Route path="/employees/*" element={<EmployeeList />} />
+            </>
           )}
           <Route path="/account/*" element={<AccountSettings />} />
           <Route path="/companies/*" element={<CompanyList />} />
-          <Route path="/roles/*" element={<Roles />} />
+          {/* <Route path="/roles/*" element={<Roles />} /> */}
           <Route path="/help/*" element={<Help />} />
           <Route path="/main_goals/*" element={<MainGoals />} />
           <Route

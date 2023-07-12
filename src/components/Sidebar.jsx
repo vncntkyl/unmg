@@ -49,22 +49,38 @@ export default function Sidebar({ sidebarToggler, className }) {
           </span>
         </div>
         <section className="w-full flex flex-col py-2 lg:py-0">
-          <NavButton icon={<RxDashboard />} textLabel={"Dashboard"} slug={""} />
+          {JSON.parse(currentUser).user_type <= 2 && (
+            <>
+              <NavButton
+                icon={<RxDashboard />}
+                textLabel={"Dashboard"}
+                slug={""}
+              />
+            </>
+          )}
           <div className="flex flex-col">
             <NavButton
               isDropdown={true}
               dropdown={dropdown}
-              icon={<FaWpforms />}
+              icon={JSON.parse(currentUser).user_type <= 2 ? <FaWpforms /> : ""}
               textLabel={"KPI Management"}
               code={"forms"}
-              onClick={toggleDropdown}
+              onClick={
+                JSON.parse(currentUser).user_type <= 2
+                  ? toggleDropdown
+                  : () => {
+                      return;
+                    }
+              }
             />
             <div
               className={classNames(
                 "pl-4 opacity-0 origin-top transition-all duration-300 bg-default rounded-md pointer-events-none",
-                dropdown.forms
-                  ? "opacity-100 max-h-[15rem] pointer-events-auto"
-                  : "max-h-[0rem]"
+                JSON.parse(currentUser).user_type <= 2
+                  ? dropdown.forms
+                    ? "opacity-100 max-h-[15rem] pointer-events-auto"
+                    : "max-h-[0rem]"
+                  : "opacity-100 max-h-[15rem] pointer-events-auto"
               )}
             >
               <NavButton

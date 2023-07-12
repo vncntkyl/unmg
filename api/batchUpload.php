@@ -114,6 +114,8 @@ if (isset($_POST['employees'])) {
     }
 
     foreach ($data as $key => $emp) {
-        $user->insertAcc($emp);
+        if($emp->contract_type !== "project based" && $emp->contract_type !== "consultant"){
+            echo $user->insertAcc($emp);
+        }
     }
 }

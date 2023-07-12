@@ -13,13 +13,16 @@ export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
   const [employeeID, setEmployeeID] = useState();
   const [pillars, setPillars] = useState([]);
+  const [isEvaluator, setIsEvaluator] = useState(false);
+  const [workYear, setWorkYear] = useState(-1);
   const { getPath } = useFunction();
-  const { currentUser } = useAuth();
+  const { currentUser, kpiDurations } = useAuth();
 
   const setHeader = (path) => {
     switch (path) {
       case "/main_goals":
       case "/main_goals/":
+      case "/":
         if (panel === "My Goals") {
           return "Main Goals";
         } else {
@@ -49,13 +52,31 @@ export default function MainGoals() {
         console.log(e.message);
       }
     };
-
+    const verifyEvaluator = async () => {
+      let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
+      //let url = "../api/retrieveUsers.php";
+      const parameters = {
+        params: {
+          employee_goals: true,
+          evaluator: JSON.parse(currentUser).employee_id,
+          work_year: workYear,
+          is_count: true,
+        },
+      };
+      try {
+        const response = await axios.get(url, parameters);
+        setIsEvaluator(response.data > 0);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    verifyEvaluator();
     getPillars();
   }, []);
   useEffect(() => {
     const user = JSON.parse(currentUser);
     setEmployeeID(user.users_id);
-    if (user.user_type == 3) {
+    if (user.user_type == 3 || user.users_id == 1) {
       setPanel("Employee Goals");
     }
   }, []);
@@ -68,26 +89,31 @@ export default function MainGoals() {
             {/* HEADER */}
             <div className="flex flex-col items-center justify-between md:flex-row">
               <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
-                {!["/main_goals/", "/main_goals"].includes(getPath()) && (
-                  <a
-                    href="/main_goals"
-                    className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
-                  >
-                    <MdOutlineKeyboardArrowLeft />
-                    <span>Back</span>
-                  </a>
-                )}
+                {!["/main_goals/", "/main_goals"].includes(getPath()) &&
+                  getPath() !== "/" && (
+                    <a
+                      href="/main_goals"
+                      className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
+                    >
+                      <MdOutlineKeyboardArrowLeft />
+                      <span>Back</span>
+                    </a>
+                  )}
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
               {JSON.parse(currentUser).user_type != 3 && (
-                <Toggle
-                  paths={["/main_goals/", "/main_goals"]}
-                  panel={panel}
-                  panel_1={"My Goals"}
-                  setPanel={setPanel}
-                  panel_2={"Employee Goals"}
-                />
+                <>
+                  {isEvaluator && (
+                    <Toggle
+                      paths={["/main_goals/", "/main_goals", "/"]}
+                      panel={panel}
+                      panel_1={"My Goals"}
+                      setPanel={setPanel}
+                      panel_2={"Employee Goals"}
+                    />
+                  )}
+                </>
               )}
             </div>
             {/* BODY */}
@@ -97,18 +123,40 @@ export default function MainGoals() {
                   <>
                     <Route
                       path="/*"
-                      element={<Goals user_id={employeeID} pillars={pillars} />}
+                      element={
+                        <Goals
+                          user_id={employeeID}
+                          pillars={pillars}
+                          kpiYears={kpiDurations}
+                          workYear={workYear}
+                          setKpiDuration={setWorkYear}
+                        />
+                      }
                     />
                     <Route
                       path="/:id"
-                      element={<Goals user_id={employeeID} pillars={pillars} />}
+                      element={
+                        <Goals
+                          user_id={employeeID}
+                          pillars={pillars}
+                          kpiYears={kpiDurations}
+                          workYear={workYear}
+                          setKpiDuration={setWorkYear}
+                        />
+                      }
                     />
                   </>
                 ) : (
                   <>
                     <Route
                       path="/*"
-                      element={<EmployeeGoals pillars={pillars} />}
+                      element={
+                        <EmployeeGoals
+                          pillars={pillars}
+                          workYear={workYear}
+                          setKpiDuration={setWorkYear}
+                        />
+                      }
                     />
                   </>
                 )}
@@ -116,7 +164,11 @@ export default function MainGoals() {
                 <Route
                   path="/create/*"
                   element={
-                    <CreateGoals pillars={pillars} user_id={employeeID} />
+                    <CreateGoals
+                      pillars={pillars}
+                      user_id={employeeID}
+                      kpi_work_year={workYear}
+                    />
                   }
                 />
                 <Route

@@ -8,9 +8,10 @@ if (isset($_POST['submit'])) {
     $goals = json_decode($_POST['goals']);
     if (isset($_POST['userID'])) {
         $userID = $_POST['userID'];
+        $creator = $_POST['current_user_id'];
 
         if ($formID = $formController->createEvalForm($userID)) {
-            $latestFpID = $formController->createEvalFormFp($formID, $_POST['userID']);
+            $latestFpID = $formController->createEvalFormFp($formID,$creator, $_POST['userID']);
             $latestSpID = $formController->createEvalFormSp($formID);
 
             foreach ($goals as $index => $goal) {

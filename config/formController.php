@@ -73,11 +73,23 @@ class Form extends Controller
         return $this->statement->fetch();
     }
 
-    function createEvalFormFp($formID, $user)
+    function createEvalFormFp($formID, $created_by, $goal_owner)
     {
-        $this->setStatement("INSERT into `hr_eval_form_fp` (eval_form_id, created_by) VALUES (:formID, :user)");
-        if ($this->statement->execute([':formID' => $formID, ':user' => $user])) {
-            return $this->connection->lastInsertId();
+        $sqlQuery = "INSERT into `hr_eval_form_fp` (eval_form_id, ";
+        if ($created_by === $goal_owner) {
+            //may created_by pero for approval pa
+            $sqlQuery .= "created_by) VALUES (:formID, :owner)";
+            $this->setStatement($sqlQuery);
+            if ($this->statement->execute([':formID' => $formID, ':owner' => $goal_owner])) {
+                return $this->connection->lastInsertId();
+            }
+        } else {
+            //created_by ay yung employee and then approved by automatically by superior
+            $sqlQuery .= "created_by, approved_by) VALUES (:formID, :owner, :creator)";
+            $this->setStatement($sqlQuery);
+            if ($this->statement->execute([':formID' => $formID, ':owner' => $goal_owner, ':creator' => $created_by])) {
+                return $this->connection->lastInsertId();
+            }
         }
     }
     function createEvalFormSp($formID)
@@ -152,10 +164,10 @@ class Form extends Controller
         return $this->statement->execute([':agreedrating' => $agreedRate, ':weightedRate' => $weightedRating, ':yearEndRateID' => $latestYearEndValID]);
     }
 
-    function checkEvaluationForm($userID)
+    function checkEvaluationForm($userID, $workYear = 0)
     {
-        $this->setStatement("SELECT * FROM `hr_eval_form` WHERE users_id = ?");
-        $this->statement->execute([$userID]);
+        $this->setStatement("SELECT * FROM `hr_eval_form` WHERE users_id = ? AND creationDate = ?");
+        $this->statement->execute([$userID, $workYear]);
         if ($evalArr = $this->statement->fetch()) {
             if (!empty($evalArr)) {
                 return $evalArr->hr_eval_form_id;
@@ -189,7 +201,7 @@ class Form extends Controller
         $this->statement->execute([$kpiID]);
         return $this->statement->fetchAll();
     }
-    function fetchEvaluationForm($userID)
+    function fetchEvaluationForm($userID, $workYear)
     {
         $this->setStatement(
             "SELECT
@@ -221,9 +233,9 @@ class Form extends Controller
         JOIN 
             hr_target_metrics ON hr_kpi.kpi_id = hr_target_metrics.kpi_id
         WHERE 
-            hr_eval_form.users_id = :userID"
+            hr_eval_form.users_id = :userID AND hr_eval_form.creationDate = :kpi_year"
         );
-        $this->statement->execute([':userID' => $userID]);
+        $this->statement->execute([':userID' => $userID, ':kpi_year' => $workYear]);
         return $this->statement->fetchAll();
     }
 
@@ -263,30 +275,27 @@ class Form extends Controller
             LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
         LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
   	WHERE
-      	u.contract_type IN ('regular','probationary') AND  u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')
+      	u.contract_type IN ('regular','probationary') AND  u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30') AND u.users_id != 1
     GROUP BY
     u.users_id");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
-    function getEvaluatorEmployeeGoals($evaluator)
+    function getEvaluatorEmployeeGoals($evaluator, $is_count = false, $workyear)
     {
         $this->setStatement("SELECT
         u.users_id,
         u.employee_id,
         IF(u.middle_name <> '.', CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.'), CONCAT(u.last_name, ', ', u.first_name)) AS full_name,
         u.contract_type,
+        IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :work_year, 1, 0)) AS has_eval,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
         CASE
-            WHEN ef.users_id IS NULL THEN 0
-            ELSE 1
-        END AS has_eval,
-        MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
-        MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
-        MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
-        MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
-        CASE
-            WHEN fp.created_by <> '' AND fp.approved_by <> '' THEN '1'
-            WHEN fp.created_by <> '' OR fp.approved_by <> '' THEN '2'
+            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' AND fp.approved_by <> '') THEN '1'
+            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' OR fp.approved_by <> '') THEN '2'
             ELSE '3'
         END AS status
     FROM
@@ -297,11 +306,15 @@ class Form extends Controller
     WHERE
         u.contract_type IN ('regular', 'probationary') 
         AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30') 
-        AND (u.primary_evaluator = :evaluator OR u.secondary_evaluator = :evaluator OR u.tertiary_evaluator = :evaluator)
+        AND (u.primary_evaluator = :evaluator OR u.secondary_evaluator = :evaluator OR u.tertiary_evaluator = :evaluator) AND u.users_id != 1
     GROUP BY
         u.users_id");
-        $this->statement->execute([":evaluator" => $evaluator]);
-        return $this->statement->fetchAll();
+        $this->statement->execute([":evaluator" => $evaluator, ":work_year" => $workyear]);
+        if ($is_count) {
+            return $this->statement->rowCount();
+        } else {
+            return $this->statement->fetchAll();
+        }
     }
     function getEmployeeGoalsData()
     {
@@ -543,9 +556,9 @@ class Form extends Controller
     function selectEmployeeSignOffAssessment($empID, $userStatus)
     {
         $this->setStatement("SELECT
-            employee.rater_1,
-            employee.rater_2,
-            employee.rater_3,
+            employee.primary_evaluator,
+            employee.secondary_evaluator,
+            employee.tertiary_evaluator,
             CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
             CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
             CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
@@ -553,11 +566,11 @@ class Form extends Controller
             employee.emp_id,
             employee.job_description
         FROM hr_users AS employee
-        LEFT JOIN hr_users AS primary_eval ON primary_eval.emp_id = employee.rater_1
-        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.emp_id = employee.rater_2
-        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.emp_id = employee.rater_3
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.emp_id = employee.primary_evaluator
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.emp_id = employee.secondary_evaluator
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.emp_id = employee.tertiary_evaluator
         WHERE 
-        (employee.rater_1 = :rater_id OR employee.rater_2 = :rater_id OR employee.rater_3 = :rater_id)
+        (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
         AND employee.user_status = :user_status
                 ");
         $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
@@ -637,7 +650,7 @@ class Form extends Controller
             hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
 
         WHERE 
-          (employee.rater_1 = :rater_id OR employee.rater_2 = :rater_id OR employee.rater_3 = :rater_id)
+          (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
            AND employee.user_status = :user_status
          ORDER BY employee.users_id");
         $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);

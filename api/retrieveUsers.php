@@ -8,14 +8,7 @@ if (isset($_GET['users'])) {
     $json_users = json_encode($fetch->retrieveUsers(), JSON_UNESCAPED_UNICODE);
     echo $json_users;
 }
-if (isset($_GET['inactive'])) {
-    $json_inactive = json_encode($fetch->retrieveDeactivatedUsers(), JSON_UNESCAPED_UNICODE);
-    echo $json_inactive;
-}
-if (isset($_GET['deleted'])) {
-    $json_deleted = json_encode($fetch->retrieveDeletedUsers(), JSON_UNESCAPED_UNICODE);
-    echo $json_deleted;
-}
+
 if (isset($_GET['heads'])) {
     $json_head = json_encode($fetch->retrieveHeadUsers(), JSON_UNESCAPED_UNICODE);
     echo $json_head;

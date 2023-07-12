@@ -163,7 +163,7 @@ export default function GoalTable({
                       <span>-</span>
                       {edit ? (
                         <textarea
-                          className="w-full resize-y bg-default p-2 rounded-md"
+                          className="w-full resize-y bg-default p-2 rounded-md min-h-[75px]"
                           value={item.target_metrics_desc}
                           onChange={(e) => {
                             updateData(
@@ -183,7 +183,7 @@ export default function GoalTable({
           </tbody>
         </table>
       </div>
-      <button onClick={() => saveData()}>Save</button>
+      {edit && <button onClick={() => saveData()} className=" bg-un-blue-light text-white mt-2 py-1 px-3 rounded-md float-right">Save</button>}
     </>
   );
 }
