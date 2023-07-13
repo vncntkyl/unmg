@@ -253,7 +253,17 @@ export default function AssessmentTracking({ emp_id }) {
                                 </td>
                                 <td className="w-[10%] p-4 bg-white">
                                   <div className="flex items-center justify-center">
-                                  {performance.results}
+                                    {
+                                      quarter == 3 ? (                                  
+                                      <Badge message={performance.results} 
+                                        type={performance.results === 1 ? "failure":
+                                        performance.results === 2 ? "warning":
+                                        performance.results === 3 ? "success":
+                                        performance.results === 4 ? "success":
+                                        ""} 
+                                        className="px-8 rounded-md text-[1rem]"/>
+                                        ): performance.results
+                                    }
                                   </div>
                                 </td>
                                 <td className="w-[20%] p-4 bg-white">
@@ -262,7 +272,7 @@ export default function AssessmentTracking({ emp_id }) {
                                   </div>
                                 </td>
                                 <td className="w-[20%] p-4 bg-white">
-                                  <div className="flex items-center">
+                                  <div className="flex items-center"> 
                                   {performance.remarks}
                                   </div>
                                 </td>

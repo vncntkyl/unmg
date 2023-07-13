@@ -39,7 +39,6 @@ export default function EmployeeAssessmentGradeEdit() {
             empID: sessionStorage.getItem("assessment_id"),
           },
         });
-        console.table(response.data)
         setGrades(response.data);
         //if pillar id is not found
         const ColumnAllFalse = response.data.some(
@@ -186,23 +185,6 @@ export default function EmployeeAssessmentGradeEdit() {
     return tbl_name;
   }
 
-  function coloring(met) {
-    let color = "";
-    if (met === "4") {
-      color = "bg-border-un-green-light";
-    }
-    else if (met === "3") {
-      color = "bg-border-un-green-light";
-    }
-    else if (met === "2") {
-      color = "bg-border-un-yellow-light";
-    }
-    else if (met === "1") {
-      color = "bg-border-un-red-light-1";
-    }
-    return color;
-  }
-
   //functions for handling select and textarea
   function handleSelectChange(event, pillarIndex, objectIndex, gradeIndex) {
     const selectedValue = event.target.value;
@@ -215,7 +197,7 @@ export default function EmployeeAssessmentGradeEdit() {
     updatedValues[pillarIndex][objectIndex] =
       updatedValues[pillarIndex][objectIndex] || [];
     updatedValues[pillarIndex][objectIndex][gradeIndex] = selectedValue;
-
+console.log(gradeIndex);
     setSelectedValues(updatedValues);
   }
 
@@ -265,6 +247,7 @@ export default function EmployeeAssessmentGradeEdit() {
   //       grades.filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
   //       .map((grade) => grade.results)))))
   //   )
+
   return (
     <>
       <button
@@ -427,7 +410,13 @@ export default function EmployeeAssessmentGradeEdit() {
                                         <td>
                                           <div className="p-2 flex items-center justify-center">
                                             <select
-                                              className="bg-default rounded-md px-4 flex content-center"
+                                              className={classNames("rounded-md px-4 flex content-center",
+                                              quarter == 3 ? (
+                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '1' || grade.results === 1 ? 'bg-un-red-light-1 text-un-red-dark' : 
+                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '2' || grade.results === 2 ? 'bg-un-yellow-light text-un-yellow-dark' : 
+                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '3' || grade.results === 3 ? 'bg-un-green-light text-un-green-dark' : 
+                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '4' || grade.results === 4 ? 'bg-un-green-light text-un-green-dark' : 
+                                              'bg-default'):"bg-default")}
                                               value={
                                                 selectedValues[pillarIndex]?.[
                                                 objectIndex
@@ -457,20 +446,12 @@ export default function EmployeeAssessmentGradeEdit() {
                                                 .map((metric) => (
                                                   <option
                                                     key={metric.target_metrics_id}
-                                                    value={
-                                                      metric.target_metrics_score
-                                                    }
-                                                    className={
-                                                      metric.target_metrics_score === 1
-                                                        ? 'bg-un-red-light-1'
-                                                        : metric.target_metrics_score === 2
-                                                        ? 'bg-border-un-yellow-light'
-                                                        : metric.target_metrics_score === 3 || metric.target_metrics_score === 4
-                                                        ? 'bg-border-un-green-light'
-                                                        : ''
-                                                    }
-                                                  >
-                                                    {metric.target_metrics_score}
+                                                    value={metric.target_metrics_score}
+                                                    className={quarter == 3 && (metric.target_metrics_score === 1  ? 'bg-un-red-light-1 text-un-red-dark' :
+                                                    metric.target_metrics_score === 2 ? 'bg-un-yellow-light text-un-yellow-dark': 
+                                                    metric.target_metrics_score === 3 || metric.target_metrics_score === 4 ? 'bg-un-green-light text-un-green-dark':
+                                                    '')}
+                                                  >{metric.target_metrics_score}
                                                   </option>
                                                 ))}
                                             </select>
