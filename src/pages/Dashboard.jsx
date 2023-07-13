@@ -96,7 +96,7 @@ export default function Dashboard() {
           <Route path="/roles/*" element={<Roles />} />
           <Route path="/help/*" element={<Help />} />
           <Route path="/main_goals/*" element={<MainGoals />} />
-          <Route path="/tracking_and_assement/*" element={<TrackingAssessment />} />
+          <Route path="/tracking_and_assessment/*" element={<TrackingAssessment />} />
           <Route path="/sign_off/*" element={<AgreementSignOff />} />
         </Routes>
       </div>

@@ -72,7 +72,7 @@ export default function Sidebar({ sidebarToggler, className }) {
               <NavButton
                 icon={<RiLineChartLine />}
                 textLabel={"Tracking & Assessment"}
-                slug={"tracking_and_assement"}
+                slug={"tracking_and_assessment"}
               />
               <NavButton
                 icon={<FaSignature />}

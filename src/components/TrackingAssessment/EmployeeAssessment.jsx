@@ -60,9 +60,9 @@ export default function EmployeeAssessment() {
         </div>
         <Toggle
           paths={[
-            "/tracking_and_assement/employee_assessment/" +
+            "/tracking_and_assessment/employee_assessment/" +
             sessionStorage.getItem("assessment_name"),
-            "/tracking_and_assement/employee_assessment/" +
+            "/tracking_and_assessment/employee_assessment/" +
             sessionStorage.getItem("assessment_name") +
             "/",
           ]}

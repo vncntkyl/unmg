@@ -30,7 +30,7 @@ export default function TrackingAction({
     sessionStorage.setItem("assessment_id", employee_id);
     sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assement/employee_assessment/" + formatName(first_name)
+      "/tracking_and_assessment/employee_assessment/" + formatName(first_name)
     );
   };
 
@@ -38,7 +38,7 @@ export default function TrackingAction({
     sessionStorage.setItem("assessment_id", employee_id);
     sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assement/employee_assessment/" +
+      "/tracking_and_assessment/employee_assessment/" +
         formatName(first_name) +
         "/grade_edit"
     );
@@ -48,7 +48,7 @@ export default function TrackingAction({
     sessionStorage.setItem("assessment_id", employee_id);
     sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assement/employee_assessment/" +
+      "/tracking_and_assessment/employee_assessment/" +
         formatName(first_name) +
         "/approve"
     );

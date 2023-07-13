@@ -495,7 +495,7 @@ console.log(gradeIndex);
                                               value={
                                                 remarks[pillarIndex]?.[objectIndex]?.[gradeIndex] || (grade.remarks !== null ? grade.remarks : "")
                                               }
-                                              defaultValue={grade.remarks || "N/A"}
+                                              defaultValue={grade.remarks || ""}
                                               onChange={(event) =>
                                                 handleRemarksChange(
                                                   event,

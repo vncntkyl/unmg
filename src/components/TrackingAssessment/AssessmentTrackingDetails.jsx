@@ -12,7 +12,7 @@ export default function AssessmentTrackingDetails({ quarter }) {
                     Sorry, your supervisor has not yet graded your KPI for the {quarterName}.
                 </span>
                 <a
-                    href="/tracking_and_assement/create"
+                    href="/tracking_and_assessment/create"
                     className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
                 >
                     <AiOutlinePlus />

@@ -17,15 +17,15 @@ export default function TrackingAssessment() {
   
   const setHeader = (path) => {
     switch (path) {
-      case "/tracking_and_assement":
-      case "/tracking_and_assement/":
+      case "/tracking_and_assessment":
+      case "/tracking_and_assessment/":
         if (panel === "My Assessment") {
           return "Tracking & Assessment";
         } else {
           return "Employees' Tracking & Assessment";
         }
-      case "/tracking_and_assement/create":
-      case "/tracking_and_assement/create/":
+      case "/tracking_and_assessment/create":
+      case "/tracking_and_assessment/create/":
         return "Create Assessment";
     }
   };
@@ -47,9 +47,9 @@ export default function TrackingAssessment() {
             {/* HEADER */}
             <div className="flex flex-col items-center justify-between md:flex-row">
               <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
-                {["/tracking_and_assement/create", "/tracking_and_assement/create/"].includes(getPath()) && (
+                {["/tracking_and_assessment/create", "/tracking_and_assessment/create/"].includes(getPath()) && (
                   <a
-                    href="/tracking_and_assement"
+                    href="/tracking_and_assessment"
                     className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
                   >
                     <MdOutlineKeyboardArrowLeft />
@@ -61,7 +61,7 @@ export default function TrackingAssessment() {
               </span>
               {/* TOGGLE */}
               <Toggle
-                paths={["/tracking_and_assement/", "/tracking_and_assement"]}
+                paths={["/tracking_and_assessment/", "/tracking_and_assessment"]}
                 panel={panel}
                 panel_1={"My Assessment"}
                 setPanel={setPanel}

@@ -156,15 +156,13 @@ export default function AssessmentTracking({ emp_id }) {
                 className={`px-2 text-[1rem]
                   ${index > 0 ? "border-1" : ""}
                   ${index < pillarName.length - 1 ? "border-r" : ""}
-                  ${
-                    selectedPillar !== index
-                      ? "hover:border-b-2 border-b-un-red-light"
-                      : ""
+                  ${selectedPillar !== index
+                    ? "hover:border-b-2 border-b-un-red-light"
+                    : ""
                   } 
-                  ${
-                    selectedPillar === index
-                      ? "border-b-4 border-b-un-red-light"
-                      : ""
+                  ${selectedPillar === index
+                    ? "border-b-4 border-b-un-red-light"
+                    : ""
                   }`}
                 onClick={() => setSelectedPillar(index)}
               >
@@ -208,6 +206,11 @@ export default function AssessmentTracking({ emp_id }) {
                             Results
                           </div>
                         </td>
+                        <td className="w-[10%] px-2 bg-un-blue-light">
+                          <div className="text-white flex justify-center">
+                            Weighted
+                          </div>
+                        </td>
                         <td className="w-[20%] px-2 bg-un-blue-light">
                           <div className="text-white flex justify-center">
                             Description
@@ -236,52 +239,74 @@ export default function AssessmentTracking({ emp_id }) {
                             .map((performance) => (
                               <React.Fragment key={performance.kpi_objective_id}>
                                 <tr>
-                                <td className="w-[20%] p-4">
-                                  <div>
-                                {objective.obj_objective !== previousObjective ? performance.obj_objective : ""}
-                                  </div>
-                                </td>
-                                <td className="w-[20%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                  {performance.kpi_desc}
-                                  </div>
-                                </td>
-                                <td className="w-[10%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                  {`${performance.kpi_weight}%`}
-                                  </div>
-                                </td>
-                                <td className="w-[10%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                    {
-                                      quarter == 3 ? (                                  
-                                      <Badge message={performance.results} 
-                                        type={performance.results === 1 ? "failure":
-                                        performance.results === 2 ? "warning":
-                                        performance.results === 3 ? "success":
-                                        performance.results === 4 ? "success":
-                                        ""} 
-                                        className="px-8 rounded-md text-[1rem]"/>
-                                        ): performance.results
-                                    }
-                                  </div>
-                                </td>
-                                <td className="w-[20%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                  {performance.metrics_desc}
-                                  </div>
-                                </td>
-                                <td className="w-[20%] p-4 bg-white">
-                                  <div className="flex items-center"> 
-                                  {performance.remarks}
-                                  </div>
-                                </td>
-                              </tr>
-                                </React.Fragment>
+                                  <td className="w-[20%] p-4">
+                                    <div>
+                                      {objective.obj_objective !== previousObjective ? performance.obj_objective : ""}
+                                    </div>
+                                  </td>
+                                  <td className="w-[20%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {performance.kpi_desc}
+                                    </div>
+                                  </td>
+                                  <td className="w-[10%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {`${performance.kpi_weight}%`}
+                                    </div>
+                                  </td>
+                                  <td className="w-[5%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {
+                                        quarter == 3 ? (
+                                          <Badge message={performance.results}
+                                            type={performance.results === 1 ? "failure" :
+                                              performance.results === 2 ? "warning" :
+                                                performance.results === 3 ? "success" :
+                                                  performance.results === 4 ? "success" :
+                                                    ""}
+                                            className="px-8 rounded-md text-[1rem]" />
+                                        ) : performance.results
+                                      }
+                                    </div>
+                                  </td>
+                                  <td className="w-[5%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {(performance.kpi_weight / 100) * performance.results}
+                                    </div>
+                                  </td>
+                                  <td className="w-[20%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {performance.metrics_desc}
+                                    </div>
+                                  </td>
+                                  <td className="w-[20%] p-4 bg-white">
+                                    <div className="flex items-center">
+                                      {performance.remarks}
+                                    </div>
+                                  </td>
+                                </tr>
+                              </React.Fragment>
                             ))}
                         </tbody>
                       ))}
                   </table>
+                </div>
+                <div className="w-full px-2 mt-4">
+                  <div className="w-full bg-white px-2 rounded">
+                    <span className="block font-semibold">
+                      Overall Summary ({quarter == 1 ? "First Quarter" :
+                        quarter == 2 ? "Mid Year" :
+                          quarter == 3 ? "Third Quarter" :
+                            quarter == 4 ? "Fourth Quarter" :
+                              ""})
+                    </span>
+                    <span className="block pl-4">
+                      Weight:
+                    </span>
+                    <span className="block pl-4">
+                      Results:  something/4
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
