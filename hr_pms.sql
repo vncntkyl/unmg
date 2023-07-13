@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2023 at 01:06 PM
+-- Generation Time: Jul 13, 2023 at 10:02 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -28,49 +28,29 @@ SET time_zone = "+00:00";
 -- (See below for the actual view)
 --
 CREATE TABLE `evaluation_form` (
-`users_id` int(11)
-,`rater_1` int(11)
-,`rater_2` int(11)
-,`rater_3` int(11)
-,`recipient_signatory` varchar(255)
-,`hr_eval_form_pillar_id` int(11)
-,`pillar_id` int(11)
-,`pillar_name` varchar(255)
-,`pillar_description` varchar(255)
-,`pillar_percentage` decimal(10,0)
-,`hr_eval_form_fp_id` int(11)
-,`objective` text
-,`objective_id` int(11)
-,`kpi_desc` text
-,`kpi_weight` decimal(10,0)
-,`hr_eval_form_id` int(11)
-,`fq_results` int(11)
-,`fq_desc` text
-,`fq_remarks` text
-,`fq_review_date` date
-,`fq_ratee_achievement` text
-,`myr_results` int(11)
-,`myr_desc` text
-,`myr_status` text
-,`myr_remarks` text
-,`myr_address_action` text
-,`myr_review_date` date
-,`myr_ratee_achievement` text
-,`myr_rater1` int(11)
-,`myr_rater2` int(11)
-,`myr_rater3` int(11)
-,`tq_results` int(11)
-,`tq_desc` text
-,`tq_remarks` text
-,`tq_review_date` date
-,`tq_ratee_achievement` text
-,`yee_results` int(11)
-,`yee_desc` text
-,`yee_remarks` text
-,`agreed_rating` decimal(10,0)
-,`wtd_rating` decimal(10,0)
-,`yee_achievement` text
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hr_color_status`
+--
+
+CREATE TABLE `hr_color_status` (
+  `ID` int(11) NOT NULL,
+  `range_from` decimal(10,2) NOT NULL,
+  `range_to` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hr_color_status`
+--
+
+INSERT INTO `hr_color_status` (`ID`, `range_from`, `range_to`) VALUES
+(1, 1.00, 1.75),
+(2, 1.76, 2.50),
+(3, 2.51, 3.25),
+(4, 3.26, 4.00);
 
 -- --------------------------------------------------------
 
@@ -211,7 +191,7 @@ INSERT INTO `hr_eval_form_sp` (`hr_eval_form_sp_id`, `eval_form_id`) VALUES
 --
 
 CREATE TABLE `hr_eval_form_sp_fq` (
-  `eval_form_sp_fq_id` int(11) NOT NULL,
+  `ID` int(11) NOT NULL,
   `results` int(11) NOT NULL,
   `remarks` text NOT NULL,
   `fq_review_date` date NOT NULL,
@@ -223,7 +203,7 @@ CREATE TABLE `hr_eval_form_sp_fq` (
 -- Dumping data for table `hr_eval_form_sp_fq`
 --
 
-INSERT INTO `hr_eval_form_sp_fq` (`eval_form_sp_fq_id`, `results`, `remarks`, `fq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+INSERT INTO `hr_eval_form_sp_fq` (`ID`, `results`, `remarks`, `fq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
 (1, 1, '', '0000-00-00', 1, 1),
 (2, 1, '', '0000-00-00', 2, 1),
 (3, 1, '', '0000-00-00', 3, 1),
@@ -265,11 +245,10 @@ INSERT INTO `hr_eval_form_sp_fq_rating` (`fq_rating_id`, `hr_eval_form_sp_id`, `
 --
 
 CREATE TABLE `hr_eval_form_sp_myr` (
-  `hr_eval_form_sp_myr_id` int(11) NOT NULL,
+  `ID` int(11) NOT NULL,
   `results` int(11) NOT NULL,
   `status` text NOT NULL,
   `remarks` text NOT NULL,
-  `actions_to_address` text NOT NULL,
   `myr_review_date` date NOT NULL,
   `hr_eval_form_kpi_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL
@@ -279,20 +258,20 @@ CREATE TABLE `hr_eval_form_sp_myr` (
 -- Dumping data for table `hr_eval_form_sp_myr`
 --
 
-INSERT INTO `hr_eval_form_sp_myr` (`hr_eval_form_sp_myr_id`, `results`, `status`, `remarks`, `actions_to_address`, `myr_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, 2, '', '', '', '0000-00-00', 1, 1),
-(2, 2, '', '', '', '0000-00-00', 2, 1),
-(3, 2, '', '', '', '0000-00-00', 3, 1),
-(4, 2, '', '', '', '0000-00-00', 4, 1),
-(5, 2, '', '', '', '0000-00-00', 5, 1),
-(6, 2, '', '', '', '0000-00-00', 6, 1),
-(7, 2, '', '', '', '0000-00-00', 7, 1),
-(8, 2, '', '', '', '0000-00-00', 8, 1),
-(9, 2, '', '', '', '0000-00-00', 9, 1),
-(10, 0, '', '', '', '0000-00-00', 10, 2),
-(11, 0, '', '', '', '0000-00-00', 11, 2),
-(12, 0, '', '', '', '0000-00-00', 12, 2),
-(13, 0, '', '', '', '0000-00-00', 13, 2);
+INSERT INTO `hr_eval_form_sp_myr` (`ID`, `results`, `status`, `remarks`, `myr_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+(1, 2, '', '', '0000-00-00', 1, 1),
+(2, 2, '', '', '0000-00-00', 2, 1),
+(3, 2, '', '', '0000-00-00', 3, 1),
+(4, 2, '', '', '0000-00-00', 4, 1),
+(5, 2, '', '', '0000-00-00', 5, 1),
+(6, 2, '', '', '0000-00-00', 6, 1),
+(7, 2, '', '', '0000-00-00', 7, 1),
+(8, 2, '', '', '0000-00-00', 8, 1),
+(9, 2, '', '', '0000-00-00', 9, 1),
+(10, 0, '', '', '0000-00-00', 10, 2),
+(11, 0, '', '', '0000-00-00', 11, 2),
+(12, 0, '', '', '0000-00-00', 12, 2),
+(13, 0, '', '', '0000-00-00', 13, 2);
 
 -- --------------------------------------------------------
 
@@ -304,6 +283,7 @@ CREATE TABLE `hr_eval_form_sp_myr_rating` (
   `myr_rating_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL,
   `ratee_achievement` text NOT NULL,
+  `actions_to_address` text NOT NULL,
   `rater_1` int(11) DEFAULT NULL,
   `rater_2` int(11) DEFAULT NULL,
   `rater_3` int(11) DEFAULT NULL
@@ -313,9 +293,9 @@ CREATE TABLE `hr_eval_form_sp_myr_rating` (
 -- Dumping data for table `hr_eval_form_sp_myr_rating`
 --
 
-INSERT INTO `hr_eval_form_sp_myr_rating` (`myr_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`, `rater_1`, `rater_2`, `rater_3`) VALUES
-(1, 1, 'Hello this is Norvin and these are my achievements on midyear:\nSleep', NULL, NULL, NULL),
-(4, 2, 'dgfdfgddf', NULL, NULL, NULL);
+INSERT INTO `hr_eval_form_sp_myr_rating` (`myr_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`, `actions_to_address`, `rater_1`, `rater_2`, `rater_3`) VALUES
+(1, 1, 'Hello this is Norvin and these are my achievements on midyear:\nSleep', '', NULL, NULL, NULL),
+(4, 2, 'dgfdfgddf', '', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -329,6 +309,7 @@ CREATE TABLE `hr_eval_form_sp_pillar_ratings` (
   `firstQuarterTotalResult` decimal(10,2) NOT NULL,
   `midYearTotalResult` decimal(10,2) NOT NULL,
   `ThirdQuarterTotalResult` decimal(10,2) NOT NULL,
+  `fourthQuarterTotalResult` decimal(10,2) DEFAULT NULL COMMENT 'for Probationary',
   `YearEndTotalResult` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -336,11 +317,36 @@ CREATE TABLE `hr_eval_form_sp_pillar_ratings` (
 -- Dumping data for table `hr_eval_form_sp_pillar_ratings`
 --
 
-INSERT INTO `hr_eval_form_sp_pillar_ratings` (`eval_form_sp_pillar_ratings_id`, `eval_form_pillars_id`, `firstQuarterTotalResult`, `midYearTotalResult`, `ThirdQuarterTotalResult`, `YearEndTotalResult`) VALUES
-(1, 1, 4.00, 3.00, 3.00, 3.00),
-(2, 2, 3.00, 3.00, 3.00, 3.00),
-(3, 3, 2.50, 2.50, 2.50, 2.50),
-(4, 4, 2.40, 4.20, 2.50, 2.50);
+INSERT INTO `hr_eval_form_sp_pillar_ratings` (`eval_form_sp_pillar_ratings_id`, `eval_form_pillars_id`, `firstQuarterTotalResult`, `midYearTotalResult`, `ThirdQuarterTotalResult`, `fourthQuarterTotalResult`, `YearEndTotalResult`) VALUES
+(1, 1, 4.00, 3.00, 3.00, NULL, 3.00),
+(2, 2, 3.00, 3.00, 3.00, NULL, 3.00),
+(3, 3, 2.50, 2.50, 2.50, NULL, 2.50),
+(4, 4, 2.40, 4.20, 2.50, NULL, 2.50);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hr_eval_form_sp_quarterly_ratings`
+--
+
+CREATE TABLE `hr_eval_form_sp_quarterly_ratings` (
+  `quarterly_ratings_id` int(11) NOT NULL,
+  `eval_form_id` int(11) NOT NULL,
+  `FirstQuarterRating` decimal(10,2) NOT NULL,
+  `MidYearRating` decimal(10,2) NOT NULL,
+  `ThirdQuarterRating` decimal(10,2) NOT NULL,
+  `FourthQuarterRating` decimal(10,2) DEFAULT NULL COMMENT 'for Probationary',
+  `YearEndRating` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hr_eval_form_sp_quarterly_ratings`
+--
+
+INSERT INTO `hr_eval_form_sp_quarterly_ratings` (`quarterly_ratings_id`, `eval_form_id`, `FirstQuarterRating`, `MidYearRating`, `ThirdQuarterRating`, `FourthQuarterRating`, `YearEndRating`) VALUES
+(1, 3, 3.16, 3.00, 4.00, NULL, 1.00),
+(2, 4, 2.36, 1.25, 1.55, 1.79, 2.00),
+(3, 5, 3.30, 3.50, 3.70, NULL, 3.90);
 
 -- --------------------------------------------------------
 
@@ -349,7 +355,7 @@ INSERT INTO `hr_eval_form_sp_pillar_ratings` (`eval_form_sp_pillar_ratings_id`, 
 --
 
 CREATE TABLE `hr_eval_form_sp_tq` (
-  `hr_eval_form_sp_tq_id` int(11) NOT NULL,
+  `ID` int(11) NOT NULL,
   `results` int(11) NOT NULL,
   `remarks` text NOT NULL,
   `tq_review_date` date NOT NULL,
@@ -361,7 +367,7 @@ CREATE TABLE `hr_eval_form_sp_tq` (
 -- Dumping data for table `hr_eval_form_sp_tq`
 --
 
-INSERT INTO `hr_eval_form_sp_tq` (`hr_eval_form_sp_tq_id`, `results`, `remarks`, `tq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+INSERT INTO `hr_eval_form_sp_tq` (`ID`, `results`, `remarks`, `tq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
 (1, 3, '', '0000-00-00', 1, 1),
 (2, 3, '', '0000-00-00', 2, 1),
 (3, 3, '', '0000-00-00', 3, 1),
@@ -403,7 +409,7 @@ INSERT INTO `hr_eval_form_sp_tq_rating` (`tq_rating_id`, `hr_eval_form_sp_id`, `
 --
 
 CREATE TABLE `hr_eval_form_sp_yee` (
-  `hr_eval_form_sp_yee_id` int(11) NOT NULL,
+  `ID` int(11) NOT NULL,
   `results` int(11) NOT NULL,
   `remarks` text NOT NULL,
   `agreed_rating` decimal(10,0) NOT NULL,
@@ -417,7 +423,7 @@ CREATE TABLE `hr_eval_form_sp_yee` (
 -- Dumping data for table `hr_eval_form_sp_yee`
 --
 
-INSERT INTO `hr_eval_form_sp_yee` (`hr_eval_form_sp_yee_id`, `results`, `remarks`, `agreed_rating`, `wtd_rating`, `yee_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+INSERT INTO `hr_eval_form_sp_yee` (`ID`, `results`, `remarks`, `agreed_rating`, `wtd_rating`, `yee_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
 (1, 4, 'Voluptates reprehenderit debitis', 0, 0, '0000-00-00', 1, 1),
 (2, 4, 'Voluptates reprehenderit debitis', 0, 0, '0000-00-00', 2, 1),
 (3, 4, 'Voluptates reprehenderit debitis', 0, 0, '0000-00-00', 3, 1),
@@ -686,6 +692,12 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 
 --
+-- Indexes for table `hr_color_status`
+--
+ALTER TABLE `hr_color_status`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `hr_company`
 --
 ALTER TABLE `hr_company`
@@ -732,7 +744,7 @@ ALTER TABLE `hr_eval_form_sp`
 -- Indexes for table `hr_eval_form_sp_fq`
 --
 ALTER TABLE `hr_eval_form_sp_fq`
-  ADD PRIMARY KEY (`eval_form_sp_fq_id`),
+  ADD PRIMARY KEY (`ID`),
   ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`),
   ADD KEY `hr_eval_form_kpi_id` (`hr_eval_form_kpi_id`);
 
@@ -747,7 +759,7 @@ ALTER TABLE `hr_eval_form_sp_fq_rating`
 -- Indexes for table `hr_eval_form_sp_myr`
 --
 ALTER TABLE `hr_eval_form_sp_myr`
-  ADD PRIMARY KEY (`hr_eval_form_sp_myr_id`),
+  ADD PRIMARY KEY (`ID`),
   ADD KEY `hr_eval_form_kpi_id` (`hr_eval_form_kpi_id`),
   ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`);
 
@@ -769,10 +781,16 @@ ALTER TABLE `hr_eval_form_sp_pillar_ratings`
   ADD KEY `eval_form_pillars_id` (`eval_form_pillars_id`);
 
 --
+-- Indexes for table `hr_eval_form_sp_quarterly_ratings`
+--
+ALTER TABLE `hr_eval_form_sp_quarterly_ratings`
+  ADD PRIMARY KEY (`quarterly_ratings_id`);
+
+--
 -- Indexes for table `hr_eval_form_sp_tq`
 --
 ALTER TABLE `hr_eval_form_sp_tq`
-  ADD PRIMARY KEY (`hr_eval_form_sp_tq_id`),
+  ADD PRIMARY KEY (`ID`),
   ADD KEY `hr_eval_form_kpi_id` (`hr_eval_form_kpi_id`),
   ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`);
 
@@ -787,7 +805,7 @@ ALTER TABLE `hr_eval_form_sp_tq_rating`
 -- Indexes for table `hr_eval_form_sp_yee`
 --
 ALTER TABLE `hr_eval_form_sp_yee`
-  ADD PRIMARY KEY (`hr_eval_form_sp_yee_id`),
+  ADD PRIMARY KEY (`ID`),
   ADD KEY `hr_eval_form_kpi_id` (`hr_eval_form_kpi_id`),
   ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`);
 
@@ -847,6 +865,12 @@ ALTER TABLE `hr_usertype`
 --
 
 --
+-- AUTO_INCREMENT for table `hr_color_status`
+--
+ALTER TABLE `hr_color_status`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `hr_company`
 --
 ALTER TABLE `hr_company`
@@ -886,7 +910,7 @@ ALTER TABLE `hr_eval_form_sp`
 -- AUTO_INCREMENT for table `hr_eval_form_sp_fq`
 --
 ALTER TABLE `hr_eval_form_sp_fq`
-  MODIFY `eval_form_sp_fq_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_fq_rating`
@@ -898,7 +922,7 @@ ALTER TABLE `hr_eval_form_sp_fq_rating`
 -- AUTO_INCREMENT for table `hr_eval_form_sp_myr`
 --
 ALTER TABLE `hr_eval_form_sp_myr`
-  MODIFY `hr_eval_form_sp_myr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_myr_rating`
@@ -913,10 +937,16 @@ ALTER TABLE `hr_eval_form_sp_pillar_ratings`
   MODIFY `eval_form_sp_pillar_ratings_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `hr_eval_form_sp_quarterly_ratings`
+--
+ALTER TABLE `hr_eval_form_sp_quarterly_ratings`
+  MODIFY `quarterly_ratings_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `hr_eval_form_sp_tq`
 --
 ALTER TABLE `hr_eval_form_sp_tq`
-  MODIFY `hr_eval_form_sp_tq_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_tq_rating`
@@ -928,7 +958,7 @@ ALTER TABLE `hr_eval_form_sp_tq_rating`
 -- AUTO_INCREMENT for table `hr_eval_form_sp_yee`
 --
 ALTER TABLE `hr_eval_form_sp_yee`
-  MODIFY `hr_eval_form_sp_yee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_yee_rating`
