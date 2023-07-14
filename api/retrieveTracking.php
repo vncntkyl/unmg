@@ -33,10 +33,10 @@ if (isset($_GET['empID'])) {
         }
         echo $retrieveAssessment;
     }
-
-
-
-
+//check personal achievements
+    if (isset($_GET['checkUserAchievements'])) {
+        echo json_encode($form->checkUserAchievements($empID));
+    }
 
 
     if (isset($_GET['userTrackingAchievements'])) {

@@ -199,6 +199,40 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//main tracking and assessment code
     function selectUserAssessment($table_name_results, $table_name_rating, $empID)
     {
         $this->setStatement("
@@ -273,6 +307,39 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
+
+//check personal achievements
+function checkUserAchievements($empID)
+{
+    $this->setStatement("
+    SELECT 
+        hr_users.emp_id,
+        hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
+        hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
+        hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
+        hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements
+    FROM 
+        hr_users 
+    LEFT JOIN hr_eval_form ON  hr_eval_form.users_id = hr_users.users_id
+    LEFT JOIN hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    WHERE emp_id = ?
+    ");
+    $this->statement->execute([$empID]);
+    return $this->statement->fetchAll();
+}
+
+
+
+
+
+
+
+
+ //sign off   
     function selectEmployeeSignOffAssessment($empID, $userStatus)
     {
         $this->setStatement("SELECT

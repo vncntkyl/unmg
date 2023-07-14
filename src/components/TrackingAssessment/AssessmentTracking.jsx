@@ -146,7 +146,7 @@ export default function AssessmentTracking({ emp_id }) {
           )}
         </div>
       </div>
-      {!checkScores && <AssessmentTrackingDetails quarter={quarter} />}
+      {!checkScores && <AssessmentTrackingDetails quarter={quarter} emp_id={emp_id} />}
       {checkScores && (
         <div>
           <div className="md:text-[.8rem] px-2 lg:text-[1rem]">
@@ -156,13 +156,15 @@ export default function AssessmentTracking({ emp_id }) {
                 className={`px-2 text-[1rem]
                   ${index > 0 ? "border-1" : ""}
                   ${index < pillarName.length - 1 ? "border-r" : ""}
-                  ${selectedPillar !== index
-                    ? "hover:border-b-2 border-b-un-red-light"
-                    : ""
+                  ${
+                    selectedPillar !== index
+                      ? "hover:border-b-2 border-b-un-red-light"
+                      : ""
                   } 
-                  ${selectedPillar === index
-                    ? "border-b-4 border-b-un-red-light"
-                    : ""
+                  ${
+                    selectedPillar === index
+                      ? "border-b-4 border-b-un-red-light"
+                      : ""
                   }`}
                 onClick={() => setSelectedPillar(index)}
               >
@@ -237,11 +239,16 @@ export default function AssessmentTracking({ emp_id }) {
                                 objective.obj_objective_id
                             )
                             .map((performance) => (
-                              <React.Fragment key={performance.kpi_objective_id}>
+                              <React.Fragment
+                                key={performance.kpi_objective_id}
+                              >
                                 <tr>
                                   <td className="w-[20%] p-4">
                                     <div>
-                                      {objective.obj_objective !== previousObjective ? performance.obj_objective : ""}
+                                      {objective.obj_objective !==
+                                      previousObjective
+                                        ? performance.obj_objective
+                                        : ""}
                                     </div>
                                   </td>
                                   <td className="w-[20%] p-4 bg-white">
@@ -256,22 +263,30 @@ export default function AssessmentTracking({ emp_id }) {
                                   </td>
                                   <td className="w-[5%] p-4 bg-white">
                                     <div className="flex items-center justify-center">
-                                      {
-                                        quarter == 3 ? (
-                                          <Badge message={performance.results}
-                                            type={performance.results === 1 ? "failure" :
-                                              performance.results === 2 ? "warning" :
-                                                performance.results === 3 ? "success" :
-                                                  performance.results === 4 ? "success" :
-                                                    ""}
-                                            className="px-8 rounded-md text-[1rem]" />
-                                        ) : performance.results
-                                      }
+                                      {quarter == 3 ? (
+                                        <Badge
+                                          message={performance.results}
+                                          type={
+                                            performance.results === '1'
+                                              ? "failure"
+                                              : performance.results === '2'
+                                              ? "warning"
+                                              : performance.results === '3'
+                                              ? "success"
+                                              : performance.results === '4'
+                                              ? "success"
+                                              : ""
+                                          }
+                                          className="px-8 rounded-md text-[1rem]"
+                                        />
+                                      ) : (
+                                        performance.results
+                                      )}
                                     </div>
                                   </td>
                                   <td className="w-[5%] p-4 bg-white">
                                     <div className="flex items-center justify-center">
-                                      {(performance.kpi_weight / 100) * performance.results}
+                                    {(performance.kpi_weight / 100 * performance.results).toFixed(2)}
                                     </div>
                                   </td>
                                   <td className="w-[20%] p-4 bg-white">
@@ -294,18 +309,40 @@ export default function AssessmentTracking({ emp_id }) {
                 <div className="w-full px-2 mt-4">
                   <div className="w-full bg-white px-2 rounded">
                     <span className="block font-semibold">
-                      Overall Summary ({quarter == 1 ? "First Quarter" :
-                        quarter == 2 ? "Mid Year" :
-                          quarter == 3 ? "Third Quarter" :
-                            quarter == 4 ? "Fourth Quarter" :
-                              ""})
+                      Overall Summary (
+                      {quarter == 1
+                        ? "First Quarter"
+                        : quarter == 2
+                        ? "Mid Year"
+                        : quarter == 3
+                        ? "Third Quarter"
+                        : quarter == 4
+                        ? "Fourth Quarter"
+                        : ""}
+                      )
                     </span>
-                    <span className="block pl-4">
-                      Weight:
-                    </span>
-                    <span className="block pl-4">
-                      Results:  something/4
-                    </span>
+                    <div className="w-full flex p-4">
+                      <div className="w-1/2">
+                        <span className="block">Weight:</span>
+                        <span className="block">Results: something/4</span>
+                      </div>
+                      <div className="w-1/2 justify-end">
+                        <span className="block font-semibold">Pillars</span>
+                        <table>
+                          <tbody>
+                            <tr>
+                              <td>
+                                
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        {pillarName.map((pillar) => (
+                        <span className="block pl-2">
+                          {`${pillar.pillar_name} (${pillar.pillar_description})`}
+                        </span>))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

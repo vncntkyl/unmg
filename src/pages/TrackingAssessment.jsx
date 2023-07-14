@@ -4,7 +4,7 @@ import { Route, Router, Routes } from "react-router-dom";
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
 import EmployeeAssessmentTable from "../components/TrackingAssessment/EmployeeAssessmentTable";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
-import CreateAssessment from "../components/TrackingAssessment/CreateAssessment";
+import CreateAchievements from "../components/TrackingAssessment/CreateAchievements";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useFunction } from "../context/FunctionContext";
 import Toggle from "../components/Toggle";
@@ -80,7 +80,7 @@ export default function TrackingAssessment() {
                 <Route
                   path="/create/*"
                   element={
-                    <CreateAssessment emp_id={employeeID} /> 
+                    <CreateAchievements emp_id={employeeID} /> 
                   }
                 />
                 <Route path="/employee_assessment/:id" element={<EmployeeAssessment />}/>
