@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2023 at 10:02 AM
+-- Generation Time: Jul 14, 2023 at 12:17 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -268,10 +268,10 @@ INSERT INTO `hr_eval_form_sp_myr` (`ID`, `results`, `status`, `remarks`, `myr_re
 (7, 2, '', '', '0000-00-00', 7, 1),
 (8, 2, '', '', '0000-00-00', 8, 1),
 (9, 2, '', '', '0000-00-00', 9, 1),
-(10, 0, '', '', '0000-00-00', 10, 2),
-(11, 0, '', '', '0000-00-00', 11, 2),
-(12, 0, '', '', '0000-00-00', 12, 2),
-(13, 0, '', '', '0000-00-00', 13, 2);
+(10, 2, '', 'N/A', '0000-00-00', 10, 2),
+(11, 3, '', 'N/A', '0000-00-00', 11, 2),
+(12, 4, '', 'N/A', '0000-00-00', 12, 2),
+(13, 4, '', 'N/A', '0000-00-00', 13, 2);
 
 -- --------------------------------------------------------
 
@@ -295,7 +295,7 @@ CREATE TABLE `hr_eval_form_sp_myr_rating` (
 
 INSERT INTO `hr_eval_form_sp_myr_rating` (`myr_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`, `actions_to_address`, `rater_1`, `rater_2`, `rater_3`) VALUES
 (1, 1, 'Hello this is Norvin and these are my achievements on midyear:\nSleep', '', NULL, NULL, NULL),
-(4, 2, 'dgfdfgddf', '', NULL, NULL, NULL);
+(4, 2, '', '', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -318,10 +318,10 @@ CREATE TABLE `hr_eval_form_sp_pillar_ratings` (
 --
 
 INSERT INTO `hr_eval_form_sp_pillar_ratings` (`eval_form_sp_pillar_ratings_id`, `eval_form_pillars_id`, `firstQuarterTotalResult`, `midYearTotalResult`, `ThirdQuarterTotalResult`, `fourthQuarterTotalResult`, `YearEndTotalResult`) VALUES
-(1, 1, 4.00, 3.00, 3.00, NULL, 3.00),
-(2, 2, 3.00, 3.00, 3.00, NULL, 3.00),
-(3, 3, 2.50, 2.50, 2.50, NULL, 2.50),
-(4, 4, 2.40, 4.20, 2.50, NULL, 2.50);
+(1, 1, 0.35, 0.70, 1.05, NULL, 1.40),
+(2, 2, 0.30, 0.60, 0.90, NULL, 1.20),
+(3, 3, 0.20, 0.40, 0.60, NULL, 0.60),
+(4, 4, 0.15, 0.30, 0.45, NULL, 0.45);
 
 -- --------------------------------------------------------
 
@@ -344,9 +344,7 @@ CREATE TABLE `hr_eval_form_sp_quarterly_ratings` (
 --
 
 INSERT INTO `hr_eval_form_sp_quarterly_ratings` (`quarterly_ratings_id`, `eval_form_id`, `FirstQuarterRating`, `MidYearRating`, `ThirdQuarterRating`, `FourthQuarterRating`, `YearEndRating`) VALUES
-(1, 3, 3.16, 3.00, 4.00, NULL, 1.00),
-(2, 4, 2.36, 1.25, 1.55, 1.79, 2.00),
-(3, 5, 3.30, 3.50, 3.70, NULL, 3.90);
+(1, 1, 1.00, 2.00, 3.00, NULL, 3.65);
 
 -- --------------------------------------------------------
 
@@ -784,7 +782,8 @@ ALTER TABLE `hr_eval_form_sp_pillar_ratings`
 -- Indexes for table `hr_eval_form_sp_quarterly_ratings`
 --
 ALTER TABLE `hr_eval_form_sp_quarterly_ratings`
-  ADD PRIMARY KEY (`quarterly_ratings_id`);
+  ADD PRIMARY KEY (`quarterly_ratings_id`),
+  ADD KEY `eval_form_id` (`eval_form_id`);
 
 --
 -- Indexes for table `hr_eval_form_sp_tq`
@@ -1072,6 +1071,12 @@ ALTER TABLE `hr_eval_form_sp_myr_rating`
 --
 ALTER TABLE `hr_eval_form_sp_pillar_ratings`
   ADD CONSTRAINT `hr_eval_form_sp_pillar_ratings_ibfk_1` FOREIGN KEY (`eval_form_pillars_id`) REFERENCES `hr_eval_form_pillars` (`hr_eval_form_pillar_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `hr_eval_form_sp_quarterly_ratings`
+--
+ALTER TABLE `hr_eval_form_sp_quarterly_ratings`
+  ADD CONSTRAINT `hr_eval_form_sp_quarterly_ratings_ibfk_1` FOREIGN KEY (`eval_form_id`) REFERENCES `hr_eval_form` (`hr_eval_form_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `hr_eval_form_sp_tq`
