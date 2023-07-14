@@ -275,7 +275,7 @@ class Form extends Controller
         {$table_name_results}.results AS results,
         hr_metrics_desc.target_metrics_desc AS metrics_desc,
         {$table_name_results}.remarks AS remarks,
-        {$table_name_rating}.ratee_achievement AS ratee_achievement
+        {$table_name_rating}.ratee_achievement AS ratee_achievement,
     FROM 
         hr_users
     LEFT JOIN
@@ -307,27 +307,106 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
-
-//check personal achievements
-function checkUserAchievements($empID)
+// additional for tracking and assessment
+function totalUserAssessment($empID)
 {
     $this->setStatement("
     SELECT 
         hr_users.emp_id,
-        hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
-        hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
-        hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
-        hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements
+        hr_eval_form_pillars.pillar_id,
+        hr_pillars.pillar_name,
+        hr_eval_form_sp_pillar_ratings.firstQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.midYearTotalResult,
+        hr_eval_form_sp_pillar_ratings.ThirdQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.fourthQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.YearEndTotalResult,
+        
+        hr_eval_form_sp_quarterly_ratings.FirstQuarterRating,
+        hr_eval_form_sp_quarterly_ratings.MidYearRating,
+        hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating,
+        hr_eval_form_sp_quarterly_ratings.FourthQuarterRating,
+        hr_eval_form_sp_quarterly_ratings.YearEndRating
+        
+
     FROM 
-        hr_users 
-    LEFT JOIN hr_eval_form ON  hr_eval_form.users_id = hr_users.users_id
-    LEFT JOIN hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
-    LEFT JOIN hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    LEFT JOIN hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    LEFT JOIN hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    LEFT JOIN hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    WHERE emp_id = ?
+        hr_users
+    LEFT JOIN
+        hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+    LEFT JOIN 
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN
+        hr_eval_form_sp_pillar_ratings ON hr_eval_form_sp_pillar_ratings.eval_form_pillars_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    WHERE 
+        hr_users.emp_id = ?
     ");
+    $this->statement->execute([$empID]);
+    return $this->statement->fetchAll();
+}
+//check personal achievements
+function checkUserAchievements($empID)
+{
+    $this->setStatement("
+    SELECT
+    hr_users.users_id,
+    hr_users.emp_id,
+    hr_eval_form_sp_fq_rating.fq_rating_id,
+    hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
+    hr_eval_form_sp_myr_rating.myr_rating_id,
+    hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
+    hr_eval_form_sp_tq_rating.tq_rating_id,
+    hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
+    hr_eval_form_sp_yee_rating.yee_rating_id,
+    hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements,
+    
+    hr_eval_form_sp.hr_eval_form_sp_id,
+    hr_eval_form_sp_fq.results AS fq_results,
+    
+    hr_eval_form_sp_myr.results AS myr_results,
+    
+    hr_eval_form_sp_tq.results AS tq_results,
+    
+    hr_eval_form_sp_yee.results AS yee_results,
+    hr_eval_form_sp_yee.agreed_rating AS agreed_rating
+
+    
+    FROM hr_users
+
+    LEFT JOIN
+        hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
+    LEFT JOIN
+        hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN
+        hr_objectives ON hr_objectives.hr_eval_form_pillar_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    LEFT JOIN
+        hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+    LEFT JOIN
+        hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+     
+    LEFT JOIN
+        hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+     
+    LEFT JOIN
+        hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
+    LEFT JOIN
+        hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id  
+    LEFT JOIN
+        hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+    LEFT JOIN
+        hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        
+    WHERE emp_id = ?");
     $this->statement->execute([$empID]);
     return $this->statement->fetchAll();
 }

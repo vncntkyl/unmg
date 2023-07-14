@@ -6,12 +6,14 @@ import Badge from "../../misc/Badge";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
 
 export default function AssessmentTracking({ emp_id }) {
+  //setters
   const [userPerformance, setUserPerformance] = useState([]);
   const [pillarName, setPillarName] = useState([]);
   const [objectives, setObjectives] = useState([]);
   const [selectedPillar, setSelectedPillar] = useState(0);
   const [tabTitle, setTabTitle] = useState([]);
   const [quarter, setQuarter] = useState(1);
+  const [] = useState();
   //checkers
   const [checkForm, setcheckForm] = useState(false);
   const [checkScores, setCheckScores] = useState(false);
@@ -30,7 +32,6 @@ export default function AssessmentTracking({ emp_id }) {
             },
           }
         );
-
         setUserPerformance(response.data);
         const form = response.data.some(
           (item) => item.hr_eval_form_id !== null
@@ -156,15 +157,13 @@ export default function AssessmentTracking({ emp_id }) {
                 className={`px-2 text-[1rem]
                   ${index > 0 ? "border-1" : ""}
                   ${index < pillarName.length - 1 ? "border-r" : ""}
-                  ${
-                    selectedPillar !== index
-                      ? "hover:border-b-2 border-b-un-red-light"
-                      : ""
+                  ${selectedPillar !== index
+                    ? "hover:border-b-2 border-b-un-red-light"
+                    : ""
                   } 
-                  ${
-                    selectedPillar === index
-                      ? "border-b-4 border-b-un-red-light"
-                      : ""
+                  ${selectedPillar === index
+                    ? "border-b-4 border-b-un-red-light"
+                    : ""
                   }`}
                 onClick={() => setSelectedPillar(index)}
               >
@@ -246,7 +245,7 @@ export default function AssessmentTracking({ emp_id }) {
                                   <td className="w-[20%] p-4">
                                     <div>
                                       {objective.obj_objective !==
-                                      previousObjective
+                                        previousObjective
                                         ? performance.obj_objective
                                         : ""}
                                     </div>
@@ -267,15 +266,15 @@ export default function AssessmentTracking({ emp_id }) {
                                         <Badge
                                           message={performance.results}
                                           type={
-                                            performance.results === '1'
+                                            performance.results === 1 || performance.results === '1'
                                               ? "failure"
-                                              : performance.results === '2'
-                                              ? "warning"
-                                              : performance.results === '3'
-                                              ? "success"
-                                              : performance.results === '4'
-                                              ? "success"
-                                              : ""
+                                              : performance.results === 2 || performance.results === '2'
+                                                ? "warning"
+                                                : performance.results === 3 || performance.results === '3'
+                                                  ? "success"
+                                                  : performance.results === 4 || performance.results === '4'
+                                                    ? "success"
+                                                    : ""
                                           }
                                           className="px-8 rounded-md text-[1rem]"
                                         />
@@ -286,7 +285,7 @@ export default function AssessmentTracking({ emp_id }) {
                                   </td>
                                   <td className="w-[5%] p-4 bg-white">
                                     <div className="flex items-center justify-center">
-                                    {(performance.kpi_weight / 100 * performance.results).toFixed(2)}
+                                      {(performance.kpi_weight / 100 * performance.results).toFixed(2)}
                                     </div>
                                   </td>
                                   <td className="w-[20%] p-4 bg-white">
@@ -313,12 +312,12 @@ export default function AssessmentTracking({ emp_id }) {
                       {quarter == 1
                         ? "First Quarter"
                         : quarter == 2
-                        ? "Mid Year"
-                        : quarter == 3
-                        ? "Third Quarter"
-                        : quarter == 4
-                        ? "Fourth Quarter"
-                        : ""}
+                          ? "Mid Year"
+                          : quarter == 3
+                            ? "Third Quarter"
+                            : quarter == 4
+                              ? "Fourth Quarter"
+                              : ""}
                       )
                     </span>
                     <div className="w-full flex p-4">
@@ -326,21 +325,27 @@ export default function AssessmentTracking({ emp_id }) {
                         <span className="block">Weight:</span>
                         <span className="block">Results: something/4</span>
                       </div>
-                      <div className="w-1/2 justify-end">
+                      <div className="w-1/2">
                         <span className="block font-semibold">Pillars</span>
-                        <table>
+
+                        <table className="w-full">
                           <tbody>
-                            <tr>
-                              <td>
-                                
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                         {pillarName.map((pillar) => (
-                        <span className="block pl-2">
-                          {`${pillar.pillar_name} (${pillar.pillar_description})`}
-                        </span>))}
+                              <tr>
+                                <td>
+                                  <div className="pl-4">
+                                    {`${pillar.pillar_name} (${pillar.pillar_description}):`}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div>
+                                    hello
+                                  </div>
+                                </td>
+                              </tr>
+                        ))}
+                        </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
