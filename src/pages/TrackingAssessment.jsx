@@ -34,7 +34,7 @@ export default function TrackingAssessment() {
   }
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const employeeID = currentUser ? currentUser.emp_id : null;
+    const employeeID = currentUser ? currentUser.employee_id : null;
     setEmployeeID(employeeID);
   }, []);
 

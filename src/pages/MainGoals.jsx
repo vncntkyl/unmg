@@ -1,6 +1,5 @@
-import classNames from "classnames";
 import React, { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { CreateGoals, EmployeeGoals, Goals } from "../components/Goals";
 import { useFunction } from "../context/FunctionContext";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -78,6 +77,10 @@ export default function MainGoals() {
     setEmployeeID(user.users_id);
     if (user.user_type == 3 || user.users_id == 1) {
       setPanel("Employee Goals");
+    }
+    if (localStorage.getItem("work_year")) {
+      setWorkYear(localStorage.getItem("work_year"));
+      localStorage.removeItem("work_year");
     }
   }, []);
   return (
@@ -162,7 +165,7 @@ export default function MainGoals() {
                 )}
 
                 <Route
-                  path="/create/*"
+                  path="/create"
                   element={
                     <CreateGoals
                       pillars={pillars}

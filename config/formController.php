@@ -59,10 +59,10 @@ class Form extends Controller
         $this->statement->execute([':objID' => $objID]);
         return $this->statement->fetch();
     }
-    function createEvalForm($userid)
+    function createEvalForm($userid, $workyear)
     {
-        $this->setStatement("INSERT into `hr_eval_form` (users_id) VALUES (:id)");
-        if ($this->statement->execute([':id' => $userid])) {
+        $this->setStatement("INSERT into `hr_eval_form` (users_id, CreationDate) VALUES (:id, :work_year)");
+        if ($this->statement->execute([':id' => $userid, ':work_year' => $workyear])) {
             return $this->connection->lastInsertId();
         }
     }
@@ -111,31 +111,31 @@ class Form extends Controller
         $this->setStatement("INSERT into `hr_target_metrics` (target_metrics_score,target_metrics_desc,kpi_id) VALUES (:TMScore,:TMDesc,:kpiID)");
         return $this->statement->execute([':TMScore' => $TMScore, ':TMDesc' => $TMDesc, ':kpiID' => $kpiID]);
     }
-    function insertFqEval($formPillarID, $latestSpID)
+    function insertFqEval($kpiID, $latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_fq` (ID,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
-        return $this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
+        $this->setStatement("INSERT into `hr_eval_form_sp_fq` (hr_eval_form_kpi_id,hr_eval_form_sp_id) VALUES (:kpi_ID,:formSpID)");
+        return $this->statement->execute([':kpi_ID' => $kpiID, ':formSpID' => $latestSpID]);
     }
-    function insertMyrEval($formPillarID, $latestSpID)
+    function insertMyrEval($kpiID, $latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_myr` (ID,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
-        return $this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
+        $this->setStatement("INSERT into `hr_eval_form_sp_myr` (hr_eval_form_kpi_id,hr_eval_form_sp_id) VALUES (:kpi_ID,:formSpID)");
+        return $this->statement->execute([':kpi_ID' => $kpiID, ':formSpID' => $latestSpID]);
     }
-    function insertTqEval($formPillarID, $latestSpID)
+    function insertTqEval($kpiID, $latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_tq` (ID,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
-        return $this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID]);
+        $this->setStatement("INSERT into `hr_eval_form_sp_tq` (hr_eval_form_kpi_id,hr_eval_form_sp_id) VALUES (:kpi_ID,:formSpID)");
+        return $this->statement->execute([':kpi_ID' => $kpiID, ':formSpID' => $latestSpID]);
     }
-    function insertYeEval($formPillarID, $latestSpID)
+    function insertYeEval($kpiID, $latestSpID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_yee` (ID,hr_eval_form_sp_id) VALUES (:formPillarID,:formSpID)");
-        if ($this->statement->execute([':formPillarID' => $formPillarID, ':formSpID' => $latestSpID])) {
+        $this->setStatement("INSERT into `hr_eval_form_sp_yee` (hr_eval_form_kpi_id,hr_eval_form_sp_id) VALUES (:kpi_ID,:formSpID)");
+        if ($this->statement->execute([':kpi_ID' => $kpiID, ':formSpID' => $latestSpID])) {
             return $this->connection->lastInsertId();
         }
     }
     function InsertRatingForYearEndEvaluation($latestYearEndValID)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_yee_rating` (yee_rating_id) VALUES (:yearEndRateID)");
+        $this->setStatement("INSERT into `hr_eval_form_sp_yee_rating` (hr_eval_form_sp_yee_id) VALUES (:yearEndRateID)");
         return $this->statement->execute([':yearEndRateID' => $latestYearEndValID]);
     }
     function EvaluationForFirstQT($results, $remarks, $reviewDate, $formPillarID, $latestSpID)
@@ -435,7 +435,7 @@ class Form extends Controller
     function selectUserPerformance($empID)
     {
         $this->setStatement("SELECT
-        hr_users.emp_id,
+        hr_users.employee_id,
         hr_eval_form.users_id, 
         hr_eval_form.rater_1, 
         hr_eval_form.rater_2,
@@ -473,7 +473,7 @@ class Form extends Controller
     JOIN 
         hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
     WHERE 
-        hr_users.emp_id = ?");
+        hr_users.employee_id = ?");
         $this->statement->execute([$empID]);
 
         return $this->statement->fetchAll();
@@ -483,8 +483,9 @@ class Form extends Controller
     {
         $this->setStatement("
         SELECT 
-        hr_users.emp_id,
+        hr_users.employee_id,
         hr_eval_form.hr_eval_form_id,
+        hr_eval_form_sp.hr_eval_form_sp_id,
         hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
         hr_pillars.pillar_id AS pillar_id,
         CASE
@@ -546,7 +547,7 @@ class Form extends Controller
         hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id 
         AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
     WHERE 
-        hr_users.emp_id = ?
+        hr_users.employee_id = ?
         ORDER BY hr_pillars.pillar_id ASC
         ");
         $this->statement->execute([$empID]);
@@ -563,15 +564,15 @@ class Form extends Controller
             CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
             CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
             CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
-            employee.emp_id,
+            employee.employee_id,
             employee.job_description
         FROM hr_users AS employee
-        LEFT JOIN hr_users AS primary_eval ON primary_eval.emp_id = employee.primary_evaluator
-        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.emp_id = employee.secondary_evaluator
-        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.emp_id = employee.tertiary_evaluator
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator
         WHERE 
         (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
-        AND employee.user_status = :user_status
+        AND employee.contract_type = :user_status
                 ");
         $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
         return $this->statement->fetchAll();
@@ -581,9 +582,9 @@ class Form extends Controller
     {
         $this->setStatement("SELECT
         employee.users_id,
-        employee.emp_id AS employee_id,
+        employee.employee_id AS employee_id,
         employee.first_name,
-        employee.user_status,
+        employee.contract_type,
         CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
         CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
         CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
@@ -612,9 +613,9 @@ class Form extends Controller
 
         FROM hr_users AS employee
 
-        LEFT JOIN hr_users AS primary_eval ON primary_eval.emp_id = employee.rater_1
-        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.emp_id = employee.rater_2
-        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.emp_id = employee.rater_3
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator
 
         LEFT JOIN
         hr_eval_form ON hr_eval_form.users_id = employee.users_id
@@ -651,7 +652,7 @@ class Form extends Controller
 
         WHERE 
           (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
-           AND employee.user_status = :user_status
+           AND employee.contract_type = :user_status
          ORDER BY employee.users_id");
         $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
         return $this->statement->fetchAll();
@@ -661,7 +662,7 @@ class Form extends Controller
     {
         $this->setStatement("
         SELECT 
-    hr_users.emp_id,
+    hr_users.employee_id,
     CONCAT(hr_users.first_name, ' ', LEFT(hr_users.middle_name, 1), '. ', hr_users.last_name) AS employee_name,
     hr_eval_form_fp.hr_eval_form_fp_id AS first_part_id,
     hr_eval_form_sp_fq_rating.ratee_achievement AS fq_ratee_achievement,
@@ -685,7 +686,7 @@ LEFT JOIN
 LEFT JOIN
     hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
 WHERE 
-    hr_users.emp_id = ?");
+    hr_users.employee_id = ?");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
@@ -695,7 +696,7 @@ WHERE
     {
         $this->setStatement("
         SELECT 
-        hr_users.emp_id,
+        hr_users.employee_id,
         CONCAT(hr_users.first_name, ' ', LEFT(hr_users.middle_name, 1), '. ', hr_users.last_name) AS employee_name,
 
         hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
@@ -760,7 +761,7 @@ WHERE
         hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id 
         AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
     WHERE 
-        hr_users.emp_id = ?
+        hr_users.employee_id = ?
         ORDER BY hr_pillars.pillar_id ASC
         ");
         $this->statement->execute([$empID]);
@@ -792,7 +793,7 @@ WHERE
         LEFT JOIN 
             hr_target_metrics ON hr_target_metrics.kpi_id = hr_kpi.kpi_id
         WHERE
-        hr_users.emp_id = ?
+        hr_users.employee_id = ?
         ");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();

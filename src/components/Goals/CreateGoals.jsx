@@ -159,7 +159,9 @@ export default function CreateGoals({
         ", " +
         owner.first_name +
         " " +
-        (owner.middle_name != "." && owner.middle_name.substring(0, 1) + ".");
+        (owner.middle_name != "."
+          ? owner.middle_name.substring(0, 1) + "."
+          : "");
       return owner_name;
     } else {
       return "Loading...";
@@ -190,7 +192,7 @@ export default function CreateGoals({
       const formData = new FormData();
       formData.append("submit", true);
       formData.append("userID", user.length != 0 ? user : user_id);
-      formData.append("current_user_id",user_id);
+      formData.append("current_user_id", user_id);
       formData.append("goals", JSON.stringify(goals));
       formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
       const response = await axios.post(url, formData);
@@ -248,11 +250,16 @@ export default function CreateGoals({
       setUser(localStorage.getItem("create_goal"));
       localStorage.removeItem("create_goal");
     }
+    if (localStorage.getItem("work_year")) {
+      setDuration(localStorage.getItem("work_year"));
+      localStorage.removeItem("work_year");
+    }
     setup();
   }, []);
 
   return (
     <>
+      {console.log(duration)}
       <div className="flex flex-col gap-2">
         <GoalsInstructions />
         <div>Create goals for: {showGoalsOwner()}</div>
@@ -262,7 +269,7 @@ export default function CreateGoals({
             <select
               id="workyear"
               className="bg-default rounded-md p-1 px-2"
-              onChange={(e) => setDuration(e.target.valueAsNumber)}
+              onChange={(e) => setDuration(e.target.value)}
             >
               <option value="" disabled>
                 --Select Year--
@@ -270,7 +277,10 @@ export default function CreateGoals({
               {kpiDurations.length > 0 &&
                 kpiDurations.map((year) => {
                   return (
-                    <option value={year.kpi_year_duration_id}>
+                    <option
+                      value={year.kpi_year_duration_id}
+                      selected={year.kpi_year_duration_id == duration}
+                    >
                       {format(new Date(year.from_date), "MMM d, yyyy") +
                         " - " +
                         format(new Date(year.to_date), "MMM d, yyyy")}

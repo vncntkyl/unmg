@@ -28,9 +28,9 @@ export default function Goals({
     const retrieveUser = async () => {
       const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
       //const url = "../api/fetchGoals.php";
-      console.log(workYear);
       const formData = new FormData();
-      formData.append("user_id", user_id);
+      console.log(user_id, workYear);
+      formData.append("user_id", id ? id : user_id);
       formData.append("work_year", workYear);
       try {
         const response = await axios.post(url, formData);
@@ -95,9 +95,7 @@ export default function Goals({
       </div>
       {workYear === -1 ? (
         <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
-          <span>
-            Please select a work year to show your goals.
-          </span>
+          <span>Please select a work year to show your goals.</span>
         </div>
       ) : !hasSet ? (
         <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
@@ -108,6 +106,10 @@ export default function Goals({
           <a
             href="/main_goals/create"
             className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
+            onClick={() => {
+              localStorage.setItem("create_goal", user_id);
+              localStorage.setItem("work_year", workYear);
+            }}
           >
             <AiOutlinePlus />
             Create Goals

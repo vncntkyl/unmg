@@ -17,6 +17,7 @@ export default function AssessmentTracking({ emp_id }) {
   const [checkScores, setCheckScores] = useState(false);
   const [checkAchievements, setCheckAchievements] = useState(false);
   let previousObjective = null;
+
   useEffect(() => {
     const getUserPerformance = async () => {
       try {
@@ -30,7 +31,6 @@ export default function AssessmentTracking({ emp_id }) {
             },
           }
         );
-
         setUserPerformance(response.data);
         const form = response.data.some(
           (item) => item.hr_eval_form_id !== null
@@ -91,7 +91,7 @@ export default function AssessmentTracking({ emp_id }) {
     getUserPerformance();
   }, [emp_id, selectedPillar, quarter]);
 
-  return !checkForm ? (
+  return checkForm ? (
     <>
       <div className="flex pb-2 px-2 justify-between">
         <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
@@ -234,40 +234,45 @@ export default function AssessmentTracking({ emp_id }) {
                                 objective.obj_objective_id
                             )
                             .map((performance) => (
-                              <React.Fragment key={performance.kpi_objective_id}>
+                              <React.Fragment
+                                key={performance.kpi_objective_id}
+                              >
                                 <tr>
-                                <td className="w-[20%] p-4">
-                                  <div>
-                                {objective.obj_objective !== previousObjective ? performance.obj_objective : ""}
-                                  </div>
-                                </td>
-                                <td className="w-[20%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                  {performance.kpi_desc}
-                                  </div>
-                                </td>
-                                <td className="w-[10%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                  {`${performance.kpi_weight}%`}
-                                  </div>
-                                </td>
-                                <td className="w-[10%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                  {performance.results}
-                                  </div>
-                                </td>
-                                <td className="w-[20%] p-4 bg-white">
-                                  <div className="flex items-center justify-center">
-                                  {performance.metrics_desc}
-                                  </div>
-                                </td>
-                                <td className="w-[20%] p-4 bg-white">
-                                  <div className="flex items-center">
-                                  {performance.remarks}
-                                  </div>
-                                </td>
-                              </tr>
-                                </React.Fragment>
+                                  <td className="w-[20%] p-4">
+                                    <div>
+                                      {objective.obj_objective !==
+                                      previousObjective
+                                        ? performance.obj_objective
+                                        : ""}
+                                    </div>
+                                  </td>
+                                  <td className="w-[20%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {performance.kpi_desc}
+                                    </div>
+                                  </td>
+                                  <td className="w-[10%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {`${performance.kpi_weight}%`}
+                                    </div>
+                                  </td>
+                                  <td className="w-[10%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {performance.results}
+                                    </div>
+                                  </td>
+                                  <td className="w-[20%] p-4 bg-white">
+                                    <div className="flex items-center justify-center">
+                                      {performance.metrics_desc}
+                                    </div>
+                                  </td>
+                                  <td className="w-[20%] p-4 bg-white">
+                                    <div className="flex items-center">
+                                      {performance.remarks}
+                                    </div>
+                                  </td>
+                                </tr>
+                              </React.Fragment>
                             ))}
                         </tbody>
                       ))}

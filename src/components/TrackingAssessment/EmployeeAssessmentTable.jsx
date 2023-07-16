@@ -4,7 +4,7 @@ import axios from "axios";
 import TrackingAction from "./TrackingAction";
 
 export default function EmployeeAssessmentTable(emp_id) {
-  const [employeeType, setEmployeeType] = useState("0");
+  const [employeeType, setEmployeeType] = useState("regular");
   const [employeesRecords, setEmployeesRecords] = useState([]);
   const [actionVisibility, setActionVisibility] = useState(false);
   localStorage.setItem("assessment_quarter", 0);
@@ -51,6 +51,7 @@ export default function EmployeeAssessmentTable(emp_id) {
         );
 
         // setEmployeesRecords(response.data);
+        console.log(response.data);
         const employeeRecords = response.data.map((item) => {
           return {
             employee_id: item.employee_id,
@@ -90,8 +91,8 @@ export default function EmployeeAssessmentTable(emp_id) {
             className="text-black rounded-md p-1 px-2 outline-none"
             onChange={(event) => setEmployeeType(event.target.value)}
           >
-            <option value="0">Regular</option>
-            <option value="1">Probationary</option>
+            <option value="regular">Regular</option>
+            <option value="probationary">Probationary</option>
           </select>
         </div>
         <div className="flex flex-row p-2 items-center gap-3">
