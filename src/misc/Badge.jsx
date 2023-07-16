@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 
-export default function Badge({ type = "default", message, className }) {
+export default function Badge({ type = "default", message }) {
   return (
     <div
       className={classNames(
@@ -13,8 +13,7 @@ export default function Badge({ type = "default", message, className }) {
         type === "success" &&
           "border-un-green-light bg-un-green-light text-un-green-dark",
         type === "failure" &&
-          "border-un-red-light-1 bg-un-red-light-1 text-un-red-dark",
-          className
+          "border-un-red-light-1 bg-un-red-light-1 text-un-red-dark"
       )}
     >
       {message}

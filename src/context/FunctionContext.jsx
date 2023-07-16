@@ -5,14 +5,21 @@ export function useFunction() {
   return useContext(FunctionContext);
 }
 export function FunctionProvider({ children }) {
+  const [loading, setLoading] = useState(false);
   function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
   function capitalizeSentence(sentence) {
     let splitSentence = sentence.split(" ");
     let joined = [];
+    const wordsToSkip = ["and", "to", "with"];
     splitSentence.forEach((word) => {
-      joined.push(capitalize(word));
+      word = word.toLowerCase();
+      if (!wordsToSkip.includes(word)) {
+        joined.push(capitalize(word));
+      } else {
+        joined.push(word);
+      }
     });
     return joined.join(" ");
   }
@@ -44,7 +51,13 @@ export function FunctionProvider({ children }) {
   }
 
   function areValuesFilled(obj) {
-    const keysToSkip = ["middle_name", "immediate_supervisor"];
+    const keysToSkip = [
+      "middle_name",
+      "suffix",
+      "primary_evaluator",
+      "secondary_evaluator",
+      "tertiary_evaluator",
+    ];
     const values = Object.keys(obj)
       .filter((key) => !keysToSkip.includes(key))
       .map((key) => obj[key]);
@@ -107,9 +120,11 @@ export function FunctionProvider({ children }) {
     return `#${redHex}${greenHex}${blueHex}`;
   }
   const value = {
+    loading,
     getPath,
     splitKey,
     splitPath,
+    setLoading,
     capitalize,
     formatName,
     reformatName,

@@ -1,13 +1,18 @@
 import React, { useEffect } from "react";
-import { AiOutlineUserAdd } from "react-icons/ai";
+import { AiOutlineUserAdd, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useSearchParams } from "react-router-dom";
 import { EmployeeTable, EmployeeAdd } from "../components";
 import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
+import BulkEmployeeAdd from "../components/BulkEmployeeAdd";
+import { useAuth } from "../context/authContext";
 
-export default function EmployeeList({panel_type}) {
+export default function EmployeeList() {
   const { getPath } = useFunction();
+  const { currentUser } = useAuth();
+  const searchParams = useSearchParams();
+
   const setHeader = (pathname) => {
     switch (pathname) {
       case "/employees":
@@ -17,6 +22,8 @@ export default function EmployeeList({panel_type}) {
         return "Add New Employee";
       case "/employees/edit":
         return "Edit Employee";
+      case "/employees/batch_add":
+        return "Import Employees";
     }
   };
   useEffect(() => {
@@ -56,16 +63,49 @@ export default function EmployeeList({panel_type}) {
                     Add Employee
                   </span>
                 </a>
+                <a
+                  href="/employees/batch_add"
+                  className="w-1/2 flex items-center justify-center gap-2 border bg-un-blue-light hover:bg-un-blue rounded-md p-1 text-white md:w-full"
+                >
+                  <AiOutlineUsergroupAdd />
+                  <span className="text-[.8rem] md:text-[.9rem] whitespace-nowrap">
+                    Batch Add Employee
+                  </span>
+                </a>
               </div>
             </div>
             <Routes>
-              <Route
-                path="*"
-                element={<EmployeeTable panel_type={panel_type} />}
-              />
-              <Route path="/profile/:id" element={<EmployeeProfile />} />
-              <Route path="/profile/:id/edit" element={<EmployeeProfile />} />
-              <Route path="/add" element={<EmployeeAdd />} />
+              {JSON.parse(currentUser).user_type < 2 ? (
+                <>
+                  <Route
+                    path="*"
+                    element={
+                      <EmployeeTable
+                        filters={{
+                          company: searchParams[0].get("company"),
+                          department: searchParams[0].get("department"),
+                        }}
+                      />
+                    }
+                  />
+
+                  <Route path="/profile/:id" element={<EmployeeProfile />} />
+                  <Route
+                    path="/profile/:id/edit"
+                    element={<EmployeeProfile />}
+                  />
+                  <Route path="/add" element={<EmployeeAdd />} />
+                  <Route path="/batch_add" element={<BulkEmployeeAdd />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/profile/:id" element={<EmployeeProfile />} />
+                  <Route
+                    path="/profile/:id/edit"
+                    element={<EmployeeProfile />}
+                  />
+                </>
+              )}
             </Routes>
           </div>
         </div>

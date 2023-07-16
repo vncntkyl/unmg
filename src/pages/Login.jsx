@@ -1,40 +1,69 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/unmg_logo_colored.png";
 import logo_2 from "../assets/unmg_logo_plain_colored.png";
+import Alert from "../misc/Alert";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import classNames from "classnames";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { signInUser } = useAuth();
+  const [error, showError] = useState(null);
+  const [loginStatus, setLoginStatus] = useState(null);
+  const { signInUser,setCurrentUser } = useAuth();
   const username = useRef();
   const password = useRef();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    signInUser(username.current.value, password.current.value);
+    setLoginStatus("submitting");
+    const loginResponse = await signInUser(
+      username.current.value,
+      password.current.value
+    );
+    if (typeof loginResponse === "object") {
+      setCurrentUser(JSON.stringify(loginResponse));
+      localStorage.setItem("currentUser", JSON.stringify(loginResponse));
+      if (localStorage.getItem("redirect_to")) {
+        const redirectLink = localStorage.getItem("redirect_to");
+        localStorage.removeItem("redirect_to");
+        navigate(redirectLink);
+      } else {
+        navigate("/");
+      }
+    } else {
+      showError(loginResponse);
+    }
   };
 
   useEffect(() => {
-    if (sessionStorage.getItem("currentUser")) {
+    if (localStorage.getItem("currentUser")) {
       navigate("/");
     }
   }, []);
   return (
     <>
       <div className="w-screen h-screen flex flex-col justify-center items-center drop-shadow-lg p-4">
-        <div className="overflow-hidden rounded-lg transition-all w-[90%] md:w-[50%] flex flex-col lg:flex-row">
+        <div className="overflow-hidden rounded-lg transition-all w-[90%] md:w-[50%] lg:w-[80%] xl:w-[50%] flex flex-col lg:flex-row">
           <div className="bg-white flex flex-row gap-2 justify-center items-center p-4 lg:w-1/2 lg:h-[500px]">
-            <img src={logo_2} alt="logo" className="w-auto h-[3rem] lg:hidden" />
+            <img
+              src={logo_2}
+              alt="logo"
+              className="w-auto h-[3rem] lg:hidden"
+            />
             <span className="text-[.8rem] text-un-blue font-semibold lg:hidden">
               United Neon Media Group
               <br />
               Performance Management System
             </span>
-            <img src={logo} alt="logo" className="hidden w-auto h-[15rem] lg:block" />
+            <img
+              src={logo}
+              alt="logo"
+              className="hidden w-auto h-[15rem] lg:block"
+            />
           </div>
           <form
-            action=""
             onSubmit={handleSubmit}
             className="bg-un-blue flex flex-col justify-center items-center p-8 gap-6 lg:w-1/2"
           >
@@ -42,7 +71,7 @@ export default function Login() {
             <input
               className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
               type="text"
-              placeholder="Username"
+              placeholder="Username or Email Address"
               ref={username}
             />
             <input
@@ -53,34 +82,40 @@ export default function Login() {
             />
             <button
               type="submit"
-              className="bg-un-red text-white p-2 w-[80%] rounded"
+              className={classNames(
+                "bg-un-red hover:bg-un-red-dark text-white p-2 w-[80%] rounded flex items-center justify-center",
+                loginStatus === "submitting" &&
+                  "bg-mid-gray pointer-events-none"
+              )}
             >
-              Sign In
+              {loginStatus === null ? (
+                "Sign In"
+              ) : (
+                <AiOutlineLoading3Quarters className="animate-spin text-[1.1rem]" />
+              )}
             </button>
           </form>
         </div>
-        {/* <form onSubmit={handleSubmit} className="bg-un-blue w-[25%] h-[60%] rounded-r-lg flex flex-col justify-center items-center p-8 gap-6">
-          <span className="text-white text-[30px] pb-3">Sign In</span>
-          <input
-            className="bg-transparent placeholder:text-white  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
-            type="text"
-            placeholder="Username"
-            ref={username}
-          />
-          <input
-            className="bg-transparent placeholder:text-white  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
-            type="password"
-            placeholder="Password"
-            ref={password}
-          />
-          <button
-            type="submit"
-            className="bg-un-red text-white p-2 w-[80%] rounded"
-          >
-            Sign In
-          </button>
-        </form> */}
-        
+        {error && (
+          <>
+            <Alert
+              type="warning"
+              title={"Login Error"}
+              message={error}
+              onClose={() => {
+                showError(null);
+                setLoginStatus(null);
+              }}
+            />
+            <div
+              className="bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto"
+              onClick={() => {
+                showError(null);
+                setLoginStatus(null);
+              }}
+            />
+          </>
+        )}
       </div>
     </>
   );

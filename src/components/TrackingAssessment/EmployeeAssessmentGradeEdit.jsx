@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AssessmentInstructions from "./AssessmentInstructions";
+//import AssessmentInstructions from "./AssessmentInstructions";
 import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ export default function EmployeeAssessmentGradeEdit() {
   const [pillars, setPillars] = useState([]);
   const [objectives, setObjectives] = useState([]);
   const [quarter, setQuarter] = useState(
-    sessionStorage.getItem("assessment_quarter") || 0
+    localStorage.getItem("assessment_quarter") || 0
   );
   const [name, setName] = useState([]);
   const navigate = useNavigate();
@@ -24,8 +24,7 @@ export default function EmployeeAssessmentGradeEdit() {
   const [remarks, setRemarks] = useState([]);
   //Submit form
   const handleSubmit = () => { };
-  // Usage
-  const tbl_name = getTableName(quarter);
+
 
   useEffect(() => {
     //Whole Grades
@@ -36,9 +35,10 @@ export default function EmployeeAssessmentGradeEdit() {
           params: {
             userGrading: true,
             quarter: quarter,
-            empID: sessionStorage.getItem("assessment_id"),
+            empID: localStorage.getItem("assessment_id"),
           },
         });
+        console.table(response.data)
         setGrades(response.data);
         //if pillar id is not found
         const ColumnAllFalse = response.data.some(
@@ -51,7 +51,7 @@ export default function EmployeeAssessmentGradeEdit() {
         setName(uniqueNames);
 
         //checking the stored quarter
-        const storedQuarter = sessionStorage.getItem("assessment_quarter");
+        const storedQuarter = localStorage.getItem("assessment_quarter");
         if (storedQuarter) {
           setQuarter(storedQuarter);
         }
@@ -104,7 +104,7 @@ export default function EmployeeAssessmentGradeEdit() {
         const response = await axios.get(url, {
           params: {
             metrics: true,
-            empID: sessionStorage.getItem("assessment_id"),
+            empID: localStorage.getItem("assessment_id"),
           },
         });
         setMetrics(response.data);
@@ -156,7 +156,7 @@ export default function EmployeeAssessmentGradeEdit() {
         axios.post(url, fData)
           .then(response => alert(response.data))
           .catch(error => alert(error));
-        navigate(-1);
+          navigate(-1);
       }
 
     }
@@ -184,6 +184,9 @@ export default function EmployeeAssessmentGradeEdit() {
     }
     return tbl_name;
   }
+  // Usage
+  const tbl_name = getTableName(quarter);
+
 
   //functions for handling select and textarea
   function handleSelectChange(event, pillarIndex, objectIndex, gradeIndex) {
@@ -197,7 +200,7 @@ export default function EmployeeAssessmentGradeEdit() {
     updatedValues[pillarIndex][objectIndex] =
       updatedValues[pillarIndex][objectIndex] || [];
     updatedValues[pillarIndex][objectIndex][gradeIndex] = selectedValue;
-console.log(gradeIndex);
+
     setSelectedValues(updatedValues);
   }
 
@@ -247,7 +250,6 @@ console.log(gradeIndex);
   //       grades.filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
   //       .map((grade) => grade.results)))))
   //   )
-
   return (
     <>
       <button
@@ -273,7 +275,7 @@ console.log(gradeIndex);
             onChange={(event) => {
               const selectedQuarter = event.target.value;
               setQuarter(selectedQuarter);
-              sessionStorage.setItem("assessment_quarter", selectedQuarter);
+              localStorage.setItem("assessment_quarter", selectedQuarter);
             }}
             value={quarter}
           >
@@ -410,13 +412,7 @@ console.log(gradeIndex);
                                         <td>
                                           <div className="p-2 flex items-center justify-center">
                                             <select
-                                              className={classNames("rounded-md px-4 flex content-center",
-                                              quarter == 3 ? (
-                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '1' || grade.results === 1 ? 'bg-un-red-light-1 text-un-red-dark' : 
-                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '2' || grade.results === 2 ? 'bg-un-yellow-light text-un-yellow-dark' : 
-                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '3' || grade.results === 3 ? 'bg-un-green-light text-un-green-dark' : 
-                                              selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '4' || grade.results === 4 ? 'bg-un-green-light text-un-green-dark' : 
-                                              'bg-default'):"bg-default")}
+                                              className="bg-default rounded-md px-4 flex content-center"
                                               value={
                                                 selectedValues[pillarIndex]?.[
                                                 objectIndex
@@ -434,7 +430,7 @@ console.log(gradeIndex);
                                                 )
                                               } // event handler
                                             >
-                                              <option value="0" disabled>
+                                              <option value="0">
                                                 Choose a Metric
                                               </option>
                                               {metrics
@@ -446,12 +442,11 @@ console.log(gradeIndex);
                                                 .map((metric) => (
                                                   <option
                                                     key={metric.target_metrics_id}
-                                                    value={metric.target_metrics_score}
-                                                    className={quarter == 3 && (metric.target_metrics_score === 1  ? 'bg-un-red-light-1 text-un-red-dark' :
-                                                    metric.target_metrics_score === 2 ? 'bg-un-yellow-light text-un-yellow-dark': 
-                                                    metric.target_metrics_score === 3 || metric.target_metrics_score === 4 ? 'bg-un-green-light text-un-green-dark':
-                                                    '')}
-                                                  >{metric.target_metrics_score}
+                                                    value={
+                                                      metric.target_metrics_score
+                                                    }
+                                                  >
+                                                    {metric.target_metrics_score}
                                                   </option>
                                                 ))}
                                             </select>
@@ -495,7 +490,7 @@ console.log(gradeIndex);
                                               value={
                                                 remarks[pillarIndex]?.[objectIndex]?.[gradeIndex] || (grade.remarks !== null ? grade.remarks : "")
                                               }
-                                              defaultValue={grade.remarks || ""}
+                                              defaultValue={grade.remarks || "N/A"}
                                               onChange={(event) =>
                                                 handleRemarksChange(
                                                   event,
@@ -516,11 +511,9 @@ console.log(gradeIndex);
                         ))}
                     </div>
                   </div>
-
                 </React.Fragment>
               ))}
             </div>
-            <AssessmentInstructions />
             <div className="w-full flex justify-end pt-4">
               <button
                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"

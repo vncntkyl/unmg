@@ -17,8 +17,8 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
 
 const navigate = useNavigate();
 const edit = () => {
-  sessionStorage.setItem("assessment_quarter", quarter);
-  navigate("/tracking_and_assessment/employee_assessment/" + sessionStorage.getItem("assessment_name") + "/grade_edit");
+  localStorage.setItem("assessment_quarter", quarter);
+  navigate("/tracking_and_assement/employee_assessment/" + localStorage.getItem("assessment_name") + "/grade_edit");
 }
 
   useEffect(() => {

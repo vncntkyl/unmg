@@ -1,112 +1,87 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
+import axios from "axios";
+import Counter from "../misc/Counter";
+import { format, startOfToday } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
-export default function Overview({ overview_type }) {
-  const [cards, setCards] = useState([
-    {
-      id: 1,
-      title: "Employees",
-      count: 175,
-    },
-    {
-      id: 2,
-      title: "Not Evaluated",
-      count: 130,
-    },
-    {
-      id: 3,
-      title: "1 on 1 Discussion",
-      count: 62,
-    },
-    {
-      id: 4,
-      title: "Finalized Sign Off",
-      count: 20,
-    },
-    {
-      id: 5,
-      title: "Submitted",
-      count: 20,
-    },
-  ]);
-  const [loader, toggleLoader] = useState(false);
-  useEffect(() => {
-    if (overview_type === "regular") {
-      setCards([
-        {
-          id: 1,
-          title: "Employees",
-          count: 175,
-        },
-        {
-          id: 2,
-          title: "Not Evaluated",
-          count: 130,
-        },
-        {
-          id: 3,
-          title: "1 on 1 Discussion",
-          count: 62,
-        },
-        {
-          id: 4,
-          title: "Finalized Sign Off",
-          count: 20,
-        },
-        {
-          id: 5,
-          title: "Submitted",
-          count: 20,
-        },
-      ]);
-    } else {
-      setCards([
-        {
-          id: 1,
-          title: "Employee Under Probation",
-          count: 10,
-        },
-        {
-          id: 2,
-          title: "Not Evaluated",
-          count: 7,
-        },
-        {
-          id: 3,
-          title: "1 on 1 Discussion",
-          count: 2,
-        },
-        {
-          id: 4,
-          title: "Finalized Sign Off",
-          count: 1,
-        },
-        {
-          id: 5,
-          title: "Submitted",
-          count: 0,
-        },
-      ]);
+export default function Overview() {
+  const [cards, setCards] = useState([]);
+  const navigate = useNavigate();
+
+  const onCardClick = (cardID) => {
+    console.log(cardID);
+    switch (cardID) {
+      case 0:
+        navigate("/employees");
+        break;
+      case 1:
+        localStorage.setItem("usertype", "regular");
+        navigate("/main_goals");
+        break;
+      case 2:
+        localStorage.setItem("usertype", "probationary");
+        navigate("/main_goals");
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
     }
-    toggleLoader(true);
-  }, [overview_type]);
-  return loader ? (
+  };
+
+  useEffect(() => {
+    const retrieveOverviewContent = async () => {
+      const url = "http://localhost/unmg_pms/api/fetchOverview.php";
+      //const url = "../api/fetchOverview.php";
+      const formData = new FormData();
+
+      formData.append("getCount", "all");
+      try {
+        const response = await axios.post(url, formData);
+        setCards(response.data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    retrieveOverviewContent();
+  }, []);
+
+  return (
     <>
       {/* top overview */}
-      <div className="w-full bg-un-blue min-h-[100px] p-4 lg:pl-[18rem] lg:pr-6 xl:pl-[24.5rem] xl:pr-32">
+      <div className="w-full bg-un-blue min-h-[100px] px-4 pb-4 lg:pl-[18rem] lg:pr-6 xl:pl-[24.5rem] xl:pr-32">
+        <div className="pb-2 flex flex-col xs:flex-row xs:items-end xs:justify-between">
+          <p className="text-white font-semibold text-[1.1rem] ">
+            Admin Overview
+          </p>
+          <span className="text-[.8rem] text-white">
+            As of {format(startOfToday(), "EEEE, MMMM d, yyyy")}
+          </span>
+        </div>
         <div className="overview_container w-full overflow-hidden overflow-x-scroll snap-x snap-mandatory scroll-smooth flex flex-row gap-1">
-          {cards.map((card) => {
+          {cards.map((card, index) => {
             return (
-              <div key={card.id} className="bg-white min-w-full flex flex-col text-center items-center justify-between rounded-md snap-start p-4 md:min-w-[49.5%] lg:min-w-[32.75%] xl:min-w-[19.5%]">
-                <span className="text-[1rem] font-semibold">{card.title}</span>
-                <span className="text-[3rem]">{card.count}</span>
+              <div
+                key={index}
+                value={card.title}
+                onClick={() => onCardClick(index)}
+                className="group/overview relative select-none bg-white min-w-full flex flex-col text-center items-center justify-between rounded-md snap-start p-4 md:min-w-[49.5%] lg:min-w-[32.75%] xl:min-w-[19.7%] cursor-pointer hover:bg-default"
+              >
+                <span className="text-[1rem] font-semibold text-black">
+                  {card.title}
+                </span>
+                <span className="text-[3rem] text-un-blue-light">
+                  <Counter max={card.value} />
+                </span>
+                <span className="text-right w-full hidden group-hover/overview:block absolute bottom-2 right-4 animate-fade">
+                  View
+                </span>
               </div>
             );
           })}
         </div>
       </div>
     </>
-  ) : (
-    <>Loading...</>
   );
 }

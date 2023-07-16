@@ -9,15 +9,17 @@ import CompanyList from "./CompanyList";
 import Roles from "./Roles";
 import Help from "./Help";
 import MainGoals from "./MainGoals";
+import ViewEvaluation from "./ViewEvaluation";
+import CompanyPlans from "./CompanyPlans";
 import TrackingAssessment from "./TrackingAssessment";
 import AgreementSignOff from "./AgreementSignOff";
+
 export default function Dashboard() {
-  if (!sessionStorage.getItem("currentUser")) {
-    sessionStorage.setItem("redirect_to", window.location.pathname);
+  if (!localStorage.getItem("currentUser")) {
+    localStorage.setItem("redirect_to", window.location.pathname);
   }
   const navigate = useNavigate();
   const [sidebar, toggleSidebar] = useState(false);
-  const [panel, setPanel] = useState("regular");
   const [loader, toggleLoader] = useState(true);
   const [user, setUser] = useState({});
   let xDown = null;
@@ -42,11 +44,11 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    if (!sessionStorage.getItem("currentUser")) {
+    if (!localStorage.getItem("currentUser")) {
       navigate("/login");
       return;
     } else {
-      setUser(JSON.parse(sessionStorage.getItem("currentUser")));
+      setUser(JSON.parse(localStorage.getItem("currentUser")));
       toggleLoader(false);
     }
     if (window.innerWidth < 1024) {
@@ -61,7 +63,7 @@ export default function Dashboard() {
         document.removeEventListener("touchend", handleTouchEnd);
       };
     }
-  }, [sessionStorage]);
+  }, [localStorage]);
   return !loader ? (
     <>
       <Navbar
@@ -69,7 +71,7 @@ export default function Dashboard() {
         user_data={user}
         sidebarToggler={toggleSidebar}
       />
-      <div className=" min-h-screen">
+      <div className="min-h-[(calc(100vh_-_76px))]">
         <Sidebar
           sidebarToggler={toggleSidebar}
           className={classNames(sidebar && "translate-x-[0%]")}
@@ -83,21 +85,28 @@ export default function Dashboard() {
         />
         {/* DASHBOARD MAIN */}
         <Routes>
-          <Route
-            path="/"
-            element={<DashboardOverview panel={panel} setPanel={setPanel} />}
-          />
-          <Route
-            path="/employees/*"
-            element={<EmployeeList panel_type={panel} />}
-          />
+          {user.user_type > 2 ? (
+            <Route path="/" element={<MainGoals />} />
+          ) : (
+            <Route path="/" element={<DashboardOverview />} />
+          )}
+          {user.user_type < 2 && (
+            <>
+              <Route path="/employees/*" element={<EmployeeList />} />
+            </>
+          )}
           <Route path="/account/*" element={<AccountSettings />} />
           <Route path="/companies/*" element={<CompanyList />} />
-          <Route path="/roles/*" element={<Roles />} />
+          {/* <Route path="/roles/*" element={<Roles />} /> */}
           <Route path="/help/*" element={<Help />} />
           <Route path="/main_goals/*" element={<MainGoals />} />
-          <Route path="/tracking_and_assessment/*" element={<TrackingAssessment />} />
+          <Route
+            path="/tracking_and_assessment/*"
+            element={<TrackingAssessment />}
+          />
           <Route path="/sign_off/*" element={<AgreementSignOff />} />
+          <Route path="/view_evaluations/*" element={<ViewEvaluation />} />
+          <Route path="/company_plans/*" element={<CompanyPlans />} />
         </Routes>
       </div>
     </>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useFunction } from "../context/FunctionContext";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
-import axios from "axios";
 
 export default function Input({
   id,
@@ -15,7 +14,7 @@ export default function Input({
   editable,
 }) {
   const { companyList, departmentList, headList, usertypeList } = useAuth();
-  const { splitKey } = useFunction();
+  const { splitKey, capitalizeSentence } = useFunction();
 
   const jobStatusList = ["Regular", "Probation", "Resigned"];
 
@@ -47,17 +46,16 @@ export default function Input({
                 ? departmentList.length > 0 &&
                   departmentList.find((dept) => dept.department_id === val)
                     .department_name
-                : id === "supervisor" || id === "immediate_supervisor"
+                : id.includes("evaluator")
                 ? headList.length > 0 &&
-                  headList.find((head) => head.users_id === val)
-                  ? headList.find((head) => head.users_id === val).full_name
+                  headList.find((head) => head.employee_id === val)
+                  ? headList.find((head) => head.employee_id === val).full_name
                   : "N/A"
                 : id === "status"
                 ? jobStatusList[val]
                 : usertypeList.length > 0 &&
-                  usertypeList.find((u) => u.user_type == val)
-                ? usertypeList.find((u) => u.user_type == val)
-                    .user_type_description
+                  usertypeList.find((u) => u.job_level == val)
+                ? usertypeList.find((u) => u.job_level == val).job_level_name
                 : val
               : ""
           }
@@ -95,14 +93,14 @@ export default function Input({
             if (val) {
               return (id === "company" && opt.company_id === val) ||
                 (id === "department" && opt.department_id === val) ||
-                opt.users_id === val ||
-                opt.user_type === val ||
+                opt.employee_id === val ||
+                opt.job_level_id === val ||
                 opt === val ? (
                 <option key={idx} value={val} selected>
                   {opt.company_name ||
                     opt.department_name ||
                     opt.full_name ||
-                    opt.user_type_description ||
+                    opt.job_level_name ||
                     opt}
                 </option>
               ) : (
@@ -111,15 +109,15 @@ export default function Input({
                   value={
                     (id === "company" && opt.company_id) ||
                     (id === "department" && opt.department_id) ||
-                    opt.users_id ||
-                    opt.user_type ||
+                    opt.employee_id ||
+                    opt.job_level_id ||
                     dropdownOptions.indexOf(opt)
                   }
                 >
                   {opt.company_name ||
                     opt.department_name ||
                     opt.full_name ||
-                    opt.user_type_description ||
+                    opt.job_level_name ||
                     opt}
                 </option>
               );
@@ -130,21 +128,36 @@ export default function Input({
                   value={
                     (id === "company" && opt.company_id) ||
                     (id === "department" && opt.department_id) ||
-                    opt.users_id ||
-                    opt.user_type ||
+                    opt.employee_id ||
+                    opt.job_level_id ||
                     dropdownOptions.indexOf(opt)
                   }
                 >
                   {opt.company_name ||
                     opt.department_name ||
                     opt.full_name ||
-                    opt.user_type_description ||
+                    opt.job_level_name ||
                     opt}
                 </option>
               );
             }
           })}
         </select>
+      ) : type === "date" ? (
+        <input
+          type="date"
+          id={id}
+          value={val}
+          className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+          onChange={(e) => {
+            set((prev) => {
+              return {
+                ...prev,
+                [`${id}`]: e.target.value,
+              };
+            });
+          }}
+        />
       ) : (
         <input
           type="password"

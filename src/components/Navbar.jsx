@@ -13,7 +13,7 @@ export default function Navbar({
   user_data,
   sidebarToggler,
 }) {
-  const { setCurrentUser } = useAuth();
+  const { setCurrentUser, currentUser, usertypeList } = useAuth();
   const {
     getPath,
     capitalize,
@@ -29,13 +29,13 @@ export default function Navbar({
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     setCurrentUser([]);
     navigate("/login");
   };
 
   useEffect(() => {
-    const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const setImg = async () => {
       try {
         const image = await import("./" + currentUser["picture"]);
@@ -68,7 +68,21 @@ export default function Navbar({
           </div>
           <div className="nav_page col-[2/3] flex items-center md:mr-auto">
             <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
-              Admin /{" "}
+              {usertypeList.length > 0 &&
+                currentUser != [] &&
+                capitalize(
+                  usertypeList.find(
+                    (usertype) =>
+                      usertype.job_level_id == JSON.parse(currentUser).user_type
+                  ).job_level_name === "rank and file"
+                    ? "employee"
+                    : usertypeList.find(
+                        (usertype) =>
+                          usertype.job_level_id ==
+                          JSON.parse(currentUser).user_type
+                      ).job_level_name
+                )}{" "}
+              /{" "}
               <span className="font-semibold text-[.9rem] sm:text-[1.2rem]">
                 {getPath() === "/"
                   ? "Dashboard"
@@ -167,11 +181,7 @@ export default function Navbar({
                     </a>
                   </li>
                   <li className="p-2 text-end">
-                    <a
-                      href="/help"
-                    >
-                      Help
-                    </a>
+                    <a href="/help">Help</a>
                   </li>
                   <li className="p-2 text-end">
                     <button type="button" onClick={() => handleLogout()}>

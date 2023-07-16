@@ -33,15 +33,10 @@ if (isset($_GET['empID'])) {
         }
         echo $retrieveAssessment;
     }
-//check personal achievements
-    if (isset($_GET['checkUserAchievements'])) {
-        echo json_encode($form->checkUserAchievements($empID));
-    }
-//get total results quarterly and per pillar
-if(isset($_GET['totalTracking']))
-{
-    echo json_encode($form->totalUserAssessment($empID));
-}
+
+
+
+
 
 
     if (isset($_GET['userTrackingAchievements'])) {

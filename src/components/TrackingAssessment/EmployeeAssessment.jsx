@@ -9,7 +9,7 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export default function EmployeeAssessment() {
-  const employee_id = sessionStorage.getItem("assessment_id");
+  const employee_id = localStorage.getItem("assessment_id");
   const [panel, setPanel] = useState("Achievements");
   const [quarter, setQuarter] = useState(0);
   const [achievements, setAchievements] = useState([]);
@@ -60,10 +60,10 @@ export default function EmployeeAssessment() {
         </div>
         <Toggle
           paths={[
-            "/tracking_and_assessment/employee_assessment/" +
-            sessionStorage.getItem("assessment_name"),
-            "/tracking_and_assessment/employee_assessment/" +
-            sessionStorage.getItem("assessment_name") +
+            "/tracking_and_assement/employee_assessment/" +
+            localStorage.getItem("assessment_name"),
+            "/tracking_and_assement/employee_assessment/" +
+            localStorage.getItem("assessment_name") +
             "/",
           ]}
           panel={panel}

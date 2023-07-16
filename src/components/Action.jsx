@@ -15,11 +15,11 @@ export default function Action({
   const { formatName } = useFunction();
   const navigate = useNavigate();
   const viewUser = () => {
-    sessionStorage.setItem("user", JSON.stringify(emp));
+    localStorage.setItem("user", JSON.stringify(emp));
     navigate("/employees/profile/" + formatName(emp.first_name));
   };
   const editUser = () => {
-    sessionStorage.setItem("user", JSON.stringify(emp));
+    localStorage.setItem("user", JSON.stringify(emp));
     navigate("/employees/profile/" + formatName(emp.first_name) + "/edit");
   };
   return (
@@ -158,8 +158,8 @@ export function RoleActions({ modal, toggleModal, emp, setEmployee }) {
         <button
           className="p-1 hover:bg-gray w-full text-left rounded text-black"
           onClick={() => {
-            sessionStorage.setItem("user", JSON.stringify(emp));
-            sessionStorage.setItem("redirect_back_to", getPath());
+            localStorage.setItem("user", JSON.stringify(emp));
+            localStorage.setItem("redirect_back_to", getPath());
             navigate("/employees/profile/" + formatName(emp.first_name));
           }}
         >
@@ -174,7 +174,6 @@ export function RoleActions({ modal, toggleModal, emp, setEmployee }) {
         >
           Re-assign Role
         </button>
-
       </div>
     </>
   );

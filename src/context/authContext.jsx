@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { developmentAPIs as url } from "./apiList";
 import axios from "axios";
+import { format } from "date-fns";
 const AuthContext = React.createContext();
 
 export function useAuth() {
@@ -12,46 +14,33 @@ export function AuthProvider({ children }) {
   const [headList, setHeadList] = useState([]);
   const [usertypeList, setUsertypeList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
+  const [kpiDurations, setKpiDurations] = useState([]);
   const nav = useNavigate();
 
-  const signInUser = (username, password) => {
-    const url = "http://localhost/unmg_pms/api/signInUser.php";
-    //const url = "../api/signInUser.php";
+  const signInUser = async (username, password) => {
     let formData = new FormData();
-    formData.append("username", username);
+    formData.append("user_login", username);
     formData.append("password", password);
 
-    axios
-      .post(url, formData)
-      .then((response) => {
-        setCurrentUser(JSON.stringify(response.data));
-        sessionStorage.setItem("currentUser", JSON.stringify(response.data));
-        if (sessionStorage.getItem("redirect_to")) {
-          const redirect_link = sessionStorage.getItem("redirect_to");
-          sessionStorage.removeItem("redirect_to");
-          nav(redirect_link);
-        } else {
-          nav("/");
-        }
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
+    try {
+      const response = await axios.post(url.login, formData);
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const registerUser = async (userdata) => {
     try {
-      const url = "http://localhost/unmg_pms/api/registerUser.php";
-      //const url = "../api/registerUser.php";
-      const response = await axios.post(url, {
-        params: {
-          userdata: userdata,
-        },
-      });
-
-      if (response.data === "success") {
-        return true;
-      }
+      let fd = new FormData();
+      fd.append("userdata", JSON.stringify(userdata));
+      const response = await axios.post(url.register, fd);
+      console.log(response.data);
+      // if (response.data === "success") {
+      //   return true;
+      // }
     } catch (e) {
       console.log(e.message);
     }
@@ -59,14 +48,11 @@ export function AuthProvider({ children }) {
 
   const updateUser = async (userdata, id) => {
     try {
-      const url = "http://localhost/unmg_pms/api/updateUser.php";
-      //const url = "../api/updateUser.php";
-      const response = await axios.post(url, {
-        params: {
-          userdata: userdata,
-          id: id,
-        },
-      });
+      const fd = new FormData();
+      fd.append("userdata", JSON.stringify(userdata));
+      fd.append("id", id);
+
+      const response = await axios.post(url.updateUser, fd);
       if (response.data === "success") {
         return true;
       }
@@ -74,7 +60,24 @@ export function AuthProvider({ children }) {
       console.log(e.message);
     }
   };
-
+  const fetchUsers = async () => {
+    let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
+    //let url = "../api/retrieveUsers.php";
+    try {
+      const response = await axios.get(url, {
+        params: {
+          users: true,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        return 1;
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
   const addCompany = async (companyData) => {
     const url = "http://localhost/unmg_pms/api/manageCompany.php";
     //const url = "../api/manageCompany.php";
@@ -123,6 +126,38 @@ export function AuthProvider({ children }) {
       // }
     } catch (e) {
       console.log(e);
+    }
+  };
+  const getBusinessUnits = async () => {
+    const url = "http://localhost/unmg_pms/api/conglomerate.php";
+    //const url = "../api/conglomerate.php";
+    try {
+      const response = await axios.get(url, {
+        params: {
+          company: true,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getDepartments = async () => {
+    const url = "http://localhost/unmg_pms/api/conglomerate.php";
+    //const url = "../api/conglomerate.php";
+    try {
+      const response = await axios.get(url, {
+        params: {
+          department: true,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
   const manageUser = async (action, id) => {
@@ -204,9 +239,47 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const uploadProfilePicture = async (file) => {
+    const imageURL = `../src/assets/images/profile_${
+      JSON.parse(localStorage.getItem("user")).employee_id
+    }_${format(new Date(), "T")}.${
+      file.name.split(".")[file.name.split(".").length - 1]
+    }`;
+
+    const formdata = new FormData();
+    formdata.append("imageFile", file);
+    formdata.append(
+      "user_id",
+      JSON.parse(localStorage.getItem("user")).users_id
+    );
+    formdata.append("imageURL", imageURL);
+    try {
+      const response = await axios.post(url.uploadProfilePicture, formdata);
+      if (response.data) {
+        const tempUser = JSON.parse(localStorage.getItem("user"));
+        tempUser.picture = ".." + imageURL.substring(6);
+        localStorage.setItem("user", JSON.stringify(tempUser));
+        return 1;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const uploadUsers = async (data) => {
+    try {
+      const fd = new FormData();
+      fd.append("employees", data);
+
+      const response = await axios.post(url.uploadBatchUsers, fd);
+      return response.data;
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   useEffect(() => {
-    if (sessionStorage.getItem("currentUser")) {
-      setCurrentUser(sessionStorage.getItem("currentUser"));
+    if (localStorage.getItem("currentUser")) {
+      setCurrentUser(localStorage.getItem("currentUser"));
     }
     const url = "http://localhost/unmg_pms/api/conglomerate.php";
     //const url = "../api/conglomerate.php";
@@ -265,6 +338,20 @@ export function AuthProvider({ children }) {
         console.log(e.message);
       }
     };
+    const retrieveKPIYear = async () => {
+      try {
+        const url = "http://localhost/unmg_pms/api/fetchKpiDuration.php";
+        const response = await axios.get(url, {
+          params: {
+            kpiDuration: true,
+          },
+        });
+        setKpiDurations(response.data);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    retrieveKPIYear();
     fetchHeads();
     retrieveUserTypes();
   }, [currentUser]);
@@ -272,6 +359,7 @@ export function AuthProvider({ children }) {
   const value = {
     departmentList,
     usertypeList,
+    kpiDurations,
     currentUser,
     companyList,
     headList,
@@ -280,15 +368,20 @@ export function AuthProvider({ children }) {
     manageUser,
     signInUser,
     addCompany,
+    uploadUsers,
     updateUser,
+    fetchUsers,
     deleteRole,
     registerUser,
     registerRole,
     unassignUser,
     addDepartment,
     updateUserRole,
+    getDepartments,
     setCurrentUser,
+    getBusinessUnits,
     deleteDepartment,
+    uploadProfilePicture,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

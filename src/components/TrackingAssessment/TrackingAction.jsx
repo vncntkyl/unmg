@@ -27,28 +27,28 @@ export default function TrackingAction({
   };
   const { formatName } = useFunction();
   const viewUserAssessment = () => {
-    sessionStorage.setItem("assessment_id", employee_id);
-    sessionStorage.setItem("assessment_name", formatName(first_name));
+    localStorage.setItem("assessment_id", employee_id);
+    localStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assessment/employee_assessment/" + formatName(first_name)
+      "/tracking_and_assement/employee_assessment/" + formatName(first_name)
     );
   };
 
   const gradeUserAssessment = () => {
-    sessionStorage.setItem("assessment_id", employee_id);
-    sessionStorage.setItem("assessment_name", formatName(first_name));
+    localStorage.setItem("assessment_id", employee_id);
+    localStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assessment/employee_assessment/" +
+      "/tracking_and_assement/employee_assessment/" +
         formatName(first_name) +
         "/grade_edit"
     );
   };
 
   const approveUserAssessment = () => {
-    sessionStorage.setItem("assessment_id", employee_id);
-    sessionStorage.setItem("assessment_name", formatName(first_name));
+    localStorage.setItem("assessment_id", employee_id);
+    localStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assessment/employee_assessment/" +
+      "/tracking_and_assement/employee_assessment/" +
         formatName(first_name) +
         "/approve"
     );
