@@ -13,7 +13,10 @@ export default function AssessmentTracking({ emp_id }) {
   const [selectedPillar, setSelectedPillar] = useState(0);
   const [tabTitle, setTabTitle] = useState([]);
   const [quarter, setQuarter] = useState(1);
-  const [] = useState();
+
+  //total performance
+  const [totalPerformance, setTotalPerformance] = useState([]);
+  const [totalQuarterlyResults, setTotalQuarterlyResults] = useState([]);
   //checkers
   const [checkForm, setcheckForm] = useState(false);
   const [checkScores, setCheckScores] = useState(false);
@@ -83,12 +86,50 @@ export default function AssessmentTracking({ emp_id }) {
           }
           return uniqueObjectives;
         }, []);
-
         setObjectives(obj);
       } catch (error) {
         console.log(error.message);
       }
     };
+
+    //addional for tracking and assessment
+    const getTotalPerformance = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost/unmg_pms/api/retrieveTracking.php",
+          {
+            params: {
+              totalTracking: true,
+              empID: emp_id,
+            },
+          }
+        );
+        setTotalPerformance(response.data);
+
+
+
+
+        const quarterly = response.data.reduce((uniqueQuarterlyResults, item) => {
+          const existingQuarterlyResults = uniqueQuarterlyResults.find(
+            (result) => result.eval_form_id === item.eval_form_id
+          );
+          if (!existingQuarterlyResults) {
+            uniqueQuarterlyResults.push({
+              eval_form_id: item.eval_form_id,
+              FirstQuarterRating: item.FirstQuarterRating,
+              MidYearRating: item.MidYearRating,
+              ThirdQuarterRating: item.ThirdQuarterRating,
+              YearEndRating: item.YearEndRating,
+            });
+          }
+          return uniqueQuarterlyResults;
+        }, []);
+        setTotalQuarterlyResults(quarterly);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getTotalPerformance();
     getUserPerformance();
   }, [emp_id, selectedPillar, quarter]);
 
@@ -147,7 +188,9 @@ export default function AssessmentTracking({ emp_id }) {
           )}
         </div>
       </div>
-      {!checkScores && <AssessmentTrackingDetails quarter={quarter} emp_id={emp_id} />}
+      {!checkScores && (
+        <AssessmentTrackingDetails quarter={quarter} emp_id={emp_id} />
+      )}
       {checkScores && (
         <div>
           <div className="md:text-[.8rem] px-2 lg:text-[1rem]">
@@ -157,13 +200,15 @@ export default function AssessmentTracking({ emp_id }) {
                 className={`px-2 text-[1rem]
                   ${index > 0 ? "border-1" : ""}
                   ${index < pillarName.length - 1 ? "border-r" : ""}
-                  ${selectedPillar !== index
-                    ? "hover:border-b-2 border-b-un-red-light"
-                    : ""
+                  ${
+                    selectedPillar !== index
+                      ? "hover:border-b-2 border-b-un-red-light"
+                      : ""
                   } 
-                  ${selectedPillar === index
-                    ? "border-b-4 border-b-un-red-light"
-                    : ""
+                  ${
+                    selectedPillar === index
+                      ? "border-b-4 border-b-un-red-light"
+                      : ""
                   }`}
                 onClick={() => setSelectedPillar(index)}
               >
@@ -245,7 +290,7 @@ export default function AssessmentTracking({ emp_id }) {
                                   <td className="w-[20%] p-4">
                                     <div>
                                       {objective.obj_objective !==
-                                        previousObjective
+                                      previousObjective
                                         ? performance.obj_objective
                                         : ""}
                                     </div>
@@ -262,19 +307,23 @@ export default function AssessmentTracking({ emp_id }) {
                                   </td>
                                   <td className="w-[5%] p-4 bg-white">
                                     <div className="flex items-center justify-center">
-                                      {quarter == 3 ? (
+                                      {quarter === 2 || quarter === '2' ? (
                                         <Badge
                                           message={performance.results}
                                           type={
-                                            performance.results === 1 || performance.results === '1'
+                                            performance.results === 1 ||
+                                            performance.results === "1"
                                               ? "failure"
-                                              : performance.results === 2 || performance.results === '2'
-                                                ? "warning"
-                                                : performance.results === 3 || performance.results === '3'
-                                                  ? "success"
-                                                  : performance.results === 4 || performance.results === '4'
-                                                    ? "success"
-                                                    : ""
+                                              : performance.results === 2 ||
+                                                performance.results === "2"
+                                              ? "warning"
+                                              : performance.results === 3 ||
+                                                performance.results === "3"
+                                              ? "success"
+                                              : performance.results === 4 ||
+                                                performance.results === "4"
+                                              ? "success"
+                                              : ""
                                           }
                                           className="px-8 rounded-md text-[1rem]"
                                         />
@@ -285,7 +334,10 @@ export default function AssessmentTracking({ emp_id }) {
                                   </td>
                                   <td className="w-[5%] p-4 bg-white">
                                     <div className="flex items-center justify-center">
-                                      {(performance.kpi_weight / 100 * performance.results).toFixed(2)}
+                                      {(
+                                        (performance.kpi_weight / 100) *
+                                        performance.results
+                                      ).toFixed(2)}
                                     </div>
                                   </td>
                                   <td className="w-[20%] p-4 bg-white">
@@ -312,25 +364,68 @@ export default function AssessmentTracking({ emp_id }) {
                       {quarter == 1
                         ? "First Quarter"
                         : quarter == 2
-                          ? "Mid Year"
-                          : quarter == 3
-                            ? "Third Quarter"
-                            : quarter == 4
-                              ? "Fourth Quarter"
-                              : ""}
+                        ? "Mid Year"
+                        : quarter == 3
+                        ? "Third Quarter"
+                        : quarter == 4
+                        ? "Fourth Quarter"
+                        : ""}
                       )
                     </span>
                     <div className="w-full flex p-4">
                       <div className="w-1/2">
-                        <span className="block">Weight:</span>
-                        <span className="block">Results: something/4</span>
+                        <div className="flex items-center gap-2">
+                        <span className="block">Final Results:</span>
+                                    {totalQuarterlyResults
+                                      .map((quarterly) => {
+                                        return (
+                                          <React.Fragment
+                                            key={quarterly.eval_form_id}
+                                          >
+                                            {quarter === 1 || quarter === "1" ? (
+                                              <span className="font-semibold text-[1.2rem]">
+                                                {quarterly.FirstQuarterRating}
+                                              </span>
+                                            ) : quarter === 2 || quarter === "2" ? (
+                                            <span className="block">
+                                              <Badge
+                                                message={quarterly.MidYearRating}
+                                                type={
+                                                      quarterly.MidYearRating >= 1.00 && quarterly.MidYearRating <= 1.75 ||
+                                                      quarterly.MidYearRating >= "1.00" && quarterly.MidYearRating <= "1.75"
+                                                    ? "failure"
+                                                    : quarterly.MidYearRating >= 1.76 && quarterly.MidYearRating <= 2.50 ||
+                                                      quarterly.MidYearRating >= "1.76" && quarterly.MidYearRating <= "2.50"
+                                                    ? "warning"
+                                                    : quarterly.MidYearRating >= 2.51 && quarterly.MidYearRating <= 3.25 ||
+                                                      quarterly.MidYearRating >= "2.51" && quarterly.MidYearRating <= "3.25"
+                                                    ? "success"
+                                                    : quarterly.MidYearRating >= 3.26 && quarterly.MidYearRating <= 4.00 ||
+                                                      quarterly.MidYearRating >= "3.26" && quarterly.MidYearRating <= "4.00"
+                                                    ? "success"
+                                                    : ""
+                                                }
+                                                className="px-8 rounded-md text-[1rem]"
+                                              />
+                                            </span>
+                                            ) : quarter === 3 || quarter === "3" ? (
+                                              <span className="font-semibold text-[1.2rem]">
+                                                {quarterly.ThirdQuarterRating}
+                                              </span>
+                                            ) : (
+                                              <span className="font-semibold text-[1.2rem]">{quarterly.YearEndRating}</span>
+                                            )}
+                                          </React.Fragment>
+                                        );
+                                      })}
+                        </div>
                       </div>
                       <div className="w-1/2">
                         <span className="block font-semibold">Pillars</span>
 
                         <table className="w-full">
                           <tbody>
-                        {pillarName.map((pillar) => (
+                            {pillarName.map((pillar) => (
                               <tr>
                                 <td>
                                   <div className="pl-4">
@@ -339,12 +434,38 @@ export default function AssessmentTracking({ emp_id }) {
                                 </td>
                                 <td>
                                   <div>
-                                    hello
+                                    {totalPerformance
+                                      .filter(
+                                        (performance) =>
+                                          performance.pillar_name === pillar.pillar_name)
+                                      .map((performance) => {
+                                        return (
+                                          <React.Fragment
+                                            key={performance.pillar_id}
+                                          >
+                                            {quarter === 1 || quarter === "1" ? (
+                                              <span>
+                                                {performance.firstQuarterTotalResult}
+                                              </span>
+                                            ) : quarter === 2 || quarter === "2" ? (
+                                              <span>
+                                              {performance.midYearTotalResult}
+                                            </span>
+                                            ) : quarter === 3 || quarter === "3" ? (
+                                              <span>
+                                                {performance.ThirdQuarterTotalResult}
+                                              </span>
+                                            ) : (
+                                              <span>{performance.YearEndTotalResult}</span>
+                                            )}
+                                          </React.Fragment>
+                                        );
+                                      })}
                                   </div>
                                 </td>
                               </tr>
-                        ))}
-                        </tbody>
+                            ))}
+                          </tbody>
                         </table>
                       </div>
                     </div>

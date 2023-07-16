@@ -232,7 +232,7 @@ class Form extends Controller
 
 
 
-//main tracking and assessment code
+    //main tracking and assessment code
     function selectUserAssessment($table_name_results, $table_name_rating, $empID)
     {
         $this->setStatement("
@@ -275,7 +275,7 @@ class Form extends Controller
         {$table_name_results}.results AS results,
         hr_metrics_desc.target_metrics_desc AS metrics_desc,
         {$table_name_results}.remarks AS remarks,
-        {$table_name_rating}.ratee_achievement AS ratee_achievement,
+        {$table_name_rating}.ratee_achievement AS ratee_achievement
     FROM 
         hr_users
     LEFT JOIN
@@ -307,10 +307,10 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
-// additional for tracking and assessment
-function totalUserAssessment($empID)
-{
-    $this->setStatement("
+    // additional for tracking and assessment
+    function totalUserAssessment($empID)
+    {
+        $this->setStatement("
     SELECT 
         hr_users.emp_id,
         hr_eval_form_pillars.pillar_id,
@@ -321,13 +321,37 @@ function totalUserAssessment($empID)
         hr_eval_form_sp_pillar_ratings.fourthQuarterTotalResult,
         hr_eval_form_sp_pillar_ratings.YearEndTotalResult,
         
-        hr_eval_form_sp_quarterly_ratings.FirstQuarterRating,
-        hr_eval_form_sp_quarterly_ratings.MidYearRating,
-        hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating,
-        hr_eval_form_sp_quarterly_ratings.FourthQuarterRating,
-        hr_eval_form_sp_quarterly_ratings.YearEndRating
+        hr_eval_form_sp_quarterly_ratings.eval_form_id,
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.FirstQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.FirstQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.FirstQuarterRating
+        ELSE ''
+    END AS FirstQuarterRating,
         
-
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.MidYearRating ORDER BY hr_eval_form_sp_quarterly_ratings.MidYearRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.MidYearRating
+        ELSE ''
+    END AS MidYearRating,
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating
+        ELSE ''
+    END AS ThirdQuarterRating,   
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.FourthQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.FourthQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.FourthQuarterRating
+        ELSE ''
+    END AS FourthQuarterRating,      
+  
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.YearEndRating ORDER BY hr_eval_form_sp_quarterly_ratings.YearEndRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.YearEndRating
+        ELSE ''
+    END AS YearEndRating
+        
     FROM 
         hr_users
     LEFT JOIN
@@ -338,16 +362,18 @@ function totalUserAssessment($empID)
         hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
     LEFT JOIN
         hr_eval_form_sp_pillar_ratings ON hr_eval_form_sp_pillar_ratings.eval_form_pillars_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    LEFT JOIN
+    	hr_eval_form_sp_quarterly_ratings ON hr_eval_form_sp_quarterly_ratings.eval_form_id = hr_eval_form.hr_eval_form_id
     WHERE 
         hr_users.emp_id = ?
     ");
-    $this->statement->execute([$empID]);
-    return $this->statement->fetchAll();
-}
-//check personal achievements
-function checkUserAchievements($empID)
-{
-    $this->setStatement("
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
+    //check personal achievements
+    function checkUserAchievements($empID)
+    {
+        $this->setStatement("
     SELECT
     hr_users.users_id,
     hr_users.emp_id,
@@ -407,9 +433,9 @@ function checkUserAchievements($empID)
         hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
         
     WHERE emp_id = ?");
-    $this->statement->execute([$empID]);
-    return $this->statement->fetchAll();
-}
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
 
 
 
@@ -418,7 +444,7 @@ function checkUserAchievements($empID)
 
 
 
- //sign off   
+    //sign off   
     function selectEmployeeSignOffAssessment($empID, $userStatus)
     {
         $this->setStatement("SELECT
@@ -663,7 +689,7 @@ WHERE
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
-//submit achievement of user on quarter
+    //submit achievement of user on quarter
     function insertUserAssessment($tbl_name, $formspID, $achievements)
     {
         $this->setStatement("UPDATE {$tbl_name} SET ratee_achievement = :ratee_achievement WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id");

@@ -39,20 +39,20 @@ export default function AssessmentTrackingDetails({ quarter, emp_id }) {
 
                 const achievements = uniqueAchievements.map((item) => {
                     return {
-                        fq_achievements: item.fq_achievements !== '' && item.fq_achievements !== null,
-                        myr_achievements: item.myr_achievements !== '' && item.myr_achievements !== null,
-                        tq_achievements: item.tq_achievements !== '' && item.tq_achievements !== null,
-                        yee_achievements: item.yee_achievements !== '' && item.yee_achievements !== null
+                        fq_achievements: item.fq_achievements != '' && item.fq_achievements != null,
+                        myr_achievements: item.myr_achievements != '' && item.myr_achievements != null,
+                        tq_achievements: item.tq_achievements != '' && item.tq_achievements != null,
+                        yee_achievements: item.yee_achievements != '' && item.yee_achievements != null
                     };
                 });
                 setIfAchievementsExists(achievements);
 
                 const results = [
                     {
-                        checkfq: response.data.some((item) => item.fq_results !== 0),
-                        checkmyr: response.data.some((item) => item.myr_results !== 0),
-                        checktq: response.data.some((item) => item.tq_results !== 0),
-                        checkyee: response.data.some((item) => item.yee_results !== 0)
+                        checkfq: response.data.some((item) => item.fq_results != 0),
+                        checkmyr: response.data.some((item) => item.myr_results != 0),
+                        checktq: response.data.some((item) => item.tq_results != 0),
+                        checkyee: response.data.some((item) => item.yee_results != 0)
                     }
                 ];
                 setIfResultsExists(results);
