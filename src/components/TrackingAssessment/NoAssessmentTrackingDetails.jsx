@@ -1,6 +1,6 @@
 import React from "react";
-import axios from "axios";
-import { Route, Router, Routes } from "react-router-dom";
+// import axios from "axios";
+// import { Route, Router, Routes } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
 
 export default function NoAssessmentTrackingDetails() {

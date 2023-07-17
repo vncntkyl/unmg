@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { error } from "jquery";
 
-export default function CreateAssessment({ emp_id }) {
+export default function CreateAchievements({ emp_id }) {
   const [finalUserPerformance, setfinalUserPerformance] = useState([]);
-  const [quarterCheck, setQuarterCheck] = useState("");
-  const [ifExists, setIfExists] = useState();
-  const [tableName, setTableName] = useState();
+  const quarter = sessionStorage.getItem("assessment_quarter");
+  const [quarterCheck, setQuarterCheck] = useState(quarter);
+  const [ifExists, setIfExists] = useState(false);
+  const [achievements, setAchievments] = useState("");
   const handleQuarterChange = (event) => {
     setQuarterCheck(event.target.value);
   };
-  const [achievements, setAchievments] = useState("");
 
   // Submit Button
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (achievements.length === 0) {
       alert("Achievements has been left blank!");
     } else if (tbl_name.length === 0) {
       alert("Please select an available quarter!");
     } else {
+      console.log(tbl_name);
       const formspID = finalUserPerformance.find(
         (item) => item.hr_eval_form_sp_id
       ).hr_eval_form_sp_id;
@@ -29,7 +29,7 @@ export default function CreateAssessment({ emp_id }) {
       fData.append("tbl_name", tbl_name);
       fData.append("formspID", formspID);
       fData.append("achievements", achievements);
-      axios
+      await axios
         .post(url, fData)
         .then((response) => alert(response.data))
         .catch((error) => alert(error));
@@ -57,26 +57,22 @@ export default function CreateAssessment({ emp_id }) {
 
   useEffect(() => {
     const getfinalUserPerformance = async () => {
-        if(quarterCheck.length === 0) return;
       const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
         const response = await axios.get(url, {
           params: {
-            userTracking: true,
+            checkUserAchievements: true,
             empID: emp_id,
-            quarter: quarterCheck
           },
         });
-        console.log(response.data);
         setfinalUserPerformance(response.data);
-        const results = response.data.map((item) => ({
-          fq_result: item.fq_results !== 0,
-          myr_result: item.myr_results !== 0,
-          tq_result: item.tq_results !== 0,
-          yee_result: item.yee_results !== 0,
+        const achievements = response.data.map((item) => ({
+          fq_achievements: item.fq_achievements !== "",
+          myr_achievements: item.myr_achievements !== "",
+          tq_achievements: item.tq_achievements !== "",
+          yee_achievements: item.yee_achievements !== "",
         }));
-        console.log(response.data)
-        setIfExists(results);
+        setIfExists(achievements);
       } catch (error) {
         console.log(error.message);
       }
@@ -96,32 +92,41 @@ export default function CreateAssessment({ emp_id }) {
             <select
               className="bg-white text-black rounded-md p-1 px-2 outline-none"
               name="quarter"
+              value={quarterCheck}
               onChange={handleQuarterChange}
             >
-              <option value="" disabled={ifExists}>
+              <option value="" disabled>
                 Select Quarter
               </option>
               <option
-                value="1"
-                disabled={ifExists && ifExists.some((item) => item.fq_result)}
+                value={1}
+                disabled={
+                  ifExists && ifExists.some((item) => item.fq_achievements)
+                }
               >
                 First Quarter
               </option>
               <option
-                value="2"
-                disabled={ifExists && ifExists.some((item) => item.myr_result)}
+                value={2}
+                disabled={
+                  ifExists && ifExists.some((item) => item.myr_achievements)
+                }
               >
                 Second Quarter
               </option>
               <option
-                value="3"
-                disabled={ifExists && ifExists.some((item) => item.tq_result)}
+                value={3}
+                disabled={
+                  ifExists && ifExists.some((item) => item.tq_achievements)
+                }
               >
                 Third Quarter
               </option>
               <option
-                value="4"
-                disabled={ifExists && ifExists.some((item) => item.yee_result)}
+                value={4}
+                disabled={
+                  ifExists && ifExists.some((item) => item.yee_achievements)
+                }
               >
                 Fourth Quarter
               </option>
@@ -132,7 +137,7 @@ export default function CreateAssessment({ emp_id }) {
             given quarter:{" "}
           </span>
           <textarea
-            className="p-2 h-40 rounded-md"
+            className="h-40 rounded-md"
             name="achievements"
             value={achievements}
             onChange={(e) => setAchievments(e.target.value)}

@@ -80,7 +80,6 @@ export default function MainGoals() {
     }
     if (localStorage.getItem("work_year")) {
       setWorkYear(localStorage.getItem("work_year"));
-      localStorage.removeItem("work_year");
     }
   }, []);
   return (
@@ -176,7 +175,7 @@ export default function MainGoals() {
                 />
                 <Route
                   path="/edit/*"
-                  element={<EditGoals pillars={pillars} />}
+                  element={<EditGoals pillars={pillars} workYear={workYear} />}
                 />
               </Routes>
             </div>

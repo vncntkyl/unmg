@@ -37,7 +37,8 @@ export default function DataTable({
         sortEmployees(data.filter((user) => user.status == 3));
         break;
     }
-  }, [statusIdx, data]);
+    setKPIYear(workYear);
+  }, [statusIdx, data, workYear]);
 
   const filterEmployees = (employees) => {
     if (usertype === "all") return employees;
@@ -160,7 +161,7 @@ export default function DataTable({
                                   "goal_user",
                                   item.users_id
                                 );
-                                localStorage.setItem("work_year", workYear);
+                                localStorage.setItem("work_year", kpiYear);
                               }}
                             >
                               Edit Goals

@@ -116,6 +116,7 @@ export default function EmployeeGoals({
                 id="workyear"
                 className="bg-white rounded-md p-1 px-2"
                 onChange={(e) => {
+                  localStorage.setItem("work_year", parseInt(e.target.value));
                   setKpiDuration(parseInt(e.target.value));
                 }}
               >

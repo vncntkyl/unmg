@@ -133,11 +133,22 @@ class Form extends Controller
             return $this->connection->lastInsertId();
         }
     }
-    function InsertRatingForYearEndEvaluation($latestYearEndValID)
+    function insertRatings($sp_id)
     {
-        $this->setStatement("INSERT into `hr_eval_form_sp_yee_rating` (hr_eval_form_sp_yee_id) VALUES (:yearEndRateID)");
-        return $this->statement->execute([':yearEndRateID' => $latestYearEndValID]);
+        $this->setStatement("BEGIN;
+        INSERT INTO hr_eval_form_sp_fq_rating (hr_eval_form_sp_id) VALUES (:sp_id);
+        INSERT INTO hr_eval_form_sp_myr_rating (hr_eval_form_sp_id) VALUES (:sp_id);
+        INSERT INTO hr_eval_form_sp_tq_rating (hr_eval_form_sp_id) VALUES (:sp_id);
+        INSERT INTO hr_eval_form_sp_yee_rating (hr_eval_form_sp_id) VALUES (:sp_id);
+        
+        COMMIT;");
+        return $this->statement->execute([":sp_id" => $sp_id]);
     }
+    // function InsertRatingForYearEndEvaluation($latestYearEndValID)
+    // {
+    //     $this->setStatement("INSERT into `hr_eval_form_sp_yee_rating` (hr_eval_form_sp_yee_id) VALUES (:yearEndRateID)");
+    //     return $this->statement->execute([':yearEndRateID' => $latestYearEndValID]);
+    // }
     function EvaluationForFirstQT($results, $remarks, $reviewDate, $formPillarID, $latestSpID)
     {
         $this->setStatement("UPDATE `hr_eval_form_sp_fq` SET results = :results, remarks = :remarks, fq_review_date = :revDate  WHERE hr_eval_form_pillars_id = :formPillarID and hr_eval_form_sp_id = :formSpID");
@@ -166,7 +177,7 @@ class Form extends Controller
 
     function checkEvaluationForm($userID, $workYear = 0)
     {
-        $this->setStatement("SELECT * FROM `hr_eval_form` WHERE users_id = ? AND creationDate = ?");
+        $this->setStatement("SELECT * FROM `hr_eval_form` WHERE users_id = ? AND CreationDate = ?");
         $this->statement->execute([$userID, $workYear]);
         if ($evalArr = $this->statement->fetch()) {
             if (!empty($evalArr)) {
@@ -233,7 +244,7 @@ class Form extends Controller
         JOIN 
             hr_target_metrics ON hr_kpi.kpi_id = hr_target_metrics.kpi_id
         WHERE 
-            hr_eval_form.users_id = :userID AND hr_eval_form.creationDate = :kpi_year"
+            hr_eval_form.users_id = :userID AND hr_eval_form.CreationDate = :kpi_year"
         );
         $this->statement->execute([':userID' => $userID, ':kpi_year' => $workYear]);
         return $this->statement->fetchAll();
@@ -250,36 +261,39 @@ class Form extends Controller
         $this->statement->execute([$user_id]);
         return $this->statement->fetchAll();
     }
-    function getEmployeeGoals()
+    function getEmployeeGoals($workyear, $is_count = false)
     {
         $this->setStatement("SELECT
         u.users_id,
-        CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
+        u.employee_id,
+        IF(u.middle_name <> '.', CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.'), CONCAT(u.last_name, ', ', u.first_name)) AS full_name,
         u.contract_type,
+        IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :work_year, 1, 0)) AS has_eval,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
+        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
         CASE
-            WHEN ef.users_id IS NULL THEN 0
-            ELSE 1
-        END AS has_eval,
-        MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
-        MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
-        MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
-        MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
-        CASE
-            WHEN fp.created_by <> '' AND fp.approved_by <> '' THEN '1'
-            WHEN fp.created_by <> '' OR fp.approved_by <> '' THEN '2'
+            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' AND fp.approved_by <> '') THEN '1'
+            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' OR fp.approved_by <> '') THEN '2'
             ELSE '3'
         END AS status
     FROM
         hr_users u
         LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
-            LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
+        LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
         LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
-  	WHERE
-      	u.contract_type IN ('regular','probationary') AND  u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30') AND u.users_id != 1
+    WHERE
+        u.contract_type IN ('regular', 'probationary') 
+        AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30') 
     GROUP BY
-    u.users_id");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
+        u.users_id");
+        $this->statement->execute([":work_year" => $workyear]);
+        if ($is_count) {
+            return $this->statement->rowCount();
+        } else {
+            return $this->statement->fetchAll();
+        }
     }
     function getEvaluatorEmployeeGoals($evaluator, $is_count = false, $workyear)
     {
@@ -366,7 +380,7 @@ class Form extends Controller
     }
     function updateTargetMetricsByID($targetMetricsID, $targetMetrics)
     {
-        $this->setStatement("UPDATE `hr_target_metrics` SET `target_metrics_desc`= ? WHERE `target_metrics_id` = ?");
+        $this->setStatement("UPDATE `hr_target_metrics` SET `target_metrics_desc`= ? WHERE `targetkpi_duration_id_metrics_id` = ?");
         return $this->statement->execute([$targetMetrics, $targetMetricsID]);
     }
     function fetchAllEvaluations()
@@ -392,9 +406,9 @@ class Form extends Controller
         secondary_evaluator,
         tertiary_evaluator,
         employee_id,
-        kpi_duration_id as 'form_kpi_duration'
+        CreationDate as 'form_kpi_duration'
         FROM hr_eval_form
-        JOIN hr_kpi_year_duration ON hr_eval_form.kpi_duration_id = kpi_year_duration_id
+        JOIN hr_kpi_year_duration ON hr_eval_form.CreationDate = kpi_year_duration_id
         JOIN hr_users ON hr_eval_form.users_id = hr_users.users_id
         JOIN hr_eval_form_pillars ON hr_eval_form.hr_eval_form_id = hr_eval_form_pillars.hr_eval_form_id
         JOIN hr_eval_form_sp_pillar_ratings ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_eval_form_sp_pillar_ratings.eval_form_pillars_id
@@ -411,9 +425,9 @@ class Form extends Controller
         hr_eval_form_pillars.pillar_id, 
         contract_type,
         hr_objectives.objective as 'objective',
-        kpi_duration_id as 'form_kpi_duration'
+        CreationDate as 'form_kpi_duration'
         FROM hr_eval_form
-        JOIN hr_kpi_year_duration ON hr_eval_form.kpi_duration_id = kpi_year_duration_id
+        JOIN hr_kpi_year_duration ON hr_eval_form.CreationDate = kpi_year_duration_id
         JOIN hr_users ON hr_eval_form.users_id = hr_users.users_id
         JOIN hr_eval_form_pillars ON hr_eval_form.hr_eval_form_id = hr_eval_form_pillars.hr_eval_form_id
         JOIN hr_objectives ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
@@ -550,6 +564,132 @@ class Form extends Controller
         hr_users.employee_id = ?
         ORDER BY hr_pillars.pillar_id ASC
         ");
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
+    function totalUserAssessment($empID)
+    {
+        $this->setStatement("
+    SELECT 
+        hr_users.employee_id,
+        hr_eval_form_pillars.pillar_id,
+        hr_pillars.pillar_name,
+        hr_eval_form_sp_pillar_ratings.firstQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.midYearTotalResult,
+        hr_eval_form_sp_pillar_ratings.ThirdQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.fourthQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.YearEndTotalResult,
+        
+        hr_eval_form_sp_quarterly_ratings.eval_form_id,
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.FirstQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.FirstQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.FirstQuarterRating
+        ELSE ''
+    END AS FirstQuarterRating,
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.MidYearRating ORDER BY hr_eval_form_sp_quarterly_ratings.MidYearRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.MidYearRating
+        ELSE ''
+    END AS MidYearRating,
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating
+        ELSE ''
+    END AS ThirdQuarterRating,   
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.FourthQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.FourthQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.FourthQuarterRating
+        ELSE ''
+    END AS FourthQuarterRating,      
+  
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.YearEndRating ORDER BY hr_eval_form_sp_quarterly_ratings.YearEndRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.YearEndRating
+        ELSE ''
+    END AS YearEndRating
+        
+    FROM 
+        hr_users
+    LEFT JOIN
+        hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+    LEFT JOIN 
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN
+        hr_eval_form_sp_pillar_ratings ON hr_eval_form_sp_pillar_ratings.eval_form_pillars_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    LEFT JOIN
+    	hr_eval_form_sp_quarterly_ratings ON hr_eval_form_sp_quarterly_ratings.eval_form_id = hr_eval_form.hr_eval_form_id
+    WHERE 
+        hr_users.employee_id = ?
+    ");
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
+    //check personal achievements
+    function checkUserAchievements($empID)
+    {
+        $this->setStatement("
+    SELECT
+    hr_users.users_id,
+    hr_users.employee_id,
+    hr_eval_form_sp_fq_rating.fq_rating_id,
+    hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
+    hr_eval_form_sp_myr_rating.myr_rating_id,
+    hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
+    hr_eval_form_sp_tq_rating.tq_rating_id,
+    hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
+    hr_eval_form_sp_yee_rating.yee_rating_id,
+    hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements,
+    
+    hr_eval_form_sp.hr_eval_form_sp_id,
+    hr_eval_form_sp_fq.results AS fq_results,
+    
+    hr_eval_form_sp_myr.results AS myr_results,
+    
+    hr_eval_form_sp_tq.results AS tq_results,
+    
+    hr_eval_form_sp_yee.results AS yee_results,
+    hr_eval_form_sp_yee.agreed_rating AS agreed_rating
+    
+    FROM hr_users
+    LEFT JOIN
+        hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
+    LEFT JOIN
+        hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN
+        hr_objectives ON hr_objectives.hr_eval_form_pillar_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    LEFT JOIN
+        hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+    LEFT JOIN
+        hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+     
+    LEFT JOIN
+        hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+     
+    LEFT JOIN
+        hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
+    LEFT JOIN
+        hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id  
+    LEFT JOIN
+        hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+    LEFT JOIN
+        hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        
+    WHERE employee_id = ?");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
@@ -809,5 +949,19 @@ WHERE
     {
         $this->setStatement("UPDATE {$tbl_name} SET results = :results, remarks = :remarks WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id AND ID = :tbl_id");
         return $this->statement->execute([':results' => $currentMetric, ':remarks' => $currentRemarks, ':tbl_id' => $id, ':hr_eval_form_sp_id' => $formspID]);
+    }
+
+    //1 on 1 discussion statements
+    function insertDiscussion($subject, $description)
+    {
+        $this->setStatement("INSERT INTO hr_request_discussion (consultation_subject, description) VALUES (:consultation_subject, :description)");
+        if ($this->statement->execute([':consultation_subject' => $subject, ':description' => $description])) {
+            return $this->connection->lastInsertId();
+        }
+    }
+    function updateUserRequestConsultation($ID, $employee_id)
+    {
+        $this->setStatement("UPDATE hr_users SET request_consult = :request_consult WHERE employee_id = :employee_id");
+        return $this->statement->execute([':request_consult' => $ID, ':employee_id' => $employee_id]);
     }
 }

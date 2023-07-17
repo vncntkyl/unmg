@@ -9,7 +9,7 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export default function EmployeeAssessment() {
-  const employee_id = localStorage.getItem("assessment_id");
+  const employee_id = sessionStorage.getItem("assessment_id");
   const [panel, setPanel] = useState("Achievements");
   const [quarter, setQuarter] = useState(0);
   const [achievements, setAchievements] = useState([]);
@@ -23,31 +23,35 @@ export default function EmployeeAssessment() {
         const response = await axios.get(url, {
           params: {
             userTrackingAchievements: true,
-            empID: employee_id
+            empID: employee_id,
           },
         });
-        setAchievements(response.data);
         const quarterlyAchievements = response.data.map((item) => {
           return {
-            first_part_id: item.first_part_id !== "" && item.first_part_id !== null,
-            fq_ratee_achievement: item.fq_ratee_achievement !== "" && item.fq_ratee_achievement !== null,
-            myr_ratee_achievement: item.myr_ratee_achievement !== "" && item.myr_ratee_achievement !== null,
-            tq_ratee_achievement: item.tq_ratee_achievement !== "" && item.tq_ratee_achievement !== null,
-            yee_ratee_achievement: item.yee_ratee_achievement !== "" && item.yee_ratee_achievement !== null,
+            first_part_id: item.first_part_id && item.first_part_id,
+            fq_ratee_achievement:
+              item.fq_ratee_achievement && item.fq_ratee_achievement,
+            myr_ratee_achievement:
+              item.myr_ratee_achievement && item.myr_ratee_achievement,
+            tq_ratee_achievement:
+              item.tq_ratee_achievement && item.tq_ratee_achievement,
+            yee_ratee_achievement:
+              item.yee_ratee_achievement && item.yee_ratee_achievement,
           };
-        })
+        });
+        console.log(quarterlyAchievements);
         setCheckAchievements(quarterlyAchievements);
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error.message);
       }
-    }
+    };
     getAchievements();
   }, [employee_id]);
 
   return (
     <>
-      <button className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md mb-4"
+      <button
+        className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md mb-4"
         onClick={() => navigate(-1)}
       >
         <MdOutlineKeyboardArrowLeft />
@@ -60,11 +64,11 @@ export default function EmployeeAssessment() {
         </div>
         <Toggle
           paths={[
-            "/tracking_and_assement/employee_assessment/" +
-            localStorage.getItem("assessment_name"),
-            "/tracking_and_assement/employee_assessment/" +
-            localStorage.getItem("assessment_name") +
-            "/",
+            "/tracking_and_assessment/employee_assessment/" +
+              sessionStorage.getItem("assessment_name"),
+            "/tracking_and_assessment/employee_assessment/" +
+              sessionStorage.getItem("assessment_name") +
+              "/",
           ]}
           panel={panel}
           panel_1={"Achievements"}
@@ -77,11 +81,14 @@ export default function EmployeeAssessment() {
           <label htmlFor="quarterPicker" className="font-semibold">
             Select Quarter:
           </label>
-          <select className="bg-default text-black rounded-md p-1 px-2 outline-none"
-            onChange={quart => setQuarter(quart.target.value)}
+          <select
+            className="bg-default text-black rounded-md p-1 px-2 outline-none"
+            onChange={(quart) => setQuarter(quart.target.value)}
             value={quarter}
           >
-            <option value={0} disabled>Select Quarter</option>
+            <option value={0} disabled>
+              Select Quarter
+            </option>
             <option value={1}>First Quarter</option>
             <option value={2}>Second Quarter</option>
             <option value={3}>Third Quarter</option>
@@ -91,7 +98,7 @@ export default function EmployeeAssessment() {
         <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
           <label className="font-semibold">Status:</label>
           <Badge
-            message={"Ready for Grading"}
+            message={"Badge In Progress"}
             className={"text-[.8rem] px-1"}
           />
         </div>
@@ -111,57 +118,70 @@ export default function EmployeeAssessment() {
                   </div>
                   <div className="w-full pt-4 pl-4">
                     {achievements.map((ach, use) => (
-
-                      <span 
-                      key={use}
-                      className="text-black">
-                        {quarter == 0 || quarter == 1 ?
-                          (<>
-                            {check.fq_ratee_achievement ? (ach.fq_ratee_achievement)
-                              : (
-                                <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                                  <span>
-                                    Sorry, the employee have not yet submitted their <a className="font-bold">First Quarter</a> achievements
-                                  </span>
-                                </div>
-                              )}
-                          </>)
-                          : quarter == 2 ?
-                            (<>
-                              {check.myr_ratee_achievement ? (ach.myr_ratee_achievement)
-                                : (
-                                  <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                                    <span>
-                                      Sorry, the employee have not yet submitted their <a className="font-bold">Mid Year Quarter</a> achievements
-                                    </span>
-                                  </div>
-                                )}
-                            </>)
-                            : quarter == 3 ?
-                              (<>
-                                {check.tq_ratee_achievement ? (ach.tq_ratee_achievement)
-                                  : (
-                                    <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                                      <span>
-                                        Sorry, the employee have not yet submitted their <a className="font-bold">Third Quarter</a> achievements
-                                      </span>
-                                    </div>
-                                  )}
-                              </>)
-                              : quarter == 4 ?
-                                (<>
-                                  {check.yee_ratee_achievement ? (ach.yee_ratee_achievement)
-                                    : (
-                                      <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                                        <span>
-                                          Sorry, the employee have not yet submitted their <a className="font-bold">Year End Quarter</a> achievements
-                                        </span>
-                                      </div>
-                                    )}
-                                </>)
-                                : (<>
-                                  Loading...
-                                </>)}
+                      <span key={use} className="text-black">
+                        {quarter == 0 || quarter == 1 ? (
+                          <>
+                            {check.fq_ratee_achievement ? (
+                              ach.fq_ratee_achievement
+                            ) : (
+                              <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                <span>
+                                  Sorry, the employee have not yet submitted
+                                  their{" "}
+                                  <a className="font-bold">First Quarter</a>{" "}
+                                  achievements
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        ) : quarter == 2 ? (
+                          <>
+                            {check.myr_ratee_achievement ? (
+                              ach.myr_ratee_achievement
+                            ) : (
+                              <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                <span>
+                                  Sorry, the employee have not yet submitted
+                                  their{" "}
+                                  <a className="font-bold">Mid Year Quarter</a>{" "}
+                                  achievements
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        ) : quarter == 3 ? (
+                          <>
+                            {check.tq_ratee_achievement ? (
+                              ach.tq_ratee_achievement
+                            ) : (
+                              <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                <span>
+                                  Sorry, the employee have not yet submitted
+                                  their{" "}
+                                  <a className="font-bold">Third Quarter</a>{" "}
+                                  achievements
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        ) : quarter == 4 ? (
+                          <>
+                            {check.yee_ratee_achievement ? (
+                              ach.yee_ratee_achievement
+                            ) : (
+                              <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                                <span>
+                                  Sorry, the employee have not yet submitted
+                                  their{" "}
+                                  <a className="font-bold">Year End Quarter</a>{" "}
+                                  achievements
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <>Loading...</>
+                        )}
                       </span>
                     ))}
                   </div>
@@ -169,7 +189,8 @@ export default function EmployeeAssessment() {
               ) : (
                 <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
                   <span>
-                    Sorry, the employee have not yet created their main goals yet
+                    Sorry, the employee have not yet created their main goals
+                    yet
                   </span>
                 </div>
               )}
@@ -179,7 +200,9 @@ export default function EmployeeAssessment() {
       )}
       {/* Grades */}
 
-      {panel === "Grades" && (<EmployeeAssessmentGrade employee_id={employee_id} quarter={quarter} />)}
+      {panel === "Grades" && (
+        <EmployeeAssessmentGrade employee_id={employee_id} quarter={quarter} />
+      )}
     </>
   );
 }

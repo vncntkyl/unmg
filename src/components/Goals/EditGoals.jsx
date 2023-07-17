@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import JSONCheck from "../../misc/JSONCheck";
 import axios from "axios";
 import { useFunction } from "../../context/FunctionContext";
 import classNames from "classnames";
 import GoalTable from "./GoalTableHeader";
 
-export default function EditGoals({ pillars = [] }) {
+export default function EditGoals({ pillars = [], workYear }) {
   const [goalData, setGoalData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPillar, setPillar] = useState(1);
@@ -79,14 +78,15 @@ export default function EditGoals({ pillars = [] }) {
       //const url = "../api/fetchGoals.php";
 
       const formData = new FormData();
-      const goal_owner = localStorage.getItem("goal_user");
-      const work_year = localStorage.getItem("work_year");
+      const goal_owner = parseInt(localStorage.getItem("goal_user"));
+      const work_year = parseInt(localStorage.getItem("work_year"));
+      console.log(work_year, goal_owner);
 
       formData.append("user_id", goal_owner);
       formData.append("work_year", work_year);
       try {
         const response = await axios.post(url, formData);
-        console.log(response.data)
+        console.log(response.data);
         if (response.data != 0) {
           setGoalData(response.data);
           let previousObjective = "";
@@ -116,8 +116,8 @@ export default function EditGoals({ pillars = [] }) {
       }
     };
     retrieveUser();
-  }, []);
-  return !loading ? (
+  }, [workYear]);
+  return !loading && pillars ? (
     <>
       <div className="flex flex-row flex-wrap gap-2">
         {pillars.map((pillar, index) => {

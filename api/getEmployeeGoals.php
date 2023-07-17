@@ -15,7 +15,11 @@ if (isset($_GET['employee_goals'])) {
                 echo json_encode($formController->getEvaluatorEmployeeGoals($_GET['evaluator'], false, $_GET['work_year']));
             }
         } else {
-            echo json_encode($formController->getEmployeeGoals());
+            if (isset($_GET['is_count'])) {
+                echo json_encode($formController->getEmployeeGoals($_GET['work_year'], true));
+            } else {
+                echo json_encode($formController->getEmployeeGoals($_GET['work_year']));
+            }
         }
     }
 }

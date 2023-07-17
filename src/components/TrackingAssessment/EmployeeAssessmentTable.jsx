@@ -7,15 +7,15 @@ export default function EmployeeAssessmentTable(emp_id) {
   const [employeeType, setEmployeeType] = useState("regular");
   const [employeesRecords, setEmployeesRecords] = useState([]);
   const [actionVisibility, setActionVisibility] = useState(false);
-  localStorage.setItem("assessment_quarter", 0);
+  sessionStorage.setItem("assessment_quarter", 0);
   const toggleActionVisibility = () => {
     setActionVisibility((prev) => !prev);
   };
-
+  //check columns
   const fqisColumnAllFalse =
     employeesRecords.length > 0 &&
     employeesRecords.every(
-      (employee) => employee.fq_achievements && !employee.fq_results
+      (employee) => !employee.fq_achievements && !employee.fq_results
     );
   const myrisColumnAllFalse =
     employeesRecords.length > 0 &&
@@ -35,8 +35,9 @@ export default function EmployeeAssessmentTable(emp_id) {
   const yeeagreedisColumnAllFalse =
     employeesRecords.length > 0 &&
     employeesRecords.every(
-      (employee) => !employee.agreed_rating &&  !employee.yee_results
+      (employee) => !employee.agreed_rating && !employee.yee_results
     );
+
   useEffect(() => {
     const getemployeesRecords = async () => {
       try {
@@ -51,7 +52,6 @@ export default function EmployeeAssessmentTable(emp_id) {
         );
 
         // setEmployeesRecords(response.data);
-        console.log(response.data);
         const employeeRecords = response.data.map((item) => {
           return {
             employee_id: item.employee_id,
@@ -143,7 +143,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                     <>
                       <td>
                         <div className="pl-4 pt-2">
-                        {employee.employee_name}
+                          {employee.employee_name}
                         </div>
                       </td>
                       <td>
@@ -155,38 +155,28 @@ export default function EmployeeAssessmentTable(emp_id) {
                                 <Badge
                                   message={"Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : !employee.fq_achievements &&
                                 employee.fq_results ? (
                                 <Badge
                                   message={"Not Submitted/Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : employee.fq_achievements &&
-                                !employee.fq_results ? (
-                                <Badge
-                                  message={"Achievements Submitted"}
-                                  type="warning"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : !employee.fq_achievements &&
-                                !employee.fq_results ? (
-                                <Badge
-                                  message={"Awaiting Submission"}
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : (
                                 <Badge
-                                  message={"Internal Error"}
-                                  type="failure"
-                                  className={"text-[.8rem] px-1"}
+                                  message={"Achievements Submitted"}
+                                  type="warning"
+                                  className={"px-1"}
                                 />
                               )}
                             </>
                           ) : (
-                            ""
+                            <Badge
+                              message={"Awaiting Submission"}
+                              className={"px-1"}
+                            />
                           )}
                         </div>
                       </td>
@@ -199,38 +189,28 @@ export default function EmployeeAssessmentTable(emp_id) {
                                 <Badge
                                   message={"Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : !employee.myr_achievements &&
                                 employee.myr_results ? (
                                 <Badge
                                   message={"Not Submitted/Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : employee.myr_achievements &&
-                                !employee.myr_results ? (
-                                <Badge
-                                  message={"Achievements Submitted"}
-                                  type="warning"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : !employee.myr_achievements &&
-                                !employee.myr_results ? (
-                                <Badge
-                                  message={"Awaiting Submission"}
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : (
                                 <Badge
-                                  message={"Internal Error"}
-                                  type="failure"
-                                  className={"text-[.8rem] px-1"}
+                                  message={"Achievements Submitted"}
+                                  type="warning"
+                                  className={"px-1"}
                                 />
                               )}
                             </>
                           ) : (
-                            ""
+                            <Badge
+                              message={"Awaiting Submission"}
+                              className={"px-1"}
+                            />
                           )}
                         </div>
                       </td>
@@ -243,38 +223,28 @@ export default function EmployeeAssessmentTable(emp_id) {
                                 <Badge
                                   message={"Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : !employee.tq_achievements &&
                                 employee.tq_results ? (
                                 <Badge
                                   message={"Not Submitted/Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : employee.tq_achievements &&
-                                !employee.tq_results ? (
-                                <Badge
-                                  message={"Achievements Submitted"}
-                                  type="warning"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : !employee.tq_achievements &&
-                                !employee.tq_results ? (
-                                <Badge
-                                  message={"Awaiting Submission"}
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : (
                                 <Badge
-                                  message={"Internal Error"}
-                                  type="failure"
-                                  className={"text-[.8rem] px-1"}
+                                  message={"Achievements Submitted"}
+                                  type="warning"
+                                  className={"px-1"}
                                 />
                               )}
                             </>
                           ) : (
-                            ""
+                            <Badge
+                              message={"Awaiting Submission"}
+                              className={"px-1"}
+                            />
                           )}
                         </div>
                       </td>
@@ -287,38 +257,28 @@ export default function EmployeeAssessmentTable(emp_id) {
                                 <Badge
                                   message={"Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : !employee.yee_achievements &&
                                 employee.yee_results ? (
                                 <Badge
                                   message={"Not Submitted/Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : employee.yee_achievements &&
-                                !employee.yee_results ? (
-                                <Badge
-                                  message={"Achievements Submitted"}
-                                  type="warning"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : !employee.yee_achievements &&
-                                !employee.yee_results ? (
-                                <Badge
-                                  message={"Awaiting Submission"}
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : (
                                 <Badge
-                                  message={"Internal Error"}
-                                  type="failure"
-                                  className={"text-[.8rem] px-1"}
+                                  message={"Achievements Submitted"}
+                                  type="warning"
+                                  className={"px-1"}
                                 />
                               )}
                             </>
                           ) : (
-                            ""
+                            <Badge
+                              message={"Awaiting Submission"}
+                              className={"px-1"}
+                            />
                           )}
                         </div>
                       </td>
@@ -331,42 +291,34 @@ export default function EmployeeAssessmentTable(emp_id) {
                                 <Badge
                                   message={"Graded"}
                                   type="success"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : employee.yee_results &&
-                                !employee.agreed_rating ? (
-                                <Badge
-                                  message={"Waiting for Agreement"}
-                                  type="warning"
-                                  className={"text-[.8rem] px-1"}
-                                />
-                              ) : !employee.yee_results &&
-                                !employee.agreed_rating ? (
-                                <Badge
-                                  message={"Not Yet Graded"}
-                                  className={"text-[.8rem] px-1"}
+                                  className={"px-1"}
                                 />
                               ) : (
                                 <Badge
-                                  message={"Internal Error"}
-                                  type="failure"
-                                  className={"text-[.8rem] px-1"}
+                                  message={"Waiting for Agreement"}
+                                  type="warning"
+                                  className={"px-1"}
                                 />
                               )}
                             </>
                           ) : (
-                            ""
+                            <Badge
+                              message={"Not Yet Graded"}
+                              className={"px-1"}
+                            />
                           )}
                         </div>
                       </td>
                       <td>
-                      <TrackingAction 
-                      toggleActionVisibility={toggleActionVisibility} 
-                      employee_id={employee.employee_id}
-                      first_name={employee.first_name}
-                      />
+                        <TrackingAction
+                          toggleActionVisibility={toggleActionVisibility}
+                          employee_id={employee.employee_id}
+                          first_name={employee.first_name}
+                          myr={employee.myr_results}
+                          yee={employee.yee_results}
+                        />
                       </td>
-                    </> 
+                    </>
                   ) : (
                     <>
                       <td></td>
@@ -386,10 +338,3 @@ export default function EmployeeAssessmentTable(emp_id) {
     </>
   );
 }
-
-
-
-
-
-
-

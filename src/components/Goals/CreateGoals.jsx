@@ -252,7 +252,6 @@ export default function CreateGoals({
     }
     if (localStorage.getItem("work_year")) {
       setDuration(localStorage.getItem("work_year"));
-      localStorage.removeItem("work_year");
     }
     setup();
   }, []);

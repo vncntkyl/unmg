@@ -162,13 +162,13 @@ export default function AssessmentEmployeeTracking({ emp_id }) {
                         Status:
                     </label>
                     {!ifExists && !checkQuarter ? (
-                        <Badge message={"Awaiting Submission"} className={"text-[.8rem] px-1"} />
+                        <Badge message={"Awaiting Submission"} className={"px-1"} />
                     ): ifExists && !checkQuarter ? (
-                        <Badge message={"Submitted"} type="warning" className={"text-[.8rem] px-1"} />
+                        <Badge message={"Submitted"} type="warning" className={"px-1"} />
                     ): ifExists && checkQuarter ? (
-                        <Badge message={"Graded"} type="success" className={"text-[.8rem] px-1"} />
+                        <Badge message={"Graded"} type="success" className={"px-1"} />
                     ):
-                        <Badge message={"Internal Error"} type="failure" className={"text-[.8rem] px-1"} />
+                        <Badge message={"Internal Error"} type="failure" className={"px-1"} />
                     }
 
                 </div>

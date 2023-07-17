@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import JSONCheck from "../../misc/JSONCheck";
-import axios from "axios";
+// import JSONCheck from "../../misc/JSONCheck";
+// import axios from "axios";
 import classNames from "classnames";
 
 export default function GoalTable({

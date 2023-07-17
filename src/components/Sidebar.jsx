@@ -100,7 +100,7 @@ export default function Sidebar({ sidebarToggler, className }) {
               />
             </div>
           </div>
-          {JSON.parse(currentUser).user_type <= 2 && (
+          {JSON.parse(currentUser).user_type <= 5 && (
             <div className="flex flex-col">
               <NavButton
                 isDropdown={true}
@@ -118,21 +118,20 @@ export default function Sidebar({ sidebarToggler, className }) {
                     : "max-h-[0rem]"
                 )}
               >
-                <NavButton
-                  icon={<BsPeople />}
-                  textLabel={"List of Employees"}
-                  slug={"employees"}
-                />
-                {/* <NavButton
-                icon={<BsPersonGear />}
-                textLabel={"Roles"}
-                slug={"roles"}
-              /> */}
-                <NavButton
-                  icon={<BsBuildings />}
-                  textLabel={"Companies"}
-                  slug={"companies"}
-                />
+                {JSON.parse(currentUser).user_type < 3 && (
+                  <>
+                    <NavButton
+                      icon={<BsPeople />}
+                      textLabel={"List of Employees"}
+                      slug={"employees"}
+                    />
+                    <NavButton
+                      icon={<BsBuildings />}
+                      textLabel={"Companies"}
+                      slug={"companies"}
+                    />
+                  </>
+                )}
                 <NavButton
                   icon={<BsJournalCheck />}
                   textLabel={"Company Plans"}
@@ -143,11 +142,13 @@ export default function Sidebar({ sidebarToggler, className }) {
                   textLabel={"View Evaluations"}
                   slug={"view_evaluations"}
                 />
-                <NavButton
-                  icon={<RxCounterClockwiseClock />}
-                  textLabel={"Logs"}
-                  slug={"logs"}
-                />
+                {JSON.parse(currentUser).user_type < 3 && (
+                  <NavButton
+                    icon={<RxCounterClockwiseClock />}
+                    textLabel={"Logs"}
+                    slug={"logs"}
+                  />
+                )}
               </div>
             </div>
           )}

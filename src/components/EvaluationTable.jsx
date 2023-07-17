@@ -28,6 +28,7 @@ export default function EvaluationTable({
 
         const extractedEvaluations = response.data;
         const extractedFirstQuarterRate = [];
+        console.log(response.data.length);
         for (let i = 0; i < extractedEvaluations.length; i += 5) {
           const batch = extractedEvaluations.slice(i, i + 5);
           extractedFirstQuarterRate.push(batch);
@@ -40,7 +41,8 @@ export default function EvaluationTable({
     };
 
     fetchEvaluations();
-  }, [selectedQuarter]);
+    console.log(employeeType, selectedQuarter, selectedKpiDuration);
+  }, [selectedQuarter, employeeType, selectedKpiDuration]);
 
   const RenderTable = () => {
     if (employeeType === "regular" && selectedQuarter === "All") {
@@ -747,8 +749,8 @@ export default function EvaluationTable({
                 {allEvaluations
                   .filter(
                     (row) =>
-                    row.form_kpi_duration == selectedKpiDuration &&
-                      (row.Name.toLowerCase().includes(query) &&
+                      (row.form_kpi_duration == selectedKpiDuration &&
+                        row.Name.toLowerCase().includes(query) &&
                         row.contract_type == employeeType &&
                         row.primary_evaluator == currentEmployeeID) ||
                       row.secondary_evaluator == currentEmployeeID ||
@@ -1595,7 +1597,7 @@ export default function EvaluationTable({
                 {processedData
                   .filter(
                     (row) =>
-                    row.form_kpi_duration == selectedKpiDuration &&
+                      row.form_kpi_duration == selectedKpiDuration &&
                       (row.company == selectedCompanyID ||
                         selectedCompanyID == "All") &&
                       (row.department == selectedDepartmentID ||
@@ -1615,16 +1617,14 @@ export default function EvaluationTable({
                       <td className="text-center bg-gray-200 px-4 py-2">
                         {row.Job_Title}
                       </td>
-                      {row[selectedQuarter]
-                        .slice(0, 4)
-                        .map((rating, index) => (
-                          <td
-                            className="text-center bg-gray-200 px-4 py-2"
-                            key={index}
-                          >
-                            {rating}
-                          </td>
-                        ))}
+                      {row[selectedQuarter].slice(0, 4).map((rating, index) => (
+                        <td
+                          className="text-center bg-gray-200 px-4 py-2"
+                          key={index}
+                        >
+                          {rating}
+                        </td>
+                      ))}
                     </tr>
                   ))}
               </tbody>

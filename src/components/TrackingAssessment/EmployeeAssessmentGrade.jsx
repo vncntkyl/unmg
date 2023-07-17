@@ -14,12 +14,15 @@ export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
     oCounter,
     kCounter = 1;
 
-
-const navigate = useNavigate();
-const edit = () => {
-  localStorage.setItem("assessment_quarter", quarter);
-  navigate("/tracking_and_assement/employee_assessment/" + localStorage.getItem("assessment_name") + "/grade_edit");
-}
+  const navigate = useNavigate();
+  const edit = () => {
+    sessionStorage.setItem("assessment_quarter", quarter);
+    navigate(
+      "/tracking_and_assessment/employee_assessment/" +
+        sessionStorage.getItem("assessment_name") +
+        "/grade_edit"
+    );
+  };
 
   useEffect(() => {
     const getGrades = async () => {
@@ -34,11 +37,14 @@ const edit = () => {
         });
         setGrades(response.data);
 
-        const ColumnAllFalse = response.data.some((item) => item.pillar_id === null);
+        const ColumnAllFalse = response.data.some(
+          (item) => item.pillar_id === null
+        );
         setcheckForm(ColumnAllFalse);
 
-
-        const scores = response.data.every((item) => item.results === 0 || item.metrics_desc === null);
+        const scores = response.data.every(
+          (item) => item.results === 0 || item.metrics_desc === null
+        );
 
         setCheckScores(scores);
 
@@ -61,7 +67,7 @@ const edit = () => {
         setPillars(pillars);
 
         const obj = response.data.reduce((uniqueObjectives, item) => {
-          if (item.obj_objective.trim() !== '') {
+          if (item.obj_objective.trim() !== "") {
             const existingObjective = uniqueObjectives.find(
               (objective) => objective.obj_objective === item.obj_objective
             );
@@ -69,7 +75,7 @@ const edit = () => {
               uniqueObjectives.push({
                 obj_objective_id: item.obj_objective_id,
                 obj_eval_pillar_id: item.obj_eval_pillar_id,
-                obj_objective: item.obj_objective
+                obj_objective: item.obj_objective,
               });
             }
           }
@@ -77,7 +83,6 @@ const edit = () => {
         }, []);
 
         setObjectives(obj);
-
       } catch (error) {
         console.log(error.message);
       }
@@ -108,8 +113,9 @@ const edit = () => {
                 </div>
               </div>
               <div className="w-full flex justify-end pt-4">
-                <button className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                onClick={() => edit()}
+                <button
+                  className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                  onClick={() => edit()}
                 >
                   Grade Employee
                 </button>
@@ -125,7 +131,7 @@ const edit = () => {
                 </div>
                 {pillars.map((pillar) => (
                   <React.Fragment
-                  key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+                    key={"pillar - " + pillar.eval_pillar_id + pCounter++}
                   >
                     <div className="bg-white w-full rounded-md p-2 mb-4">
                       <div className="w-full">
@@ -138,14 +144,18 @@ const edit = () => {
                       </div>
                       <div className="flex gap-2 p-2 overflow-x-auto w-full">
                         {objectives
-                          .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
+                          .filter(
+                            (object) =>
+                              object.obj_eval_pillar_id ===
+                              pillar.eval_pillar_id
+                          )
                           .map((object) => (
                             <div
-                                key={
-                                  "objective - " +
-                                  object.obj_objective_id +
-                                  oCounter++
-                                }
+                              key={
+                                "objective - " +
+                                object.obj_objective_id +
+                                oCounter++
+                              }
                               className={classNames(
                                 "bg-default-dark",
                                 "flex-none",
@@ -153,8 +163,18 @@ const edit = () => {
                                 "p-2",
                                 "rounded-md",
                                 {
-                                  "w-[50%]": objectives.filter((obj) => obj.obj_eval_pillar_id === pillar.eval_pillar_id).length > 1,
-                                  "w-[100%]": objectives.filter((obj) => obj.obj_eval_pillar_id === pillar.eval_pillar_id).length <= 1
+                                  "w-[50%]":
+                                    objectives.filter(
+                                      (obj) =>
+                                        obj.obj_eval_pillar_id ===
+                                        pillar.eval_pillar_id
+                                    ).length > 1,
+                                  "w-[100%]":
+                                    objectives.filter(
+                                      (obj) =>
+                                        obj.obj_eval_pillar_id ===
+                                        pillar.eval_pillar_id
+                                    ).length <= 1,
                                 }
                               )}
                             >
@@ -196,10 +216,20 @@ const edit = () => {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                  {grades
-                                    .filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
-                                    .map((grade) => (
-                                        <tr key={"kpi - " + grade.kpi_kpi_id + kCounter++}>
+                                    {grades
+                                      .filter(
+                                        (grade) =>
+                                          grade.kpi_objective_id ===
+                                          object.obj_objective_id
+                                      )
+                                      .map((grade) => (
+                                        <tr
+                                          key={
+                                            "kpi - " +
+                                            grade.kpi_kpi_id +
+                                            kCounter++
+                                          }
+                                        >
                                           <td>
                                             <div className="whitespace-normal p-2">
                                               {grade.kpi_desc}
@@ -230,8 +260,7 @@ const edit = () => {
                                             </div>
                                           </td>
                                         </tr>
-                                    ))
-                                  }
+                                      ))}
                                   </tbody>
                                 </table>
                               </div>
@@ -244,8 +273,9 @@ const edit = () => {
               </div>
               <AssessmentInstructions />
               <div className="w-full flex justify-end pt-4">
-                <button className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                onClick={() => edit()}
+                <button
+                  className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                  onClick={() => edit()}
                 >
                   Edit
                 </button>
