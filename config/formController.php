@@ -752,13 +752,19 @@ class Form extends Controller
         CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
         CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
         
+        hr_eval_form_sp_fq_rating.ratee_achievement AS fq_achievements,
+        hr_eval_form_sp_myr_rating.ratee_achievement AS myr_achievements,
+        hr_eval_form_sp_tq_rating.ratee_achievement AS tq_achievements,
+        hr_eval_form_sp_yee_rating.ratee_achievement AS yee_achievements,
+
+        hr_eval_form_sp_myr_rating.rater_1 AS myr_rater_1,
+        hr_eval_form_sp_myr_rating.rater_2 AS myr_rater_2,
+        hr_eval_form_sp_myr_rating.rater_3 AS myr_rater_3,
+        hr_eval_form.rater_1 AS yee_rater_1,
+        hr_eval_form.rater_2 AS yee_rater_2,
+        hr_eval_form.rater_3 AS yee_rater_3,
         
-        hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
-        hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
-        hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
-        hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements,
-        
-        hr_eval_form_sp.hr_eval_form_sp_id,
+        hr_eval_form_sp.hr_eval_form_sp_id AS sp_id,
         hr_eval_form_sp_fq.results AS fq_results,
         hr_eval_form_sp_fq.remarks AS fq_remarks,
         
@@ -991,6 +997,36 @@ WHERE
     {
         $this->setStatement("UPDATE hr_users SET request_consult = :request_consult WHERE employee_id = :employee_id");
         return $this->statement->execute([':request_consult' => $ID, ':employee_id' => $employee_id]);
+    }
+
+    //assessment approval
+    //select where is the rater placed
+    function selectRaterPlacement($rater_id, $employee_id) {
+        $this->setStatement("
+            SELECT 
+                hr_eval_form.hr_eval_form_id AS form_id,
+                CASE
+                    WHEN hr_users.primary_evaluator = :rater_id THEN 'rater_1'
+                    WHEN hr_users.secondary_evaluator = :rater_id THEN 'rater_2'
+                    WHEN hr_users.tertiary_evaluator = :rater_id THEN 'rater_3'
+                END AS evaluator
+            FROM hr_users
+            JOIN hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
+            WHERE (hr_users.primary_evaluator = :rater_id OR hr_users.secondary_evaluator = :rater_id OR hr_users.tertiary_evaluator = :rater_id)
+            AND hr_users.employee_id = :employee_id
+        ");
+        $this->statement->execute([':rater_id' => $rater_id, ':employee_id' => $employee_id]);
+        return $this->statement->fetch();
+    }
+    //update midyear
+    function midyearApproveAssessment($rater, $rater_id, $sp_id){
+        $this->setStatement("UPDATE hr_eval_form_sp_myr_rating SET {$rater} = :rater_id WHERE hr_eval_form_sp_id = :sp_id");
+        return $this->statement->execute([':rater_id' => $rater_id, ':sp_id' => $sp_id]);
+    }
+
+    function yearendApproveAssessment($rater, $rater_id, $form_id){
+        $this->setStatement("UPDATE hr_eval_form SET {$rater} = :rater_id WHERE hr_eval_form_id = :form_id");
+        return $this->statement->execute([':rater_id' => $rater_id, ':form_id' => $form_id]);
     }
 
 }

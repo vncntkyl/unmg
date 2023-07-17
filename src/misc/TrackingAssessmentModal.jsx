@@ -5,14 +5,18 @@ import axios from "axios";
 export default function TrackingAssessmentModal({
   closeModal,
   type,
+  sp_id,
   title,
+  approval,
   employee_id,
   first_name,
   message,
   continuebutton,
 }) {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")).employee_id;
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
+
   const handleDiscussSubmit = (e) => {
     e.preventDefault();
     if (subject.length === 0 || description.length === 0) {
@@ -27,23 +31,39 @@ export default function TrackingAssessmentModal({
       fData.append("subject", subject);
       fData.append("description", description);
       axios.post(url, fData)
-                .then(response => alert(response.data))
-                .catch(error => alert(error));
+        .then(response => alert(response.data))
+        .catch(error => alert(error));
       closeModal(false);
     }
   };
+  const handleApprovalSubmit = (e) => {
+    e.preventDefault();
+      const url = "http://localhost/unmg_pms/api/userSubmitApproval.php";
+      let fData = new FormData();
+      fData.append("submit", true);
+      fData.append("approval_type", approval);
+      fData.append("rater_id", currentUser);
+      fData.append("employee_id", employee_id);
+      fData.append("first_name", first_name);
+      fData.append("sp_id", sp_id);
+      axios.post(url, fData)
+        .then(response => alert(response.data))
+        .catch(error => alert(error));
+      closeModal(false);
 
-  const notifyEmployee = () => {
-    if (type === "discussion") {
-      closeModal(false);
-      alert("A 1 on 1 disscussion with " + first_name + " has been sent!");
-    } else if (type === "approval") {
-      closeModal(false);
-      alert(
-        "The assessment of " + first_name + " has been approved successfully!"
-      );
-    }
+
   };
+  // const notifyEmployee = () => {
+  //   if (type === "discussion") {
+  //     closeModal(false);
+  //     alert("A 1 on 1 disscussion with " + first_name + " has been sent!");
+  //   } else if (type === "approval") {
+  //     closeModal(false);
+  //     alert(
+  //       "The assessment of " + first_name + " has been approved successfully!"
+  //     );
+  //   }
+  // };
   return (
     <>
       {type == "discussion" ? (
@@ -109,6 +129,7 @@ export default function TrackingAssessmentModal({
       ) : (
         <>
           <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
+            <form>
             {/* TITLE */}
             <div className="flex flex-row items-center justify-between border-b border-gray py-1">
               <span className="font-semibold text-[1.1rem]">{title}</span>
@@ -134,12 +155,13 @@ export default function TrackingAssessmentModal({
                 Cancel
               </button>
               <input
-                type="button"
-                value={continuebutton}
-                onClick={() => notifyEmployee()}
-                className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
-              />
+                  type="submit"
+                  value={continuebutton}
+                  onClick={handleApprovalSubmit}
+                  className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
+                />
             </div>
+            </form>
           </div>
         </>
       )}

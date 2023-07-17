@@ -37,17 +37,6 @@ export default function EmployeeAssessmentTable(emp_id) {
     employeesRecords.every(
       (employee) => !employee.agreed_rating &&  !employee.yee_results
     );
-    // const myristrue = 
-    // employeesRecords.length > 0 &&
-    // employeesRecords.every(
-    //   (employee) => !employee.myr_results
-    // );
-    // const yeeistrue = 
-    // employeesRecords.length > 0 &&
-    // employeesRecords.every(
-    //   (employee) => !employee.yee_results
-    // );
-
   useEffect(() => {
     const getemployeesRecords = async () => {
       try {
@@ -67,6 +56,13 @@ export default function EmployeeAssessmentTable(emp_id) {
             employee_id: item.employee_id,
             first_name: item.first_name,
             employee_name: item.employee_name,
+            sp_id: item.sp_id,
+            myr_rater_1: item.myr_rater_1 !== "" && item.myr_rater_1,
+            myr_rater_2: item.myr_rater_2 !== "" && item.myr_rater_2,
+            myr_rater_3: item.myr_rater_3 !== "" && item.myr_rater_3,
+            yee_rater_1: item.yee_rater_1 !== "" && item.yee_rater_1,
+            yee_rater_2: item.yee_rater_2 !== "" && item.yee_rater_2,
+            yee_rater_3: item.yee_rater_3 !== "" && item.yee_rater_3,
             fq_achievements:
               item.fq_achievements !== "" && item.fq_achievements !== null,
             myr_achievements:
@@ -204,7 +200,17 @@ export default function EmployeeAssessmentTable(emp_id) {
                         <div className="flex items-center justify-center pt-2">
                           {!myrisColumnAllFalse ? (
                             <>
-                              {employee.myr_achievements &&
+                            {employee.myr_rater_1 || employee.myr_rater_2 || employee.myr_rater_3 ? (
+                            <>
+                            <Badge
+                                  message={"Approved"}
+                                  type="success"
+                                  className={"text-[.8rem] px-1"}
+                                />
+                                </>
+                                ) : (
+                                <>
+                            {employee.myr_achievements &&
                               employee.myr_results ? (
                                 <Badge
                                   message={"Graded"}
@@ -238,6 +244,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                                   className={"text-[.8rem] px-1"}
                                 />
                               )}
+                                </>)}
                             </>
                           ) : (
                             ""
@@ -292,6 +299,16 @@ export default function EmployeeAssessmentTable(emp_id) {
                         <div className="flex items-center justify-center pt-2">
                           {!yeeisColumnAllFalse ? (
                             <>
+                            {employee.yee_rater_1 || employee.yee_rater_2 || employee.yee_rater_3 ? (
+                            <>
+                            <Badge
+                                  message={"Approved"}
+                                  type="success"
+                                  className={"text-[.8rem] px-1"}
+                                />
+                                </>
+                                ) : (
+                                <>
                               {employee.yee_achievements &&
                               employee.yee_results ? (
                                 <Badge
@@ -326,6 +343,7 @@ export default function EmployeeAssessmentTable(emp_id) {
                                   className={"text-[.8rem] px-1"}
                                 />
                               )}
+                            </>)}
                             </>
                           ) : (
                             ""
@@ -372,10 +390,13 @@ export default function EmployeeAssessmentTable(emp_id) {
                       <td>
                       <TrackingAction 
                       toggleActionVisibility={toggleActionVisibility}
+                      sp_id={employee.sp_id}
                       employee_id={employee.employee_id}
                       first_name={employee.first_name}
-                      myr={employee.myr_results}
-                      yee={employee.yee_results}
+                      myr_results={employee.myr_results}
+                      yee_results={employee.yee_results}
+                      myr_achievements={employee.myr_achievements}
+                      yee_achievements={employee.yee_achievements}
                       />
                       </td>
                     </> 

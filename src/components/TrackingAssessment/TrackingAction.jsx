@@ -5,21 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { useFunction } from "../../context/FunctionContext";
 import TrackingAssessmentModal from "../../misc/TrackingAssessmentModal";
 export default function TrackingAction({
+  sp_id,
   employee_id,
   first_name,
   toggleActionVisibility,
-  myr,
-  yee
+  myr_results,
+  yee_results,
+  myr_achievements,
+  yee_achievements
 }) {
-  console.log(employee_id);
-  console.log(myr);
-  console.log(yee);
   const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [signModal, setsignModal] = useState(false);
   const [discussionModal, setDiscussionModal] = useState(false);
   const dropdownRef = useRef(null);
-
   const handleDropdownToggle = () => {
     setDropdownVisible(!dropdownVisible);
     toggleActionVisibility();
@@ -103,6 +102,8 @@ export default function TrackingAction({
             Ask for a 1 on 1 discussion
           </button>
 
+
+{myr_achievements && !yee_achievements && myr_results && !yee_results ? (
           <button
             className="p-1 hover:bg-gray w-full text-left rounded"
             onClick={() => {
@@ -111,13 +112,25 @@ export default function TrackingAction({
           >
             Approve Assessment
           </button>
+          ) : myr_achievements && yee_achievements && myr_results && yee_results ? (
+          <button
+            className="p-1 hover:bg-gray w-full text-left rounded"
+            onClick={() => {
+              setsignModal(true);
+            }}
+          >
+            Approve Assessment
+          </button>
+          ):""}
+
+
           <button className="p-1 hover:bg-gray w-full text-left rounded text-un-red">
             Delete
           </button>
 
 
 {/* Ask for a 1 on 1 discussion */}
-          {discussionModal && (
+{discussionModal && (
             <TrackingAssessmentModal
               closeModal={setDiscussionModal}
               type={"discussion"}
@@ -127,7 +140,7 @@ export default function TrackingAction({
               message={`Ask ${first_name} for a 1 on 1 discussion`}
               continuebutton={"Confirm"}
             />
-          )}
+            )}
           <div
             className={classNames(
               "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
@@ -136,18 +149,25 @@ export default function TrackingAction({
             onClick={() => {
               setDiscussionModal(false);
             }}
-          />
+            />
+
+
+
 
 
 {/* Approve assessment */}
-          {signModal && (
+{myr_achievements && !yee_achievements && myr_results && !yee_results ? (
+<>
+{signModal && (
             <TrackingAssessmentModal
               closeModal={setsignModal}
               type={"approval"}
+              sp_id={sp_id}
               title={"Approve Assessment"}
+              approval={"midyear"}
               employee_id={employee_id}
               first_name={first_name}
-              message={`I confirm that the employee's grade reflected in this form is accurate and appropriate based on their performance over the past and their job responsibilities.`}
+              message={`I confirm that the employee's grade for this Mid Year Quarter is accurate and appropriate based on their performance over the past and their job responsibilities.`}
               continuebutton={"Confirm"}
             />
           )}
@@ -160,6 +180,36 @@ export default function TrackingAction({
               setsignModal(false);
             }}
           />
+</>
+): myr_achievements && yee_achievements && myr_results && yee_results ? (
+<>
+{signModal && (
+            <TrackingAssessmentModal
+              closeModal={setsignModal}
+              type={"approval"}
+              sp_id={sp_id}
+              title={"Approve Assessment"}
+              approval={"yearend"}
+              employee_id={employee_id}
+              first_name={first_name}
+              message={`I confirm that the employee's grade for this Year End Quarter is accurate and appropriate based on their performance over the past and their job responsibilities.`}
+              continuebutton={"Confirm"}
+            />
+          )}
+          <div
+            className={classNames(
+              "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
+              signModal === false && "z-[-1] hidden pointer-events-none"
+            )}
+            onClick={() => {
+              setsignModal(false);
+            }}
+          />
+
+</>) : ""}
+
+
+
         </div>
       )}
     </div>
