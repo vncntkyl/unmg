@@ -7,15 +7,15 @@ export default function EmployeeAssessmentTable(emp_id) {
   const [employeeType, setEmployeeType] = useState("0");
   const [employeesRecords, setEmployeesRecords] = useState([]);
   const [actionVisibility, setActionVisibility] = useState(false);
-  localStorage.setItem("assessment_quarter", 0);
+  sessionStorage.setItem("assessment_quarter", 0);
   const toggleActionVisibility = () => {
     setActionVisibility((prev) => !prev);
   };
-
+  //check columns
   const fqisColumnAllFalse =
     employeesRecords.length > 0 &&
     employeesRecords.every(
-      (employee) => employee.fq_achievements && !employee.fq_results
+      (employee) => !employee.fq_achievements && !employee.fq_results
     );
   const myrisColumnAllFalse =
     employeesRecords.length > 0 &&
@@ -37,6 +37,17 @@ export default function EmployeeAssessmentTable(emp_id) {
     employeesRecords.every(
       (employee) => !employee.agreed_rating &&  !employee.yee_results
     );
+    // const myristrue = 
+    // employeesRecords.length > 0 &&
+    // employeesRecords.every(
+    //   (employee) => !employee.myr_results
+    // );
+    // const yeeistrue = 
+    // employeesRecords.length > 0 &&
+    // employeesRecords.every(
+    //   (employee) => !employee.yee_results
+    // );
+
   useEffect(() => {
     const getemployeesRecords = async () => {
       try {
@@ -360,9 +371,11 @@ export default function EmployeeAssessmentTable(emp_id) {
                       </td>
                       <td>
                       <TrackingAction 
-                      toggleActionVisibility={toggleActionVisibility} 
+                      toggleActionVisibility={toggleActionVisibility}
                       employee_id={employee.employee_id}
                       first_name={employee.first_name}
+                      myr={employee.myr_results}
+                      yee={employee.yee_results}
                       />
                       </td>
                     </> 

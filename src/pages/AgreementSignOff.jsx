@@ -7,13 +7,13 @@ import EmployeeSignOff from "../components/Signoff/EmployeeSignOff";
 
 
 export default function AgreementSignOff() {
-  if (!localStorage.getItem("currentUser")) {
-    localStorage.setItem("redirect_to", window.location.pathname);
+  if (!sessionStorage.getItem("currentUser")) {
+    sessionStorage.setItem("redirect_to", window.location.pathname);
   }
   const [panel, setPanel] = useState("my evaluations");
   const [employeeID, setEmployeeID] = useState(-1);
   useEffect(() => {
-    setEmployeeID(JSON.parse(localStorage.getItem("currentUser")).emp_id);
+    setEmployeeID(JSON.parse(sessionStorage.getItem("currentUser")).emp_id);
   }, []);
   return employeeID !== -1 && (
     <>

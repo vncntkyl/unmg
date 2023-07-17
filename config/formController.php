@@ -432,10 +432,20 @@ class Form extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
+
+
+
+
+
+
+
+
+
+    //CODE NI NORVIN
     function selectUserPerformance($empID)
     {
         $this->setStatement("SELECT
-        hr_users.emp_id,
+        hr_users.employee_id,
         hr_eval_form.users_id, 
         hr_eval_form.rater_1, 
         hr_eval_form.rater_2,
@@ -473,17 +483,32 @@ class Form extends Controller
     JOIN 
         hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
     WHERE 
-        hr_users.emp_id = ?");
+        hr_users.employee_id = ?");
         $this->statement->execute([$empID]);
 
         return $this->statement->fetchAll();
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //main tracking and assessment code
     function selectUserAssessment($table_name_results, $table_name_rating, $empID)
     {
         $this->setStatement("
         SELECT 
-        hr_users.emp_id,
+        hr_users.employee_id,
         hr_eval_form.hr_eval_form_id,
         hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
         hr_pillars.pillar_id AS pillar_id,
@@ -492,13 +517,13 @@ class Form extends Controller
                 THEN hr_pillars.pillar_name
             ELSE ''
         END AS pillar_name,
-
+        
         CASE
             WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_description ORDER BY hr_pillars.pillar_description) = 1
                 THEN hr_pillars.pillar_description
             ELSE ''
         END AS pillar_description,
-
+        
         hr_eval_form_pillars.pillar_percentage,
 
 
@@ -546,76 +571,214 @@ class Form extends Controller
         hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id 
         AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
     WHERE 
-        hr_users.emp_id = ?
+        hr_users.employee_id = ?
         ORDER BY hr_pillars.pillar_id ASC
         ");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
 
+    // additional for tracking and assessment
+    function totalUserAssessment($empID)
+    {
+        $this->setStatement("
+    SELECT 
+        hr_users.employee_id,
+        hr_eval_form_pillars.pillar_id,
+        hr_pillars.pillar_name,
+        hr_eval_form_sp_pillar_ratings.firstQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.midYearTotalResult,
+        hr_eval_form_sp_pillar_ratings.ThirdQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.fourthQuarterTotalResult,
+        hr_eval_form_sp_pillar_ratings.YearEndTotalResult,
+        
+        hr_eval_form_sp_quarterly_ratings.eval_form_id,
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.FirstQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.FirstQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.FirstQuarterRating
+        ELSE ''
+    END AS FirstQuarterRating,
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.MidYearRating ORDER BY hr_eval_form_sp_quarterly_ratings.MidYearRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.MidYearRating
+        ELSE ''
+    END AS MidYearRating,
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.ThirdQuarterRating
+        ELSE ''
+    END AS ThirdQuarterRating,   
+        
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.FourthQuarterRating ORDER BY hr_eval_form_sp_quarterly_ratings.FourthQuarterRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.FourthQuarterRating
+        ELSE ''
+    END AS FourthQuarterRating,      
+  
+    CASE
+        WHEN ROW_NUMBER() OVER (PARTITION BY hr_eval_form_sp_quarterly_ratings.YearEndRating ORDER BY hr_eval_form_sp_quarterly_ratings.YearEndRating) = 1
+            THEN hr_eval_form_sp_quarterly_ratings.YearEndRating
+        ELSE ''
+    END AS YearEndRating
+        
+    FROM 
+        hr_users
+    LEFT JOIN
+        hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+    LEFT JOIN 
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN
+        hr_eval_form_sp_pillar_ratings ON hr_eval_form_sp_pillar_ratings.eval_form_pillars_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    LEFT JOIN
+    	hr_eval_form_sp_quarterly_ratings ON hr_eval_form_sp_quarterly_ratings.eval_form_id = hr_eval_form.hr_eval_form_id
+    WHERE 
+        hr_users.employee_id = ?
+    ");
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
+    //check personal achievements
+    function checkUserAchievements($empID)
+    {
+        $this->setStatement("
+    SELECT
+    hr_users.users_id,
+    hr_users.employee_id,
+    hr_eval_form_sp_fq_rating.fq_rating_id,
+    hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
+    hr_eval_form_sp_myr_rating.myr_rating_id,
+    hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
+    hr_eval_form_sp_tq_rating.tq_rating_id,
+    hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
+    hr_eval_form_sp_yee_rating.yee_rating_id,
+    hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements,
+    
+    hr_eval_form_sp.hr_eval_form_sp_id,
+    hr_eval_form_sp_fq.results AS fq_results,
+    
+    hr_eval_form_sp_myr.results AS myr_results,
+    
+    hr_eval_form_sp_tq.results AS tq_results,
+    
+    hr_eval_form_sp_yee.results AS yee_results,
+    hr_eval_form_sp_yee.agreed_rating AS agreed_rating
+
+    
+    FROM hr_users
+
+    LEFT JOIN
+        hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
+    LEFT JOIN
+        hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN
+        hr_objectives ON hr_objectives.hr_eval_form_pillar_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    LEFT JOIN
+        hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+    LEFT JOIN
+        hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+     
+    LEFT JOIN
+        hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+    LEFT JOIN
+        hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+     
+    LEFT JOIN
+        hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
+    LEFT JOIN
+        hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id  
+    LEFT JOIN
+        hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+    LEFT JOIN
+        hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        
+    WHERE employee_id = ?");
+        $this->statement->execute([$empID]);
+        return $this->statement->fetchAll();
+    }
+
+
+
+
+
+
+
+
+    //sign off   
     function selectEmployeeSignOffAssessment($empID, $userStatus)
     {
         $this->setStatement("SELECT
-            employee.primary_evaluator,
-            employee.secondary_evaluator,
-            employee.tertiary_evaluator,
+            employee.rater_1,
+            employee.rater_2,
+            employee.rater_3,
             CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
             CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
             CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
             CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
-            employee.emp_id,
+            employee.employee_id,
             employee.job_description
         FROM hr_users AS employee
-        LEFT JOIN hr_users AS primary_eval ON primary_eval.emp_id = employee.primary_evaluator
-        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.emp_id = employee.secondary_evaluator
-        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.emp_id = employee.tertiary_evaluator
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.rater_1
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.rater_2
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.rater_3
         WHERE 
-        (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
+        (employee.rater_1 = :rater_id OR employee.rater_2 = :rater_id OR employee.rater_3 = :rater_id)
         AND employee.user_status = :user_status
                 ");
         $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
         return $this->statement->fetchAll();
     }
 
-    function selectEmployeeAssessment($empID, $userStatus)
+    function selectEmployeeAssessment($empID, $contractType)
     {
         $this->setStatement("SELECT
         employee.users_id,
-        employee.emp_id AS employee_id,
+        employee.employee_id AS employee_id,
         employee.first_name,
-        employee.user_status,
+        employee.contract_type,
         CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
         CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
         CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
         CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
-
-
+        
+        
         hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
         hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
         hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
         hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements,
-
+        
         hr_eval_form_sp.hr_eval_form_sp_id,
         hr_eval_form_sp_fq.results AS fq_results,
         hr_eval_form_sp_fq.remarks AS fq_remarks,
-
+        
         hr_eval_form_sp_myr.results AS myr_results,
         hr_eval_form_sp_myr.remarks AS myr_remarks,
-
+        
         hr_eval_form_sp_tq.results AS tq_results,
         hr_eval_form_sp_tq.remarks AS tq_remarks,
-
+        
         hr_eval_form_sp_yee.results AS yee_results,
         hr_eval_form_sp_yee.remarks AS yee_remarks,
         hr_eval_form_sp_yee.agreed_rating AS agreed_rating
 
-
+        
         FROM hr_users AS employee
-
-        LEFT JOIN hr_users AS primary_eval ON primary_eval.emp_id = employee.rater_1
-        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.emp_id = employee.rater_2
-        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.emp_id = employee.rater_3
-
+        
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator 
+        
         LEFT JOIN
         hr_eval_form ON hr_eval_form.users_id = employee.users_id
         LEFT JOIN
@@ -630,7 +793,7 @@ class Form extends Controller
         hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
         LEFT JOIN
             hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
-
+         
          LEFT JOIN
             hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
           LEFT JOIN
@@ -639,7 +802,7 @@ class Form extends Controller
             hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
           LEFT JOIN
             hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-
+         
         LEFT JOIN
             hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
         LEFT JOIN
@@ -648,12 +811,12 @@ class Form extends Controller
             hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
         LEFT JOIN
             hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
-
+            
         WHERE 
           (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
-           AND employee.user_status = :user_status
+           AND employee.contract_type = :contract_type
          ORDER BY employee.users_id");
-        $this->statement->execute([':rater_id' => $empID, ':user_status' => $userStatus]);
+        $this->statement->execute([':rater_id' => $empID, ':contract_type' => $contractType]);
         return $this->statement->fetchAll();
     }
 
@@ -661,7 +824,7 @@ class Form extends Controller
     {
         $this->setStatement("
         SELECT 
-    hr_users.emp_id,
+    hr_users.employee_id,
     CONCAT(hr_users.first_name, ' ', LEFT(hr_users.middle_name, 1), '. ', hr_users.last_name) AS employee_name,
     hr_eval_form_fp.hr_eval_form_fp_id AS first_part_id,
     hr_eval_form_sp_fq_rating.ratee_achievement AS fq_ratee_achievement,
@@ -685,7 +848,7 @@ LEFT JOIN
 LEFT JOIN
     hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
 WHERE 
-    hr_users.emp_id = ?");
+    hr_users.employee_id = ?");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
@@ -695,7 +858,7 @@ WHERE
     {
         $this->setStatement("
         SELECT 
-        hr_users.emp_id,
+        hr_users.employee_id,
         CONCAT(hr_users.first_name, ' ', LEFT(hr_users.middle_name, 1), '. ', hr_users.last_name) AS employee_name,
 
         hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
@@ -705,13 +868,13 @@ WHERE
                 THEN hr_pillars.pillar_name
             ELSE ''
         END AS pillar_name,
-
+        
         CASE
             WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_description ORDER BY hr_pillars.pillar_description) = 1
                 THEN hr_pillars.pillar_description
             ELSE ''
         END AS pillar_description,
-
+        
         hr_eval_form_pillars.pillar_percentage,
 
 
@@ -760,7 +923,7 @@ WHERE
         hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id 
         AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
     WHERE 
-        hr_users.emp_id = ?
+        hr_users.employee_id = ?
         ORDER BY hr_pillars.pillar_id ASC
         ");
         $this->statement->execute([$empID]);
@@ -786,27 +949,48 @@ WHERE
         LEFT JOIN 
             hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
         LEFT JOIN 
-             hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+            hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
         LEFT JOIN 
             hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
         LEFT JOIN 
             hr_target_metrics ON hr_target_metrics.kpi_id = hr_kpi.kpi_id
         WHERE
-        hr_users.emp_id = ?
+        hr_users.employee_id = ?
         ");
         $this->statement->execute([$empID]);
         return $this->statement->fetchAll();
     }
+
+    
     //submit achievement of user on quarter
     function insertUserAssessment($tbl_name, $formspID, $achievements)
     {
         $this->setStatement("UPDATE {$tbl_name} SET ratee_achievement = :ratee_achievement WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id");
         return $this->statement->execute([':ratee_achievement' => $achievements, ':hr_eval_form_sp_id' => $formspID]);
     }
+
+
     //Grade user based on quarter
     function updateUserAssessment($tbl_name, $formspID, $currentMetric, $currentRemarks, $id)
     {
         $this->setStatement("UPDATE {$tbl_name} SET results = :results, remarks = :remarks WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id AND ID = :tbl_id");
         return $this->statement->execute([':results' => $currentMetric, ':remarks' => $currentRemarks, ':tbl_id' => $id, ':hr_eval_form_sp_id' => $formspID]);
     }
+
+
+
+    //1 on 1 discussion statements
+    function insertDiscussion($subject, $description)
+    {
+        $this->setStatement("INSERT INTO hr_request_discussion (consultation_subject, description) VALUES (:consultation_subject, :description)");
+        if($this->statement->execute([':consultation_subject' => $subject, ':description' => $description])) {
+            return $this->connection->lastInsertId();
+        }
+    }
+    function updateUserRequestConsultation($ID, $employee_id)
+    {
+        $this->setStatement("UPDATE hr_users SET request_consult = :request_consult WHERE employee_id = :employee_id");
+        return $this->statement->execute([':request_consult' => $ID, ':employee_id' => $employee_id]);
+    }
+
 }

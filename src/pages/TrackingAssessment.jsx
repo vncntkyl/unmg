@@ -4,7 +4,7 @@ import { Route, Router, Routes } from "react-router-dom";
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
 import EmployeeAssessmentTable from "../components/TrackingAssessment/EmployeeAssessmentTable";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
-import CreateAssessment from "../components/TrackingAssessment/CreateAssessment";
+import CreateAchievements from "../components/TrackingAssessment/CreateAchievements";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useFunction } from "../context/FunctionContext";
 import Toggle from "../components/Toggle";
@@ -14,7 +14,6 @@ export default function TrackingAssessment() {
   const [panel, setPanel] = useState("My Assessment");
   const [employeeID, setEmployeeID] = useState();
   const { getPath } = useFunction();
-  
   const setHeader = (path) => {
     switch (path) {
       case "/tracking_and_assessment":
@@ -33,9 +32,8 @@ export default function TrackingAssessment() {
     localStorage.setItem("redirect_to", window.location.pathname);
   }
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const employeeID = currentUser ? currentUser.emp_id : null;
-    setEmployeeID(employeeID);
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")).employee_id;
+    setEmployeeID(currentUser);
   }, []);
 
   return employeeID !== -1 && (
@@ -47,9 +45,9 @@ export default function TrackingAssessment() {
             {/* HEADER */}
             <div className="flex flex-col items-center justify-between md:flex-row">
               <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
-                {["/tracking_and_assement/create", "/tracking_and_assement/create/"].includes(getPath()) && (
+                {["/tracking_and_assessment/create", "/tracking_and_assessment/create/"].includes(getPath()) && (
                   <a
-                    href="/tracking_and_assement"
+                    href="/tracking_and_assessment"
                     className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
                   >
                     <MdOutlineKeyboardArrowLeft />
@@ -80,7 +78,7 @@ export default function TrackingAssessment() {
                 <Route
                   path="/create/*"
                   element={
-                    <CreateAssessment emp_id={employeeID} /> 
+                    <CreateAchievements emp_id={employeeID} /> 
                   }
                 />
                 <Route path="/employee_assessment/:id" element={<EmployeeAssessment />}/>

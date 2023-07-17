@@ -8,7 +8,12 @@ export default function TrackingAction({
   employee_id,
   first_name,
   toggleActionVisibility,
+  myr,
+  yee
 }) {
+  console.log(employee_id);
+  console.log(myr);
+  console.log(yee);
   const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [signModal, setsignModal] = useState(false);
@@ -27,28 +32,28 @@ export default function TrackingAction({
   };
   const { formatName } = useFunction();
   const viewUserAssessment = () => {
-    localStorage.setItem("assessment_id", employee_id);
-    localStorage.setItem("assessment_name", formatName(first_name));
+    sessionStorage.setItem("assessment_id", employee_id);
+    sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assement/employee_assessment/" + formatName(first_name)
+      "/tracking_and_assessment/employee_assessment/" + formatName(first_name)
     );
   };
 
   const gradeUserAssessment = () => {
-    localStorage.setItem("assessment_id", employee_id);
-    localStorage.setItem("assessment_name", formatName(first_name));
+    sessionStorage.setItem("assessment_id", employee_id);
+    sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assement/employee_assessment/" +
+      "/tracking_and_assessment/employee_assessment/" +
         formatName(first_name) +
         "/grade_edit"
     );
   };
 
   const approveUserAssessment = () => {
-    localStorage.setItem("assessment_id", employee_id);
-    localStorage.setItem("assessment_name", formatName(first_name));
+    sessionStorage.setItem("assessment_id", employee_id);
+    sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
-      "/tracking_and_assement/employee_assessment/" +
+      "/tracking_and_assessment/employee_assessment/" +
         formatName(first_name) +
         "/approve"
     );
@@ -61,7 +66,7 @@ export default function TrackingAction({
     };
   }, []);
   return (
-    <div className="relative flex items-center justify-center py-1">
+    <div className="relative flex z-[40] items-center justify-center py-1">
       <button
         type="button"
         className="outline-none cursor-pointer text-un-blue text-[1.5rem] hover:text-un-blue-light transition-all"
@@ -117,8 +122,9 @@ export default function TrackingAction({
               closeModal={setDiscussionModal}
               type={"discussion"}
               title={"Assessment Discussion"}
+              employee_id={employee_id}
               first_name={first_name}
-              message={`Do you want to ask ${first_name} for a 1 on 1 discussion?`}
+              message={`Ask ${first_name} for a 1 on 1 discussion`}
               continuebutton={"Confirm"}
             />
           )}
@@ -139,6 +145,7 @@ export default function TrackingAction({
               closeModal={setsignModal}
               type={"approval"}
               title={"Approve Assessment"}
+              employee_id={employee_id}
               first_name={first_name}
               message={`I confirm that the employee's grade reflected in this form is accurate and appropriate based on their performance over the past and their job responsibilities.`}
               continuebutton={"Confirm"}

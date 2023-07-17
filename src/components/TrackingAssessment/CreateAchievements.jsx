@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { error } from 'jquery';
 
-export default function CreateAssessment({ emp_id }) {
+export default function CreateAchievements({ emp_id }) {
     const [finalUserPerformance, setfinalUserPerformance] = useState([]);
-    const [quarterCheck, setQuarterCheck] = useState("");
-    const [ifExists, setIfExists] = useState();
-    const [tableName, setTableName] = useState();
+    const quarter = sessionStorage.getItem("assessment_quarter");
+    const [quarterCheck, setQuarterCheck] = useState(quarter);
+    const [ifExists, setIfExists] = useState(false);
+    const [achievements, setAchievments] = useState("");
     const handleQuarterChange = (event) => {
         setQuarterCheck(event.target.value);
     };
-    const [achievements, setAchievments] = useState("");
 
     // Submit Button
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = () => {
         if (achievements.length === 0) {
             alert("Achievements has been left blank!");
         }
@@ -62,18 +60,18 @@ export default function CreateAssessment({ emp_id }) {
             try {
                 const response = await axios.get(url, {
                     params: {
-                        userTracking: true,
+                        checkUserAchievements: true,
                         empID: emp_id
                     },
                 });
                 setfinalUserPerformance(response.data);
-                const results = response.data.map(item => ({
-                    fq_result: item.fq_results !== 0,
-                    myr_result: item.myr_results !== 0,
-                    tq_result: item.tq_results !== 0,
-                    yee_result: item.yee_results !== 0
+                const achievements = response.data.map(item => ({
+                    fq_achievements: item.fq_achievements !== '',
+                    myr_achievements: item.myr_achievements !== '',
+                    tq_achievements: item.tq_achievements !== '',
+                    yee_achievements: item.yee_achievements !== ''
                 }));
-                setIfExists(results);
+                setIfExists(achievements);
             }
             catch (error) {
                 console.log(error.message);
@@ -97,13 +95,14 @@ export default function CreateAssessment({ emp_id }) {
                         <select
                             className="bg-white text-black rounded-md p-1 px-2 outline-none"
                             name="quarter"
+                            value={quarterCheck}
                             onChange={handleQuarterChange}
                         >
-                            <option value="" disabled={ifExists}>Select Quarter</option>
-                            <option value="1" disabled={ifExists && ifExists.some(item => item.fq_result)}>First Quarter</option>
-                            <option value="2" disabled={ifExists && ifExists.some(item => item.myr_result)}>Second Quarter</option>
-                            <option value="3" disabled={ifExists && ifExists.some(item => item.tq_result)}>Third Quarter</option>
-                            <option value="4" disabled={ifExists && ifExists.some(item => item.yee_result)}>Fourth Quarter</option>
+                            <option value="" disabled>Select Quarter</option>
+                            <option value={1} disabled={ifExists && ifExists.some(item => item.fq_achievements)}>First Quarter</option>
+                            <option value={2} disabled={ifExists && ifExists.some(item => item.myr_achievements)}>Second Quarter</option>
+                            <option value={3} disabled={ifExists && ifExists.some(item => item.tq_achievements)}>Third Quarter</option>
+                            <option value={4} disabled={ifExists && ifExists.some(item => item.yee_achievements)}>Fourth Quarter</option>
                         </select>
                     </div>
                     <span className='text-sm pt-4'>Please enter your achievements or accomplishments below for the given quarter: </span>
