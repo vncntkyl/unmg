@@ -58,6 +58,7 @@ export default function TrackingAssessment() {
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
+              {JSON.parse(localStorage.getItem("currentUser")).user_type != 3 && (
               <Toggle
                 paths={["/tracking_and_assessment/", "/tracking_and_assessment"]}
                 panel={panel}
@@ -65,6 +66,7 @@ export default function TrackingAssessment() {
                 setPanel={setPanel}
                 panel_2={"Employee Assessment"}
               />
+              )}
             </div>
             <div className="flex flex-col">
               <Routes>

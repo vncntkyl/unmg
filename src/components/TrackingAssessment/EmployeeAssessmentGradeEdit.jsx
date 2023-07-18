@@ -23,7 +23,6 @@ export default function EmployeeAssessmentGradeEdit() {
   const [selectedValues, setSelectedValues] = useState([]);
   const [remarks, setRemarks] = useState([]);
   //Submit form
-  const handleSubmit = () => { };
   // Usage
   const tbl_name = getTableName(quarter);
 
@@ -40,6 +39,10 @@ export default function EmployeeAssessmentGradeEdit() {
           },
         });
         setGrades(response.data);
+        //set weight
+        // const kpi_weight = response.data.map((item) => item.kpi_weight)
+        // setWeight(kpi_weight);
+
         //if pillar id is not found
         const ColumnAllFalse = response.data.some(
           (item) => item.pillar_id === null
@@ -118,6 +121,18 @@ export default function EmployeeAssessmentGradeEdit() {
   //submit
   const Submit = (e) => {
     e.preventDefault();
+
+    const weight = grades.map((grade) => grade.kpi_weight);
+    const result = [];
+
+    weight.forEach((value, index) => {
+      const calculatedValue = (value / 100) * selectedValues[index];
+      result.push(calculatedValue.toFixed(2));
+    });
+    
+
+    console.log(result);
+
     const totalGrades = pillars.reduce((accumulator, pillar) => {
       const objectiveGrades = objectives
         .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
@@ -130,7 +145,6 @@ export default function EmployeeAssessmentGradeEdit() {
 
       return accumulator + objectiveGrades;
     }, 0);
-
     const totalsubmitted = selectedValues.length;
 
     if (totalGrades === totalsubmitted) {
@@ -144,19 +158,18 @@ export default function EmployeeAssessmentGradeEdit() {
         grades.forEach((grade) => grade_id.push(grade.table_id));
         const metric = selectedValues.flat(Infinity);
         const rem = remarks.flat(Infinity);
-        console.log(rem);
-        const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";
-        let fData = new FormData();
-        fData.append("submit", true);
-        fData.append('tbl_name', tbl_name);
-        fData.append("formspID", formspID);
-        fData.append('grade_id', JSON.stringify(grade_id));
-        fData.append('metric', JSON.stringify(metric));
-        fData.append('remarks', JSON.stringify(rem));
-        axios.post(url, fData)
-          .then(response => alert(response.data))
-          .catch(error => alert(error));
-        navigate(-1);
+        // const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";  
+        // let fData = new FormData();
+        // fData.append("submit", true);
+        // fData.append('tbl_name', tbl_name);
+        // fData.append("formspID", formspID);
+        // fData.append('grade_id', JSON.stringify(grade_id));
+        // fData.append('metric', JSON.stringify(metric));
+        // fData.append('remarks', JSON.stringify(rem));
+        // axios.post(url, fData)
+        //   .then(response => alert(response.data))
+        //   .catch(error => alert(error));
+        // navigate(-1);
       }
 
     }
@@ -244,9 +257,9 @@ console.log(gradeIndex);
               Select Quarter
             </option>
             <option value={1}>First Quarter</option>
-            <option value={2}>Second Quarter</option>
+            <option value={2}>Mid Year</option>
             <option value={3}>Third Quarter</option>
-            <option value={4}>Fourth Quarter</option>
+            <option value={4}>Year End</option>
           </select>
         </div>
       </div>
@@ -374,7 +387,7 @@ console.log(gradeIndex);
                                           <div className="p-2 flex items-center justify-center">
                                             <select
                                               className={classNames("rounded-md px-4 flex content-center",
-                                              quarter == 3 ? (
+                                              quarter == 2 ? (
                                               selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '1' || grade.results === 1 ? 'bg-un-red-light-1 text-un-red-dark' : 
                                               selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '2' || grade.results === 2 ? 'bg-un-yellow-light text-un-yellow-dark' : 
                                               selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '3' || grade.results === 3 ? 'bg-un-green-light text-un-green-dark' : 
@@ -410,7 +423,7 @@ console.log(gradeIndex);
                                                   <option
                                                     key={metric.target_metrics_id}
                                                     value={metric.target_metrics_score}
-                                                    className={quarter == 3 && (metric.target_metrics_score === 1  ? 'bg-un-red-light-1 text-un-red-dark' :
+                                                    className={quarter == 2 && (metric.target_metrics_score === 1  ? 'bg-un-red-light-1 text-un-red-dark' :
                                                     metric.target_metrics_score === 2 ? 'bg-un-yellow-light text-un-yellow-dark': 
                                                     metric.target_metrics_score === 3 || metric.target_metrics_score === 4 ? 'bg-un-green-light text-un-green-dark':
                                                     '')}
@@ -488,7 +501,6 @@ console.log(gradeIndex);
               <button
                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                 type="submit"
-                onClick={handleSubmit}
               >
                 Submit
               </button>

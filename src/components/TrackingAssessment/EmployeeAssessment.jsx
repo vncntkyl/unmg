@@ -83,9 +83,9 @@ export default function EmployeeAssessment() {
           >
             <option value={0} disabled>Select Quarter</option>
             <option value={1}>First Quarter</option>
-            <option value={2}>Second Quarter</option>
+            <option value={2}>Mid Year</option>
             <option value={3}>Third Quarter</option>
-            <option value={4}>Fourth Quarter</option>
+            <option value={4}>Year End</option>
           </select>
         </div>
         <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
