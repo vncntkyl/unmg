@@ -210,43 +210,6 @@ console.log(gradeIndex);
     updatedRemark[pillarIndex][objectIndex][gradeIndex] = event.target.value;
     setRemarks(updatedRemark);
   }
-  // const defaultSelectedValues = pillars.map((pillar) =>
-  // objectives
-  // .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
-  //   .map((object) =>
-  //   grades
-  //   .filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
-  //   .map((grade) => grade.results)
-  //   )
-  //   );
-
-  //   const flattenedArray = pillars.flatMap((pillar) =>
-  //   objectives
-  //     .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
-  //     .flatMap((object) =>
-  //       grades
-  //         .filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
-  //         .map((grade) => grade.results)
-  //     )
-  // );
-
-  // const flatArray = [1, 2, 3, 4];
-  // const chunkSize = 1; // Number of elements in each nested array
-
-  // const nestedArray = [];
-
-  // for (let i = 0; i < flatArray.length; i += chunkSize) {
-  //   const chunk = flatArray.slice(i, i + chunkSize);
-  //   nestedArray.push(chunk);
-  // }
-
-  // console.log(
-  //   pillars.map((pillar) => (
-  //     objectives.filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
-  //     .map((object) => (
-  //       grades.filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
-  //       .map((grade) => grade.results)))))
-  //   )
 
   return (
     <>
