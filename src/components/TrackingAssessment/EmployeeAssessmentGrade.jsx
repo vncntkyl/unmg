@@ -147,15 +147,7 @@ const edit = () => {
                                   oCounter++
                                 }
                               className={classNames(
-                                "bg-default-dark",
-                                "flex-none",
-                                "bg-gray-200",
-                                "p-2",
-                                "rounded-md",
-                                {
-                                  "w-[50%]": objectives.filter((obj) => obj.obj_eval_pillar_id === pillar.eval_pillar_id).length > 1,
-                                  "w-[100%]": objectives.filter((obj) => obj.obj_eval_pillar_id === pillar.eval_pillar_id).length <= 1
-                                }
+                                "bg-default-dark flex-none bg-gray-200 p-2 rounded-md w-full"
                               )}
                             >
                               <div className="pb-2">
@@ -165,7 +157,7 @@ const edit = () => {
                               </div>
 
                               <div className="bg-white rounded-md shadow">
-                                <table className="w-full">
+                                {/* <table className="w-full">
                                   <thead>
                                     <tr>
                                       <td>
@@ -233,7 +225,7 @@ const edit = () => {
                                     ))
                                   }
                                   </tbody>
-                                </table>
+                                </table> */}
                               </div>
                             </div>
                           ))}

@@ -443,7 +443,7 @@ class Form extends Controller
 
     //CODE NI NORVIN
     //main tracking and assessment code
-    function selectUserAssessment($table_name_results, $table_name_rating, $empID)
+    function selectUserAssessment($table_name_results, $table_name_rating, $empID, $creation_date)
     {
         $this->setStatement("
         SELECT 
@@ -511,9 +511,10 @@ class Form extends Controller
         AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
     WHERE 
         hr_users.employee_id = ?
+    AND hr_eval_form.CreationDate = ?
         ORDER BY hr_pillars.pillar_id ASC
         ");
-        $this->statement->execute([$empID]);
+        $this->statement->execute([$empID, $creation_date]);
         return $this->statement->fetchAll();
     }
 

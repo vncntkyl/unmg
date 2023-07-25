@@ -8,11 +8,15 @@ import CreateAchievements from "../components/TrackingAssessment/CreateAchieveme
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useFunction } from "../context/FunctionContext";
 import Toggle from "../components/Toggle";
+import axios from "axios";
 import EmployeeAssessmentGradeEdit from "../components/TrackingAssessment/EmployeeAssessmentGradeEdit";
 
 export default function TrackingAssessment() {
+  const [loading, toggleLoading] = useState(true);
   const [panel, setPanel] = useState("My Assessment");
+  console.log(panel);
   const [employeeID, setEmployeeID] = useState();
+  const [isEvaluator, setIsEvaluator] = useState(false);
   const { getPath } = useFunction();
   const setHeader = (path) => {
     switch (path) {
@@ -28,15 +32,41 @@ export default function TrackingAssessment() {
         return "Create Assessment";
     }
   };
+  const verifyEvaluator = async () => {
+    let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
+    //let url = "../api/retrieveUsers.php";
+    const parameters = {
+      params: {
+        employee_goals: true,
+        evaluator: JSON.parse(currentUser).employee_id,
+        work_year: workYear,
+        is_count: true,
+      },
+    };
+    try {
+      const response = await axios.get(url, parameters);
+      setIsEvaluator(response.data > 0);
+      toggleLoading(false);
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  verifyEvaluator();
   if (!localStorage.getItem("currentUser")) {
     localStorage.setItem("redirect_to", window.location.pathname);
   }
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser")).employee_id;
-    setEmployeeID(currentUser);
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    setEmployeeID(currentUser.employee_id);
+    if (currentUser.user_type == 3 || currentUser.users_id == 1) {
+      setPanel("Employee Assessment");
+    }
+    toggleLoading(false);
   }, []);
 
-  return employeeID !== -1 && (
+  return employeeID !== -1 && (loading ? (
+    "Loading..."
+  ):(
     <>
       <section className="relative">
         <div className="w-full min-h-[175px] bg-un-blue" />
@@ -59,13 +89,17 @@ export default function TrackingAssessment() {
               </span>
               {/* TOGGLE */}
               {JSON.parse(localStorage.getItem("currentUser")).user_type != 3 && (
-              <Toggle
-                paths={["/tracking_and_assessment/", "/tracking_and_assessment"]}
-                panel={panel}
-                panel_1={"My Assessment"}
-                setPanel={setPanel}
-                panel_2={"Employee Assessment"}
-              />
+                <>
+                {isEvaluator && (
+                  <Toggle
+                    paths={["/tracking_and_assessment/", "/tracking_and_assessment", "/"]}
+                    panel={panel}
+                    panel_1={"My Assessment"}
+                    setPanel={setPanel}
+                    panel_2={"Employee Assessment"}
+                  />
+                )}
+                </>
               )}
             </div>
             <div className="flex flex-col">
@@ -92,5 +126,5 @@ export default function TrackingAssessment() {
         </div>
       </section>
     </>
-  );
+  ));
 }

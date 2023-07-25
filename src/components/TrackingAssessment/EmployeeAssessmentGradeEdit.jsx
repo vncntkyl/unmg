@@ -110,8 +110,8 @@ export default function EmployeeAssessmentGradeEdit() {
 
         setObjectiveTabStatus(Object.keys(groupedObjs).map((id) => {
           return groupedObjs[id].map((m, i) => ({ status: i === 0 ? true : false, obj_eval_pillar_id: m.obj_eval_pillar_id, obj_objective_id: m.obj_objective_id }))
-
         }))
+        console.log(groupedObjs);
       } catch (error) {
         console.log(error.message);
       }
