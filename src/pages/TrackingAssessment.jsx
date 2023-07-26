@@ -14,7 +14,6 @@ import EmployeeAssessmentGradeEdit from "../components/TrackingAssessment/Employ
 export default function TrackingAssessment() {
   const [loading, toggleLoading] = useState(true);
   const [panel, setPanel] = useState("My Assessment");
-  console.log(panel);
   const [employeeID, setEmployeeID] = useState();
   const [isEvaluator, setIsEvaluator] = useState(false);
   const { getPath } = useFunction();
