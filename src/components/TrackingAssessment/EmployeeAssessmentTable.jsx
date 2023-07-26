@@ -186,9 +186,8 @@ export default function EmployeeAssessmentTable(emp_id) {
                 <tbody>
                   {employeesRecords.length !== 0 &&
                     employeesRecords.map((employee, index) => (
-                      <React.Fragment key={index}>
+                      <tr key={index}>
                         {index === 0 || employee.employee_id !== employeesRecords[index - 1].employee_id ? (
-                          <tr>
                             <>
                               <td>
                                 <div className="pl-4 pt-2">
@@ -443,9 +442,8 @@ export default function EmployeeAssessmentTable(emp_id) {
                                 />
                               </td>
                             </>
-                          </tr>
-                        ) : null}
-                      </React.Fragment>
+                          ) : null}
+                      </tr>
                     ))}
                 </tbody>
               </table>
@@ -463,7 +461,7 @@ export default function EmployeeAssessmentTable(emp_id) {
         </div>
 
         }
-      </div >
+      </div>
     </>
   );
 }
