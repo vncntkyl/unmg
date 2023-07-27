@@ -10,6 +10,7 @@ import { useFunction } from "../context/FunctionContext";
 import Toggle from "../components/Toggle";
 import axios from "axios";
 import EmployeeAssessmentGradeEdit from "../components/TrackingAssessment/EmployeeAssessmentGradeEdit";
+import { useAuth } from "../context/authContext";
 
 export default function TrackingAssessment() {
   const [loading, toggleLoading] = useState(true);
@@ -17,6 +18,8 @@ export default function TrackingAssessment() {
   const [employeeID, setEmployeeID] = useState();
   const [isEvaluator, setIsEvaluator] = useState(false);
   const { getPath } = useFunction();
+  const { currentUser, kpiDurations } = useAuth();
+  const [workYear, setWorkYear] = useState(-1);
   const setHeader = (path) => {
     switch (path) {
       case "/tracking_and_assessment":
@@ -65,7 +68,7 @@ export default function TrackingAssessment() {
 
   return employeeID !== -1 && (loading ? (
     "Loading..."
-  ):(
+  ) : (
     <>
       <section className="relative">
         <div className="w-full min-h-[175px] bg-un-blue" />
@@ -83,21 +86,21 @@ export default function TrackingAssessment() {
                     <span>Back</span>
                   </a>
                 )
-              }
+                }
                 {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
-              {JSON.parse(localStorage.getItem("currentUser")).user_type != 3 && (
+              {JSON.parse(currentUser).user_type != 3 && (
                 <>
-                {isEvaluator && (
-                  <Toggle
-                    paths={["/tracking_and_assessment/", "/tracking_and_assessment", "/"]}
-                    panel={panel}
-                    panel_1={"My Assessment"}
-                    setPanel={setPanel}
-                    panel_2={"Employee Assessment"}
-                  />
-                )}
+                  {isEvaluator && (
+                    <Toggle
+                      paths={["/tracking_and_assessment/", "/tracking_and_assessment", "/"]}
+                      panel={panel}
+                      panel_1={"My Assessment"}
+                      setPanel={setPanel}
+                      panel_2={"Employee Assessment"}
+                    />
+                  )}
                 </>
               )}
             </div>
@@ -105,7 +108,11 @@ export default function TrackingAssessment() {
               <Routes>
                 {panel === "My Assessment" ? <Route
                   path="/"
-                  element={<AssessmentTracking emp_id={employeeID}/>}
+                  element={<AssessmentTracking
+                    emp_id={employeeID}
+                    kpiYears={kpiDurations}
+                    workYear={workYear}
+                    setKpiDuration={setWorkYear} />}
                 /> : <Route
                   path="/"
                   element={<EmployeeAssessmentTable emp_id={employeeID} />}
@@ -113,12 +120,12 @@ export default function TrackingAssessment() {
                 <Route
                   path="/create/*"
                   element={
-                    <CreateAchievements emp_id={employeeID} /> 
+                    <CreateAchievements emp_id={employeeID} />
                   }
                 />
-                <Route path="/employee_assessment/:id" element={<EmployeeAssessment />}/>
-                <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessmentGradeEdit />}/>
-                <Route path="/employee_assessment/:id/approve" element={<EmployeeAssessment />}/>
+                <Route path="/employee_assessment/:id" element={<EmployeeAssessment />} />
+                <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessmentGradeEdit />} />
+                <Route path="/employee_assessment/:id/approve" element={<EmployeeAssessment />} />
               </Routes>
             </div>
           </div>

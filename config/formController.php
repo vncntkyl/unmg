@@ -445,12 +445,13 @@ class Form extends Controller
 
   //CODE NI NORVIN
   //main tracking and assessment code
-  function selectUserAssessment($table_name_results, $table_name_rating, $empID, $creation_date)
+  function selectUserAssessment($table_name_results, $empID, $creation_date)
   {
     $this->setStatement("
-        SELECT 
+    SELECT 
         hr_users.employee_id,
         hr_eval_form.hr_eval_form_id,
+        hr_eval_form.CreationDate,
         hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
         hr_pillars.pillar_id AS pillar_id,
         CASE
@@ -484,10 +485,10 @@ class Form extends Controller
         hr_kpi.kpi_weight,
 
         {$table_name_results}.ID AS table_id,
+        {$table_name_results}.achievements AS achievements,
         {$table_name_results}.results AS results,
         hr_metrics_desc.target_metrics_desc AS metrics_desc,
-        {$table_name_results}.remarks AS remarks,
-        {$table_name_rating}.ratee_achievement AS ratee_achievement
+        {$table_name_results}.remarks AS remarks
     FROM 
         hr_users
     LEFT JOIN
@@ -507,16 +508,14 @@ class Form extends Controller
     LEFT JOIN
         {$table_name_results} ON {$table_name_results}.hr_eval_form_kpi_id = hr_kpi.kpi_id
     LEFT JOIN
-        {$table_name_rating} ON {$table_name_rating}.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    LEFT JOIN
         hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id 
         AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
     WHERE 
-        hr_users.employee_id = ?
-    AND hr_eval_form.CreationDate = ?
+        hr_users.employee_id = :employee_id
+        AND hr_eval_form.CreationDate = :creation_date
         ORDER BY hr_pillars.pillar_id ASC
         ");
-    $this->statement->execute([$empID, $creation_date]);
+    $this->statement->execute(['employee_id' => $empID,'creation_date' => $creation_date]);
     return $this->statement->fetchAll();
   }
 
@@ -584,31 +583,27 @@ class Form extends Controller
     return $this->statement->fetchAll();
   }
   //check personal achievements
-  function checkUserAchievements($empID)
+  function checkUserAchievements($empID, $creation_date)
   {
     $this->setStatement("
     SELECT
     hr_users.users_id,
     hr_users.employee_id,
-    hr_eval_form_sp_fq_rating.fq_rating_id,
-    hr_eval_form_sp_fq_rating.ratee_achievement fq_achievements,
-    hr_eval_form_sp_myr_rating.myr_rating_id,
-    hr_eval_form_sp_myr_rating.ratee_achievement myr_achievements,
-    hr_eval_form_sp_tq_rating.tq_rating_id,
-    hr_eval_form_sp_tq_rating.ratee_achievement tq_achievements,
-    hr_eval_form_sp_yee_rating.yee_rating_id,
-    hr_eval_form_sp_yee_rating.ratee_achievement yee_achievements,
     
     hr_eval_form_sp.hr_eval_form_sp_id,
+    hr_kpi.kpi_id,
+    hr_kpi.kpi_desc,
+    hr_eval_form_sp_fq.achievements AS fq_achievements,
+    hr_eval_form_sp_myr.achievements AS myr_achievements,
+    hr_eval_form_sp_tq.achievements AS tq_achievements,
+    hr_eval_form_sp_yee.achievements AS yee_achievements,
+    
     hr_eval_form_sp_fq.results AS fq_results,
-    
     hr_eval_form_sp_myr.results AS myr_results,
-    
     hr_eval_form_sp_tq.results AS tq_results,
-    
     hr_eval_form_sp_yee.results AS yee_results,
-    hr_eval_form_sp_yee.agreed_rating AS agreed_rating
 
+    hr_eval_form_sp_yee.agreed_rating AS agreed_rating
     
     FROM hr_users
 
@@ -628,15 +623,6 @@ class Form extends Controller
         hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
      
     LEFT JOIN
-        hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    LEFT JOIN
-        hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    LEFT JOIN
-        hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-    LEFT JOIN
-        hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-     
-    LEFT JOIN
         hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
     LEFT JOIN
         hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id  
@@ -644,9 +630,10 @@ class Form extends Controller
         hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
     LEFT JOIN
         hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        
-    WHERE employee_id = ?");
-    $this->statement->execute([$empID]);
+        WHERE employee_id = :employee_id
+        AND hr_eval_form.CreationDate = :creation_date
+        ");
+    $this->statement->execute([':employee_id' => $empID, ':creation_date' => $creation_date]);
     return $this->statement->fetchAll();
   }
 

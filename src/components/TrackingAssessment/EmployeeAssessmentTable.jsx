@@ -186,264 +186,265 @@ export default function EmployeeAssessmentTable(emp_id) {
                 <tbody>
                   {employeesRecords.length !== 0 &&
                     employeesRecords.map((employee, index) => (
-                      <tr key={index}>
+                      <React.Fragment key={index}>
                         {index === 0 || employee.employee_id !== employeesRecords[index - 1].employee_id ? (
-                            <>
-                              <td>
-                                <div className="pl-4 pt-2">
-                                  {employee.employee_name}
-                                </div>
-                              </td>
-                              <td>
-                                <div className="flex items-center justify-center pt-2">
-                                  {!fqisColumnAllFalse ? (
-                                    <>
-                                      {employee.fq_achievements &&
-                                        employee.fq_results ? (
+                          <tr>
+                            <td>
+                              <div className="pl-4 pt-2">
+                                {employee.employee_name}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="flex items-center justify-center pt-2">
+                                {!fqisColumnAllFalse ? (
+                                  <>
+                                    {employee.fq_achievements &&
+                                      employee.fq_results ? (
+                                      <Badge
+                                        message={"Graded"}
+                                        type="success"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : !employee.fq_achievements &&
+                                      employee.fq_results ? (
+                                      <Badge
+                                        message={"Not Submitted/Graded"}
+                                        type="success"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : employee.fq_achievements &&
+                                      !employee.fq_results ? (
+                                      <Badge
+                                        message={"Achievements Submitted"}
+                                        type="warning"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : !employee.fq_achievements &&
+                                      !employee.fq_results ? (
+                                      <Badge
+                                        message={"Awaiting Submission"}
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : (
+                                      <Badge
+                                        message={"Internal Error"}
+                                        type="failure"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    )}
+                                  </>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="flex items-center justify-center pt-2">
+                                {!myrisColumnAllFalse ? (
+                                  <>
+                                    {employee.myr_rater_1 || employee.myr_rater_2 || employee.myr_rater_3 ? (
+                                      <>
                                         <Badge
-                                          message={"Graded"}
+                                          message={"Approved"}
                                           type="success"
                                           className={"text-[.8rem] px-1"}
                                         />
-                                      ) : !employee.fq_achievements &&
-                                        employee.fq_results ? (
-                                        <Badge
-                                          message={"Not Submitted/Graded"}
-                                          type="success"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : employee.fq_achievements &&
-                                        !employee.fq_results ? (
-                                        <Badge
-                                          message={"Achievements Submitted"}
-                                          type="warning"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : !employee.fq_achievements &&
-                                        !employee.fq_results ? (
-                                        <Badge
-                                          message={"Awaiting Submission"}
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : (
-                                        <Badge
-                                          message={"Internal Error"}
-                                          type="failure"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      )}
-                                    </>
-                                  ) : (
-                                    ""
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                <div className="flex items-center justify-center pt-2">
-                                  {!myrisColumnAllFalse ? (
-                                    <>
-                                      {employee.myr_rater_1 || employee.myr_rater_2 || employee.myr_rater_3 ? (
-                                        <>
+                                      </>
+                                    ) : (
+                                      <>
+                                        {employee.myr_achievements &&
+                                          employee.myr_results ? (
                                           <Badge
-                                            message={"Approved"}
+                                            message={"Graded"}
                                             type="success"
                                             className={"text-[.8rem] px-1"}
                                           />
-                                        </>
-                                      ) : (
-                                        <>
-                                          {employee.myr_achievements &&
-                                            employee.myr_results ? (
-                                            <Badge
-                                              message={"Graded"}
-                                              type="success"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : !employee.myr_achievements &&
-                                            employee.myr_results ? (
-                                            <Badge
-                                              message={"Not Submitted/Graded"}
-                                              type="success"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : employee.myr_achievements &&
-                                            !employee.myr_results ? (
-                                            <Badge
-                                              message={"Achievements Submitted"}
-                                              type="warning"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : !employee.myr_achievements &&
-                                            !employee.myr_results ? (
-                                            <Badge
-                                              message={"Awaiting Submission"}
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : (
-                                            <Badge
-                                              message={"Internal Error"}
-                                              type="failure"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          )}
-                                        </>)}
-                                    </>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                <div className="flex items-center justify-center pt-2">
-                                  {!tqisColumnAllFalse ? (
-                                    <>
-                                      {employee.tq_achievements &&
-                                        employee.tq_results ? (
-                                        <Badge
-                                          message={"Graded"}
-                                          type="success"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : !employee.tq_achievements &&
-                                        employee.tq_results ? (
-                                        <Badge
-                                          message={"Not Submitted/Graded"}
-                                          type="success"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : employee.tq_achievements &&
-                                        !employee.tq_results ? (
-                                        <Badge
-                                          message={"Achievements Submitted"}
-                                          type="warning"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : !employee.tq_achievements &&
-                                        !employee.tq_results ? (
-                                        <Badge
-                                          message={"Awaiting Submission"}
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : (
-                                        <Badge
-                                          message={"Internal Error"}
-                                          type="failure"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      )}
-                                    </>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                <div className="flex items-center justify-center pt-2">
-                                  {!yeeisColumnAllFalse ? (
-                                    <>
-                                      {employee.yee_rater_1 || employee.yee_rater_2 || employee.yee_rater_3 ? (
-                                        <>
+                                        ) : !employee.myr_achievements &&
+                                          employee.myr_results ? (
                                           <Badge
-                                            message={"Approved"}
+                                            message={"Not Submitted/Graded"}
                                             type="success"
                                             className={"text-[.8rem] px-1"}
                                           />
-                                        </>
-                                      ) : (
-                                        <>
-                                          {employee.yee_achievements &&
-                                            employee.yee_results ? (
-                                            <Badge
-                                              message={"Graded"}
-                                              type="success"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : !employee.yee_achievements &&
-                                            employee.yee_results ? (
-                                            <Badge
-                                              message={"Not Submitted/Graded"}
-                                              type="success"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : employee.yee_achievements &&
-                                            !employee.yee_results ? (
-                                            <Badge
-                                              message={"Achievements Submitted"}
-                                              type="warning"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : !employee.yee_achievements &&
-                                            !employee.yee_results ? (
-                                            <Badge
-                                              message={"Awaiting Submission"}
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          ) : (
-                                            <Badge
-                                              message={"Internal Error"}
-                                              type="failure"
-                                              className={"text-[.8rem] px-1"}
-                                            />
-                                          )}
-                                        </>)}
-                                    </>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                <div className="flex items-center justify-center pt-2">
-                                  {!yeeagreedisColumnAllFalse ? (
-                                    <>
-                                      {employee.yee_results &&
-                                        employee.agreed_rating ? (
+                                        ) : employee.myr_achievements &&
+                                          !employee.myr_results ? (
+                                          <Badge
+                                            message={"Achievements Submitted"}
+                                            type="warning"
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        ) : !employee.myr_achievements &&
+                                          !employee.myr_results ? (
+                                          <Badge
+                                            message={"Awaiting Submission"}
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        ) : (
+                                          <Badge
+                                            message={"Internal Error"}
+                                            type="failure"
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        )}
+                                      </>)}
+                                  </>
+                                ) : (
+                                  "-"
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="flex items-center justify-center pt-2">
+                                {!tqisColumnAllFalse ? (
+                                  <>
+                                    {employee.tq_achievements &&
+                                      employee.tq_results ? (
+                                      <Badge
+                                        message={"Graded"}
+                                        type="success"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : !employee.tq_achievements &&
+                                      employee.tq_results ? (
+                                      <Badge
+                                        message={"Not Submitted/Graded"}
+                                        type="success"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : employee.tq_achievements &&
+                                      !employee.tq_results ? (
+                                      <Badge
+                                        message={"Achievements Submitted"}
+                                        type="warning"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : !employee.tq_achievements &&
+                                      !employee.tq_results ? (
+                                      <Badge
+                                        message={"Awaiting Submission"}
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : (
+                                      <Badge
+                                        message={"Internal Error"}
+                                        type="failure"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    )}
+                                  </>
+                                ) : (
+                                  "-"
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="flex items-center justify-center pt-2">
+                                {!yeeisColumnAllFalse ? (
+                                  <>
+                                    {employee.yee_rater_1 || employee.yee_rater_2 || employee.yee_rater_3 ? (
+                                      <>
                                         <Badge
-                                          message={"Graded"}
+                                          message={"Approved"}
                                           type="success"
                                           className={"text-[.8rem] px-1"}
                                         />
-                                      ) : employee.yee_results &&
-                                        !employee.agreed_rating ? (
-                                        <Badge
-                                          message={"Waiting for Agreement"}
-                                          type="warning"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : !employee.yee_results &&
-                                        !employee.agreed_rating ? (
-                                        <Badge
-                                          message={"Not Yet Graded"}
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      ) : (
-                                        <Badge
-                                          message={"Internal Error"}
-                                          type="failure"
-                                          className={"text-[.8rem] px-1"}
-                                        />
-                                      )}
-                                    </>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </div>
-                              </td>
-                              <td>
-                                <TrackingAction
-                                  toggleActionVisibility={toggleActionVisibility}
-                                  sp_id={employee.sp_id}
-                                  employee_id={employee.employee_id}
-                                  first_name={employee.first_name}
-                                  myr_results={employee.myr_results}
-                                  yee_results={employee.yee_results}
-                                  myr_achievements={employee.myr_achievements}
-                                  yee_achievements={employee.yee_achievements}
-                                />
-                              </td>
-                            </>
-                          ) : null}
-                      </tr>
+                                      </>
+                                    ) : (
+                                      <>
+                                        {employee.yee_achievements &&
+                                          employee.yee_results ? (
+                                          <Badge
+                                            message={"Graded"}
+                                            type="success"
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        ) : !employee.yee_achievements &&
+                                          employee.yee_results ? (
+                                          <Badge
+                                            message={"Not Submitted/Graded"}
+                                            type="success"
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        ) : employee.yee_achievements &&
+                                          !employee.yee_results ? (
+                                          <Badge
+                                            message={"Achievements Submitted"}
+                                            type="warning"
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        ) : !employee.yee_achievements &&
+                                          !employee.yee_results ? (
+                                          <Badge
+                                            message={"Awaiting Submission"}
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        ) : (
+                                          <Badge
+                                            message={"Internal Error"}
+                                            type="failure"
+                                            className={"text-[.8rem] px-1"}
+                                          />
+                                        )}
+                                      </>)}
+                                  </>
+                                ) : (
+                                  "-"
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="flex items-center justify-center pt-2">
+                                {!yeeagreedisColumnAllFalse ? (
+                                  <>
+                                    {employee.yee_results &&
+                                      employee.agreed_rating ? (
+                                      <Badge
+                                        message={"Graded"}
+                                        type="success"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : employee.yee_results &&
+                                      !employee.agreed_rating ? (
+                                      <Badge
+                                        message={"Waiting for Agreement"}
+                                        type="warning"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : !employee.yee_results &&
+                                      !employee.agreed_rating ? (
+                                      <Badge
+                                        message={"Not Yet Graded"}
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    ) : (
+                                      <Badge
+                                        message={"Internal Error"}
+                                        type="failure"
+                                        className={"text-[.8rem] px-1"}
+                                      />
+                                    )}
+                                  </>
+                                ) : (
+                                  "-"
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <TrackingAction
+                                toggleActionVisibility={toggleActionVisibility}
+                                sp_id={employee.sp_id}
+                                employee_id={employee.employee_id}
+                                first_name={employee.first_name}
+                                myr_results={employee.myr_results}
+                                yee_results={employee.yee_results}
+                                myr_achievements={employee.myr_achievements}
+                                yee_achievements={employee.yee_achievements}
+                              />
+                            </td>
+
+                          </tr>
+                        ) : null}
+                      </React.Fragment>
                     ))}
                 </tbody>
               </table>

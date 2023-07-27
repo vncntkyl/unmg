@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2023 at 02:39 AM
--- Server version: 10.4.20-MariaDB
--- PHP Version: 8.0.9
+-- Generation Time: Jul 27, 2023 at 11:59 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `hr_company` (
   `company_id` int(11) NOT NULL,
   `company_name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_company`
@@ -51,7 +51,7 @@ CREATE TABLE `hr_departments` (
   `department_name` varchar(255) NOT NULL,
   `deleted` int(11) NOT NULL DEFAULT 0,
   `inactive` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_departments`
@@ -70,21 +70,24 @@ INSERT INTO `hr_departments` (`department_id`, `company_id`, `department_name`, 
 CREATE TABLE `hr_eval_form` (
   `hr_eval_form_id` int(11) NOT NULL,
   `users_id` int(11) NOT NULL,
+  `myr_rater_1` int(11) NOT NULL,
+  `myr_rater_2` int(11) NOT NULL,
+  `myr_rater_3` int(11) NOT NULL,
   `rater_1` int(11) DEFAULT NULL,
   `rater_2` int(11) DEFAULT NULL,
   `rater_3` int(11) DEFAULT NULL,
   `ratees_comment` text NOT NULL,
   `recommendation` text NOT NULL,
   `CreationDate` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form`
 --
 
-INSERT INTO `hr_eval_form` (`hr_eval_form_id`, `users_id`, `rater_1`, `rater_2`, `rater_3`, `ratees_comment`, `recommendation`, `CreationDate`) VALUES
-(1, 19, NULL, NULL, NULL, '', '', 1),
-(2, 13, NULL, NULL, NULL, '', '', 0);
+INSERT INTO `hr_eval_form` (`hr_eval_form_id`, `users_id`, `myr_rater_1`, `myr_rater_2`, `myr_rater_3`, `rater_1`, `rater_2`, `rater_3`, `ratees_comment`, `recommendation`, `CreationDate`) VALUES
+(1, 19, 0, 0, 0, NULL, NULL, NULL, '', '', 1),
+(2, 13, 0, 0, 0, NULL, NULL, NULL, '', '', 1);
 
 -- --------------------------------------------------------
 
@@ -97,7 +100,7 @@ CREATE TABLE `hr_eval_form_fp` (
   `eval_form_id` int(11) NOT NULL,
   `created_by` int(11) NOT NULL,
   `approved_by` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_fp`
@@ -119,18 +122,18 @@ CREATE TABLE `hr_eval_form_pillars` (
   `hr_eval_form_fp_id` int(11) NOT NULL,
   `pillar_id` int(11) NOT NULL,
   `pillar_percentage` decimal(10,0) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_pillars`
 --
 
 INSERT INTO `hr_eval_form_pillars` (`hr_eval_form_pillar_id`, `hr_eval_form_id`, `hr_eval_form_fp_id`, `pillar_id`, `pillar_percentage`) VALUES
-(1, 1, 1, 1, '30'),
-(2, 1, 1, 2, '35'),
-(3, 1, 1, 3, '20'),
-(4, 1, 1, 4, '15'),
-(5, 2, 2, 1, '25');
+(1, 1, 1, 1, 30),
+(2, 1, 1, 2, 35),
+(3, 1, 1, 3, 20),
+(4, 1, 1, 4, 15),
+(5, 2, 2, 1, 25);
 
 -- --------------------------------------------------------
 
@@ -141,7 +144,7 @@ INSERT INTO `hr_eval_form_pillars` (`hr_eval_form_pillar_id`, `hr_eval_form_id`,
 CREATE TABLE `hr_eval_form_sp` (
   `hr_eval_form_sp_id` int(11) NOT NULL,
   `eval_form_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp`
@@ -159,30 +162,32 @@ INSERT INTO `hr_eval_form_sp` (`hr_eval_form_sp_id`, `eval_form_id`) VALUES
 
 CREATE TABLE `hr_eval_form_sp_fq` (
   `ID` int(11) NOT NULL,
+  `achievements` text NOT NULL,
   `results` text NOT NULL,
+  `weighted` float(10,2) NOT NULL,
   `remarks` text NOT NULL,
   `fq_review_date` date NOT NULL,
   `hr_eval_form_kpi_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_fq`
 --
 
-INSERT INTO `hr_eval_form_sp_fq` (`ID`, `results`, `remarks`, `fq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, '1', '', '0000-00-00', 1, 1),
-(2, '1', '', '0000-00-00', 2, 1),
-(3, '1', '', '0000-00-00', 3, 1),
-(4, '1', '', '0000-00-00', 4, 1),
-(5, '1', '', '0000-00-00', 5, 1),
-(6, '1', '', '0000-00-00', 6, 1),
-(7, '1', '', '0000-00-00', 7, 1),
-(8, '1', '', '0000-00-00', 8, 1),
-(9, '1', '', '0000-00-00', 9, 1),
-(10, '1', '', '0000-00-00', 10, 1),
-(11, '1', '', '0000-00-00', 11, 1),
-(12, '1', '', '0000-00-00', 12, 1);
+INSERT INTO `hr_eval_form_sp_fq` (`ID`, `achievements`, `results`, `weighted`, `remarks`, `fq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+(1, 'hello', '', 0.00, '', '0000-00-00', 1, 1),
+(2, '', '', 0.00, '', '0000-00-00', 2, 1),
+(3, '', '', 0.00, '', '0000-00-00', 3, 1),
+(4, '', '', 0.00, '', '0000-00-00', 4, 1),
+(5, '', '', 0.00, '', '0000-00-00', 5, 1),
+(6, '', '', 0.00, '', '0000-00-00', 6, 1),
+(7, '', '', 0.00, '', '0000-00-00', 7, 1),
+(8, '', '', 0.00, '', '0000-00-00', 8, 1),
+(9, '', '', 0.00, '', '0000-00-00', 9, 1),
+(10, '', '', 0.00, '', '0000-00-00', 10, 1),
+(11, '', '', 0.00, '', '0000-00-00', 11, 1),
+(12, '', '', 0.00, '', '0000-00-00', 12, 1);
 
 -- --------------------------------------------------------
 
@@ -194,7 +199,7 @@ CREATE TABLE `hr_eval_form_sp_fq_rating` (
   `fq_rating_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL,
   `ratee_achievement` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_fq_rating`
@@ -211,31 +216,32 @@ INSERT INTO `hr_eval_form_sp_fq_rating` (`fq_rating_id`, `hr_eval_form_sp_id`, `
 
 CREATE TABLE `hr_eval_form_sp_myr` (
   `ID` int(11) NOT NULL,
+  `achievements` text NOT NULL,
   `results` text NOT NULL,
   `status` text NOT NULL,
   `remarks` text NOT NULL,
   `myr_review_date` date NOT NULL,
   `hr_eval_form_kpi_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_myr`
 --
 
-INSERT INTO `hr_eval_form_sp_myr` (`ID`, `results`, `status`, `remarks`, `myr_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, '1', '', '', '0000-00-00', 1, 1),
-(2, '1', '', '', '0000-00-00', 2, 1),
-(3, '1', '', '', '0000-00-00', 3, 1),
-(4, '1', '', '', '0000-00-00', 4, 1),
-(5, '1', '', '', '0000-00-00', 5, 1),
-(6, '1', '', '', '0000-00-00', 6, 1),
-(7, '1', '', '', '0000-00-00', 7, 1),
-(8, '1', '', '', '0000-00-00', 8, 1),
-(9, '1', '', '', '0000-00-00', 9, 1),
-(10, '1', '', '', '0000-00-00', 10, 1),
-(11, '1', '', '', '0000-00-00', 11, 1),
-(12, '1', '', '', '0000-00-00', 12, 1);
+INSERT INTO `hr_eval_form_sp_myr` (`ID`, `achievements`, `results`, `status`, `remarks`, `myr_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+(1, '', '1', '', '', '0000-00-00', 1, 1),
+(2, '', '1', '', '', '0000-00-00', 2, 1),
+(3, '', '1', '', '', '0000-00-00', 3, 1),
+(4, '', '1', '', '', '0000-00-00', 4, 1),
+(5, '', '1', '', '', '0000-00-00', 5, 1),
+(6, '', '1', '', '', '0000-00-00', 6, 1),
+(7, '', '1', '', '', '0000-00-00', 7, 1),
+(8, '', '1', '', '', '0000-00-00', 8, 1),
+(9, '', '1', '', '', '0000-00-00', 9, 1),
+(10, '', '1', '', '', '0000-00-00', 10, 1),
+(11, '', '1', '', '', '0000-00-00', 11, 1),
+(12, '', '1', '', '', '0000-00-00', 12, 1);
 
 -- --------------------------------------------------------
 
@@ -250,7 +256,7 @@ CREATE TABLE `hr_eval_form_sp_myr_rating` (
   `rater_1` int(11) DEFAULT NULL,
   `rater_2` int(11) DEFAULT NULL,
   `rater_3` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_myr_rating`
@@ -274,17 +280,17 @@ CREATE TABLE `hr_eval_form_sp_pillar_ratings` (
   `ThirdQuarterTotalResult` decimal(10,2) NOT NULL,
   `fourthQuarterTotalResult` decimal(10,2) DEFAULT NULL COMMENT 'for Probationary',
   `YearEndTotalResult` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_pillar_ratings`
 --
 
 INSERT INTO `hr_eval_form_sp_pillar_ratings` (`eval_form_sp_pillar_ratings_id`, `eval_form_pillars_id`, `firstQuarterTotalResult`, `midYearTotalResult`, `ThirdQuarterTotalResult`, `fourthQuarterTotalResult`, `YearEndTotalResult`) VALUES
-(1, 1, '0.35', '0.70', '1.05', NULL, '1.40'),
-(2, 2, '0.30', '0.60', '0.90', NULL, '1.20'),
-(3, 3, '0.20', '0.40', '0.60', NULL, '0.60'),
-(4, 4, '0.15', '0.30', '0.45', NULL, '0.45');
+(1, 1, 0.35, 0.70, 1.05, NULL, 1.40),
+(2, 2, 0.30, 0.60, 0.90, NULL, 1.20),
+(3, 3, 0.20, 0.40, 0.60, NULL, 0.60),
+(4, 4, 0.15, 0.30, 0.45, NULL, 0.45);
 
 -- --------------------------------------------------------
 
@@ -300,14 +306,14 @@ CREATE TABLE `hr_eval_form_sp_quarterly_ratings` (
   `ThirdQuarterRating` decimal(10,2) NOT NULL,
   `FourthQuarterRating` decimal(10,2) DEFAULT NULL COMMENT 'for Probationary',
   `YearEndRating` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_quarterly_ratings`
 --
 
 INSERT INTO `hr_eval_form_sp_quarterly_ratings` (`quarterly_ratings_id`, `eval_form_id`, `FirstQuarterRating`, `MidYearRating`, `ThirdQuarterRating`, `FourthQuarterRating`, `YearEndRating`) VALUES
-(1, 1, '1.00', '2.00', '3.00', NULL, '3.65');
+(1, 1, 1.00, 2.00, 3.00, NULL, 3.65);
 
 -- --------------------------------------------------------
 
@@ -317,30 +323,31 @@ INSERT INTO `hr_eval_form_sp_quarterly_ratings` (`quarterly_ratings_id`, `eval_f
 
 CREATE TABLE `hr_eval_form_sp_tq` (
   `ID` int(11) NOT NULL,
+  `achievements` text NOT NULL,
   `results` text NOT NULL,
   `remarks` text NOT NULL,
   `tq_review_date` date NOT NULL,
   `hr_eval_form_kpi_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_tq`
 --
 
-INSERT INTO `hr_eval_form_sp_tq` (`ID`, `results`, `remarks`, `tq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, '', '', '0000-00-00', 1, 1),
-(2, '', '', '0000-00-00', 2, 1),
-(3, '', '', '0000-00-00', 3, 1),
-(4, '', '', '0000-00-00', 4, 1),
-(5, '', '', '0000-00-00', 5, 1),
-(6, '', '', '0000-00-00', 6, 1),
-(7, '', '', '0000-00-00', 7, 1),
-(8, '', '', '0000-00-00', 8, 1),
-(9, '', '', '0000-00-00', 9, 1),
-(10, '', '', '0000-00-00', 10, 1),
-(11, '', '', '0000-00-00', 11, 1),
-(12, '', '', '0000-00-00', 12, 1);
+INSERT INTO `hr_eval_form_sp_tq` (`ID`, `achievements`, `results`, `remarks`, `tq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+(1, '', '', '', '0000-00-00', 1, 1),
+(2, '', '', '', '0000-00-00', 2, 1),
+(3, '', '', '', '0000-00-00', 3, 1),
+(4, '', '', '', '0000-00-00', 4, 1),
+(5, '', '', '', '0000-00-00', 5, 1),
+(6, '', '', '', '0000-00-00', 6, 1),
+(7, '', '', '', '0000-00-00', 7, 1),
+(8, '', '', '', '0000-00-00', 8, 1),
+(9, '', '', '', '0000-00-00', 9, 1),
+(10, '', '', '', '0000-00-00', 10, 1),
+(11, '', '', '', '0000-00-00', 11, 1),
+(12, '', '', '', '0000-00-00', 12, 1);
 
 -- --------------------------------------------------------
 
@@ -352,7 +359,7 @@ CREATE TABLE `hr_eval_form_sp_tq_rating` (
   `tq_rating_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL,
   `ratee_achievement` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_tq_rating`
@@ -369,6 +376,7 @@ INSERT INTO `hr_eval_form_sp_tq_rating` (`tq_rating_id`, `hr_eval_form_sp_id`, `
 
 CREATE TABLE `hr_eval_form_sp_yee` (
   `ID` int(11) NOT NULL,
+  `achievements` text NOT NULL,
   `results` text NOT NULL,
   `remarks` text NOT NULL,
   `agreed_rating` decimal(10,0) NOT NULL,
@@ -376,25 +384,25 @@ CREATE TABLE `hr_eval_form_sp_yee` (
   `yee_review_date` date NOT NULL,
   `hr_eval_form_kpi_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_yee`
 --
 
-INSERT INTO `hr_eval_form_sp_yee` (`ID`, `results`, `remarks`, `agreed_rating`, `wtd_rating`, `yee_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, '', '', '0', '0', '0000-00-00', 1, 1),
-(2, '', '', '0', '0', '0000-00-00', 2, 1),
-(3, '', '', '0', '0', '0000-00-00', 3, 1),
-(4, '', '', '0', '0', '0000-00-00', 4, 1),
-(5, '', '', '0', '0', '0000-00-00', 5, 1),
-(6, '', '', '0', '0', '0000-00-00', 6, 1),
-(7, '', '', '0', '0', '0000-00-00', 7, 1),
-(8, '', '', '0', '0', '0000-00-00', 8, 1),
-(9, '', '', '0', '0', '0000-00-00', 9, 1),
-(10, '', '', '0', '0', '0000-00-00', 10, 1),
-(11, '', '', '0', '0', '0000-00-00', 11, 1),
-(12, '', '', '0', '0', '0000-00-00', 12, 1);
+INSERT INTO `hr_eval_form_sp_yee` (`ID`, `achievements`, `results`, `remarks`, `agreed_rating`, `wtd_rating`, `yee_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
+(1, '', '', '', 0, 0, '0000-00-00', 1, 1),
+(2, '', '', '', 0, 0, '0000-00-00', 2, 1),
+(3, '', '', '', 0, 0, '0000-00-00', 3, 1),
+(4, '', '', '', 0, 0, '0000-00-00', 4, 1),
+(5, '', '', '', 0, 0, '0000-00-00', 5, 1),
+(6, '', '', '', 0, 0, '0000-00-00', 6, 1),
+(7, '', '', '', 0, 0, '0000-00-00', 7, 1),
+(8, '', '', '', 0, 0, '0000-00-00', 8, 1),
+(9, '', '', '', 0, 0, '0000-00-00', 9, 1),
+(10, '', '', '', 0, 0, '0000-00-00', 10, 1),
+(11, '', '', '', 0, 0, '0000-00-00', 11, 1),
+(12, '', '', '', 0, 0, '0000-00-00', 12, 1);
 
 -- --------------------------------------------------------
 
@@ -406,14 +414,14 @@ CREATE TABLE `hr_eval_form_sp_yee_rating` (
   `yee_rating_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL,
   `ratee_achievement` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_eval_form_sp_yee_rating`
 --
 
 INSERT INTO `hr_eval_form_sp_yee_rating` (`yee_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`) VALUES
-(1, 1, '');
+(1, 1, 'gfddfgdgdfgg');
 
 -- --------------------------------------------------------
 
@@ -426,25 +434,25 @@ CREATE TABLE `hr_kpi` (
   `objective_id` int(11) NOT NULL,
   `kpi_desc` text NOT NULL,
   `kpi_weight` decimal(10,0) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_kpi`
 --
 
 INSERT INTO `hr_kpi` (`kpi_id`, `objective_id`, `kpi_desc`, `kpi_weight`) VALUES
-(1, 1, 'Accomplishments need to be at least 85% accurate.', '10'),
-(2, 1, 'Tasks need to be at least 85% complete.', '10'),
-(3, 1, 'Completion should be within the set timeline.', '10'),
-(4, 2, 'Complete and complete all pending lark approval procedures.', '10'),
-(5, 2, 'Correct and complete all information to be indicated on organizational management.', '5'),
-(6, 3, 'Receive a satisfactory rating from the key stakeholders.', '20'),
-(7, 4, 'proper and comprehensive process documentation for IT activities, services, and processes.', '10'),
-(8, 4, 'signed-off IT process documentations', '5'),
-(9, 4, 'signed-off IT activities documentations.', '5'),
-(10, 5, 'Processes', '5'),
-(11, 5, 'Assessments', '5'),
-(12, 5, 'Recording/Monitoring', '5');
+(1, 1, 'Accomplishments need to be at least 85% accurate.', 10),
+(2, 1, 'Tasks need to be at least 85% complete.', 10),
+(3, 1, 'Completion should be within the set timeline.', 10),
+(4, 2, 'Complete and complete all pending lark approval procedures.', 10),
+(5, 2, 'Correct and complete all information to be indicated on organizational management.', 5),
+(6, 3, 'Receive a satisfactory rating from the key stakeholders.', 20),
+(7, 4, 'proper and comprehensive process documentation for IT activities, services, and processes.', 10),
+(8, 4, 'signed-off IT process documentations', 5),
+(9, 4, 'signed-off IT activities documentations.', 5),
+(10, 5, 'Processes', 5),
+(11, 5, 'Assessments', 5),
+(12, 5, 'Recording/Monitoring', 5);
 
 -- --------------------------------------------------------
 
@@ -456,7 +464,7 @@ CREATE TABLE `hr_kpi_year_duration` (
   `kpi_year_duration_id` int(11) NOT NULL,
   `from_date` date NOT NULL,
   `to_date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_kpi_year_duration`
@@ -464,7 +472,8 @@ CREATE TABLE `hr_kpi_year_duration` (
 
 INSERT INTO `hr_kpi_year_duration` (`kpi_year_duration_id`, `from_date`, `to_date`) VALUES
 (1, '2023-01-29', '2023-12-21'),
-(2, '2021-01-31', '2021-12-23');
+(2, '2021-01-31', '2021-12-23'),
+(3, '2023-07-25', '2024-07-31');
 
 -- --------------------------------------------------------
 
@@ -477,7 +486,7 @@ CREATE TABLE `hr_objectives` (
   `hr_eval_form_pillar_id` int(11) NOT NULL,
   `hr_eval_form_fp_id` int(11) NOT NULL,
   `objective` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_objectives`
@@ -500,7 +509,7 @@ CREATE TABLE `hr_pillars` (
   `pillar_id` int(11) NOT NULL,
   `pillar_name` varchar(255) NOT NULL,
   `pillar_description` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_pillars`
@@ -523,14 +532,16 @@ CREATE TABLE `hr_request_discussion` (
   `consultation_subject` text NOT NULL,
   `description` text NOT NULL,
   `creation_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_request_discussion`
 --
 
 INSERT INTO `hr_request_discussion` (`ID`, `consultation_subject`, `description`, `creation_date`) VALUES
-(1, 'Hello', 'Goodbye', '2023-07-16 23:34:55');
+(1, 'Hello', 'Goodbye', '2023-07-16 23:34:55'),
+(2, 'sdfsfsfd', 'sdfsfsdfsdf', '2023-07-17 03:09:35'),
+(3, 'title', 'hello', '2023-07-18 07:27:01');
 
 -- --------------------------------------------------------
 
@@ -543,7 +554,7 @@ CREATE TABLE `hr_target_metrics` (
   `target_metrics_score` int(11) NOT NULL,
   `target_metrics_desc` text NOT NULL,
   `kpi_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_target_metrics`
@@ -630,7 +641,7 @@ CREATE TABLE `hr_users` (
   `hire_date` date DEFAULT NULL,
   `request_consult` int(11) DEFAULT NULL,
   `for_regularization` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_users`
@@ -645,7 +656,7 @@ INSERT INTO `hr_users` (`users_id`, `employee_id`, `picture`, `salutation`, `las
 (14, 21020804, NULL, NULL, 'Ramilo', 'Michael', 'Lauta', NULL, 'Mike', 1, 1, 'Information Systems & Technology Integration', 'Information Technology & Systems Integration Head', 'regular', '09991113498', 'Makati, Philippines', 88010102, 88010102, 88010102, 'LOCAL', 'Filipino', '2021-02-08', NULL, NULL),
 (15, 22111602, NULL, NULL, 'Ramos', 'Lorraine Ann', '.', NULL, 'Raine', 1, 1, 'Information Systems & Technology Integration', 'Web Developer', 'regular', '09991113498', 'Makati, Philippines', 21020804, 21020804, 21020804, 'LOCAL', 'Filipino', '2023-05-29', NULL, NULL),
 (16, 88010102, NULL, NULL, 'Lim', 'Daniel Christopher', 'Chua', NULL, 'Danny', 1, 11, 'Board Of Director', 'Ceo/managing Director', 'regular', '09991113498', 'Makati, Philippines', NULL, NULL, NULL, 'LOCAL', 'Filipino', '1991-03-01', NULL, NULL),
-(19, 23052906, NULL, 'Mr.', 'Perez', 'Norvin Kyle', 'Benitez', NULL, 'Norvin', 1, 1, 'Information Systems & Technology Integration', 'Developer', 'regular', '09123456789', 'malate manila', 22081701, 12010238, 21020804, 'LOCAL', 'Filipino', '2023-07-17', 1, NULL);
+(19, 23052906, NULL, 'Mr.', 'Perez', 'Norvin Kyle', 'Benitez', NULL, 'Norvin', 1, 1, 'Information Systems & Technology Integration', 'Developer', 'regular', '09123456789', 'malate manila', 22081701, 12010238, 21020804, 'LOCAL', 'Filipino', '2023-07-17', 3, NULL);
 
 -- --------------------------------------------------------
 
@@ -662,14 +673,14 @@ CREATE TABLE `hr_user_accounts` (
   `user_type` int(11) NOT NULL COMMENT 'company job level',
   `user_status` enum('active','resigned','terminated') NOT NULL COMMENT 'employment status',
   `account_status` enum('active','inactive','deleted') NOT NULL COMMENT 'system account status'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_user_accounts`
 --
 
 INSERT INTO `hr_user_accounts` (`account_id`, `users_id`, `username`, `password`, `email_address`, `user_type`, `user_status`, `account_status`) VALUES
-(1, 1, 'admin', '0192023a7bbd73250516f069df18b500', 'admin@admin.com', 1, 'active', 'active'),
+(1, 1, 'admin', '17c4520f6cfd1ab53d8745e84681eb49', 'admin@admin.com', 1, 'active', 'active'),
 (2, 10, '22081701', '74acfff97151e8467617bc6f3778ad61', 'christopher.leynes@unitedneon.com', 6, 'active', 'active'),
 (3, 11, '12010238', '28aae2e53f32e77253668682916113d4', 'jobert.lim@unitedneon.com', 6, 'active', 'active'),
 (4, 12, '21100522', 'ca63fafb3fbb76875fd35fb58ac4258b', 'anthonyjr..monserrate@unitedneon.com', 6, 'active', 'active'),
@@ -677,7 +688,7 @@ INSERT INTO `hr_user_accounts` (`account_id`, `users_id`, `username`, `password`
 (6, 14, '21020804', '0192023a7bbd73250516f069df18b500', 'michael.ramilo@unitedneon.com', 4, 'active', 'active'),
 (7, 15, '22111602', '4f6e87d9dfa01c7a7b7704f554e649e5', 'lorraineann.ramos@unitedneon.com', 6, 'active', 'active'),
 (8, 16, '88010102', '4f8f5631fd4406c206cfb7c4b8cf8fd9', 'danielchristopher.lim@unitedneon.com', 3, 'active', 'active'),
-(9, 19, 'norvinkyle', '0192023a7bbd73250516f069df18b500', 'norvinkyle@gmail.com', 4, 'active', 'active');
+(9, 19, 'norvinkyle', '0192023a7bbd73250516f069df18b500', 'norvinkyle@gmail.com', 6, 'active', 'active');
 
 -- --------------------------------------------------------
 
@@ -688,7 +699,7 @@ INSERT INTO `hr_user_accounts` (`account_id`, `users_id`, `username`, `password`
 CREATE TABLE `hr_user_level` (
   `job_level_id` int(11) NOT NULL,
   `job_level_name` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hr_user_level`
@@ -1003,7 +1014,7 @@ ALTER TABLE `hr_kpi`
 -- AUTO_INCREMENT for table `hr_kpi_year_duration`
 --
 ALTER TABLE `hr_kpi_year_duration`
-  MODIFY `kpi_year_duration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `kpi_year_duration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `hr_objectives`
@@ -1021,7 +1032,7 @@ ALTER TABLE `hr_pillars`
 -- AUTO_INCREMENT for table `hr_request_discussion`
 --
 ALTER TABLE `hr_request_discussion`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `hr_target_metrics`
