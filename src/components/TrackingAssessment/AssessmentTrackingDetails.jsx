@@ -20,7 +20,7 @@ export default function AssessmentTrackingDetails({ quarter, emp_id, workYear })
           },
         });
         setAchievements(response.data);
-console.log(response.data);
+        console.log(response.data);
         const achievements = response.data.map((item) => {
           return {
             fq_achievements: item.fq_achievements != '' && item.fq_achievements != null,
@@ -76,33 +76,41 @@ console.log(response.data);
                               <span className="w-full flex justify-center">
                                 Please wait for your supervisor to grade your KPI.
                               </span>
-                              <span className="w-full block pt-8">
+                              <span className="w-full block pt-8 pb-2">
                                 Achievements Submitted:
                               </span>
                               <div className="bg-white rounded-md text-black font-normal">
-                              <table className="w-full">
-                                <thead>
-                                  <tr>
-                                    <td className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md"><div className="text-white flex justify-center">KPI Description</div></td>
-                                    <td className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md"><div className="text-white flex justify-center">Achievements</div></td>
-                                  </tr>
-                                </thead>
-                                {achievements.map((achievement) => (
-                                  <tbody key={achievement.kpi_id}>
-                                    <tr className="shadow">
-                                      <td><div className="px-10 pb-2"><ul className="list-disc"><li>{achievement.kpi_desc}</li></ul></div></td>
-                                      <td><div className="px-10">{achievement.fq_achievements && <ul className="list-disc"><li>{achievement.fq_achievements}</li></ul>}</div></td>
+                                <table className="w-full">
+                                  <thead>
+                                    <tr>
+                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md"><div className="text-white flex justify-center">KPI Description</div></td>
+                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md"><div className="text-white flex justify-center">Achievements</div></td>
                                     </tr>
-                                  </tbody>
-                                ))}
-                              </table>
+                                  </thead>
+                                  {achievements.map((achievement) => (
+                                    <tbody key={achievement.kpi_id}>
+                                      <tr className="shadow">
+                                        <td><div className="px-10 pb-2"><ul className="list-disc"><li>{achievement.kpi_desc}</li></ul></div></td>
+                                        <td><div className="px-10">{achievement.fq_achievements && <ul className="list-disc"><li>{achievement.fq_achievements}</li></ul>}</div></td>
+                                      </tr>
+                                    </tbody>
+                                  ))}
+                                </table>
                               </div>
+                              <button
+                                  className="w-full lg:w-fit cursor-pointer transition-all font-normal bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                                  type="submit"
+                                >
+                                  Submit
+                                </button>
                             </React.Fragment>
-                          ) : (
+                          ) : ifAchievementsExists.fq_achievements && !checkresult.checkfq ? (
                             <>
-
+                              <span className="flex justify-center py-2">
+                                This quarter is still unavailable. Please submit achievements on the First Quarter
+                              </span>
                             </>
-                          )}
+                          ) : ""}
                       </>
                     )}
                   </React.Fragment>
@@ -127,54 +135,6 @@ console.log(response.data);
                 </div>
               </>
             )}
-            {/* {ifResultsExists && ifResultsExists.map((checkresult, resultIndex) => (
-                            <div key={resultIndex}>
-                                {checkresult.checkfq === true ? "" : (
-                                    <>
-                                        {
-                                            ifAchievementsExists.map((checkAchievement, achievementIndex) => (
-                                                <div key={achievementIndex}>
-                                                    {checkAchievement.fq_achievements === true ? (
-                                                        <>
-                                                            <div>
-                                                                <span className="w-full flex justify-center">
-                                                                    Please wait for your supervisor to grade your KPI.
-                                                                </span>
-                                                                <span className="w-full block pt-8">
-                                                                    Achievements Submitted:
-                                                                </span>
-                                                                <span className="w-full block pl-4">
-                                                                    {achievements.map((achievement) => achievement.fq_achievements)}
-                                                                </span>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <span className="flex justify-center py-2">
-                                                                You have not yet submitted your achievements for the {quarterName}.
-                                                            </span>
-                                                            <div className="flex justify-center py-2">    
-                                                            <a
-                                                                href="/tracking_and_assessment/create"
-                                                                className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-                                                                onClick={() => {
-                                                                    sessionStorage.setItem("assessment_quarter", quarter);
-                                                                }}
-                                                            >
-                                                                <AiOutlinePlus />
-                                                                Add Quarter Evaluation
-                                                            </a>
-                                                            </div>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            ))
-                                        }
-                                    </>
-                                )}
-
-                            </div>
-                        ))} */}
           </>
         ) : quarter == 2 ? (
           <>
