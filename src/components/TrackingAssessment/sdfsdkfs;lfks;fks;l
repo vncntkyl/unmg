@@ -1,32 +1,4 @@
 <>
-      {!checkScores && (
-        <AssessmentTrackingDetails quarter={quarter} emp_id={emp_id} />
-      )}
-      {checkScores && (
-        <div>
-          <div className="md:text-[.8rem] px-2 lg:text-[1rem]">
-            {pillarName.map((pillar, index) => (
-              <button
-                key={pillar.pillar_id}
-                className={`px-2 text-[1rem]
-                  ${index > 0 ? "border-1" : ""}
-                  ${index < pillarName.length - 1 ? "border-r" : ""}
-                  ${
-                    selectedPillar !== index
-                      ? "hover:border-b-2 border-b-un-red-light"
-                      : ""
-                  } 
-                  ${
-                    selectedPillar === index
-                      ? "border-b-4 border-b-un-red-light"
-                      : ""
-                  }`}
-                onClick={() => setSelectedPillar(index)}
-              >
-                {pillar.pillar_name}
-              </button>
-            ))}
-          </div>
 
           {pillarName
             .filter((pillar) => pillar.pillar_name === tabTitle.pillar_name)

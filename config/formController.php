@@ -515,7 +515,7 @@ class Form extends Controller
         AND hr_eval_form.CreationDate = :creation_date
         ORDER BY hr_pillars.pillar_id ASC
         ");
-    $this->statement->execute(['employee_id' => $empID,'creation_date' => $creation_date]);
+    $this->statement->execute(['employee_id' => $empID, 'creation_date' => $creation_date]);
     return $this->statement->fetchAll();
   }
 
@@ -645,101 +645,100 @@ class Form extends Controller
   function selectEmployeeAssessment($empID, $contractType = 'all', $workYear)
   {
     $sql = "SELECT
-        employee.users_id,
-        employee.employee_id AS employee_id,
-        employee.first_name,
-        employee.contract_type,
-        CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
-        CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
-        CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
-        CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
-        
-        hr_eval_form_sp_fq_rating.ratee_achievement AS fq_achievements,
-        hr_eval_form_sp_myr_rating.ratee_achievement AS myr_achievements,
-        hr_eval_form_sp_tq_rating.ratee_achievement AS tq_achievements,
-        hr_eval_form_sp_yee_rating.ratee_achievement AS yee_achievements,
-
-        hr_eval_form_sp_myr_rating.rater_1 AS myr_rater_1,
-        hr_eval_form_sp_myr_rating.rater_2 AS myr_rater_2,
-        hr_eval_form_sp_myr_rating.rater_3 AS myr_rater_3,
-        hr_eval_form.rater_1 AS yee_rater_1,
-        hr_eval_form.rater_2 AS yee_rater_2,
-        hr_eval_form.rater_3 AS yee_rater_3,
-        
-        hr_eval_form_sp.hr_eval_form_sp_id AS sp_id,
-        hr_eval_form_sp_fq.results AS fq_results,
-        hr_eval_form_sp_fq.remarks AS fq_remarks,
-        
-        hr_eval_form_sp_myr.results AS myr_results,
-        hr_eval_form_sp_myr.remarks AS myr_remarks,
-        
-        hr_eval_form_sp_tq.results AS tq_results,
-        hr_eval_form_sp_tq.remarks AS tq_remarks,
-        
-        hr_eval_form_sp_yee.results AS yee_results,
-        hr_eval_form_sp_yee.remarks AS yee_remarks,
-        hr_eval_form_sp_yee.agreed_rating AS agreed_rating
-
-        
-        FROM hr_users AS employee
-        
-        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
-        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
-        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator 
-        
-        LEFT JOIN
-        hr_eval_form ON hr_eval_form.users_id = employee.users_id
-        LEFT JOIN
-        hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
-        LEFT JOIN
-        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
-        LEFT JOIN
-        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
-        LEFT JOIN
-        hr_objectives ON hr_objectives.hr_eval_form_pillar_id = hr_eval_form_pillars.hr_eval_form_pillar_id
-        LEFT JOIN
-        hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
-        LEFT JOIN
-            hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
-         
-         LEFT JOIN
-            hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-          LEFT JOIN
-            hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-          LEFT JOIN
-            hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-          LEFT JOIN
-            hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-         
-        LEFT JOIN
-            hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
-        LEFT JOIN
-            hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id  
-        LEFT JOIN
-            hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
-        LEFT JOIN
-            hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
-            
-        WHERE 
-          (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
-         AND
-           hr_eval_form.CreationDate = :creationDate
+    employee.users_id,
+    employee.employee_id AS employee_id,
+    employee.first_name,
+    employee.contract_type,
+    CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
+    CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
+    CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
+    CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
+    hr_user_accounts.user_type,
+    IF(hr_eval_form.users_id IS NULL AND hr_eval_form.CreationDate IS NULL, 0, IF(hr_eval_form.CreationDate = :creation_date, 1, 0)) AS creation_date,
+    hr_eval_form_sp_fq_rating.ratee_achievement AS fq_achievements,
+    hr_eval_form_sp_myr_rating.ratee_achievement AS myr_achievements,
+    hr_eval_form_sp_tq_rating.ratee_achievement AS tq_achievements,
+    hr_eval_form_sp_yee_rating.ratee_achievement AS yee_achievements,
+  
+    hr_eval_form_sp_myr_rating.rater_1 AS myr_rater_1,
+    hr_eval_form_sp_myr_rating.rater_2 AS myr_rater_2,
+    hr_eval_form_sp_myr_rating.rater_3 AS myr_rater_3,
+    hr_eval_form.rater_1 AS yee_rater_1,
+    hr_eval_form.rater_2 AS yee_rater_2,
+    hr_eval_form.rater_3 AS yee_rater_3,
+    
+    hr_eval_form_sp.hr_eval_form_sp_id AS sp_id,
+    hr_eval_form_sp_fq.results AS fq_results,
+    hr_eval_form_sp_fq.remarks AS fq_remarks,
+    
+    hr_eval_form_sp_myr.results AS myr_results,
+    hr_eval_form_sp_myr.remarks AS myr_remarks,
+    
+    hr_eval_form_sp_tq.results AS tq_results,
+    hr_eval_form_sp_tq.remarks AS tq_remarks,
+    
+    hr_eval_form_sp_yee.results AS yee_results,
+    hr_eval_form_sp_yee.remarks AS yee_remarks,
+    hr_eval_form_sp_yee.agreed_rating AS agreed_rating
+  
+    
+    FROM hr_users AS employee
+    
+    LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
+    LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
+    LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator 
+    LEFT JOIN 
+    hr_user_accounts ON hr_user_accounts.users_id = employee.users_id
+    LEFT JOIN
+    hr_eval_form ON hr_eval_form.users_id = employee.users_id
+    LEFT JOIN
+    hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+    hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+    LEFT JOIN
+    hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN
+    hr_objectives ON hr_objectives.hr_eval_form_pillar_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+    LEFT JOIN
+    hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+    LEFT JOIN
+        hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+     
+     LEFT JOIN
+        hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+      LEFT JOIN
+        hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+      LEFT JOIN
+        hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+      LEFT JOIN
+        hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
+     
+    LEFT JOIN
+        hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
+    LEFT JOIN
+        hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id  
+    LEFT JOIN
+        hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+    LEFT JOIN
+        hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
          ";
     if ($contractType !== "all") {
-      $sql .= " AND employee.contract_type = :contract_type ORDER BY employee.users_id";
-      $this->statement->execute([':rater_id' => $empID, ':contract_type' => $contractType, ':creationDate' => $workYear]);
+      $sql .= " WHERE employee.contract_type = :contract_type ORDER BY hr_user_accounts.user_type ASC, employee.last_name ASC";
+      $this->setStatement($sql);
+      $this->statement->execute([':contract_type' => $contractType, ':creation_date' => $workYear]);
     } else {
-      $sql .= " ORDER BY employee.users_id";
-      $this->statement->execute([':rater_id' => $empID]);
+      $sql .= " ORDER BY hr_user_accounts.user_type ASC, employee.last_name ASC";
+      $this->setStatement($sql);
+      $this->statement->execute([':creation_date' => $workYear]);
     }
     $this->setStatement($sql);
     return $this->statement->fetchAll();
   }
 
-//check employee assessments
-function selectAllEmployeeAssessment($contractType = 'all', $workYear)
-{
-  $sql = "SELECT
+  //check employee assessments
+  function selectAllEmployeeAssessment($contractType = 'all', $workYear)
+  {
+    $sql = "SELECT
   employee.users_id,
   employee.employee_id AS employee_id,
   employee.first_name,
@@ -817,17 +816,17 @@ function selectAllEmployeeAssessment($contractType = 'all', $workYear)
   LEFT JOIN
       hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
        ";
-           if ($contractType !== "all") {
-            $sql .= " WHERE employee.contract_type = :contract_type ORDER BY hr_user_accounts.user_type ASC, employee.last_name ASC";
-            $this->setStatement($sql);
-            $this->statement->execute([':contract_type' => $contractType, ':creation_date' => $workYear]);
-          } else {
-            $sql .= " ORDER BY hr_user_accounts.user_type ASC, employee.last_name ASC";
-            $this->setStatement($sql);
-            $this->statement->execute([':creation_date' => $workYear]);
-          }
-  return $this->statement->fetchAll();
-}
+    if ($contractType !== "all") {
+      $sql .= " WHERE employee.contract_type = :contract_type ORDER BY hr_user_accounts.user_type ASC, employee.last_name ASC";
+      $this->setStatement($sql);
+      $this->statement->execute([':contract_type' => $contractType, ':creation_date' => $workYear]);
+    } else {
+      $sql .= " ORDER BY hr_user_accounts.user_type ASC, employee.last_name ASC";
+      $this->setStatement($sql);
+      $this->statement->execute([':creation_date' => $workYear]);
+    }
+    return $this->statement->fetchAll();
+  }
 
 
 
@@ -999,10 +998,10 @@ WHERE
 
 
   //submit achievement of user on quarter
-  function insertUserAssessment($tbl_name, $formspID, $achievements)
+  function updateUserAchievements($tbl_name, $formspID, $currentKpiId, $currentAchievement)
   {
-    $this->setStatement("UPDATE {$tbl_name} SET ratee_achievement = :ratee_achievement WHERE hr_eval_form_sp_id = :hr_eval_form_sp_id");
-    return $this->statement->execute([':ratee_achievement' => $achievements, ':hr_eval_form_sp_id' => $formspID]);
+    $this->setStatement("UPDATE {$tbl_name} SET achievements = :achievement WHERE hr_eval_form_kpi_id = :kpi_id AND hr_eval_form_sp_id = :hr_eval_form_sp_id");
+    return $this->statement->execute([':achievement' => $currentAchievement, ':kpi_id' => $currentKpiId, ':hr_eval_form_sp_id' => $formspID]);
   }
 
 

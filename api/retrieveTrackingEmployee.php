@@ -40,6 +40,12 @@ if (isset($_GET['employeeType'])) {
             $json_employee = json_encode($form->selectEmployeeAssessment($empID, $contractType, $workYear), JSON_UNESCAPED_UNICODE);
             echo $json_employee;
         }
+        else{
+            $contractType = "probationary";
+            $workYear = $_GET['workYear'];
+            $json_employee = json_encode($form->selectEmployeeAssessment($empID, "all", $workYear), JSON_UNESCAPED_UNICODE);
+            echo $json_employee; 
+        }
     }
 }
 ?>

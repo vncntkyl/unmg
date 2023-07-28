@@ -61,7 +61,7 @@ export default function EmployeeAssessmentTable(emp_id) {
             },
           }
         );
-
+console.log(response.data);
         const employeeRecords = response.data.map((item) => {
           return {
             employee_id: item.employee_id,
@@ -141,7 +141,7 @@ export default function EmployeeAssessmentTable(emp_id) {
             </select>
           </div>
         </div>
-        <div className="flex flex-row p-2 items-center gap-3">
+        {/* <div className="flex flex-row p-2 items-center gap-3">
           <span>Status:</span>
           <select className=" text-black rounded-md p-1 px-2 outline-none">
             <option value="All">All</option>
@@ -152,7 +152,7 @@ export default function EmployeeAssessmentTable(emp_id) {
             <option value="To Sign">To Sign</option>
             <option value="Completed">Completed</option>
           </select>
-        </div>
+        </div> */}
         {workYear != -1 ? (<>
 
           {!creation_dateColumnAllFalse ? (

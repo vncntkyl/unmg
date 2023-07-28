@@ -1,84 +1,73 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateAchievements({ emp_id }) {
+  const navigate = useNavigate();
   const quarter = sessionStorage.getItem("assessment_quarter");
+  const quarter_id = quarter == 1 ? "fq_" : quarter == 2 ? "myr_" : quarter == 3 ? "tq_" : "yee_";
   const quarter_name = sessionStorage.getItem("quarter_name");
   const [loading, toggleLoading] = useState(true);
   const [finalUserAchievements, setfinalUserAchievements] = useState([]);
-  const [achievements, setAchievements] = useState(() => {
-    // Initialize the achievements array based on the selected quarter
-    return finalUserAchievements.map(item => ({
-      ...item,
-      achievements:
-        quarter === "1"
-          ? item.fq_achievements
-          : quarter === "2"
-          ? item.myr_achievements
-          : quarter === "3"
-          ? item.tq_achievements
-          : quarter === "4"
-          ? item.yee_achievements
-          : ""
-    }));
-  });
+  const [achievements, setAchievements] = useState([]);
+  const handleAchievementChange = (kpi_id, event) => {
+    setAchievements((prevAchievements) => {
+      const index = prevAchievements.findIndex((item) => item.kpi_id === kpi_id);
+      const updatedAchievement = { ...prevAchievements[index], achievement: event.target.value };
 
-
-
-
-  // const sampleAchievementsArray = [
-  //   { kpi_id: "1", kpi_desc: "Title 1", fq_achievements: "fq_Achievement 1", myr_achievements: "myr_Achievement 1", tq_achievements: "tq_Achievement 1", yee_achievements: "yee_Achievement 1" },
-  //   { kpi_id: "2", kpi_desc: "Title 2", fq_achievements: "fq_Achievement 2", myr_achievements: "myr_Achievement 2", tq_achievements: "tq_Achievement 2", yee_achievements: "yee_Achievement 2" },
-  //   { kpi_id: "3", kpi_desc: "Title 3", fq_achievements: "fq_Achievement 3", myr_achievements: "myr_Achievement 3", tq_achievements: "tq_Achievement 3", yee_achievements: "yee_Achievement 3" },
-  //   { kpi_id: "4", kpi_desc: "Title 4", fq_achievements: "fq_Achievement 4", myr_achievements: "myr_Achievement 4", tq_achievements: "tq_Achievement 4", yee_achievements: "yee_Achievement 4" },
-  //   { kpi_id: "5", kpi_desc: "Title 5", fq_achievements: "fq_Achievement 5", myr_achievements: "myr_Achievement 5", tq_achievements: "tq_Achievement 5", yee_achievements: "yee_Achievement 5" },
-  //   { kpi_id: "6", kpi_desc: "Title 6", fq_achievements: "fq_Achievement 6", myr_achievements: "myr_Achievement 6", tq_achievements: "tq_Achievement 6", yee_achievements: "yee_Achievement 6" },
-  //   { kpi_id: "7", kpi_desc: "Title 7", fq_achievements: "fq_Achievement 7", myr_achievements: "myr_Achievement 7", tq_achievements: "tq_Achievement 7", yee_achievements: "yee_Achievement 7" },
-  //   { kpi_id: "8", kpi_desc: "Title 8", fq_achievements: "fq_Achievement 8", myr_achievements: "myr_Achievement 8", tq_achievements: "tq_Achievement 8", yee_achievements: "yee_Achievement 8" },
-  //   { kpi_id: "9", kpi_desc: "Title 9", fq_achievements: "fq_Achievement 9", myr_achievements: "myr_Achievement 9", tq_achievements: "tq_Achievement 9", yee_achievements: "yee_Achievement 9" },
-  //   { kpi_id: "10", kpi_desc: "Title 10", fq_achievements: "fq_Achievement 10", myr_achievements: "myr_Achievement 10", tq_achievements: "tq_Achievement 10", yee_achievements: "yee_Achievement 10" },
-  // ];
-  // Submit Button
-  const handleSubmit = () => {
-    if (achievements.length === 0) {
-      alert("Achievements has been left blank!");
-    } else if (tbl_name.length === 0) {
-      alert("Please select an available quarter!");
-    } else {
-      const formspID = finalUserAchievements.find(
-        (item) => item.hr_eval_form_sp_id
-      ).hr_eval_form_sp_id;
-      const url = "http://localhost/unmg_pms/api/userSubmitAchievements.php";
-      let fData = new FormData();
-      fData.append("submit", true);
-      fData.append("tbl_name", tbl_name);
-      fData.append("formspID", formspID);
-      fData.append("achievements", achievements);
-      axios
-        .post(url, fData)
-        .then((response) => alert(response.data))
-        .catch((error) => alert(error));
-    }
+      const newAchievements = [...prevAchievements];
+      newAchievements[index] = updatedAchievement;
+      return newAchievements;
+    });
   };
+
   // function for getting table name
-  function getTableName(quarterCheck) {
+  function getTableName(quarter) {
     let tbl_name = "";
 
-    if (quarterCheck === "1") {
-      tbl_name = "hr_eval_form_sp_fq_rating";
-    } else if (quarterCheck === "2") {
-      tbl_name = "hr_eval_form_sp_myr_rating";
-    } else if (quarterCheck === "3") {
-      tbl_name = "hr_eval_form_sp_tq_rating";
-    } else if (quarterCheck === "4") {
-      tbl_name = "hr_eval_form_sp_yee_rating";
+    if (quarter === "1") {
+      tbl_name = "hr_eval_form_sp_fq";
+    } else if (quarter === "2") {
+      tbl_name = "hr_eval_form_sp_myr";
+    } else if (quarter === "3") {
+      tbl_name = "hr_eval_form_sp_tq";
+    } else if (quarter === "4") {
+      tbl_name = "hr_eval_form_sp_yee";
     } else {
       tbl_name = "";
     }
     return tbl_name;
   }
+  const tbl_name = getTableName(quarter);
+  // Submit Button
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const checkach = achievements.some((item) => item.achievement === "");
+    if (checkach) {
+      alert("Achievements has been left blank!");
+    }
+    else {
+
+      const resultkpi_id = achievements.map(item => item.kpi_id);
+      const resultachievement = achievements.map(item => item.achievement);
+      const formspID = finalUserAchievements.find((item) => item.hr_eval_form_sp_id).hr_eval_form_sp_id;
+      const url = "http://localhost/unmg_pms/api/userSubmitAchievements.php";
+      let fData = new FormData();
+      fData.append("submit", true);
+      fData.append("tbl_name", tbl_name);
+      fData.append("kpi_id", JSON.stringify(resultkpi_id));
+      fData.append("achievement", JSON.stringify(resultachievement));
+      fData.append("formspID", formspID);
+      axios
+        .post(url, fData)
+        .then((response) => alert(response.data))
+        .catch((error) => alert(error));
+        navigate(
+          "/tracking_and_assessment");
+    }
+  };
+
   // Usage
-  const tbl_name = getTableName(quarter_name);
   useEffect(() => {
     const getfinalUserAchievements = async () => {
       const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
@@ -91,6 +80,13 @@ export default function CreateAchievements({ emp_id }) {
           },
         });
         setfinalUserAchievements(response.data);
+
+        const filteredAchievements = response.data.map(item => ({
+          kpi_id: item.kpi_id,
+          kpi_desc: item.kpi_desc,
+          achievement: item[`${quarter_id}achievements`] // Access the correct quarter_id data based on the sessionStorage value
+        }));
+        setAchievements(filteredAchievements);
         toggleLoading(false);
       } catch (error) {
         console.log(error.message);
@@ -98,7 +94,7 @@ export default function CreateAchievements({ emp_id }) {
     };
     if (!emp_id) return;
     getfinalUserAchievements();
-  }, [emp_id, quarter_name]);
+  }, [emp_id, quarter_name, quarter_id]);
 
   return loading ? (
     "Loading..."
@@ -110,14 +106,14 @@ export default function CreateAchievements({ emp_id }) {
           <span className="text-black font-normal">
             {finalUserAchievements.length > 0 &&
               finalUserAchievements[0].from_date +
-                " - " +
-                finalUserAchievements[0].to_date}
+              " - " +
+              finalUserAchievements[0].to_date}
           </span>
         </div>
         <div className="">
           Quarter: {" "}
           <span className="text-black font-normal">
-          {quarter_name}
+            {quarter_name}
           </span>
         </div>
         <form className="py-2 flex flex-col gap-2">
@@ -142,8 +138,8 @@ export default function CreateAchievements({ emp_id }) {
                   </th>
                 </tr>
               </thead>
-              {finalUserAchievements &&
-                finalUserAchievements.map((item, index) => (
+              {achievements &&
+                achievements.map((item) => (
                   <tbody key={item.kpi_id}>
                     <tr className="shadow">
                       <td>
@@ -155,31 +151,19 @@ export default function CreateAchievements({ emp_id }) {
                       </td>
                       <td>
                         <div className="w-full">
-                        <textarea
-                className="h-40 w-full bg-default"
-                name="achievements"
-                value={
-                  item.achievements === null
-                    ? ""
-                    : quarter === "1"
-                    ? item.fq_achievements
-                    : quarter === "2"
-                    ? item.myr_achievements
-                    : quarter === "3"
-                    ? item.tq_achievements
-                    : quarter === "4"
-                    ? item.yee_achievements
-                    : ""
-                }
-                onChange={(e) =>
-                  handleAchievementChange(item.kpi_id, quarter, e.target.value)
-                }
-              ></textarea>
+                          <textarea
+                            className="h-40 w-full bg-default"
+                            name="achievements"
+                            value={item.achievement}
+                            onChange={(event) => handleAchievementChange(item.kpi_id, event)}
+                            required
+                          ></textarea>
                         </div>
                       </td>
                     </tr>
                   </tbody>
                 ))}
+
             </table>
           </div>
           <button

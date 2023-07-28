@@ -30,7 +30,6 @@ if (isset($_GET['empID'])) {
         }
         echo $retrieveAssessment;
     }
-
 //check personal achievements
     if (isset($_GET['checkUserAchievements'])) {
         $creation_date = $_GET['workYear'];

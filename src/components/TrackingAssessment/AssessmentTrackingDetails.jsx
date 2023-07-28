@@ -73,7 +73,6 @@ export default function AssessmentTrackingDetails({
     "Loading..."
   ) : (
     <>
-      <div className="font-semibold text-dark-gray bg-default rounded-md p-2">
         {quarter == 1 ? (
           <>
             {ifAchievementsExists.fq_achievements ? (
@@ -115,20 +114,12 @@ export default function AssessmentTrackingDetails({
                                       <tr className="shadow">
                                         <td>
                                           <div className="px-10 pb-2">
-                                            <ul className="list-disc">
-                                              <li>{achievement.kpi_desc}</li>
-                                            </ul>
+                                            {achievement.kpi_desc}
                                           </div>
                                         </td>
                                         <td>
                                           <div className="px-10">
-                                            {achievement.fq_achievements && (
-                                              <ul className="list-disc">
-                                                <li>
                                                   {achievement.fq_achievements}
-                                                </li>
-                                              </ul>
-                                            )}
                                           </div>
                                         </td>
                                       </tr>
@@ -219,20 +210,12 @@ export default function AssessmentTrackingDetails({
                                       <tr className="shadow">
                                         <td>
                                           <div className="px-10 pb-2">
-                                            <ul className="list-disc">
-                                              <li>{achievement.kpi_desc}</li>
-                                            </ul>
+                                            {achievement.kpi_desc}
                                           </div>
                                         </td>
                                         <td>
                                           <div className="px-10">
-                                            {achievement.myr_achievements && (
-                                              <ul className="list-disc">
-                                                <li>
                                                   {achievement.myr_achievements}
-                                                </li>
-                                              </ul>
-                                            )}
                                           </div>
                                         </td>
                                       </tr>
@@ -337,20 +320,12 @@ export default function AssessmentTrackingDetails({
                                       <tr className="shadow">
                                         <td>
                                           <div className="px-10 pb-2">
-                                            <ul className="list-disc">
-                                              <li>{achievement.kpi_desc}</li>
-                                            </ul>
+                                            {achievement.kpi_desc}
                                           </div>
                                         </td>
                                         <td>
                                           <div className="px-10">
-                                            {achievement.tq_achievements && (
-                                              <ul className="list-disc">
-                                                <li>
                                                   {achievement.tq_achievements}
-                                                </li>
-                                              </ul>
-                                            )}
                                           </div>
                                         </td>
                                       </tr>
@@ -455,20 +430,12 @@ export default function AssessmentTrackingDetails({
                                       <tr className="shadow">
                                         <td>
                                           <div className="px-10 pb-2">
-                                            <ul className="list-disc">
-                                              <li>{achievement.kpi_desc}</li>
-                                            </ul>
+                                            {achievement.kpi_desc}
                                           </div>
                                         </td>
                                         <td>
                                           <div className="px-10">
-                                            {achievement.yee_achievements && (
-                                              <ul className="list-disc">
-                                                <li>
                                                   {achievement.yee_achievements}
-                                                </li>
-                                              </ul>
-                                            )}
                                           </div>
                                         </td>
                                       </tr>
@@ -543,7 +510,6 @@ export default function AssessmentTrackingDetails({
         ) : (
           ""
         )}
-      </div>
     </>
   );
 }

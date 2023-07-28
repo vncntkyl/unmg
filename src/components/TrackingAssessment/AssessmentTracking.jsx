@@ -20,14 +20,16 @@ export default function AssessmentTracking({
   const [selectedPillar, setSelectedPillar] = useState(0);
   const [tabTitle, setTabTitle] = useState([]);
   const [quarter, setQuarter] = useState(0);
+  const quarter_id = quarter == 1 ? "fq_" : quarter == 2 ? "myr_" : quarter == 3 ? "tq_" : quarter == 4 ? "yee_" : "";
   //total performance
   const [totalPerformance, setTotalPerformance] = useState([]);
   const [totalQuarterlyResults, setTotalQuarterlyResults] = useState([]);
   //checkers
   const [checkForm, setcheckForm] = useState(false);
-  const [checkScores, setCheckScores] = useState(false);
+  const [checkResult, setCheckResults] = useState(false);
   const [checkAchievements, setCheckAchievements] = useState(false);
   let previousObjective = null;
+
   useEffect(() => {
     const getUserPerformance = async () => {
       try {
@@ -43,20 +45,22 @@ export default function AssessmentTracking({
           }
         );
         setUserPerformance(response.data);
+
         const form = response.data.some(
           (item) => item.hr_eval_form_id !== null
         );
         setcheckForm(form);
-        const scores = response.data.every(
-          (item) => item.results !== 0 && item.metrics_desc !== null
+
+        const results = response.data.every(
+          (item) => item.results !== ""
         );
-        setCheckScores(scores);
+        console.log(results);
+        setCheckResults(results);
 
         const achievements = response.data.every(
-          (item) => item.ratee_achievement !== ""
+          (item) => item.achievements !== ""
         );
         setCheckAchievements(achievements);
-
         const pillars = response.data.reduce((uniquePillars, item) => {
           const existingPillar = uniquePillars.find(
             (pillar) => pillar.eval_pillar_id === item.eval_pillar_id
@@ -114,25 +118,6 @@ export default function AssessmentTracking({
         );
         setTotalPerformance(response.data);
 
-
-
-
-        const quarterly = response.data.reduce((uniqueQuarterlyResults, item) => {
-          const existingQuarterlyResults = uniqueQuarterlyResults.find(
-            (result) => result.eval_form_id === item.eval_form_id
-          );
-          if (!existingQuarterlyResults) {
-            uniqueQuarterlyResults.push({
-              eval_form_id: item.eval_form_id,
-              FirstQuarterRating: item.FirstQuarterRating,
-              MidYearRating: item.MidYearRating,
-              ThirdQuarterRating: item.ThirdQuarterRating,
-              YearEndRating: item.YearEndRating,
-            });
-          }
-          return uniqueQuarterlyResults;
-        }, []);
-        setTotalQuarterlyResults(quarterly);
       } catch (error) {
         console.log(error.message);
       }
@@ -178,82 +163,225 @@ export default function AssessmentTracking({
             Please select a work year to show your Tracking and assessment.
           </span>
         </div>
-      ) : (<>
-        <div className="flex pb-2 px-2 justify-between">
-          <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
-            <label htmlFor="quarterPicker" className="font-semibold">
-              Select Quarter:
-            </label>
-            <select
-              className="bg-default text-black rounded-md p-1 px-2 outline-none"
-              onChange={(quart) => setQuarter(quart.target.value)}
-              value={quarter}
-              defaultValue={0}
-            >
-              <option value={0} disabled>
-                Select Quarter
-              </option>
-              <option value={1}>First Quarter</option>
-              <option value={2}>Second Quarter</option>
-              <option value={3}>Third Quarter</option>
-              <option value={4}>Fourth Quarter</option>
-            </select>
-          </div>
-          <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
-            <label className="font-semibold">Status:</label>
-            {!checkScores && !checkAchievements ? (
-              <Badge
-                message={"Awaiting Submission"}
-                className={"text-[.8rem] px-1"}
-              />
-            ) : !checkScores && checkAchievements ? (
-              <Badge
-                message={"Achievements Submitted"}
-                type="warning"
-                className={"text-[.8rem] px-1"}
-              />
-            ) : checkScores && !checkAchievements ? (
-              <Badge
-                message={"Graded/No Achievements"}
-                type="success"
-                className={"text-[.8rem] px-1"}
-              />
-            ) : checkScores && checkAchievements ? (
-              <Badge
-                message={"Graded"}
-                type="success"
-                className={"text-[.8rem] px-1"}
-              />
-            ) : (
-              <Badge
-                message={"Internal Error"}
-                type="failure"
-                className={"text-[.8rem] px-1"}
-              />
-            )}
-          </div>
-          {/*<NoAssessmentTrackingDetails/> */}
-        </div>
-        {!checkForm ? (
-          <></>
-        ) : (
-          <>
-            {quarter === 0 ? (
+      ) : (
+        <>
+          {!checkForm ? (
+            <>
               <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
                 <span>
-                  Please select a quarter to show your assessment for that quarter.
+                  You have no assessment for this KPI period.
                 </span>
               </div>
-            ) : (
+            </>
+          ) : (
             <>
-            <AssessmentTrackingDetails quarter={quarter} emp_id={emp_id} workYear={workYear} />
+              <div className="flex pb-2 px-2 justify-between">
+                <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
+                  <label htmlFor="quarterPicker" className="font-semibold">
+                    Select Quarter:
+                  </label>
+                  <select
+                    className="bg-default text-black rounded-md p-1 px-2 outline-none"
+                    onChange={(quart) => setQuarter(quart.target.value)}
+                    value={quarter}
+                    defaultValue={0}
+                  >
+                    <option value={0} disabled>
+                      Select Quarter
+                    </option>
+                    <option value={1}>First Quarter</option>
+                    <option value={2}>Second Quarter</option>
+                    <option value={3}>Third Quarter</option>
+                    <option value={4}>Fourth Quarter</option>
+                  </select>
+                </div>
+                <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
+                  <label className="font-semibold">Status:</label>
+                  {!checkResult && !checkAchievements ? (
+                    <Badge
+                      message={"Awaiting Submission"}
+                      className={"text-[.8rem] px-1"}
+                    />
+                  ) : !checkResult && checkAchievements ? (
+                    <Badge
+                      message={"Achievements Submitted"}
+                      type="warning"
+                      className={"text-[.8rem] px-1"}
+                    />
+                  ) : checkResult && !checkAchievements ? (
+                    <Badge
+                      message={"Graded/No Achievements"}
+                      type="success"
+                      className={"text-[.8rem] px-1"}
+                    />
+                  ) : checkResult && checkAchievements ? (
+                    <Badge
+                      message={"Graded"}
+                      type="success"
+                      className={"text-[.8rem] px-1"}
+                    />
+                  ) : (
+                    <Badge
+                      message={"Internal Error"}
+                      type="failure"
+                      className={"text-[.8rem] px-1"}
+                    />
+                  )}
+                </div>
+              </div>
+              {quarter === 0 ? (
+                <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                  <span>
+                    Please select a quarter to show your assessment for that quarter.
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {checkResult && checkAchievements || checkResult && !checkAchievements ? (
+                    <>
+                      <div className="md:text-[.8rem] px-2 lg:text-[1rem]">
+                        {pillarName.map((pillar, index) => (
+                          <button
+                            key={pillar.pillar_id}
+                            className={`px-2 text-[1rem]
+                                 ${index > 0 ? "border-1" : ""}
+                                 ${index < pillarName.length - 1 ? "border-r" : ""}
+                                 ${selectedPillar !== index
+                                ? "hover:border-b-2 border-b-un-red-light"
+                                : ""
+                              } 
+                                 ${selectedPillar === index
+                                ? "border-b-4 border-b-un-red-light"
+                                : ""
+                              }`}
+                            onClick={() => setSelectedPillar(index)}
+                          >
+                            {pillar.pillar_name}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="bg-default rounded-md p-2">
+                        {pillarName.filter((pillar) => pillar.pillar_name === tabTitle.pillar_name)
+                          .map((pillar) => (
+                            <div
+                              className="bg-default px-2 pb-4 pt-2 rounded-md"
+                              key={pillar.pillar_id}
+                            >
+                              <div>
+                                <span className="text-black ml-2 md:text-[1rem] font-bold block">
+                                  {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                                </span>
+                              </div>
+                              <div className="pt-10 px-2 w-full">
+                                {/* Header */}
+                                <table className="w-full">
+                                  <thead>
+                                    <tr>
+                                      <td className="w-[20%]">
+                                        <div className="font-semibold">Objectives</div>
+                                      </td>
+                                      <td className="w-[20%] px-2 bg-un-blue-light rounded-tl-lg">
+                                        <div className="text-white flex justify-center">
+                                          KPI
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%] px-2 bg-un-blue-light">
+                                        <div className="text-white flex justify-center">
+                                          Weight
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%] px-2 bg-un-blue-light">
+                                        <div className="text-white flex justify-center">
+                                          Achievements
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%] px-2 bg-un-blue-light">
+                                        <div className="text-white flex justify-center">
+                                          Results (Actual)
+                                        </div>
+                                      </td>
+                                      <td className="w-[20%] px-2 bg-un-blue-light rounded-tr-lg">
+                                        <div className="text-white flex justify-center">
+                                          Remarks
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </thead>
+                                  {objectives
+                                    .filter(
+                                      (object) =>
+                                        object.obj_eval_pillar_id === pillar.eval_pillar_id
+                                    )
+                                    .map((objective) => (
+                                      <tbody key={objective.obj_objective_id}>
+                                        {userPerformance
+                                          .filter(
+                                            (performance) =>
+                                              performance.kpi_objective_id ===
+                                              objective.obj_objective_id
+                                          )
+                                          .map((performance) => (
+                                            <React.Fragment
+                                              key={performance.kpi_objective_id}
+                                            >
+                                              <tr>
+                                                <td className="w-[15%] p-2">
+                                                  <div>
+                                                    {objective.obj_objective !==
+                                                      previousObjective
+                                                      ? performance.obj_objective
+                                                      : ""}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%] p-2 bg-white">
+                                                  <div className="flex items-center justify-center">
+                                                    {performance.kpi_desc}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[5%] p-2 bg-white">
+                                                  <div className="flex items-center justify-center">
+                                                    {`${performance.kpi_weight}%`}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%] p-2 bg-white">
+                                                  <div className="flex items-center justify-center">
+                                                    {`${performance.achievements}`}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%] p-2 bg-white">
+                                                  <div className="flex items-center justify-center">
+                                                    {performance.results}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%] p-2 bg-white">
+                                                  <div className="flex items-center">
+                                                    {performance.remarks}
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            </React.Fragment>
+                                          ))}
+                                      </tbody>
+                                    ))}
+                                </table>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="font-semibold text-dark-gray bg-default rounded-md p-2">
+                        <AssessmentTrackingDetails quarter={quarter} emp_id={emp_id} workYear={workYear} />
+                      </div>
+                    </>)}
+                </>)}
             </>)}
-          </>)}
 
 
 
 
-      </>)
+        </>)
       }
     </>
   );
