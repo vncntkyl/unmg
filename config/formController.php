@@ -590,6 +590,8 @@ class Form extends Controller
     hr_users.users_id,
     hr_users.employee_id,
     
+    hr_kpi_year_duration.from_date,
+    hr_kpi_year_duration.to_date,
     hr_eval_form_sp.hr_eval_form_sp_id,
     hr_kpi.kpi_id,
     hr_kpi.kpi_desc,
@@ -610,6 +612,8 @@ class Form extends Controller
     LEFT JOIN
         hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
     LEFT JOIN
+        hr_kpi_year_duration ON hr_kpi_year_duration.kpi_year_duration_id = hr_eval_form.CreationDate
+    LEFT JOIN
         hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
     LEFT JOIN
         hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
@@ -621,7 +625,6 @@ class Form extends Controller
         hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
     LEFT JOIN
         hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
-     
     LEFT JOIN
         hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
     LEFT JOIN
