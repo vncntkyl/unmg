@@ -65,7 +65,6 @@ export default function TrackingAssessment() {
     }
     toggleLoading(false);
   }, []);
-
   return employeeID !== -1 && (loading ? (
     "Loading..."
   ) : (

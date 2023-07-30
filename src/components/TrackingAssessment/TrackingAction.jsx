@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useFunction } from "../../context/FunctionContext";
 import TrackingAssessmentModal from "../../misc/TrackingAssessmentModal";
 export default function TrackingAction({
+  workYear,
   sp_id,
   employee_id,
   first_name,
@@ -31,6 +32,7 @@ export default function TrackingAction({
   };
   const { formatName } = useFunction();
   const viewUserAssessment = () => {
+    sessionStorage.setItem("work_year", workYear);
     sessionStorage.setItem("assessment_id", employee_id);
     sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
@@ -39,6 +41,7 @@ export default function TrackingAction({
   };
 
   const gradeUserAssessment = () => {
+    sessionStorage.setItem("work_year", workYear);
     sessionStorage.setItem("assessment_id", employee_id);
     sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(
@@ -49,6 +52,7 @@ export default function TrackingAction({
   };
 
   const approveUserAssessment = () => {
+    sessionStorage.setItem("work_year", workYear);
     sessionStorage.setItem("assessment_id", employee_id);
     sessionStorage.setItem("assessment_name", formatName(first_name));
     navigate(

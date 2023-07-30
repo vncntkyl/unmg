@@ -5,7 +5,6 @@ import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
 import { format } from "date-fns";
-
 export default function AssessmentTracking({
   emp_id,
   kpiYears = [],
@@ -51,13 +50,12 @@ export default function AssessmentTracking({
         );
         setcheckForm(form);
 
-        const results = response.data.every(
+        const results = response.data.some(
           (item) => item.results !== ""
         );
-        console.log(results);
         setCheckResults(results);
 
-        const achievements = response.data.every(
+        const achievements = response.data.some(
           (item) => item.achievements !== ""
         );
         setCheckAchievements(achievements);
@@ -190,9 +188,9 @@ export default function AssessmentTracking({
                       Select Quarter
                     </option>
                     <option value={1}>First Quarter</option>
-                    <option value={2}>Second Quarter</option>
+                    <option value={2}>Mid Year</option>
                     <option value={3}>Third Quarter</option>
-                    <option value={4}>Fourth Quarter</option>
+                    <option value={4}>Year End</option>
                   </select>
                 </div>
                 <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
@@ -229,7 +227,7 @@ export default function AssessmentTracking({
                   )}
                 </div>
               </div>
-              {quarter === 0 ? (
+              {quarter == 0 ? (
                 <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
                   <span>
                     Please select a quarter to show your assessment for that quarter.

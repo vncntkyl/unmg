@@ -10,6 +10,8 @@ export default function CreateAchievements({ emp_id }) {
   const [loading, toggleLoading] = useState(true);
   const [finalUserAchievements, setfinalUserAchievements] = useState([]);
   const [achievements, setAchievements] = useState([]);
+
+  
   const handleAchievementChange = (kpi_id, event) => {
     setAchievements((prevAchievements) => {
       const index = prevAchievements.findIndex((item) => item.kpi_id === kpi_id);
@@ -20,7 +22,6 @@ export default function CreateAchievements({ emp_id }) {
       return newAchievements;
     });
   };
-
   // function for getting table name
   function getTableName(quarter) {
     let tbl_name = "";
@@ -84,7 +85,7 @@ export default function CreateAchievements({ emp_id }) {
         const filteredAchievements = response.data.map(item => ({
           kpi_id: item.kpi_id,
           kpi_desc: item.kpi_desc,
-          achievement: item[`${quarter_id}achievements`] // Access the correct quarter_id data based on the sessionStorage value
+          achievement: item[`${quarter_id}achievements`]
         }));
         setAchievements(filteredAchievements);
         toggleLoading(false);

@@ -30,8 +30,8 @@ if (isset($_GET['employeeType'])) {
         if ($_GET['employeeType'] === "1") {
             $contractType = "regular";
             $workYear = $_GET['workYear'];
-            $json_employee = json_encode($form->selectEmployeeAssessment($empID, $contractType, $workYear), JSON_UNESCAPED_UNICODE);
-            echo $json_employee;
+            echo json_encode($form->selectEmployeeAssessment($empID, $contractType, $workYear), JSON_UNESCAPED_UNICODE);
+            
             
         }
         else if ($_GET['employeeType'] === "2") {
@@ -41,11 +41,11 @@ if (isset($_GET['employeeType'])) {
             echo $json_employee;
         }
         else{
-            $contractType = "probationary";
             $workYear = $_GET['workYear'];
             $json_employee = json_encode($form->selectEmployeeAssessment($empID, "all", $workYear), JSON_UNESCAPED_UNICODE);
-            echo $json_employee; 
+            echo $json_employee;
         }
+        $contractType = $_GET['employeeType'];
     }
 }
 ?>

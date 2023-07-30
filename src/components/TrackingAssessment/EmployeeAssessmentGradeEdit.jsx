@@ -6,125 +6,161 @@ import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
 export default function EmployeeAssessmentGradeEdit() {
+  const employee_id = sessionStorage.getItem("assessment_id");
+  const assesssment_quarter = sessionStorage.getItem("assessment_quarter");
+  const workYear = sessionStorage.getItem("work_year");
   const [grades, setGrades] = useState([]);
-  const [checkForm, setcheckForm] = useState();
-  const [pillars, setPillars] = useState([]);
-  const [objectives, setObjectives] = useState([]);
-  const [currentObjective, setObjectiveTabStatus] = useState([]);
-  const [quarter, setQuarter] = useState(
-    sessionStorage.getItem("assessment_quarter") || 0
-  );
-  const [name, setName] = useState([]);
-  const navigate = useNavigate();
   const [metrics, setMetrics] = useState([]);
+  const [loading, toggleLoading] = useState(true);
+  const [quarter, setQuarter] = useState(assesssment_quarter || 0);
+  const quarter_id = quarter == 1 ? "fq_" : quarter == 2 ? "myr_" : quarter == 3 ? "tq_" : "yee_";
+  const navigate = useNavigate();
   let pCounter,
     oCounter,
     kCounter = 1;
-  //Form
-  const [selectedValues, setSelectedValues] = useState([]);
-  const [remarks, setRemarks] = useState([]);
-  //Submit form
-  // Usage
-  const tbl_name = getTableName(quarter);
 
+  const [results, setResults] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [agreed, setAgreed] = useState([]);
+  const [remarks, setRemarks] = useState([]);
   useEffect(() => {
-    //Whole Grades
     const getGrades = async () => {
       const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
         const response = await axios.get(url, {
           params: {
-            userGrading: true,
-            quarter: quarter,
-            empID: sessionStorage.getItem("assessment_id"),
+            userTrackingIndividualEmployeeGrades: true,
+            workYear: workYear,
+            empID: employee_id,
           },
         });
         setGrades(response.data);
-        //set weight
-        // const kpi_weight = response.data.map((item) => item.kpi_weight)
-        // setWeight(kpi_weight);
 
-        //if pillar id is not found
-        const ColumnAllFalse = response.data.some(
-          (item) => item.pillar_id === null
-        );
-        setcheckForm(ColumnAllFalse);
-        const uniqueNames = [
-          ...new Set(response.data.map((item) => item.employee_name)),
-        ];
-        setName(uniqueNames);
-
-        //checking the stored quarter
-        const storedQuarter = sessionStorage.getItem("assessment_quarter");
-        if (storedQuarter) {
-          setQuarter(storedQuarter);
-        }
-
-        //removing null from pillar columns
-        const pillars = response.data.reduce((uniquePillars, item) => {
-          const existingPillar = uniquePillars.find(
-            (pillar) => pillar.eval_pillar_id === item.eval_pillar_id
+        const initialResults = response.data
+          .filter(
+            (pillar) =>
+              pillar.pillar_name.trim() !== "" &&
+              pillar.pillar_description.trim() !== "" &&
+              pillar.pillar_percentage.trim() !== ""
+          )
+          .map((pillar) =>
+            response.data
+              .filter((object) => object.obj_objective.trim() !== "")
+              .filter(
+                (objectives) =>
+                  objectives.obj_eval_pillar_id === pillar.eval_pillar_id
+              )
+              .map((objectives) =>
+                response.data
+                  .filter(
+                    (grade) =>
+                      grade.kpi_objective_id === objectives.obj_objective_id
+                  )
+                  .map((grade) => ({
+                    kpi_id: grade.kpi_kpi_id,
+                    value: grade[`${quarter_id}results`],
+                  }))
+              )
           );
-          if (!existingPillar) {
-            uniquePillars.push({
-              eval_pillar_id: item.eval_pillar_id,
-              pillar_id: item.pillar_id,
-              pillar_name: item.pillar_name,
-              pillar_description: item.pillar_description,
-              pillar_percentage: item.pillar_percentage,
-            });
-          }
-          return uniquePillars;
-        }, []);
-        setPillars(pillars);
+        setResults(initialResults);
 
-        //removing null from qobjectives columns
-        const obj = response.data.reduce((uniqueObjectives, item) => {
-          if (item.obj_objective.trim() !== "") {
-            const existingObjective = uniqueObjectives.find(
-              (objective) => objective.obj_objective === item.obj_objective
-            );
-            if (!existingObjective) {
-              uniqueObjectives.push({
-                obj_objective_id: item.obj_objective_id,
-                obj_eval_pillar_id: item.obj_eval_pillar_id,
-                obj_objective: item.obj_objective,
-              });
-            }
-          }
-          return uniqueObjectives;
-        }, []);
 
-        setObjectives(obj);
+        const initialStatus = response.data
+        .filter(
+          (pillar) =>
+            pillar.pillar_name.trim() !== "" &&
+            pillar.pillar_description.trim() !== "" &&
+            pillar.pillar_percentage.trim() !== ""
+        )
+        .map((pillar) =>
+          response.data
+            .filter((object) => object.obj_objective.trim() !== "")
+            .filter(
+              (objectives) =>
+                objectives.obj_eval_pillar_id === pillar.eval_pillar_id
+            )
+            .map((objectives) =>
+              response.data
+                .filter(
+                  (grade) =>
+                    grade.kpi_objective_id === objectives.obj_objective_id
+                )
+                .map((grade) => ({
+                  kpi_id: grade.kpi_kpi_id,
+                  value: grade.myr_status,
+                }))
+            )
+        );
+      setStatus(initialStatus);
 
-        //pinangkat ang mga layunin
-        const groupedObjs = obj.reduce((result, item) => {
-          const { obj_eval_pillar_id } = item;
-          if (!result[obj_eval_pillar_id]) {
-            result[obj_eval_pillar_id] = [];
-          }
-          result[obj_eval_pillar_id].push(item);
+        const initialAgreed = response.data
+        .filter(
+          (pillar) =>
+            pillar.pillar_name.trim() !== "" &&
+            pillar.pillar_description.trim() !== "" &&
+            pillar.pillar_percentage.trim() !== ""
+        )
+        .map((pillar) =>
+          response.data
+            .filter((object) => object.obj_objective.trim() !== "")
+            .filter(
+              (objectives) =>
+                objectives.obj_eval_pillar_id === pillar.eval_pillar_id
+            )
+            .map((objectives) =>
+              response.data
+                .filter(
+                  (grade) =>
+                    grade.kpi_objective_id === objectives.obj_objective_id
+                )
+                .map((grade) => ({
+                  kpi_id: grade.kpi_kpi_id,
+                  value: grade.agreed_rating,
+                }))
+            )
+        );
+      setAgreed(initialAgreed);
 
-          return result;
-        }, {});
 
-        setObjectiveTabStatus(Object.keys(groupedObjs).map((id) => {
-          return groupedObjs[id].map((m, i) => ({ status: i === 0 ? true : false, obj_eval_pillar_id: m.obj_eval_pillar_id, obj_objective_id: m.obj_objective_id }))
-        }))
-        console.log(groupedObjs);
+        const initialRemarks = response.data
+          .filter(
+            (pillar) =>
+              pillar.pillar_name.trim() !== "" &&
+              pillar.pillar_description.trim() !== "" &&
+              pillar.pillar_percentage.trim() !== ""
+          )
+          .map((pillar) =>
+            response.data
+              .filter((object) => object.obj_objective.trim() !== "")
+              .filter(
+                (objectives) =>
+                  objectives.obj_eval_pillar_id === pillar.eval_pillar_id
+              )
+              .map((objectives) =>
+                response.data
+                  .filter(
+                    (grade) =>
+                      grade.kpi_objective_id === objectives.obj_objective_id
+                  )
+                  .map((grade) => ({
+                    kpi_id: grade.kpi_kpi_id,
+                    value: grade[`${quarter_id}remarks`],
+                  }))
+              )
+          );
+        setRemarks(initialRemarks);
       } catch (error) {
         console.log(error.message);
       }
     };
-
-    //Metrics
     const getMetrics = async () => {
       const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
         const response = await axios.get(url, {
           params: {
             metrics: true,
-            empID: sessionStorage.getItem("assessment_id"),
+            workYear: workYear,
+            empID: employee_id,
           },
         });
         setMetrics(response.data);
@@ -134,138 +170,142 @@ export default function EmployeeAssessmentGradeEdit() {
     };
     getMetrics();
     getGrades();
-  }, [quarter]);
-  //submit
-  const Submit = (e) => {
-    e.preventDefault();
+    toggleLoading(false);
+  }, [employee_id, workYear, quarter_id]);
 
-    const weight = grades.map((grade) => parseInt(grade.kpi_weight));
-    const valueSelected = [];
-    const result = [];
+  function handleResultChange(
+    pillarIndex,
+    objectiveIndex,
+    gradeIndex,
+    kpi_kpi_id,
+    event
+  ) {
+    const updatedResult = [...results];
+    updatedResult[pillarIndex] = updatedResult[pillarIndex] || [];
+    updatedResult[pillarIndex][objectiveIndex] =
+      updatedResult[pillarIndex][objectiveIndex] || [];
+    updatedResult[pillarIndex][objectiveIndex][gradeIndex] = {
+      kpi_id: kpi_kpi_id,
+      value: event.target.value,
+    };
+    setResults(updatedResult);
+  }
 
-    //for value of selectedValues
-    selectedValues.forEach((item) => {
-      item.forEach((score) => {
-        score.forEach((value) => {
-          valueSelected.push(parseInt(value));
-        })
-      })
-    })
-    //weight calculation
-    weight.forEach((weight, index) => {
-      const calculatedValue = (weight / 100) * valueSelected[index];
-      result.push(calculatedValue.toFixed(2));
-    });
-
-    const totalsubmitted = valueSelected.length;
-
-
-    //how many kpis are there in the form
-    const totalGrades = pillars.reduce((accumulator, pillar) => {
-      const objectiveGrades = objectives
-        .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
-        .reduce((objAccumulator, object) => {
-          const gradeCount = grades.filter(
-            (grade) => grade.kpi_objective_id === object.obj_objective_id
-          ).length;
-          return objAccumulator + gradeCount;
-        }, 0);
-
-      return accumulator + objectiveGrades;
-    }, 0);
-
-
-    if (totalGrades === totalsubmitted) {
-      if (tbl_name.length === 0) {
-        alert("Please select an available quarter!");
+  function handleStatusChange(
+    pillarIndex,
+    objectiveIndex,
+    gradeIndex,
+    kpi_kpi_id,
+    event
+  ) {
+      const selectedValue = event.target.value;
+      if (selectedValue === "4") {
+        alert("Are you sure you want to rate this metric a 4?");
       }
-      else {
+    const updatedStatus = [...status];
+    updatedStatus[pillarIndex] = updatedStatus[pillarIndex] || [];
+    updatedStatus[pillarIndex][objectiveIndex] =
+      updatedStatus[pillarIndex][objectiveIndex] || [];
+    updatedStatus[pillarIndex][objectiveIndex][gradeIndex] = {
+      kpi_id: kpi_kpi_id,
+      value: event.target.value,
+    };
+    setStatus(updatedStatus);
+  }
 
-        const formspID = grades.find((item) => item.hr_eval_form_sp_id).hr_eval_form_sp_id;
-        const grade_id = [];
-        grades.forEach((grade) => grade_id.push(grade.table_id));
-        const metric = selectedValues.flat(Infinity);
-        const rem = remarks.flat(Infinity);
-        // const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";  
-        // let fData = new FormData();
-        // fData.append("submit", true);
-        // fData.append('tbl_name', tbl_name);
-        // fData.append("formspID", formspID);
-        // fData.append('grade_id', JSON.stringify(grade_id));
-        // fData.append('metric', JSON.stringify(metric));
-        // fData.append('remarks', JSON.stringify(rem));
-        // axios.post(url, fData)
-        //   .then(response => alert(response.data))
-        //   .catch(error => alert(error));
-        // navigate(-1);
+  function handleAgreedChange(
+    pillarIndex,
+    objectiveIndex,
+    gradeIndex,
+    kpi_kpi_id,
+    event
+  ) {
+      const selectedAgreed = event.target.value;
+      if (selectedAgreed === "4") {
+        alert("Are you sure you want to rate this metric a 4?");
       }
+    const updatedAgreed = [...agreed];
+    updatedAgreed[pillarIndex] = updatedAgreed[pillarIndex] || [];
+    updatedAgreed[pillarIndex][objectiveIndex] =
+      updatedAgreed[pillarIndex][objectiveIndex] || [];
+    updatedAgreed[pillarIndex][objectiveIndex][gradeIndex] = {
+      kpi_id: kpi_kpi_id,
+      value: event.target.value,
+    };
+    setAgreed(updatedAgreed);
+  }
 
-    }
-    else {
-      //alert('Please complete all the required fields');
-    }
-
-
+  const handleRemarkChange = (
+    pillarIndex,
+    objectiveIndex,
+    gradeIndex,
+    kpi_kpi_id,
+    event
+  ) => {
+    const updatedRemark = [...remarks];
+    updatedRemark[pillarIndex] = updatedRemark[pillarIndex] || [];
+    updatedRemark[pillarIndex][objectiveIndex] =
+      updatedRemark[pillarIndex][objectiveIndex] || [];
+    updatedRemark[pillarIndex][objectiveIndex][gradeIndex] = {
+      kpi_id: kpi_kpi_id,
+      value: event.target.value,
+    };
+    setRemarks(updatedRemark);
   };
-  //getting table name
+
   function getTableName(quarter) {
     let tbl_name = "";
 
-    if (quarter === "1") {
+    if (quarter == 1) {
       tbl_name = "hr_eval_form_sp_fq";
-    } else if (quarter === "2") {
+    } else if (quarter == 2) {
       tbl_name = "hr_eval_form_sp_myr";
-    } else if (quarter === "3") {
+    } else if (quarter == 3) {
       tbl_name = "hr_eval_form_sp_tq";
-    } else if (quarter === "4") {
+    } else if (quarter == 4) {
       tbl_name = "hr_eval_form_sp_yee";
-    }
-    else {
+    } else {
       tbl_name = "";
     }
     return tbl_name;
   }
+  const tbl_name = getTableName(quarter);
+  console.log(grades.map(item => item.kpi_weight));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const totalResults = results.flat(Infinity);
+    const totalStatus = status.flat(Infinity);
+    const totalAgreed = agreed.flat(Infinity);
+    const totalRemarks = remarks.flat(Infinity);
+    const result = totalResults.map((item) => item.value);
+    const stat = totalStatus.map((item) => item.value);
+    const agree = totalAgreed.map((item) => item.value);
+    const remark = totalRemarks.map((item) => item.value);
+    const kpiId = grades.map(item => item.kpi_kpi_id);
+    const kpiWeight = grades.map(item => item.kpi_weight);
+    const formspID = grades.find((item) => item.sp_id).sp_id;
+      const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";
+      let fData = new FormData();
+      fData.append("submit", true);
+      fData.append("quarter", quarter);
+      fData.append("tbl_name", tbl_name);
+      fData.append("formspID", formspID);
+      fData.append("kpi_id", JSON.stringify(kpiId));
+      fData.append("kpi_weight", JSON.stringify(kpiWeight));
+      fData.append("total_results", JSON.stringify(result));
+      fData.append("total_stat", JSON.stringify(stat));
+      fData.append("agreed_rating", JSON.stringify(agree));
+      fData.append("total_remarks", JSON.stringify(remark));
+      axios
+        .post(url, fData)
+        .then((response) => console.log(response.data))
+        .catch((error) => alert(error));
+  };
 
-  //functions for handling select and textarea
-  function handleSelectChange(event, pillarIndex, objectIndex, gradeIndex) {
-    const selectedValue = event.target.value;
-    if (selectedValue === "4") {
-      alert("Are you sure you want to rate this metric a 4?");
-    }
-    // Update the selected values array
-    const updatedValues = [...selectedValues];
-    updatedValues[pillarIndex] = updatedValues[pillarIndex] || [];
-    updatedValues[pillarIndex][objectIndex] =
-      updatedValues[pillarIndex][objectIndex] || [];
-    updatedValues[pillarIndex][objectIndex][gradeIndex] = selectedValue;
-    console.log(gradeIndex);
-    setSelectedValues(updatedValues);
-  }
 
-  function handleRemarksChange(event, pillarIndex, objectIndex, gradeIndex) {
-    // Update the selected values array
-    const updatedRemark = [...remarks];
-    updatedRemark[pillarIndex] = updatedRemark[pillarIndex] || [];
-    updatedRemark[pillarIndex][objectIndex] =
-      updatedRemark[pillarIndex][objectIndex] || [];
-    updatedRemark[pillarIndex][objectIndex][gradeIndex] = event.target.value;
-    setRemarks(updatedRemark);
-  }
-
-  function handleTabChange(objective, obj) {
-    if (obj.status) return;
-    const tempObjectiveList = [...currentObjective];
-    const currentTab = tempObjectiveList.find(current => current == objective).find(objectiveTab => objectiveTab == obj);
-    const previousTabs = tempObjectiveList.find(current => current == objective).filter(objectiveTab => objectiveTab != obj);
-    currentTab.status = true;
-    previousTabs.forEach(tab => {
-      tab.status = false;
-    })
-
-    setObjectiveTabStatus(tempObjectiveList);
-
-  }
-  return (
+  return loading ? (
+    "Loading..."
+  ) : (
     <>
       <button
         className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
@@ -277,7 +317,13 @@ export default function EmployeeAssessmentGradeEdit() {
       <div className="flex pb-2 px-2 justify-between">
         <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
           <label className="font-semibold">Employee Name:</label>
-          <label>{name}</label>
+          <label>{grades.length > 0 && grades[0].employee_name}</label>
+        </div>
+      </div>
+      <div className="flex pb-2 px-2 justify-between">
+        <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
+          <label className="font-semibold">KPI Duration :</label>
+          <label>{grades.length > 0 && grades[0].from_date + " - " + grades[0].to_date}</label>
         </div>
       </div>
       <div className="flex pb-2 px-2 justify-between">
@@ -286,7 +332,7 @@ export default function EmployeeAssessmentGradeEdit() {
             Select Quarter:
           </label>
           <select
-            className="bg-default text-black rounded-md p-1 px-2 outline-none"
+            className="bg-default text-black rounded-md p-1 px-2 outline-none flex content-center"
             onChange={(event) => {
               const selectedQuarter = event.target.value;
               setQuarter(selectedQuarter);
@@ -304,24 +350,28 @@ export default function EmployeeAssessmentGradeEdit() {
           </select>
         </div>
       </div>
-      {checkForm === true ? (
-        <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
-          <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-            <span>
-              Sorry, the employee have not yet created their main goals yet.
-            </span>
-          </div>
-        </div>
-      ) : (
+      {quarter == 0 ? (
         <>
-          <form onSubmit={Submit}>
-            <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
-              <div className="w-full pb-4">
-                <span className="font-bold text-dark-gray">
-                  Employee Grades:
-                </span>
-              </div>
-              {pillars.map((pillar, pillarIndex) => (
+          <div className="w-full bg-default p-2 rounded-md">
+            <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+              <span>Please select a quarter</span>
+            </div>
+          </div>
+        </>
+      ) : quarter == 1 ? (
+        <>
+          <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+            <div className="w-full pb-4">
+              <span className="font-bold text-dark-gray">Employee Grades:</span>
+            </div>
+            {grades
+              .filter(
+                (pillar) =>
+                  pillar.pillar_name.trim() !== "" &&
+                  pillar.pillar_description.trim() !== "" &&
+                  pillar.pillar_percentage.trim() !== ""
+              )
+              .map((pillar, pillarIndex) => (
                 <React.Fragment
                   key={"pillar - " + pillar.eval_pillar_id + pCounter++}
                 >
@@ -334,98 +384,335 @@ export default function EmployeeAssessmentGradeEdit() {
                     <div className="px-4">
                       <span>Objectives</span>
                     </div>
-                    <div className="gap-2">
-                      {currentObjective.filter((obj) => obj[0].obj_eval_pillar_id === pillar.eval_pillar_id).map(obj => {
-                        return obj.map((o, i) => {
-                          return <>
-                          <button className={classNames(" px-4 py-2 rounded-t-md", o.status ? "bg-default-dark" : "bg-default hover:bg-default-dark")} onClick={() => handleTabChange(obj, o)}>
-                            Objective {i + 1}
-                          </button>
-                          </>
-                        })
-                      })}
-                      {/* {objectives.filter((obj) => obj.obj_eval_pillar_id === pillar.eval_pillar_id).map((objective, index) => {
-                        return <button className={classNames(" px-4 py-2 rounded-t-md", index + 1 === 1 ? "bg-default-dark" : "bg-default")}>
-                          Objective {index + 1}
-                        </button>
-                      })} */}
-                    </div>
-                    {/* {objectives.find(obj => obj.obj_objective_id == currentObjective.filter((obj) => obj[0].obj_eval_pillar_id === pillar.eval_pillar_id).find(pillar => pillar.find(objective => objective.status && objective.eval_pillar_id === pillar.eval_pillar_id)).map(objective => {return objective.obj_objective_id})).obj_objective} */}
-                    <div className="flex gap-2 overflow-x-auto w-full">
-                      {objectives
+                    <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                      {grades
+                        .filter((object) => object.obj_objective.trim() !== "")
                         .filter(
-                          (object) =>
-                            object.obj_eval_pillar_id === pillar.eval_pillar_id
+                          (objectives) =>
+                            objectives.obj_eval_pillar_id ===
+                            pillar.eval_pillar_id
                         )
-                        .map((object, objectIndex) => (
+                        .map((objectives, objectiveIndex) => (
                           <div
                             key={
                               "objective - " +
-                              object.obj_objective_id +
+                              objectives.obj_objective_id +
                               oCounter++
                             }
-                            className="bg-default-dark flex-none bg-gray-200 p-2 rounded-[0_0.375rem_0.375rem_0.375rem] w-full">
+                            className={classNames(
+                              "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                              grades
+                                .filter(
+                                  (object) => object.obj_objective.trim() !== ""
+                                )
+                                .filter(
+                                  (objectives) =>
+                                    objectives.obj_eval_pillar_id ===
+                                    pillar.eval_pillar_id
+                                ).length > 1
+                                ? "w-[95%]"
+                                : "w-[100%]"
+                            )}
+                          >
                             <div className="pb-2">
                               <span className="whitespace-normal">
-                                {object.obj_objective}
+                                {objectives.obj_objective}
                               </span>
                             </div>
-                            <div className="bg-white rounded-md shadow">
-                              {/* <table className="w-full">
-                                <thead>
+                            <div className="shadow">
+                              <table className="w-full">
+                                <thead className="text-white">
                                   <tr>
-                                    <td>
+                                    <td className="bg-un-blue-light rounded-tl-md w-[20%]">
                                       <div className="flex justify-center p-2 font-semibold">
                                         KPIs
                                       </div>
                                     </td>
-                                    <td>
+                                    <td className="bg-un-blue-light w-[10%]">
                                       <div className="flex justify-center p-2 font-semibold">
                                         Weight
                                       </div>
                                     </td>
-                                    <td>
+                                    <td className="bg-un-blue-light w-[30%]">
                                       <div className="flex justify-center p-2 font-semibold">
-                                        Metric Description
+                                        Metrics
                                       </div>
                                     </td>
-                                    <td>
+                                    <td className="bg-un-blue-light w-[20%]">
                                       <div className="flex justify-center p-2 font-semibold">
-                                        Achievements
+                                        Results(Actual)
                                       </div>
                                     </td>
-                                    <td>
-                                      <div className="flex justify-center p-2 font-semibold">
-                                        Metric
-                                      </div>
-                                    </td>
-                                    <td>
+                                    <td className="bg-un-blue-light rounded-tr-md w-[20%]">
                                       <div className="flex justify-center p-2 font-semibold">
                                         Remarks
                                       </div>
                                     </td>
                                   </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="bg-white">
                                   {grades
                                     .filter(
                                       (grade) =>
                                         grade.kpi_objective_id ===
-                                        object.obj_objective_id
+                                        objectives.obj_objective_id
                                     )
                                     .map((grade, gradeIndex) => (
-                                      <tr key={"kpi - " + grade.kpi_kpi_id + kCounter++}>
-                                        <td>
-                                          <div className="whitespace-break-spaces text-[.9rem] p-2">
+                                      <tr
+                                        key={
+                                          "kpi - " +
+                                          grade.kpi_kpi_id +
+                                          kCounter++
+                                        }
+                                        className="shadow"
+                                      >
+                                        <td className="w-[20%]">
+                                          <div className="whitespace-normal p-2">
                                             {grade.kpi_desc}
                                           </div>
                                         </td>
-                                        <td>
+                                        <td className="w-[10%]">
                                           <div className="p-2 flex items-center justify-center">
                                             {grade.kpi_weight}%
                                           </div>
                                         </td>
-                                        <td>
+                                        <td className="w-[30%]">
+                                          <div className="p-2 flex items-center justify-center">
+                                            <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                              <table>
+                                                {metrics
+                                                  .filter(
+                                                    (metric) =>
+                                                      metric.metric_kpi_id ===
+                                                      grade.kpi_kpi_id
+                                                  )
+                                                  .map((metric) => (
+                                                    <tr
+                                                      key={
+                                                        metric.target_metrics_id
+                                                      }
+                                                    >
+                                                      <td
+                                                        valign="top"
+                                                        className="whitespace-nowrap"
+                                                      >
+                                                        <span>
+                                                          {
+                                                            metric.target_metrics_score
+                                                          }
+                                                        </span>
+                                                        {" - "}
+                                                      </td>
+                                                      <td className="whitespace-break-spaces">
+                                                        {
+                                                          metric.target_metrics_desc
+                                                        }
+                                                      </td>
+                                                    </tr>
+                                                  ))}
+                                              </table>
+                                            </div>
+                                          </div>
+                                        </td>
+                                        <td className="w-[20%]">
+                                          <div className="p-2 flex items-center justify-center">
+                                            <textarea
+                                              className="h-40 w-full bg-default"
+                                              name="achievements"
+                                              value={
+                                                results[pillarIndex]?.[
+                                                  objectiveIndex
+                                                ]?.[gradeIndex]?.value ||
+                                                (grade.fq_results != null
+                                                  ? grade.fq_results
+                                                  : "")
+                                              }
+                                              onChange={(event) =>
+                                                handleResultChange(
+                                                  pillarIndex,
+                                                  objectiveIndex,
+                                                  gradeIndex,
+                                                  grade.kpi_kpi_id,
+                                                  event
+                                                )
+                                              }
+                                              required
+                                            />
+                                          </div>
+                                        </td>
+                                        <td className="w-[20%]">
+                                          <div className="whitespace-normal p-2">
+                                            <textarea
+                                              className="h-40 w-full bg-default"
+                                              name="achievements"
+                                              value={
+                                                remarks[pillarIndex]?.[
+                                                  objectiveIndex
+                                                ]?.[gradeIndex]?.value ||
+                                                (grade.fq_remarks != null
+                                                  ? grade.fq_remarks
+                                                  : "")
+                                              }
+                                              onChange={(event) =>
+                                                handleRemarkChange(
+                                                  pillarIndex,
+                                                  objectiveIndex,
+                                                  gradeIndex,
+                                                  grade.kpi_kpi_id,
+                                                  event
+                                                )
+                                              }
+                                              required
+                                            />
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+          </div>
+          <div className="w-full flex justify-end pt-4">
+            <button
+              className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue"
+              type="submit"
+              onClick={handleSubmit}
+            >
+              Submit
+            </button>
+          </div>
+        </>
+      ) : quarter == 2 ? (
+        <>
+        <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+          <div className="w-full pb-4">
+            <span className="font-bold text-dark-gray">Employee Grades:</span>
+          </div>
+          {grades
+            .filter(
+              (pillar) =>
+                pillar.pillar_name.trim() !== "" &&
+                pillar.pillar_description.trim() !== "" &&
+                pillar.pillar_percentage.trim() !== ""
+            )
+            .map((pillar, pillarIndex) => (
+              <React.Fragment
+                key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+              >
+                <div className="bg-white w-full rounded-md p-2 mb-4">
+                  <div className="w-full">
+                    <span className="text-black font-semibold">
+                      {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                    </span>
+                  </div>
+                  <div className="px-4">
+                    <span>Objectives</span>
+                  </div>
+                  <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                    {grades
+                      .filter((object) => object.obj_objective.trim() !== "")
+                      .filter(
+                        (objectives) =>
+                          objectives.obj_eval_pillar_id ===
+                          pillar.eval_pillar_id
+                      )
+                      .map((objectives, objectiveIndex) => (
+                        <div
+                          key={
+                            "objective - " +
+                            objectives.obj_objective_id +
+                            oCounter++
+                          }
+                          className={classNames(
+                            "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                            grades
+                              .filter(
+                                (object) => object.obj_objective.trim() !== ""
+                              )
+                              .filter(
+                                (objectives) =>
+                                  objectives.obj_eval_pillar_id ===
+                                  pillar.eval_pillar_id
+                              ).length > 1
+                              ? "w-[95%]"
+                              : "w-[100%]"
+                          )}
+                        >
+                          <div className="pb-2">
+                            <span className="whitespace-normal">
+                              {objectives.obj_objective}
+                            </span>
+                          </div>
+                          <div className="shadow">
+                            <table className="w-full">
+                              <thead className="text-white">
+                                <tr>
+                                  <td className="bg-un-blue-light rounded-tl-md w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      KPIs
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[10%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Weight
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Metrics
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Results(Actual)
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[10%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Status
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light rounded-tr-md w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Remarks
+                                    </div>
+                                  </td>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white">
+                                {grades
+                                  .filter(
+                                    (grade) =>
+                                      grade.kpi_objective_id ===
+                                      objectives.obj_objective_id
+                                  )
+                                  .map((grade, gradeIndex) => (
+                                    <tr
+                                      key={
+                                        "kpi - " +
+                                        grade.kpi_kpi_id +
+                                        kCounter++
+                                      }
+                                      className="shadow"
+                                    >
+                                      <td className="w-[20%]">
+                                        <div className="whitespace-normal p-2">
+                                          {grade.kpi_desc}
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          {grade.kpi_weight}%
+                                        </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="p-2 flex items-center justify-center">
                                           <div className="p-2 flex text-[.8rem] justify-center items-start">
                                             <table>
                                               {metrics
@@ -435,9 +722,20 @@ export default function EmployeeAssessmentGradeEdit() {
                                                     grade.kpi_kpi_id
                                                 )
                                                 .map((metric) => (
-                                                  <tr>
-                                                    <td valign="top" className="whitespace-nowrap">
-                                                      <span>{metric.target_metrics_score}</span>
+                                                  <tr
+                                                    key={
+                                                      metric.target_metrics_id
+                                                    }
+                                                  >
+                                                    <td
+                                                      valign="top"
+                                                      className="whitespace-nowrap"
+                                                    >
+                                                      <span>
+                                                        {
+                                                          metric.target_metrics_score
+                                                        }
+                                                      </span>
                                                       {" - "}
                                                     </td>
                                                     <td className="whitespace-break-spaces">
@@ -449,58 +747,226 @@ export default function EmployeeAssessmentGradeEdit() {
                                                 ))}
                                             </table>
                                           </div>
-                                        </td>
-                                        <td>
-                                          <div className="whitespace-normal p-2">
-                                            <textarea
-                                              id="message"
-                                              rows="4"
-                                              className="bg-default block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-md resize-none"
-                                              value={
-                                                remarks[pillarIndex]?.[objectIndex]?.[gradeIndex] || (grade.remarks !== null ? grade.remarks : "")
-                                              }
-                                              defaultValue={grade.remarks || ""}
-                                              onChange={(event) =>
-                                                handleRemarksChange(
-                                                  event,
-                                                  pillarIndex,
-                                                  objectIndex,
-                                                  gradeIndex
-                                                )
-                                              }
-                                            ></textarea>
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <div className="p-2 flex items-center justify-center">
-                                            <select
-                                              className={classNames("rounded-md px-2 max-w-[6rem]",
-                                                quarter == 2 ? (
-                                                  selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '1' || grade.results === 1 ? 'bg-un-red-light-1 text-un-red-dark' :
-                                                    selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '2' || grade.results === 2 ? 'bg-un-yellow-light text-un-yellow-dark' :
-                                                      selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '3' || grade.results === 3 ? 'bg-un-green-light text-un-green-dark' :
-                                                        selectedValues[pillarIndex]?.[objectIndex]?.[gradeIndex] === '4' || grade.results === 4 ? 'bg-un-green-light text-un-green-dark' :
-                                                          'bg-default') : "bg-default")}
-                                              value={
-                                                selectedValues[pillarIndex]?.[
-                                                objectIndex
-                                                ]?.[gradeIndex] ||
-                                                (grade.results !== 0
-                                                  ? grade.results
-                                                  : "")
-                                              } // value from state
-                                              onChange={(event) =>
-                                                handleSelectChange(
-                                                  event,
-                                                  pillarIndex,
-                                                  objectIndex,
-                                                  gradeIndex
-                                                )
-                                              } // event handler
-                                            >
-                                              <option value="0" disabled>
-                                                ---
-                                              </option>
+                                        </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <textarea
+                                            className="h-40 w-full bg-default"
+                                            name="achievements"
+                                            value={
+                                              results[pillarIndex]?.[
+                                                objectiveIndex
+                                              ]?.[gradeIndex]?.value ||
+                                              (grade.myr_results != null
+                                                ? grade.myr_results
+                                                : "")
+                                            }
+                                            onChange={(event) =>
+                                              handleResultChange(
+                                                pillarIndex,
+                                                objectiveIndex,
+                                                gradeIndex,
+                                                grade.kpi_kpi_id,
+                                                event
+                                              )
+                                            }
+                                            required
+                                          />
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%]">
+                                      <div className="p-2 flex items-center justify-center">
+                                        <select 
+                                        className={classNames(
+                                          "rounded-md px-4 flex content-center",
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 1 || grade.myr_status == 1 ? 'bg-un-red-light-1 text-un-red-dark' : 
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 2 || grade.myr_status == 2 ? 'bg-un-yellow-light text-un-yellow-dark' : 
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 3 || grade.myr_status == 3 ? 'bg-un-green-light text-un-green-dark' : 
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 4 || grade.myr_status == 4 ? 'bg-un-green-light text-un-green-dark' : 
+                                          'bg-default')}
+                                        value={status[pillarIndex]?.[objectiveIndex]?.[gradeIndex]?.value || (grade.myr_status != null ? grade.myr_status: "")}
+                                        onChange={(event) =>
+                                          handleStatusChange(
+                                            pillarIndex,
+                                            objectiveIndex,
+                                            gradeIndex,
+                                            grade.kpi_kpi_id,
+                                            event
+                                          )
+                                        }
+                                        >
+                                          <option value={0} disabled>---</option>
+                                          <option value={1} className="bg-un-red-light-1 text-un-red-dark ">1</option>
+                                          <option value={2} className="bg-un-yellow-light text-un-yellow-dark">2</option>
+                                          <option value={3} className="bg-un-green-light text-un-green-dark">3</option>
+                                          <option value={4} className="bg-un-green-light text-un-green-dark">4</option>
+                                        </select>
+                                      </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="whitespace-normal p-2">
+                                          <textarea
+                                            className="h-40 w-full bg-default"
+                                            name="achievements"
+                                            value={remarks[pillarIndex]?.[objectiveIndex]?.[gradeIndex]?.value || (grade.myr_remarks != null ? grade.myr_remarks: "")}
+                                            onChange={(event) =>
+                                              handleRemarkChange(
+                                                pillarIndex,
+                                                objectiveIndex,
+                                                gradeIndex,
+                                                grade.kpi_kpi_id,
+                                                event
+                                              )
+                                            }
+                                            required
+                                          />
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </React.Fragment>
+            ))}
+        </div>
+        <div className="w-full flex justify-end pt-4">
+          <button
+            className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue"
+            type="submit"
+            onClick={handleSubmit}
+          >
+            Submit
+          </button>
+        </div>
+        </>
+      ) : quarter == 3 ? (
+        <>
+        <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+          <div className="w-full pb-4">
+            <span className="font-bold text-dark-gray">Employee Grades:</span>
+          </div>
+          {grades
+            .filter(
+              (pillar) =>
+                pillar.pillar_name.trim() !== "" &&
+                pillar.pillar_description.trim() !== "" &&
+                pillar.pillar_percentage.trim() !== ""
+            )
+            .map((pillar, pillarIndex) => (
+              <React.Fragment
+                key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+              >
+                <div className="bg-white w-full rounded-md p-2 mb-4">
+                  <div className="w-full">
+                    <span className="text-black font-semibold">
+                      {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                    </span>
+                  </div>
+                  <div className="px-4">
+                    <span>Objectives</span>
+                  </div>
+                  <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                    {grades
+                      .filter((object) => object.obj_objective.trim() !== "")
+                      .filter(
+                        (objectives) =>
+                          objectives.obj_eval_pillar_id ===
+                          pillar.eval_pillar_id
+                      )
+                      .map((objectives, objectiveIndex) => (
+                        <div
+                          key={
+                            "objective - " +
+                            objectives.obj_objective_id +
+                            oCounter++
+                          }
+                          className={classNames(
+                            "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                            grades
+                              .filter(
+                                (object) => object.obj_objective.trim() !== ""
+                              )
+                              .filter(
+                                (objectives) =>
+                                  objectives.obj_eval_pillar_id ===
+                                  pillar.eval_pillar_id
+                              ).length > 1
+                              ? "w-[95%]"
+                              : "w-[100%]"
+                          )}
+                        >
+                          <div className="pb-2">
+                            <span className="whitespace-normal">
+                              {objectives.obj_objective}
+                            </span>
+                          </div>
+                          <div className="shadow">
+                            <table className="w-full">
+                              <thead className="text-white">
+                                <tr>
+                                  <td className="bg-un-blue-light rounded-tl-md w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      KPIs
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[10%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Weight
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[30%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Metrics
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Results(Actual)
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light rounded-tr-md w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Remarks
+                                    </div>
+                                  </td>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white">
+                                {grades
+                                  .filter(
+                                    (grade) =>
+                                      grade.kpi_objective_id ===
+                                      objectives.obj_objective_id
+                                  )
+                                  .map((grade, gradeIndex) => (
+                                    <tr
+                                      key={
+                                        "kpi - " +
+                                        grade.kpi_kpi_id +
+                                        kCounter++
+                                      }
+                                      className="shadow"
+                                    >
+                                      <td className="w-[20%]">
+                                        <div className="whitespace-normal p-2">
+                                          {grade.kpi_desc}
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          {grade.kpi_weight}%
+                                        </div>
+                                      </td>
+                                      <td className="w-[30%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                            <table>
                                               {metrics
                                                 .filter(
                                                   (metric) =>
@@ -508,65 +974,365 @@ export default function EmployeeAssessmentGradeEdit() {
                                                     grade.kpi_kpi_id
                                                 )
                                                 .map((metric) => (
-                                                  <option
-                                                    key={metric.target_metrics_id}
-                                                    value={metric.target_metrics_score}
-                                                    className={quarter == 2 && (metric.target_metrics_score === 1 ? 'bg-un-red-light-1 text-un-red-dark' :
-                                                      metric.target_metrics_score === 2 ? 'bg-un-yellow-light text-un-yellow-dark' :
-                                                        metric.target_metrics_score === 3 || metric.target_metrics_score === 4 ? 'bg-un-green-light text-un-green-dark' :
-                                                          '')}
-                                                  >{metric.target_metrics_score}
-                                                  </option>
+                                                  <tr
+                                                    key={
+                                                      metric.target_metrics_id
+                                                    }
+                                                  >
+                                                    <td
+                                                      valign="top"
+                                                      className="whitespace-nowrap"
+                                                    >
+                                                      <span>
+                                                        {
+                                                          metric.target_metrics_score
+                                                        }
+                                                      </span>
+                                                      {" - "}
+                                                    </td>
+                                                    <td className="whitespace-break-spaces">
+                                                      {
+                                                        metric.target_metrics_desc
+                                                      }
+                                                    </td>
+                                                  </tr>
                                                 ))}
-                                            </select>
-
+                                            </table>
                                           </div>
-                                        </td>
-                                        <td>
-                                          <div className="whitespace-normal p-2">
-                                            <textarea
-                                              id="message"
-                                              rows="4"
-                                              className="bg-default block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-md resize-none"
-                                              value={
-                                                remarks[pillarIndex]?.[objectIndex]?.[gradeIndex] || (grade.remarks !== null ? grade.remarks : "")
-                                              }
-                                              defaultValue={grade.remarks || ""}
-                                              onChange={(event) =>
-                                                handleRemarksChange(
-                                                  event,
-                                                  pillarIndex,
-                                                  objectIndex,
-                                                  gradeIndex
-                                                )
-                                              }
-                                            ></textarea>
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    ))}
-                                </tbody>
-                              </table> */}
-                            </div>
+                                        </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <textarea
+                                            className="h-40 w-full bg-default"
+                                            name="achievements"
+                                            value={
+                                              results[pillarIndex]?.[
+                                                objectiveIndex
+                                              ]?.[gradeIndex]?.value ||
+                                              (grade.tq_results != null
+                                                ? grade.tq_results
+                                                : "")
+                                            }
+                                            onChange={(event) =>
+                                              handleResultChange(
+                                                pillarIndex,
+                                                objectiveIndex,
+                                                gradeIndex,
+                                                grade.kpi_kpi_id,
+                                                event
+                                              )
+                                            }
+                                            required
+                                          />
+                                        </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="whitespace-normal p-2">
+                                          <textarea
+                                            className="h-40 w-full bg-default"
+                                            name="achievements"
+                                            value={
+                                              remarks[pillarIndex]?.[
+                                                objectiveIndex
+                                              ]?.[gradeIndex]?.value ||
+                                              (grade.tq_remarks != null
+                                                ? grade.tq_remarks
+                                                : "")
+                                            }
+                                            onChange={(event) =>
+                                              handleRemarkChange(
+                                                pillarIndex,
+                                                objectiveIndex,
+                                                gradeIndex,
+                                                grade.kpi_kpi_id,
+                                                event
+                                              )
+                                            }
+                                            required
+                                          />
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
                           </div>
-                        ))}
-                    </div>
+                        </div>
+                      ))}
                   </div>
-
-                </React.Fragment>
-              ))}
-            </div>
-            <AssessmentInstructions />
-            <div className="w-full flex justify-end pt-4">
-              <button
-                className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                type="submit"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
+                </div>
+              </React.Fragment>
+            ))}
+        </div>
+        <div className="w-full flex justify-end pt-4">
+          <button
+            className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue"
+            type="submit"
+            onClick={handleSubmit}
+          >
+            Submit
+          </button>
+        </div>
         </>
+      ) : quarter == 4 ? (
+        <>
+        <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+          <div className="w-full pb-4">
+            <span className="font-bold text-dark-gray">Employee Grades:</span>
+          </div>
+          {grades
+            .filter(
+              (pillar) =>
+                pillar.pillar_name.trim() !== "" &&
+                pillar.pillar_description.trim() !== "" &&
+                pillar.pillar_percentage.trim() !== ""
+            )
+            .map((pillar, pillarIndex) => (
+              <React.Fragment
+                key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+              >
+                <div className="bg-white w-full rounded-md p-2 mb-4">
+                  <div className="w-full">
+                    <span className="text-black font-semibold">
+                      {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                    </span>
+                  </div>
+                  <div className="px-4">
+                    <span>Objectives</span>
+                  </div>
+                  <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                    {grades
+                      .filter((object) => object.obj_objective.trim() !== "")
+                      .filter(
+                        (objectives) =>
+                          objectives.obj_eval_pillar_id ===
+                          pillar.eval_pillar_id
+                      )
+                      .map((objectives, objectiveIndex) => (
+                        <div
+                          key={
+                            "objective - " +
+                            objectives.obj_objective_id +
+                            oCounter++
+                          }
+                          className={classNames(
+                            "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                            grades
+                              .filter(
+                                (object) => object.obj_objective.trim() !== ""
+                              )
+                              .filter(
+                                (objectives) =>
+                                  objectives.obj_eval_pillar_id ===
+                                  pillar.eval_pillar_id
+                              ).length > 1
+                              ? "w-[95%]"
+                              : "w-[100%]"
+                          )}
+                        >
+                          <div className="pb-2">
+                            <span className="whitespace-normal">
+                              {objectives.obj_objective}
+                            </span>
+                          </div>
+                          <div className="shadow">
+                            <table className="w-full">
+                              <thead className="text-white">
+                                <tr>
+                                  <td className="bg-un-blue-light rounded-tl-md w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      KPIs
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[10%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Weight
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Metrics
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Results(Actual)
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light w-[10%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Rating
+                                    </div>
+                                  </td>
+                                  <td className="bg-un-blue-light rounded-tr-md w-[20%]">
+                                    <div className="flex justify-center p-2 font-semibold">
+                                      Remarks
+                                    </div>
+                                  </td>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white">
+                                {grades
+                                  .filter(
+                                    (grade) =>
+                                      grade.kpi_objective_id ===
+                                      objectives.obj_objective_id
+                                  )
+                                  .map((grade, gradeIndex) => (
+                                    <tr
+                                      key={
+                                        "kpi - " +
+                                        grade.kpi_kpi_id +
+                                        kCounter++
+                                      }
+                                      className="shadow"
+                                    >
+                                      <td className="w-[20%]">
+                                        <div className="whitespace-normal p-2">
+                                          {grade.kpi_desc}
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          {grade.kpi_weight}%
+                                        </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                            <table>
+                                              {metrics
+                                                .filter(
+                                                  (metric) =>
+                                                    metric.metric_kpi_id ===
+                                                    grade.kpi_kpi_id
+                                                )
+                                                .map((metric) => (
+                                                  <tr
+                                                    key={
+                                                      metric.target_metrics_id
+                                                    }
+                                                  >
+                                                    <td
+                                                      valign="top"
+                                                      className="whitespace-nowrap"
+                                                    >
+                                                      <span>
+                                                        {
+                                                          metric.target_metrics_score
+                                                        }
+                                                      </span>
+                                                      {" - "}
+                                                    </td>
+                                                    <td className="whitespace-break-spaces">
+                                                      {
+                                                        metric.target_metrics_desc
+                                                      }
+                                                    </td>
+                                                  </tr>
+                                                ))}
+                                            </table>
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <textarea
+                                            className="h-40 w-full bg-default"
+                                            name="achievements"
+                                            value={
+                                              results[pillarIndex]?.[
+                                                objectiveIndex
+                                              ]?.[gradeIndex]?.value ||
+                                              (grade.yee_results != null
+                                                ? grade.yee_results
+                                                : "")
+                                            }
+                                            onChange={(event) =>
+                                              handleResultChange(
+                                                pillarIndex,
+                                                objectiveIndex,
+                                                gradeIndex,
+                                                grade.kpi_kpi_id,
+                                                event
+                                              )
+                                            }
+                                            required
+                                          />
+                                        </div>
+                                      </td>
+                                      <td className="w-[10%]">
+                                      <div className="p-2 flex items-center justify-center">
+                                      <select 
+                                        className="rounded-md px-4 flex content-center bg-default"
+                                        value={agreed[pillarIndex]?.[objectiveIndex]?.[gradeIndex]?.value || (grade.agreed_rating != "null" ? grade.agreed_rating: "")}
+                                        onChange={(event) =>
+                                          handleAgreedChange(
+                                            pillarIndex,
+                                            objectiveIndex,
+                                            gradeIndex,
+                                            grade.kpi_kpi_id,
+                                            event
+                                          )}>
+                                          <option value={0} disabled>---</option>
+                                          <option value={1}>1</option>
+                                          <option value={2}>2</option>
+                                          <option value={3}>3</option>
+                                          <option value={4}>4</option>
+                                        </select>
+                                      </div>
+                                      </td>
+                                      <td className="w-[20%]">
+                                        <div className="whitespace-normal p-2">
+                                          <textarea
+                                            className="h-40 w-full bg-default"
+                                            name="achievements"
+                                            value={
+                                              remarks[pillarIndex]?.[
+                                                objectiveIndex
+                                              ]?.[gradeIndex]?.value ||
+                                              (grade.yee_remarks != null
+                                                ? grade.yee_remarks
+                                                : "")
+                                            }
+                                            onChange={(event) =>
+                                              handleRemarkChange(
+                                                pillarIndex,
+                                                objectiveIndex,
+                                                gradeIndex,
+                                                grade.kpi_kpi_id,
+                                                event
+                                              )
+                                            }
+                                            required
+                                          />
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </React.Fragment>
+            ))}
+        </div>
+        <div className="w-full flex justify-end pt-4">
+          <button
+            className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue"
+            type="submit"
+            onClick={handleSubmit}
+          >
+            Submit
+          </button>
+        </div>
+        </>
+      ) : (
+        "Loading..."
       )}
     </>
   );

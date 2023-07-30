@@ -3,247 +3,1064 @@ import AssessmentInstructions from "./AssessmentInstructions";
 import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
+import { error } from "jquery";
+import Badge from "../../misc/Badge";
 
-export default function EmployeeAssessmentGrade({ employee_id, quarter }) {
+export default function EmployeeAssessmentGrade({
+  employee_id,
+  quarter,
+  workYear,
+  checkAchievements,
+}) {
+  const [loading, toggleLoading] = useState(true);
   const [grades, setGrades] = useState([]);
-  const [checkForm, setcheckForm] = useState();
-  const [checkScores, setCheckScores] = useState();
-  const [pillars, setPillars] = useState([]);
-  const [objectives, setObjectives] = useState([]);
+  const [metrics, setMetrics] = useState([]);
   let pCounter,
     oCounter,
     kCounter = 1;
-
-
-const navigate = useNavigate();
-const edit = () => {
-  sessionStorage.setItem("assessment_quarter", quarter);
-  navigate("/tracking_and_assessment/employee_assessment/" + sessionStorage.getItem("assessment_name") + "/grade_edit");
-}
-
+  const navigate = useNavigate();
   useEffect(() => {
     const getGrades = async () => {
       const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
         const response = await axios.get(url, {
           params: {
-            userGrading: true,
-            quarter: quarter,
+            userTrackingIndividualEmployeeGrades: true,
+            workYear: workYear,
             empID: employee_id,
           },
         });
         setGrades(response.data);
-
-        const ColumnAllFalse = response.data.some((item) => item.pillar_id === null);
-        setcheckForm(ColumnAllFalse);
-
-
-        const scores = response.data.every((item) => item.results === 0 || item.metrics_desc === null);
-
-        setCheckScores(scores);
-
-        const pillars = response.data.reduce((uniquePillars, item) => {
-          const existingPillar = uniquePillars.find(
-            (pillar) => pillar.eval_pillar_id === item.eval_pillar_id
-          );
-          if (!existingPillar) {
-            uniquePillars.push({
-              eval_pillar_id: item.eval_pillar_id,
-              pillar_id: item.pillar_id,
-              pillar_name: item.pillar_name,
-              pillar_description: item.pillar_description,
-              pillar_percentage: item.pillar_percentage,
-            });
-          }
-          return uniquePillars;
-        }, []);
-
-        setPillars(pillars);
-
-        const obj = response.data.reduce((uniqueObjectives, item) => {
-          if (item.obj_objective.trim() !== '') {
-            const existingObjective = uniqueObjectives.find(
-              (objective) => objective.obj_objective === item.obj_objective
-            );
-            if (!existingObjective) {
-              uniqueObjectives.push({
-                obj_objective_id: item.obj_objective_id,
-                obj_eval_pillar_id: item.obj_eval_pillar_id,
-                obj_objective: item.obj_objective
-              });
-            }
-          }
-          return uniqueObjectives;
-        }, []);
-
-        setObjectives(obj);
-
       } catch (error) {
         console.log(error.message);
       }
     };
-    if (!employee_id) return;
+    const getMetrics = async () => {
+      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      try {
+        const response = await axios.get(url, {
+          params: {
+            metrics: true,
+            workYear: workYear,
+            empID: employee_id,
+          },
+        });
+        setMetrics(response.data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    toggleLoading(false);
+    getMetrics();
     getGrades();
-  }, [employee_id, quarter]);
+  }, [employee_id, workYear]);
 
-  return (
+  const edit = () => {
+    sessionStorage.setItem("work_year", workYear);
+    sessionStorage.setItem("assessment_quarter", quarter);
+    sessionStorage.setItem("assessment_id", employee_id);
+    navigate(
+      "/tracking_and_assessment/employee_assessment/" +
+        sessionStorage.getItem("assessment_name") +
+        "/grade_edit"
+    );
+  };
+  return loading ? (
+    "Loading..."
+  ) : (
     <>
-      {checkForm === true ? (
-        <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
-          <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-            <span>
-              Sorry, the employee have not yet created their main goals yet.
-            </span>
-          </div>
-        </div>
-      ) : (
+      {checkAchievements.first_part_id ? (
         <>
-          {checkScores === true ? (
+          {quarter == 0 ? (
             <>
-              <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
+              <div className="w-full bg-default p-2 rounded-md">
                 <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
-                  <span>
-                    Sorry, the employee has not been graded in this quarter.
-                  </span>
+                  <span>Please select a quarter</span>
                 </div>
               </div>
-              <div className="w-full flex justify-end pt-4">
-                <button className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                onClick={() => edit()}
-                >
-                  Grade Employee
-                </button>
-              </div>
+            </>
+          ) : quarter == 1 ? (
+            <>
+              {!checkAchievements.fq_results ? (
+                <>
+                  <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
+                    <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                      <span>
+                        The employee has not been graded in the first
+                        quarter.
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Grade Employee
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                    <div className="w-full pb-4">
+                      <span className="font-bold text-dark-gray">
+                        Employee Grades:
+                      </span>
+                    </div>
+                    {grades
+                      .filter(
+                        (pillar) =>
+                          pillar.pillar_name.trim() !== "" &&
+                          pillar.pillar_description.trim() !== "" &&
+                          pillar.pillar_percentage.trim() !== ""
+                      )
+                      .map((pillar) => (
+                        <React.Fragment
+                          key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+                        >
+                          <div className="bg-white w-full rounded-md p-2 mb-4">
+                            <div className="w-full">
+                              <span className="text-black font-semibold">
+                                {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                              </span>
+                            </div>
+                            <div className="px-4">
+                              <span>Objectives</span>
+                            </div>
+                            {grades
+                              .filter(
+                                (object) => object.obj_objective.trim() !== ""
+                              )
+                              .filter(
+                                (objectives) =>
+                                  objectives.obj_eval_pillar_id ===
+                                  pillar.eval_pillar_id
+                              )
+                              .map((objectives) => (
+                                <div
+                                  key={
+                                    "objective - " +
+                                    objectives.obj_objective_id +
+                                    oCounter++
+                                  }
+                                ></div>
+                              ))}
+                            <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                              {grades
+                                .filter(
+                                  (object) => object.obj_objective.trim() !== ""
+                                )
+                                .filter(
+                                  (objectives) =>
+                                    objectives.obj_eval_pillar_id ===
+                                    pillar.eval_pillar_id
+                                )
+                                .map((objectives) => (
+                                  <div
+                                    key={
+                                      "objective - " +
+                                      objectives.obj_objective_id +
+                                      oCounter++
+                                    }
+                                    className={classNames(
+                                      "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                                      grades
+                                        .filter(
+                                          (object) =>
+                                            object.obj_objective.trim() !== ""
+                                        )
+                                        .filter(
+                                          (objectives) =>
+                                            objectives.obj_eval_pillar_id ===
+                                            pillar.eval_pillar_id
+                                        ).length > 1
+                                        ? "w-[95%]"
+                                        : "w-[100%]"
+                                    )}
+                                  >
+                                    <div className="pb-2">
+                                      <span className="whitespace-normal">
+                                        {objectives.obj_objective}
+                                      </span>
+                                    </div>
+                                    <div className="shadow">
+                                      <table className="w-full">
+                                        <thead className="text-white">
+                                          <tr>
+                                            <td className="bg-un-blue-light rounded-tl-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                KPIs
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[10%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Weight
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Metrics
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Results(Actual)
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light rounded-tr-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Remarks
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="bg-white">
+                                          {grades
+                                            .filter(
+                                              (grade) =>
+                                                grade.kpi_objective_id ===
+                                                objectives.obj_objective_id
+                                            )
+                                            .map((grade) => (
+                                              <tr
+                                                key={
+                                                  "kpi - " +
+                                                  grade.kpi_kpi_id +
+                                                  kCounter++
+                                                }
+                                                className="shadow"
+                                              >
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.kpi_desc}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[10%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.kpi_weight}%
+                                                  </div>
+                                                </td>
+                                                <td className="w-[30%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                                      <table>
+                                                        {metrics
+                                                          .filter(
+                                                            (metric) =>
+                                                              metric.metric_kpi_id ===
+                                                              grade.kpi_kpi_id
+                                                          )
+                                                          .map((metric) => (
+                                                            <tr
+                                                              key={
+                                                                metric.target_metrics_id
+                                                              }
+                                                            >
+                                                              <td
+                                                                valign="top"
+                                                                className="whitespace-nowrap"
+                                                              >
+                                                                <span>
+                                                                  {
+                                                                    metric.target_metrics_score
+                                                                  }
+                                                                </span>
+                                                                {" - "}
+                                                              </td>
+                                                              <td className="whitespace-break-spaces">
+                                                                {
+                                                                  metric.target_metrics_desc
+                                                                }
+                                                              </td>
+                                                            </tr>
+                                                          ))}
+                                                      </table>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.fq_results}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.fq_remarks === ""
+                                                      ? "N/A"
+                                                      : grade.fq_remarks}
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      ))}
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </>
+              )}
+            </>
+          ) : quarter == 2 ? (
+            <>
+              {!checkAchievements.myr_results ? (
+                <>
+                  <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
+                    <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                      <span>
+                        The employee has not been graded in the mid year quarter.
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Grade Employee
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                    <div className="w-full pb-4">
+                      <span className="font-bold text-dark-gray">
+                        Employee Grades:
+                      </span>
+                    </div>
+                    {grades
+                      .filter(
+                        (pillar) =>
+                          pillar.pillar_name.trim() !== "" &&
+                          pillar.pillar_description.trim() !== "" &&
+                          pillar.pillar_percentage.trim() !== ""
+                      )
+                      .map((pillar) => (
+                        <React.Fragment
+                          key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+                        >
+                          <div className="bg-white w-full rounded-md p-2 mb-4">
+                            <div className="w-full">
+                              <span className="text-black font-semibold">
+                                {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                              </span>
+                            </div>
+                            <div className="px-4">
+                              <span>Objectives</span>
+                            </div>
+                            {grades
+                              .filter(
+                                (object) => object.obj_objective.trim() !== ""
+                              )
+                              .filter(
+                                (objectives) =>
+                                  objectives.obj_eval_pillar_id ===
+                                  pillar.eval_pillar_id
+                              )
+                              .map((objectives) => (
+                                <div
+                                  key={
+                                    "objective - " +
+                                    objectives.obj_objective_id +
+                                    oCounter++
+                                  }
+                                ></div>
+                              ))}
+                            <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                              {grades
+                                .filter(
+                                  (object) => object.obj_objective.trim() !== ""
+                                )
+                                .filter(
+                                  (objectives) =>
+                                    objectives.obj_eval_pillar_id ===
+                                    pillar.eval_pillar_id
+                                )
+                                .map((objectives) => (
+                                  <div
+                                    key={
+                                      "objective - " +
+                                      objectives.obj_objective_id +
+                                      oCounter++
+                                    }
+                                    className={classNames(
+                                      "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                                      grades
+                                        .filter(
+                                          (object) =>
+                                            object.obj_objective.trim() !== ""
+                                        )
+                                        .filter(
+                                          (objectives) =>
+                                            objectives.obj_eval_pillar_id ===
+                                            pillar.eval_pillar_id
+                                        ).length > 1
+                                        ? "w-[95%]"
+                                        : "w-[100%]"
+                                    )}
+                                  >
+                                    <div className="pb-2">
+                                      <span className="whitespace-normal">
+                                        {objectives.obj_objective}
+                                      </span>
+                                    </div>
+                                    <div className="shadow">
+                                      <table className="w-full">
+                                        <thead className="text-white">
+                                          <tr>
+                                            <td className="bg-un-blue-light rounded-tl-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                KPIs
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[10%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Weight
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Metrics
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Results(Actual)
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[10%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Status
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light rounded-tr-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Remarks
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="bg-white">
+                                          {grades
+                                            .filter(
+                                              (grade) =>
+                                                grade.kpi_objective_id ===
+                                                objectives.obj_objective_id
+                                            )
+                                            .map((grade) => (
+                                              <tr
+                                                key={
+                                                  "kpi - " +
+                                                  grade.kpi_kpi_id +
+                                                  kCounter++
+                                                }
+                                                className="shadow"
+                                              >
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.kpi_desc}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[10%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.kpi_weight}%
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                                      <table>
+                                                        {metrics
+                                                          .filter(
+                                                            (metric) =>
+                                                              metric.metric_kpi_id ===
+                                                              grade.kpi_kpi_id
+                                                          )
+                                                          .map((metric) => (
+                                                            <tr
+                                                              key={
+                                                                metric.target_metrics_id
+                                                              }
+                                                            >
+                                                              <td
+                                                                valign="top"
+                                                                className="whitespace-nowrap"
+                                                              >
+                                                                <span>
+                                                                  {
+                                                                    metric.target_metrics_score
+                                                                  }
+                                                                </span>
+                                                                {" - "}
+                                                              </td>
+                                                              <td className="whitespace-break-spaces">
+                                                                {
+                                                                  metric.target_metrics_desc
+                                                                }
+                                                              </td>
+                                                            </tr>
+                                                          ))}
+                                                      </table>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.myr_results}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[10%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.myr_status  == 1 ? (
+                                                    <Badge
+                                                    message={"Struggling/Help!"}
+                                                    type={"failure"}
+                                                    className={"text-[.8rem] px-1"}
+                                                    />
+                                                    ): grade.myr_status == 2 ? (
+                                                        <Badge
+                                                        message={"Lagging/Behind"}
+                                                        type={"warning"}
+                                                        className={"text-[.8rem] px-1"}
+                                                        />
+                                                    ): grade.myr_status == 3 ? (
+                                                      <Badge
+                                                      message={"Ontrack/Completed"}
+                                                      type={"success"}
+                                                      className={"text-[.8rem] px-1"}
+                                                      />
+                                                  ): grade.myr_status == 4 ? (
+                                                    <Badge
+                                                    message={"Ontrack/Completed"}
+                                                    type={"success"}
+                                                    className={"text-[.8rem] px-1"}
+                                                    />
+                                                  ) : "Loading..."}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.myr_remarks === ""
+                                                      ? "N/A"
+                                                      : grade.myr_remarks}
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      ))}
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </>
+              )}
+            </>
+          ) : quarter == 3 ? (
+            <>
+              {!checkAchievements.tq_results ? (
+                <>
+                  <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
+                    <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                      <span>
+                        The employee has not been graded in the third quarter.
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Grade Employee
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                    <div className="w-full pb-4">
+                      <span className="font-bold text-dark-gray">
+                        Employee Grades:
+                      </span>
+                    </div>
+                    {grades
+                      .filter(
+                        (pillar) =>
+                          pillar.pillar_name.trim() !== "" &&
+                          pillar.pillar_description.trim() !== "" &&
+                          pillar.pillar_percentage.trim() !== ""
+                      )
+                      .map((pillar) => (
+                        <React.Fragment
+                          key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+                        >
+                          <div className="bg-white w-full rounded-md p-2 mb-4">
+                            <div className="w-full">
+                              <span className="text-black font-semibold">
+                                {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                              </span>
+                            </div>
+                            <div className="px-4">
+                              <span>Objectives</span>
+                            </div>
+                            {grades
+                              .filter(
+                                (object) => object.obj_objective.trim() !== ""
+                              )
+                              .filter(
+                                (objectives) =>
+                                  objectives.obj_eval_pillar_id ===
+                                  pillar.eval_pillar_id
+                              )
+                              .map((objectives) => (
+                                <div
+                                  key={
+                                    "objective - " +
+                                    objectives.obj_objective_id +
+                                    oCounter++
+                                  }
+                                ></div>
+                              ))}
+                            <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                              {grades
+                                .filter(
+                                  (object) => object.obj_objective.trim() !== ""
+                                )
+                                .filter(
+                                  (objectives) =>
+                                    objectives.obj_eval_pillar_id ===
+                                    pillar.eval_pillar_id
+                                )
+                                .map((objectives) => (
+                                  <div
+                                    key={
+                                      "objective - " +
+                                      objectives.obj_objective_id +
+                                      oCounter++
+                                    }
+                                    className={classNames(
+                                      "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                                      grades
+                                        .filter(
+                                          (object) =>
+                                            object.obj_objective.trim() !== ""
+                                        )
+                                        .filter(
+                                          (objectives) =>
+                                            objectives.obj_eval_pillar_id ===
+                                            pillar.eval_pillar_id
+                                        ).length > 1
+                                        ? "w-[95%]"
+                                        : "w-[100%]"
+                                    )}
+                                  >
+                                    <div className="pb-2">
+                                      <span className="whitespace-normal">
+                                        {objectives.obj_objective}
+                                      </span>
+                                    </div>
+                                    <div className="shadow">
+                                      <table className="w-full">
+                                        <thead className="text-white">
+                                          <tr>
+                                            <td className="bg-un-blue-light rounded-tl-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                KPIs
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[10%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Weight
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Metrics
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Results(Actual)
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light rounded-tr-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Remarks
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="bg-white">
+                                          {grades
+                                            .filter(
+                                              (grade) =>
+                                                grade.kpi_objective_id ===
+                                                objectives.obj_objective_id
+                                            )
+                                            .map((grade) => (
+                                              <tr
+                                                key={
+                                                  "kpi - " +
+                                                  grade.kpi_kpi_id +
+                                                  kCounter++
+                                                }
+                                                className="shadow"
+                                              >
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.kpi_desc}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[10%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.kpi_weight}%
+                                                  </div>
+                                                </td>
+                                                <td className="w-[30%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                                      <table>
+                                                        {metrics
+                                                          .filter(
+                                                            (metric) =>
+                                                              metric.metric_kpi_id ===
+                                                              grade.kpi_kpi_id
+                                                          )
+                                                          .map((metric) => (
+                                                            <tr
+                                                              key={
+                                                                metric.target_metrics_id
+                                                              }
+                                                            >
+                                                              <td
+                                                                valign="top"
+                                                                className="whitespace-nowrap"
+                                                              >
+                                                                <span>
+                                                                  {
+                                                                    metric.target_metrics_score
+                                                                  }
+                                                                </span>
+                                                                {" - "}
+                                                              </td>
+                                                              <td className="whitespace-break-spaces">
+                                                                {
+                                                                  metric.target_metrics_desc
+                                                                }
+                                                              </td>
+                                                            </tr>
+                                                          ))}
+                                                      </table>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.tq_results}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.tq_remarks === ""
+                                                      ? "N/A"
+                                                      : grade.tq_remarks}
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      ))}
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </>
+              )}
+            </>
+          ) : quarter == 4 ? (
+            <>
+              {!checkAchievements.yee_results ? (
+                <>
+                  <div className="w-full bg-default px-2 pb-4 pt-2 rounded-md">
+                    <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+                      <span>
+                        The employee has not been graded in the year end quarter.
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Grade Employee
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                    <div className="w-full pb-4">
+                      <span className="font-bold text-dark-gray">
+                        Employee Grades:
+                      </span>
+                    </div>
+                    {grades
+                      .filter(
+                        (pillar) =>
+                          pillar.pillar_name.trim() !== "" &&
+                          pillar.pillar_description.trim() !== "" &&
+                          pillar.pillar_percentage.trim() !== ""
+                      )
+                      .map((pillar) => (
+                        <React.Fragment
+                          key={"pillar - " + pillar.eval_pillar_id + pCounter++}
+                        >
+                          <div className="bg-white w-full rounded-md p-2 mb-4">
+                            <div className="w-full">
+                              <span className="text-black font-semibold">
+                                {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
+                              </span>
+                            </div>
+                            <div className="px-4">
+                              <span>Objectives</span>
+                            </div>
+                            {grades
+                              .filter(
+                                (object) => object.obj_objective.trim() !== ""
+                              )
+                              .filter(
+                                (objectives) =>
+                                  objectives.obj_eval_pillar_id ===
+                                  pillar.eval_pillar_id
+                              )
+                              .map((objectives) => (
+                                <div
+                                  key={
+                                    "objective - " +
+                                    objectives.obj_objective_id +
+                                    oCounter++
+                                  }
+                                ></div>
+                              ))}
+                            <div className="flex gap-2 p-2 overflow-x-auto w-full">
+                              {grades
+                                .filter(
+                                  (object) => object.obj_objective.trim() !== ""
+                                )
+                                .filter(
+                                  (objectives) =>
+                                    objectives.obj_eval_pillar_id ===
+                                    pillar.eval_pillar_id
+                                )
+                                .map((objectives) => (
+                                  <div
+                                    key={
+                                      "objective - " +
+                                      objectives.obj_objective_id +
+                                      oCounter++
+                                    }
+                                    className={classNames(
+                                      "bg-default-dark flex-none bg-gray-200 p-2 rounded-md",
+                                      grades
+                                        .filter(
+                                          (object) =>
+                                            object.obj_objective.trim() !== ""
+                                        )
+                                        .filter(
+                                          (objectives) =>
+                                            objectives.obj_eval_pillar_id ===
+                                            pillar.eval_pillar_id
+                                        ).length > 1
+                                        ? "w-[95%]"
+                                        : "w-[100%]"
+                                    )}
+                                  >
+                                    <div className="pb-2">
+                                      <span className="whitespace-normal">
+                                        {objectives.obj_objective}
+                                      </span>
+                                    </div>
+                                    <div className="shadow">
+                                      <table className="w-full">
+                                        <thead className="text-white">
+                                          <tr>
+                                            <td className="bg-un-blue-light rounded-tl-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                KPIs
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[10%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Weight
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Metrics
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Results(Actual)
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light rounded-tr-md w-[20%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Remarks
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="bg-white">
+                                          {grades
+                                            .filter(
+                                              (grade) =>
+                                                grade.kpi_objective_id ===
+                                                objectives.obj_objective_id
+                                            )
+                                            .map((grade) => (
+                                              <tr
+                                                key={
+                                                  "kpi - " +
+                                                  grade.kpi_kpi_id +
+                                                  kCounter++
+                                                }
+                                                className="shadow"
+                                              >
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.kpi_desc}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[10%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.kpi_weight}%
+                                                  </div>
+                                                </td>
+                                                <td className="w-[30%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                                      <table>
+                                                        {metrics
+                                                          .filter(
+                                                            (metric) =>
+                                                              metric.metric_kpi_id ===
+                                                              grade.kpi_kpi_id
+                                                          )
+                                                          .map((metric) => (
+                                                            <tr
+                                                              key={
+                                                                metric.target_metrics_id
+                                                              }
+                                                            >
+                                                              <td
+                                                                valign="top"
+                                                                className="whitespace-nowrap"
+                                                              >
+                                                                <span>
+                                                                  {
+                                                                    metric.target_metrics_score
+                                                                  }
+                                                                </span>
+                                                                {" - "}
+                                                              </td>
+                                                              <td className="whitespace-break-spaces">
+                                                                {
+                                                                  metric.target_metrics_desc
+                                                                }
+                                                              </td>
+                                                            </tr>
+                                                          ))}
+                                                      </table>
+                                                    </div>
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.yee_results}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[20%]">
+                                                  <div className="whitespace-normal p-2">
+                                                    {grade.yee_remarks === ""
+                                                      ? "N/A"
+                                                      : grade.yee_remarks}
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      ))}
+                  </div>
+                  <div className="w-full flex justify-end pt-4">
+                    <button
+                      className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                      onClick={() => edit()}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </>
+              )}
             </>
           ) : (
-            <>
-              <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
-                <div className="w-full pb-4">
-                  <span className="font-bold text-dark-gray">
-                    Employee Grades:
-                  </span>
-                </div>
-                {pillars.map((pillar) => (
-                  <React.Fragment
-                  key={"pillar - " + pillar.eval_pillar_id + pCounter++}
-                  >
-                    <div className="bg-white w-full rounded-md p-2 mb-4">
-                      <div className="w-full">
-                        <span className="text-black font-semibold">
-                          {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
-                        </span>
-                      </div>
-                      <div className="px-4">
-                        <span>Objectives</span>
-                      </div>
-                      <div className="flex gap-2 p-2 overflow-x-auto w-full">
-                        {objectives
-                          .filter((object) => object.obj_eval_pillar_id === pillar.eval_pillar_id)
-                          .map((object) => (
-                            <div
-                                key={
-                                  "objective - " +
-                                  object.obj_objective_id +
-                                  oCounter++
-                                }
-                              className={classNames(
-                                "bg-default-dark flex-none bg-gray-200 p-2 rounded-md w-full"
-                              )}
-                            >
-                              <div className="pb-2">
-                                <span className="whitespace-normal">
-                                  {object.obj_objective}
-                                </span>
-                              </div>
-
-                              <div className="bg-white rounded-md shadow">
-                                {/* <table className="w-full">
-                                  <thead>
-                                    <tr>
-                                      <td>
-                                        <div className="flex justify-center p-2 font-semibold">
-                                          KPIs
-                                        </div>
-                                      </td>
-                                      <td>
-                                        <div className="flex justify-center p-2 font-semibold">
-                                          Weight
-                                        </div>
-                                      </td>
-                                      <td>
-                                        <div className="flex justify-center p-2 font-semibold">
-                                          Results
-                                        </div>
-                                      </td>
-                                      <td>
-                                        <div className="flex justify-center p-2 font-semibold">
-                                          Description
-                                        </div>
-                                      </td>
-                                      <td>
-                                        <div className="flex justify-center p-2 font-semibold">
-                                          Remarks
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                  {grades
-                                    .filter((grade) => grade.kpi_objective_id === object.obj_objective_id)
-                                    .map((grade) => (
-                                        <tr key={"kpi - " + grade.kpi_kpi_id + kCounter++}>
-                                          <td>
-                                            <div className="whitespace-normal p-2">
-                                              {grade.kpi_desc}
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div className="p-2 flex items-center justify-center">
-                                              {grade.kpi_weight}%
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div className="p-2 flex items-center justify-center">
-                                              {grade.results}
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div className="whitespace-normal p-2">
-                                              {grade.metrics_desc === ""
-                                                ? "N/A"
-                                                : grade.metrics_desc}
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div className="whitespace-normal p-2">
-                                              {grade.remarks === ""
-                                                ? "N/A"
-                                                : grade.remarks}
-                                            </div>
-                                          </td>
-                                        </tr>
-                                    ))
-                                  }
-                                  </tbody>
-                                </table> */}
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
-              <AssessmentInstructions />
-              <div className="w-full flex justify-end pt-4">
-                <button className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                onClick={() => edit()}
-                >
-                  Edit
-                </button>
-              </div>
-            </>
+            "Loading..."
           )}
+        </>
+      ) : (
+        <>
+          <div className="font-semibold text-dark-gray rounded-md p-2 flex flex-col gap-2 items-center text-center">
+            <span>
+              The employee have not yet created their main goals yet
+            </span>
+          </div>
         </>
       )}
     </>
