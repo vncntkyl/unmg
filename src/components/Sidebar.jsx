@@ -98,9 +98,16 @@ export default function Sidebar({ sidebarToggler, className }) {
                 textLabel={"Agreement Sign-off"}
                 slug={"sign_off"}
               />
+              {JSON.parse(currentUser).user_type > 3 && JSON.parse(currentUser).user_type <= 6 && (
+                <NavButton
+                  icon={<RiLineChartLine />}
+                  textLabel={"View Evaluations"}
+                  slug={"view_evaluations"}
+                />
+              )}
             </div>
           </div>
-          {JSON.parse(currentUser).user_type <= 5 && (
+          {JSON.parse(currentUser).user_type <= 3 && (
             <div className="flex flex-col">
               <NavButton
                 isDropdown={true}

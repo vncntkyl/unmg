@@ -1,3 +1,4 @@
+      
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -674,6 +675,7 @@ export default function EvaluationTable({
                 {allEvaluations
                   .filter(
                     (row) =>
+                    row.form_kpi_duration == selectedKpiDuration &&
                       row.contract_type == employeeType &&
                       (row.company == selectedCompanyID ||
                         selectedCompanyID == "All") &&
@@ -1748,3 +1750,5 @@ export default function EvaluationTable({
     </>
   );
 }
+
+    

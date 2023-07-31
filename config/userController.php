@@ -38,7 +38,7 @@ class User extends Controller
 
     function retrieveHeadUsers()
     {
-        $this->setStatement("SELECT u.employee_id, CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.') AS full_name, a.user_type
+        $this->setStatement("SELECT u.users_id, u.employee_id, CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.') AS full_name, a.user_type
         FROM hr_users u LEFT JOIN hr_user_accounts a ON u.users_id = a.users_id
         WHERE a.user_type != 6 AND u.users_id != 1");
         $this->statement->execute();

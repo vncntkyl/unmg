@@ -1,33 +1,11 @@
 import classNames from "classnames";
 import React, { useState } from "react";
+import batchUploadTemplate from "../assets/batchUploadTemplate.xlsx";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 
 export default function BatchEmployeeInstructions() {
   const [instructionsOpen, toggleInstructions] = useState(false);
-  const headers = [
-    "Employee ID",
-    "First Name",
-    "Middle Name",
-    "Last Name",
-    "Suffix",
-    "Nickname",
-    "Salutation",
-    "Email",
-    "Contact No.",
-    "Address",
-    "Nationality",
-    "Company",
-    "Department",
-    "Team",
-    "Job Description",
-    "Job Level",
-    "Employment Type",
-    "Contract Type",
-    "Primary Evaluator",
-    "Secondary Evaluator",
-    "Tertiary Evaluator",
-    "Hire Date",
-  ];
+
   return (
     <div className="bg-default-dark p-2 rounded-md overflow-hidden">
       <button
@@ -46,27 +24,22 @@ export default function BatchEmployeeInstructions() {
           "transition-all duration-200 grid  md:grid-cols-[2fr_1fr] gap-4"
         )}
       >
-        <div className="px-4">
+        <div className="px-4 flex flex-col gap-2">
           <p className="font-semibold">
             To import employees, you need to submit an excel file which contains
-            the information of employees. <br />
-            The header of the excel file, or the first column, should be the
-            following:
+            the information of employees. Attached below is the template you may
+            use for inserting users.
           </p>
-          <ol className="list-decimal pl-8 flex flex-row gap-12">
-            <div>
-              {headers.slice(0, headers.length / 2).map((h, index) => {
-                return <li key={index}>{h}</li>;
-              })}
-            </div>
-            <div>
-              {headers
-                .slice(headers.length / 2, headers.length)
-                .map((h, index) => {
-                  return <li key={index}>{h}</li>;
-                })}
-            </div>
-          </ol>
+          <a
+          className="p-2 bg-un-blue-light text-white rounded-md w-fit hover:bg-un-blue-light-1 hover:text-un-blue transition-all"
+            href={batchUploadTemplate}
+            download="Employee Information Template"
+            target="_blank"
+            rel="noreferrer"
+          >Download Template</a>
+          <p>
+            
+          </p>
         </div>
         <div className="flex flex-col justify-between gap-2">
           <div className="bg-default-dark p-2 rounded-md">
