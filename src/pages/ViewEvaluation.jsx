@@ -1,7 +1,9 @@
+      
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
-import EvaluationTable from "../components/EvaluationTable";
+import RenderAdminEvaluationContent from "../components/EvaluationTableContents/adminAndSuperAdminContent";
+import RenderDeptHeadToSupervisorContent from "../components/EvaluationTableContents/deptHeadToSupervisorContent";
 import { GrFormSearch } from "react-icons/gr";
 export default function ViewEvaluation() {
   const { companyList, departmentList, kpiDurations } = useAuth();
@@ -22,15 +24,15 @@ export default function ViewEvaluation() {
       const userId = JSON.parse(currentUser);
       setCurrentUserType(userId.user_type);
       setCurrentUserContractType(userId.contract_type);
-      setCurrentEmployeeID(userId.employee_id)
-      }
+      setCurrentEmployeeID(userId.employee_id);
+    }
   }, []);
   const handleChange = (event) => {
     setSelectedQuarter(event.target.value);
   };
-  const handleYearChange = (event) =>{
+  const handleYearChange = (event) => {
     setSelectedKpiDuration(event.target.value);
-  }
+  };
   const handleCompanyChange = (event) => {
     setSelectedCompanyID(event.target.value);
   };
@@ -39,7 +41,6 @@ export default function ViewEvaluation() {
   };
 
   useEffect(() => {
-  
     const fetchCompanyDepartments = async () => {
       if (selectedCompanyID === "All") {
         completeDepartments(departmentList);
@@ -66,37 +67,37 @@ export default function ViewEvaluation() {
                 Evaluations
               </span>
               {/* TOGGLE */}
-               <div
+              <div
+                className={classNames(
+                  "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
+                  employeeType !== "regular" && "on"
+                )}
+              >
+                <button
+                  type="button"
                   className={classNames(
-                    "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
-                    employeeType !== "regular" && "on"
+                    "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] text-center w-1/2 md:text-[.8rem]",
+                    employeeType === "regular" ? "text-white" : "text-black"
                   )}
+                  onClick={() => {
+                    setEmployeeType("regular");
+                  }}
                 >
-                  <button
-                    type="button"
-                    className={classNames(
-                      "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] text-center w-1/2 md:text-[.8rem]",
-                      employeeType === "regular" ? "text-white" : "text-black"
-                    )}
-                    onClick={() => {
-                      setEmployeeType("regular");
-                    }}
-                  >
-                    Regular
-                  </button>
-                  <button
-                    type="button"
-                    className={classNames(
-                      "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem] col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2]  ",
-                      employeeType === "probation" ? "text-white" : "text-black"
-                    )}
-                    onClick={() => {
-                      setEmployeeType("probationary");
-                    }}
-                  >
-                    Probation
-                  </button>
-                </div>
+                  Regular
+                </button>
+                <button
+                  type="button"
+                  className={classNames(
+                    "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem] col-[1/3] row-[3/4] xs:row-[2/3] sm:col-[1/3] lg:col-[4/6] lg:row-[1/2]  ",
+                    employeeType === "probation" ? "text-white" : "text-black"
+                  )}
+                  onClick={() => {
+                    setEmployeeType("probationary");
+                  }}
+                >
+                  Probation
+                </button>
+              </div>
             </div>
             <div className="grid grid-cols-2">
               <div className="p-2 flex flex-row gap-2 rounded-lg">
@@ -111,15 +112,19 @@ export default function ViewEvaluation() {
                   >
                     <option value="All">All</option>
                     {kpiDurations.map((kpiDur) => {
-                      const fromDate = new Date(kpiDur.from_date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                      const fromDate = new Date(
+                        kpiDur.from_date
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       });
-                      const toDate = new Date(kpiDur.to_date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                      const toDate = new Date(
+                        kpiDur.to_date
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       });
                       return (
                         <option value={kpiDur.kpi_year_duration_id}>
@@ -129,7 +134,6 @@ export default function ViewEvaluation() {
                     })}
                   </select>
                 </span>
-
               </div>
             </div>
 
@@ -272,7 +276,18 @@ export default function ViewEvaluation() {
                 </div>
               )}
             </div>
-            <EvaluationTable
+            <RenderDeptHeadToSupervisorContent
+              selectedQuarter={selectedQuarter}
+              selectedCompanyID={selectedCompanyID}
+              selectedDepartmentID={selectedDepartmentID}
+              employeeType={employeeType}
+              query={query}
+              currentUserType={currentUserType}
+              currentEmployeeID={currentEmployeeID}
+              currentUserContractType={currentUserContractType}
+              selectedKpiDuration={selectedKpiDuration}
+            />
+            <RenderAdminEvaluationContent
               selectedQuarter={selectedQuarter}
               selectedCompanyID={selectedCompanyID}
               selectedDepartmentID={selectedDepartmentID}
@@ -289,3 +304,5 @@ export default function ViewEvaluation() {
     </>
   );
 }
+
+    

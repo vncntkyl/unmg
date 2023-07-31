@@ -15,6 +15,7 @@ export default function CreateGoals({
   const [user, setUser] = useState("");
   const [duration, setDuration] = useState();
   const [users, setUsers] = useState([]);
+  const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
   const { kpiDurations, fetchUsers } = useAuth();
   const { capitalizeSentence } = useFunction();
 
@@ -159,7 +160,7 @@ export default function CreateGoals({
         ", " +
         owner.first_name +
         " " +
-        (owner.middle_name != "."
+        (owner.middle_name 
           ? owner.middle_name.substring(0, 1) + "."
           : "");
       return owner_name;
@@ -203,44 +204,90 @@ export default function CreateGoals({
     }
   };
 
+  const checkKPIWeight = (pillar) => {
+    const limit = pillar.pillar_percentage;
+    let cumulativeWeights = 0;
+    pillar.objectives.forEach((obj) => {
+      cumulativeWeights += obj.kpi[0].kpi_weight;
+    });
+    if (cumulativeWeights > limit) {
+      return 0;
+    } else {
+      return limit - cumulativeWeights;
+    }
+  };
+
+  const saveProgress = () => {
+    const progress = JSON.stringify(goals);
+    localStorage.setItem("progress_goals", progress);
+    alert("Current progress is saved.");
+  };
+  function areObjectsEqual(obj1, obj2) {
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+      return false;
+    }
+
+    for (const key in obj1) {
+      if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+        const value1 = obj1[key];
+        const value2 = obj2[key];
+
+        if (typeof value1 === "object" && typeof value2 === "object") {
+          if (!areObjectsEqual(value1, value2)) {
+            return false;
+          }
+        } else if (value1 !== value2) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  }
   useEffect(() => {
-    setGoals(
-      pillars.map((pillar) => {
-        return {
-          pillar_name: pillar.pillar_name,
-          pillar_percentage: 0,
-          objectives: [
-            {
-              objective_description: "",
-              kpi: [
-                {
-                  kpi_description: "",
-                  kpi_weight: 0,
-                  target_metrics: [
-                    {
-                      point: 1,
-                      metric_description: "",
-                    },
-                    {
-                      point: 2,
-                      metric_description: "",
-                    },
-                    {
-                      point: 3,
-                      metric_description: "",
-                    },
-                    {
-                      point: 4,
-                      metric_description: "",
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        };
-      })
-    );
+    if (localStorage.getItem("progress_goals")) {
+      setGoals(JSON.parse(localStorage.getItem("progress_goals")));
+    } else {
+      setGoals(
+        pillars.map((pillar) => {
+          return {
+            pillar_name: pillar.pillar_name,
+            pillar_percentage: 0,
+            objectives: [
+              {
+                objective_description: "",
+                kpi: [
+                  {
+                    kpi_description: "",
+                    kpi_weight: 0,
+                    target_metrics: [
+                      {
+                        point: 1,
+                        metric_description: "",
+                      },
+                      {
+                        point: 2,
+                        metric_description: "",
+                      },
+                      {
+                        point: 3,
+                        metric_description: "",
+                      },
+                      {
+                        point: 4,
+                        metric_description: "",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          };
+        })
+      );
+    }
   }, [pillars]);
   useEffect(() => {
     const setup = async () => {
@@ -254,14 +301,58 @@ export default function CreateGoals({
       setDuration(localStorage.getItem("work_year"));
     }
     setup();
-  }, []);
 
+    const checkProgress = () => {
+      if (localStorage.getItem("progress_goals")) {
+        if (goals.length > 0) {
+          if (
+            !areObjectsEqual(
+              JSON.parse(localStorage.getItem("progress_goals")),
+              goals
+            )
+          ) {
+            setSaveStatus("Changes are not yet saved");
+          } else {
+            setSaveStatus("Progress saved");
+          }
+        }
+        console.log("reading");
+      }
+    };
+    checkProgress();
+
+    const realtimeData = setInterval(checkProgress, 1000);
+
+    return () => {
+      clearInterval(realtimeData);
+    };
+  }, [goals]);
+
+  useEffect(() => {
+    // Execute the save function after 5 seconds when changes are not yet saved
+    if (goals.length > 0) {
+      if (
+        saveStatus === "Changes are not yet saved" ||
+        saveStatus === "Saving changes..."
+      ) {
+        const saveTimer = setTimeout(() => {
+          // Call your save function here
+          setSaveStatus("Saving changes...");
+          localStorage.setItem("progress_goals", JSON.stringify(goals));
+        }, 2000); // 5 seconds in milliseconds
+
+        return () => clearTimeout(saveTimer);
+      }
+    }
+  }, [saveStatus]);
   return (
     <>
-      {console.log(duration)}
       <div className="flex flex-col gap-2">
         <GoalsInstructions />
-        <div>Create goals for: {showGoalsOwner()}</div>
+        <div className="flex flex-row justify-between">
+          <span>Create goals for: {showGoalsOwner()}</span>
+          <span>Status: {saveStatus}</span>
+        </div>
         {user !== "" && (
           <div className="flex flex-row gap-2 items-center">
             <label htmlFor="workyear"> Select Work Year:</label>
@@ -415,17 +506,16 @@ export default function CreateGoals({
                                                 %
                                               </span>
                                             </div>
-                                            {!getPillarKPICount(goal) &&
-                                              getTotalKpiCount(goals) < 12 && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() =>
-                                                    addKPI(index, objIndex)
-                                                  }
-                                                >
-                                                  <AiOutlinePlus />
-                                                </button>
-                                              )}
+                                            {getTotalKpiCount(goals) < 12 && (
+                                              <button
+                                                type="button"
+                                                onClick={() =>
+                                                  addKPI(index, objIndex)
+                                                }
+                                              >
+                                                <AiOutlinePlus />
+                                              </button>
+                                            )}
 
                                             {obj.kpi.length > 1 && (
                                               <button
@@ -497,16 +587,15 @@ export default function CreateGoals({
                           </>
                         );
                       })}
-                      {!getPillarKPICount(goal) &&
-                        getTotalKpiCount(goals) < 12 && (
-                          <button
-                            type="button"
-                            className="bg-un-blue-light text-white p-1 px-2 rounded"
-                            onClick={() => addObjective(index)}
-                          >
-                            Add Objective
-                          </button>
-                        )}
+                      {getTotalKpiCount(goals) < 12 && (
+                        <button
+                          type="button"
+                          className="bg-un-blue-light text-white p-1 px-2 rounded"
+                          onClick={() => addObjective(index)}
+                        >
+                          Add Objective
+                        </button>
+                      )}
                     </div>
                   </div>
                 </>
@@ -515,9 +604,20 @@ export default function CreateGoals({
           ) : (
             <>Loading...</>
           )}
-          <button className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue">
-            Submit
-          </button>
+          <div className="flex flex-row gap-2 justify-end">
+            <span>Current Percentage: {checkPillarPercentage(goals)}</span>
+            <button
+              type="button"
+              formNoValidate
+              onClick={() => saveProgress()}
+              className="bg-mid-gray p-1 rounded-md text-white hover:bg-dark-gray"
+            >
+              Save Progress
+            </button>
+            <button className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue">
+              Submit
+            </button>
+          </div>
         </form>
       </div>
     </>

@@ -6,6 +6,7 @@ import BatchEmployeeInstructions from "./BatchEmployeeInstructions";
 import { useFunction } from "../context/FunctionContext";
 import { useAuth } from "../context/authContext";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 export default function BulkEmployeeAdd() {
   const [file, setFile] = useState([]);
@@ -14,6 +15,7 @@ export default function BulkEmployeeAdd() {
   const [fileName, setFileName] = useState([]);
   const { capitalizeSentence } = useFunction();
   const { usertypeList, uploadUsers } = useAuth();
+  const navigate = useNavigate();
 
   const handleFileSubmit = (e) => {
     e.preventDefault();
@@ -124,7 +126,7 @@ export default function BulkEmployeeAdd() {
 
   const getFullName = (user) => {
     const middle_name = user["middle name"];
-    if (middle_name === ".") {
+    if (!middle_name) {
       return user["last name"] + ", " + user["first name"];
     } else {
       return (
@@ -176,7 +178,7 @@ export default function BulkEmployeeAdd() {
                     ]
                   : e[header];
             } catch (error) {
-              console.log(e[header]);
+              console.log(e)
             }
             break;
           case "second approver":
@@ -188,7 +190,7 @@ export default function BulkEmployeeAdd() {
                     ]
                   : e[header];
             } catch (error) {
-              console.log(e[header]);
+              console.log(e)
             }
             break;
           case "third approver":
@@ -200,7 +202,7 @@ export default function BulkEmployeeAdd() {
                     ]
                   : e[header];
             } catch (error) {
-              console.log(e[header]);
+              console.log(e)
             }
             break;
           case "business unit":
@@ -215,9 +217,16 @@ export default function BulkEmployeeAdd() {
       registeredEmployees.push(registeredEmployee);
     });
 
+    console.log(registeredEmployees);
     const data = JSON.stringify(registeredEmployees);
     const response = await uploadUsers(data);
-    console.log(response);
+    if (response === 1) {
+      if (alert("You have successfully imported users.")) {
+        navigate("/employees");
+      }
+    }else{
+      console.log("error");
+    }
   };
   return (
     <>

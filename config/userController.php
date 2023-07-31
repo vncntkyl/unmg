@@ -62,12 +62,17 @@ class User extends Controller
         $this->setStatement("UPDATE `hr_users` SET deleted = 1 WHERE users_id=:uID");
         return $this->statement->execute([':uID' => $uID]);
     }
+    function checkUser($employeeID){
+        $this->setStatement("SELECT * FROM hr_users WHERE employee_id = ?");
+        $this->statement->execute([$employeeID]);
+        return $this->statement->rowCount();
+    }
     function insertAcc($u)
     {
         $salutations = ['Mr.', 'Miss', 'Mrs.'];
         $employee_ID = intval($u->employee_id);
         $company_ID = intval($u->company);
-        $salutation = isset($u->salutation) ? $salutations[intval($u->salutation)] : null;
+        $salutation = isset($u->salutation) ? (strlen($u->salutation) > 1 ? $u->salutation : $salutations[intval($u->salutation)]) : null;
         $department_ID = intval($u->department);
         $job_level = intval($u->job_level);
         $password = md5($u->password);
@@ -251,7 +256,15 @@ class User extends Controller
     }
     function getEmployeeGrades()
     {
-        $this->setStatement("SELECT CONCAT(last_name, ', ', ' ', first_name, ' ', SUBSTRING(middle_name, 1, 1), '.') AS name, (DAY(hire_date) / 31 * 4) AS grade FROM hr_users WHERE users_id != 1;");
+        $this->setStatement("SELECT 
+            CONCAT(last_name, ', ', ' ', first_name, 
+            IF(LENGTH(middle_name) > 0, CONCAT(' ', SUBSTRING(middle_name, 1, 1), '.'), '')
+            ) AS name,
+            (DAY(hire_date) / 31 * 4) AS grade 
+            FROM 
+                hr_users 
+            WHERE 
+                users_id != 1;");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
