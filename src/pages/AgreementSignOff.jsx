@@ -10,15 +10,52 @@ import axios from "axios";
 
 export default function AgreementSignOff() {
   const [loading, toggleLoading] = useState(true);
-  const [panel, setPanel] = useState("my evaluations");
+  const [isEvaluator, setIsEvaluator] = useState(false);
+  const [panel, setPanel] = useState("My Evaluation");
   const [employeeID, setEmployeeID] = useState();
+  const [workYear, setWorkYear] = useState(-1);
   const { currentUser, kpiDurations } = useAuth();
   const { getPath } = useFunction();
+
+  const verifyEvaluator = async () => {
+    let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
+    //let url = "../api/retrieveUsers.php";
+    const parameters = {
+      params: {
+        employee_goals: true,
+        evaluator: JSON.parse(currentUser).employee_id,
+        work_year: workYear,
+        is_count: true,
+      },
+    };
+    try {
+      const response = await axios.get(url, parameters);
+      setIsEvaluator(response.data > 0);
+      toggleLoading(false);
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  verifyEvaluator();
+  if (!localStorage.getItem("currentUser")) {
+    localStorage.setItem("redirect_to", window.location.pathname);
+  }
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    setEmployeeID(currentUser.employee_id);
+    if (currentUser.user_type == 3 || currentUser.users_id == 1) {
+      setPanel("Employee Evaluation");
+    }
+    toggleLoading(false);
+  }, []);
+
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser")).employee_id;
     setEmployeeID(currentUser);
   }, []);
-  return employeeID !== -1 && (
+  return employeeID !== -1 && (loading ? (
+    "Loading..."
+  ) : (
     <>
       <section className="relative">
         <div className="w-full min-h-[175px] bg-un-blue" />
@@ -30,7 +67,7 @@ export default function AgreementSignOff() {
                 Agreement Sign Off
               </span>
               {/* TOGGLE */}
-              <div
+              {/* <div
                 className={classNames(
                   "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
                   panel !== "my evaluations" && "on"
@@ -52,20 +89,33 @@ export default function AgreementSignOff() {
                   type="button"
                   className={classNames(
                     "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem]",
-                    panel === "emp evaluations" ? "text-white" : "text-black"
+                    panel === "Employee Evaluations" ? "text-white" : "text-black"
                   )}
                   onClick={() => {
-                    setPanel("emp evaluations");
+                    setPanel("Employee Evaluations");
                   }}
                 >
                   Employee Evaluation
                 </button>
-              </div>
+              </div> */}
+                  {JSON.parse(currentUser).user_type != 3 && (
+                <>
+                  {isEvaluator && (
+                    <Toggle
+                      paths={["/sign_off/", "/sign_off", "/"]}
+                      panel={panel}
+                      panel_1={"My Evaluation"}
+                      setPanel={setPanel}
+                      panel_2={"Employee Evaluation"}
+                    />
+                  )}
+                </>
+              )}
             </div>
             <div className="flex flex-row pt-4">
             </div>
             <Routes>
-              {panel === "my evaluations" ? <Route
+              {panel === "My Evaluation" ? <Route
                 path="/"
                 element={<SignOff emp_id={employeeID}/>}
               /> : <Route
@@ -76,5 +126,5 @@ export default function AgreementSignOff() {
         </div>
       </section>
     </>
-  );
+  ));
 }
