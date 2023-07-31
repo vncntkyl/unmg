@@ -270,7 +270,10 @@ export default function EmployeeAssessmentGradeEdit() {
     return tbl_name;
   }
   const tbl_name = getTableName(quarter);
-  console.log(grades.map(item => item.kpi_weight));
+
+  
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const totalResults = results.flat(Infinity);
@@ -298,8 +301,9 @@ export default function EmployeeAssessmentGradeEdit() {
       fData.append("total_remarks", JSON.stringify(remark));
       axios
         .post(url, fData)
-        .then((response) => console.log(response.data))
+        .then((response) => alert(response.data))
         .catch((error) => alert(error));
+        navigate(-1);
   };
 
 

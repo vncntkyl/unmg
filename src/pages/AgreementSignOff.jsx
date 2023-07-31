@@ -3,15 +3,17 @@ import classNames from "classnames";
 import { Route, Router, Routes } from "react-router-dom";
 import SignOff from "../components/Signoff/SignOff";
 import EmployeeSignOff from "../components/Signoff/EmployeeSignOff";
-
-
+import { useFunction } from "../context/FunctionContext";
+import { useAuth } from "../context/authContext";
+import Toggle from "../components/Toggle";
+import axios from "axios";
 
 export default function AgreementSignOff() {
-  if (!localStorage.getItem("currentUser")) {
-    localStorage.setItem("redirect_to", window.location.pathname);
-  }
+  const [loading, toggleLoading] = useState(true);
   const [panel, setPanel] = useState("my evaluations");
-  const [employeeID, setEmployeeID] = useState(-1);
+  const [employeeID, setEmployeeID] = useState();
+  const { currentUser, kpiDurations } = useAuth();
+  const { getPath } = useFunction();
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser")).employee_id;
     setEmployeeID(currentUser);

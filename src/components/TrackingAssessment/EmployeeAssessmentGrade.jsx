@@ -65,6 +65,10 @@ export default function EmployeeAssessmentGrade({
         "/grade_edit"
     );
   };
+  let wtd = 0;
+  grades.forEach(grade => {
+    wtd = wtd + parseFloat(grade.wtd_rating)
+  });
   return loading ? (
     "Loading..."
   ) : (
@@ -198,7 +202,7 @@ export default function EmployeeAssessmentGrade({
                                                 Weight
                                               </div>
                                             </td>
-                                            <td className="bg-un-blue-light w-[20%]">
+                                            <td className="bg-un-blue-light w-[30%]">
                                               <div className="flex justify-center p-2 font-semibold">
                                                 Metrics
                                               </div>
@@ -700,7 +704,7 @@ export default function EmployeeAssessmentGrade({
                                                 Weight
                                               </div>
                                             </td>
-                                            <td className="bg-un-blue-light w-[20%]">
+                                            <td className="bg-un-blue-light w-[30%]">
                                               <div className="flex justify-center p-2 font-semibold">
                                                 Metrics
                                               </div>
@@ -944,6 +948,16 @@ export default function EmployeeAssessmentGrade({
                                                 Results(Actual)
                                               </div>
                                             </td>
+                                            <td className="bg-un-blue-light w-[5%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Agreed
+                                              </div>
+                                            </td>
+                                            <td className="bg-un-blue-light w-[5%]">
+                                              <div className="flex justify-center p-2 font-semibold">
+                                                Weighted
+                                              </div>
+                                            </td>
                                             <td className="bg-un-blue-light rounded-tr-md w-[20%]">
                                               <div className="flex justify-center p-2 font-semibold">
                                                 Remarks
@@ -977,7 +991,7 @@ export default function EmployeeAssessmentGrade({
                                                     {grade.kpi_weight}%
                                                   </div>
                                                 </td>
-                                                <td className="w-[30%]">
+                                                <td className="w-[20%]">
                                                   <div className="p-2 flex items-center justify-center">
                                                     <div className="p-2 flex text-[.8rem] justify-center items-start">
                                                       <table>
@@ -1020,6 +1034,16 @@ export default function EmployeeAssessmentGrade({
                                                     {grade.yee_results}
                                                   </div>
                                                 </td>
+                                                <td className="w-[5%]">
+                                                  <div className="p-2 flex font-semibold text-[1.1rem] items-center justify-center">
+                                                    {grade.agreed_rating}
+                                                  </div>
+                                                </td>
+                                                <td className="w-[5%]">
+                                                  <div className="p-2 flex items-center justify-center">
+                                                    {grade.wtd_rating}
+                                                  </div>
+                                                </td>
                                                 <td className="w-[20%]">
                                                   <div className="whitespace-normal p-2">
                                                     {grade.yee_remarks === ""
@@ -1039,7 +1063,10 @@ export default function EmployeeAssessmentGrade({
                         </React.Fragment>
                       ))}
                   </div>
-                  <div className="w-full flex justify-end pt-4">
+                  <div className="w-full flex justify-between pt-4">
+                    <div>
+                    {quarter == 4 && (<>Total Weighted Score: <span className="text-[1.1rem] font-semibold">{wtd.toFixed(2)}</span>/4</>)}
+                    </div>
                     <button
                       className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                       onClick={() => edit()}

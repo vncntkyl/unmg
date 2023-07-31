@@ -518,6 +518,156 @@ class Form extends Controller
     $this->statement->execute(['employee_id' => $empID, 'creation_date' => $creation_date]);
     return $this->statement->fetchAll();
   }
+  function selectUserMyrAssessment($table_name_results, $empID, $creation_date)
+  {
+    $this->setStatement("
+    SELECT 
+        hr_users.employee_id,
+        hr_eval_form.hr_eval_form_id,
+        hr_eval_form.CreationDate,
+        hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
+        hr_pillars.pillar_id AS pillar_id,
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_name ORDER BY hr_pillars.pillar_name) = 1
+                THEN hr_pillars.pillar_name
+            ELSE ''
+        END AS pillar_name,
+        
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_description ORDER BY hr_pillars.pillar_description) = 1
+                THEN hr_pillars.pillar_description
+            ELSE ''
+        END AS pillar_description,
+        
+        hr_eval_form_pillars.pillar_percentage,
+
+
+
+        hr_objectives.objective_id AS obj_objective_id,
+        hr_objectives.hr_eval_form_pillar_id AS obj_eval_pillar_id,
+
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_objectives.objective ORDER BY hr_objectives.objective) = 1
+                THEN hr_objectives.objective
+            ELSE ''
+        END AS obj_objective,
+
+        hr_kpi.kpi_id AS kpi_kpi_id,
+        hr_kpi.objective_id AS kpi_objective_id,
+        hr_kpi.kpi_desc,
+        hr_kpi.kpi_weight,
+
+        {$table_name_results}.ID AS table_id,
+        {$table_name_results}.achievements AS achievements,
+        {$table_name_results}.results AS results,
+        {$table_name_results}.status AS status,
+        hr_metrics_desc.target_metrics_desc AS metrics_desc,
+        {$table_name_results}.remarks AS remarks
+    FROM 
+        hr_users
+    LEFT JOIN
+        hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+    LEFT JOIN 
+        hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN 
+        hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+    LEFT JOIN 
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN 
+        hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+    LEFT JOIN
+        hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        {$table_name_results} ON {$table_name_results}.hr_eval_form_kpi_id = hr_kpi.kpi_id
+    LEFT JOIN
+        hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id 
+        AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
+    WHERE 
+        hr_users.employee_id = :employee_id
+        AND hr_eval_form.CreationDate = :creation_date
+        ORDER BY hr_pillars.pillar_id ASC
+        ");
+    $this->statement->execute(['employee_id' => $empID, 'creation_date' => $creation_date]);
+    return $this->statement->fetchAll();
+  }
+
+  function selectUserYeeAssessment($table_name_results, $empID, $creation_date)
+  {
+    $this->setStatement("
+    SELECT 
+        hr_users.employee_id,
+        hr_eval_form.hr_eval_form_id,
+        hr_eval_form.CreationDate,
+        hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
+        hr_pillars.pillar_id AS pillar_id,
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_name ORDER BY hr_pillars.pillar_name) = 1
+                THEN hr_pillars.pillar_name
+            ELSE ''
+        END AS pillar_name,
+        
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_pillars.pillar_description ORDER BY hr_pillars.pillar_description) = 1
+                THEN hr_pillars.pillar_description
+            ELSE ''
+        END AS pillar_description,
+        
+        hr_eval_form_pillars.pillar_percentage,
+
+
+
+        hr_objectives.objective_id AS obj_objective_id,
+        hr_objectives.hr_eval_form_pillar_id AS obj_eval_pillar_id,
+
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY hr_objectives.objective ORDER BY hr_objectives.objective) = 1
+                THEN hr_objectives.objective
+            ELSE ''
+        END AS obj_objective,
+
+        hr_kpi.kpi_id AS kpi_kpi_id,
+        hr_kpi.objective_id AS kpi_objective_id,
+        hr_kpi.kpi_desc,
+        hr_kpi.kpi_weight,
+
+        {$table_name_results}.ID AS table_id,
+        {$table_name_results}.achievements AS achievements,
+        {$table_name_results}.results AS results,
+        hr_metrics_desc.target_metrics_desc AS metrics_desc,
+        {$table_name_results}.remarks AS remarks,
+        {$table_name_results}.agreed_rating AS agreed_rating,
+        {$table_name_results}.wtd_rating AS wtd_rating
+    FROM 
+        hr_users
+    LEFT JOIN
+        hr_eval_form ON hr_users.users_id = hr_eval_form.users_id
+    LEFT JOIN 
+        hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN 
+        hr_objectives ON hr_objectives.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+    LEFT JOIN 
+        hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_pillar_id = hr_objectives.hr_eval_form_pillar_id
+    LEFT JOIN
+        hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+    LEFT JOIN 
+        hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+    LEFT JOIN
+        hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+    LEFT JOIN
+        {$table_name_results} ON {$table_name_results}.hr_eval_form_kpi_id = hr_kpi.kpi_id
+    LEFT JOIN
+        hr_target_metrics AS hr_metrics_desc ON hr_metrics_desc.kpi_id = hr_kpi.kpi_id 
+        AND hr_metrics_desc.target_metrics_score = {$table_name_results}.results
+    WHERE 
+        hr_users.employee_id = :employee_id
+        AND hr_eval_form.CreationDate = :creation_date
+        ORDER BY hr_pillars.pillar_id ASC
+        ");
+    $this->statement->execute(['employee_id' => $empID, 'creation_date' => $creation_date]);
+    return $this->statement->fetchAll();
+  }
 
   // additional for tracking and assessment
   function totalUserAssessment($empID)
@@ -1175,6 +1325,12 @@ class Form extends Controller
   {
     $this->setStatement("UPDATE {$tbl_name} SET results = :results, status = :status, remarks = :remarks WHERE hr_eval_form_kpi_id = :hr_eval_form_kpi_id AND hr_eval_form_sp_id = :hr_eval_form_sp_id");
     return $this->statement->execute([':results' => $currenttotal_results, ':status' => $currenttotal_status, ':remarks' => $currenttotal_remarks, ':hr_eval_form_kpi_id' => $currentKpiId, ':hr_eval_form_sp_id' => $formspID]);
+  }
+
+  function updateUserYearEndAssessment($tbl_name, $formspID, $currentKpiId, $currenttotal_results, $currenttotal_rating, $currenttotal_weight, $currenttotal_remarks)
+  {
+    $this->setStatement("UPDATE {$tbl_name} SET results = :results, agreed_rating = :agreed_rating, wtd_rating = :wtd_rating, remarks = :remarks WHERE hr_eval_form_kpi_id = :hr_eval_form_kpi_id AND hr_eval_form_sp_id = :hr_eval_form_sp_id");
+    return $this->statement->execute([':results' => $currenttotal_results, ':agreed_rating' => $currenttotal_rating, ':wtd_rating' => $currenttotal_weight, ':remarks' => $currenttotal_remarks, ':hr_eval_form_kpi_id' => $currentKpiId, ':hr_eval_form_sp_id' => $formspID]);
   }
 
 

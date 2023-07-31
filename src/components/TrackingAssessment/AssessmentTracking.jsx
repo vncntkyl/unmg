@@ -120,10 +120,16 @@ export default function AssessmentTracking({
         console.log(error.message);
       }
     };
-    toggleLoading(false);
     getTotalPerformance();
     getUserPerformance();
+    toggleLoading(false);
   }, [emp_id, selectedPillar, quarter, workYear]);
+
+  let wtd = 0;
+  userPerformance.forEach(final => {
+    wtd = wtd + parseFloat(final.wtd_rating)
+  });
+
   return loading ? (
     "Loading..."
   ) : (
@@ -275,34 +281,100 @@ export default function AssessmentTracking({
                                 <table className="w-full">
                                   <thead>
                                     <tr>
-                                      <td className="w-[20%]">
-                                        <div className="font-semibold">Objectives</div>
-                                      </td>
-                                      <td className="w-[20%] px-2 bg-un-blue-light rounded-tl-lg">
-                                        <div className="text-white flex justify-center">
-                                          KPI
-                                        </div>
-                                      </td>
-                                      <td className="w-[10%] px-2 bg-un-blue-light">
-                                        <div className="text-white flex justify-center">
-                                          Weight
-                                        </div>
-                                      </td>
-                                      <td className="w-[10%] px-2 bg-un-blue-light">
-                                        <div className="text-white flex justify-center">
-                                          Achievements
-                                        </div>
-                                      </td>
-                                      <td className="w-[10%] px-2 bg-un-blue-light">
-                                        <div className="text-white flex justify-center">
-                                          Results (Actual)
-                                        </div>
-                                      </td>
-                                      <td className="w-[20%] px-2 bg-un-blue-light rounded-tr-lg">
-                                        <div className="text-white flex justify-center">
-                                          Remarks
-                                        </div>
-                                      </td>
+                                      {quarter == 2 ? (
+                                        <>
+                                          <td className="w-[20%]">
+                                            <div className="font-semibold">Objectives</div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light rounded-tl-lg">
+                                            <div className="text-white flex justify-center">
+                                              KPI
+                                            </div>
+                                          </td>
+                                          <td className="w-[10%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Weight
+                                            </div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Results (Actual)
+                                            </div>
+                                          </td>
+                                          <td className="w-[10%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Status
+                                            </div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light rounded-tr-lg">
+                                            <div className="text-white flex justify-center">
+                                              Remarks
+                                            </div>
+                                          </td>
+                                        </>
+                                      ) : quarter == 4 ? (
+                                        <>
+                                          <td className="w-[20%]">
+                                            <div className="font-semibold">Objectives</div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light rounded-tl-lg">
+                                            <div className="text-white flex justify-center">
+                                              KPI
+                                            </div>
+                                          </td>
+                                          <td className="w-[5%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Weight
+                                            </div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Results (Actual)
+                                            </div>
+                                          </td>
+                                          <td className="w-[5%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Agreed Rating
+                                            </div>
+                                          </td>
+                                          <td className="w-[10%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Weighted
+                                            </div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light rounded-tr-lg">
+                                            <div className="text-white flex justify-center">
+                                              Remarks
+                                            </div>
+                                          </td>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <td className="w-[20%]">
+                                            <div className="font-semibold">Objectives</div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light rounded-tl-lg">
+                                            <div className="text-white flex justify-center">
+                                              KPI
+                                            </div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Weight
+                                            </div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light">
+                                            <div className="text-white flex justify-center">
+                                              Results (Actual)
+                                            </div>
+                                          </td>
+                                          <td className="w-[20%] px-2 bg-un-blue-light rounded-tr-lg">
+                                            <div className="text-white flex justify-center">
+                                              Remarks
+                                            </div>
+                                          </td>
+                                        </>
+                                      )}
                                     </tr>
                                   </thead>
                                   {objectives
@@ -323,39 +395,139 @@ export default function AssessmentTracking({
                                               key={performance.kpi_objective_id}
                                             >
                                               <tr>
-                                                <td className="w-[15%] p-2">
-                                                  <div>
-                                                    {objective.obj_objective !==
-                                                      previousObjective
-                                                      ? performance.obj_objective
-                                                      : ""}
-                                                  </div>
-                                                </td>
-                                                <td className="w-[20%] p-2 bg-white">
-                                                  <div className="flex items-center justify-center">
-                                                    {performance.kpi_desc}
-                                                  </div>
-                                                </td>
-                                                <td className="w-[5%] p-2 bg-white">
-                                                  <div className="flex items-center justify-center">
-                                                    {`${performance.kpi_weight}%`}
-                                                  </div>
-                                                </td>
-                                                <td className="w-[20%] p-2 bg-white">
-                                                  <div className="flex items-center justify-center">
-                                                    {`${performance.achievements}`}
-                                                  </div>
-                                                </td>
-                                                <td className="w-[20%] p-2 bg-white">
-                                                  <div className="flex items-center justify-center">
-                                                    {performance.results}
-                                                  </div>
-                                                </td>
-                                                <td className="w-[20%] p-2 bg-white">
-                                                  <div className="flex items-center">
-                                                    {performance.remarks}
-                                                  </div>
-                                                </td>
+                                                {quarter == 2 ? (
+                                                  <>
+                                                    <td className="w-[20%] p-2">
+                                                      <div>
+                                                        {objective.obj_objective !==
+                                                          previousObjective
+                                                          ? performance.obj_objective
+                                                          : ""}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.kpi_desc}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[10%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {`${performance.kpi_weight}%`}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.results}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[10%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.status == 1 ? (
+                                                          <Badge
+                                                            message={"Struggling/Help!"}
+                                                            type={"failure"}
+                                                            className={"text-[.8rem] px-1"}
+                                                          />
+                                                        ) : performance.status == 2 ? (
+                                                          <Badge
+                                                            message={"Lagging/Behind"}
+                                                            type={"warning"}
+                                                            className={"text-[.8rem] px-1"}
+                                                          />
+                                                        ) : performance.status == 3 ? (
+                                                          <Badge
+                                                            message={"Ontrack/Completed"}
+                                                            type={"success"}
+                                                            className={"text-[.8rem] px-1"}
+                                                          />
+                                                        ) : performance.status == 4 ? (
+                                                          <Badge
+                                                            message={"Ontrack/Completed"}
+                                                            type={"success"}
+                                                            className={"text-[.8rem] px-1"}
+                                                          />
+                                                        ) : "Loading..."}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center">
+                                                        {performance.remarks}
+                                                      </div>
+                                                    </td>
+                                                  </>
+                                                ) : quarter == 4 ? (
+                                                  <>
+                                                    <td className="w-[20%] p-2">
+                                                      <div>
+                                                        {objective.obj_objective !==
+                                                          previousObjective
+                                                          ? performance.obj_objective
+                                                          : ""}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.kpi_desc}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[5%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {`${performance.kpi_weight}%`}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.results}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[10%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.agreed_rating}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[5%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.wtd_rating}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center">
+                                                        {performance.remarks}
+                                                      </div>
+                                                    </td>
+                                                  </>
+                                                ) : (
+                                                  <>
+                                                    <td className="w-[20%] p-2">
+                                                      <div>
+                                                        {objective.obj_objective !==
+                                                          previousObjective
+                                                          ? performance.obj_objective
+                                                          : ""}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.kpi_desc}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {`${performance.kpi_weight}%`}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center justify-center">
+                                                        {performance.results}
+                                                      </div>
+                                                    </td>
+                                                    <td className="w-[20%] p-2 bg-white">
+                                                      <div className="flex items-center">
+                                                        {performance.remarks}
+                                                      </div>
+                                                    </td>
+                                                  </>
+                                                )}
                                               </tr>
                                             </React.Fragment>
                                           ))}
@@ -365,6 +537,7 @@ export default function AssessmentTracking({
                               </div>
                             </div>
                           ))}
+                          {quarter == 4 && (<>Total Weighted Score: <span className="text-[1.1rem] font-semibold">{wtd.toFixed(2)}</span>/4</>)}
                       </div>
                     </>
                   ) : (

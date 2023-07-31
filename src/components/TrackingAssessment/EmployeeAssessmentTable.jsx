@@ -16,6 +16,7 @@ export default function EmployeeAssessmentTable({ emp_id }) {
   const toggleActionVisibility = () => {
     setActionVisibility((prev) => !prev);
   };
+
   //check columns
   const fqisColumnAllFalse =
     employeesRecords.length > 0 &&
@@ -71,6 +72,7 @@ export default function EmployeeAssessmentTable({ emp_id }) {
               myr_rater_1: item.myr_rater_1 !== null && item.myr_rater_1 !== 0,
               myr_rater_2: item.myr_rater_2 !== null && item.myr_rater_2 !== 0,
               myr_rater_3: item.myr_rater_3 !== null && item.myr_rater_3 !== 0,
+
               yee_rater_1: item.yee_rater_1 !== null && item.yee_rater_1 !== 0,
               yee_rater_2: item.yee_rater_2 !== null && item.yee_rater_2 !== 0,
               yee_rater_3: item.yee_rater_3 !== null && item.yee_rater_3 !== 0,
@@ -80,20 +82,21 @@ export default function EmployeeAssessmentTable({ emp_id }) {
             tq_achievements: item.tq_achievements !== "" && item.tq_achievements !== null,
             yee_achievements: item.yee_achievements !== "" && item.yee_achievements !== null,
 
-            fq_results: item.fq_results > 0 && item.fq_results !== null,
-            myr_results: item.myr_results > 0 && item.myr_results !== null,
-            tq_results: item.tq_results > 0 && item.tq_results !== null,
-            yee_results: item.yee_results > 0 && item.yee_results !== null,
-            agreed_rating: item.agreed_rating > 0 && item.agreed_rating !== null,
+            fq_results: item.fq_results != "" && item.fq_results !== null,
+            myr_results: item.myr_results != "" && item.myr_results !== null,
+            tq_results: item.tq_results != "" && item.tq_results !== null,
+            yee_results: item.yee_results != "" && item.yee_results !== null,
+            agreed_rating: item.agreed_rating != "" && item.agreed_rating !== null,
           };
         });
+        console.table(employeeRecords);
         setEmployeesRecords(employeeRecords);
       } catch (error) {
         console.log(error.message);
       }
     };
-    toggleLoading(false);
     getemployeesRecords();
+    toggleLoading(false);
   }, [employeeType, workYear]);
   return loading ? (
     "Loading..."

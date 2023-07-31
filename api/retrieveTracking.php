@@ -16,7 +16,7 @@ if (isset($_GET['empID'])) {
         else if($quarter == "2")
         {
             $table_name_results = "hr_eval_form_sp_myr";
-            $retrieveAssessment = json_encode($form->selectUserAssessment($table_name_results, $empID, $creation_date), JSON_UNESCAPED_UNICODE);
+            $retrieveAssessment = json_encode($form->selectUserMyrAssessment($table_name_results, $empID, $creation_date), JSON_UNESCAPED_UNICODE);
         }
         else if($quarter == "3")
         {
@@ -26,7 +26,7 @@ if (isset($_GET['empID'])) {
         else if($quarter == "4")
         {
             $table_name_results = "hr_eval_form_sp_yee";
-            $retrieveAssessment = json_encode($form->selectUserAssessment($table_name_results, $empID, $creation_date), JSON_UNESCAPED_UNICODE);
+            $retrieveAssessment = json_encode($form->selectUserYeeAssessment($table_name_results, $empID, $creation_date), JSON_UNESCAPED_UNICODE);
         }
         echo $retrieveAssessment;
     }
