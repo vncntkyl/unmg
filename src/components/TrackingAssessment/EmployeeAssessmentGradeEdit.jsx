@@ -421,7 +421,7 @@ export default function EmployeeAssessmentGradeEdit() {
                                             <select
                                               className={classNames(
                                                 "rounded-md px-4 flex content-center",
-                                                quarter == 3
+                                                quarter == 2
                                                   ? selectedValues[
                                                       pillarIndex
                                                     ]?.[objectIndex]?.[
@@ -488,7 +488,7 @@ export default function EmployeeAssessmentGradeEdit() {
                                                       metric.target_metrics_score
                                                     }
                                                     className={
-                                                      quarter == 3 &&
+                                                      quarter == 2 &&
                                                       (metric.target_metrics_score ===
                                                       1
                                                         ? "bg-un-red-light-1 text-un-red-dark"
@@ -582,7 +582,6 @@ export default function EmployeeAssessmentGradeEdit() {
               <button
                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                 type="submit"
-                onClick={handleSubmit}
               >
                 Submit
               </button>

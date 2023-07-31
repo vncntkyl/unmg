@@ -10,6 +10,9 @@ if (isset($_POST['user_id'])) {
     if ($data) {
         echo json_encode($formController->fetchEvaluationForm($_POST['user_id'], $_POST['work_year']));
     }
-} else {
-    echo "id not found";
+}
+if (isset($_POST['checkApproval'])) {
+    if (!isset($_POST['workYear']) && !isset($_POST['creator']) && !isset($_POST['approver'])) return;
+
+    echo $formController->isGoalApproved($_POST['workYear'], $_POST['creator'], $_POST['approver'])->status;
 }

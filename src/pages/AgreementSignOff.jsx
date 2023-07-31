@@ -13,7 +13,8 @@ export default function AgreementSignOff() {
   const [panel, setPanel] = useState("my evaluations");
   const [employeeID, setEmployeeID] = useState(-1);
   useEffect(() => {
-    setEmployeeID(JSON.parse(localStorage.getItem("currentUser")).emp_id);
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")).employee_id;
+    setEmployeeID(currentUser);
   }, []);
   return employeeID !== -1 && (
     <>

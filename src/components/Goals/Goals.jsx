@@ -6,6 +6,7 @@ import { useFunction } from "../../context/FunctionContext";
 import GoalTable from "./GoalTableHeader";
 import classNames from "classnames";
 import { format } from "date-fns";
+import { useAuth } from "../../context/authContext";
 export default function Goals({
   user_id,
   pillars = [],
@@ -15,12 +16,16 @@ export default function Goals({
 }) {
   const { id } = useParams();
   const [hasSet, toggleSet] = useState(false);
+  const [goalOwner, setGoalOwner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [goalData, setGoalData] = useState([]);
   const [currentPillar, setPillar] = useState(1);
   const [tableData, setTableData] = useState([]);
+  const [goalStatus, setGoalStatus] = useState(false);
 
   const { removeSubText } = useFunction();
+  const { headList, fetchUsers } = useAuth();
+
   const handleApproval = async () => {
     let approver, creator;
     approver = user_id;
@@ -31,7 +36,22 @@ export default function Goals({
     }
     if (creator === approver) return;
 
-    console.log(approver, creator);
+    try {
+      const url = "http://localhost/unmg_pms/api/approveGoals.php";
+      //const url = "../api/approveGoals.php";
+      const formData = new FormData();
+      formData.append("approve", true);
+      formData.append("approver", approver);
+      formData.append("id", goalData[0].hr_eval_form_fp_id);
+      const response = await axios.post(url, formData);
+      if (response.data == 1) {
+        alert("Goals successfully approved.");
+      } else {
+        alert(response.data);
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
   };
 
   useEffect(() => {
@@ -41,7 +61,6 @@ export default function Goals({
       const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
       //const url = "../api/fetchGoals.php";
       const formData = new FormData();
-      console.log(user_id, workYear);
       formData.append("user_id", id ? id : user_id);
       formData.append("work_year", workYear);
       try {
@@ -76,11 +95,40 @@ export default function Goals({
         console.log(e.message);
       }
     };
+    const getGoalApproval = async () => {
+      const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
+      //const url = "../api/fetchAllGoals.php";
+      if (headList.length < 1) return;
+
+      const response = await fetchUsers();
+      if (!response) return;
+
+      const goalCreator = response.find((user) =>
+        goalOwner ? user.users_id == goalOwner : user.users_id == user_id
+      );
+      const approver = headList.find(
+        (head) => head.employee_id == goalCreator.primary_evaluator
+      );
+      try {
+        const formData = new FormData();
+        formData.append("checkApproval", true);
+        formData.append("workYear", workYear);
+        formData.append("creator", goalOwner ? goalOwner : user_id);
+        formData.append("approver", approver.users_id);
+        const response = await axios.post(url, formData);
+        setGoalStatus(response.data == 1);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    if (id) {
+      setGoalOwner(id);
+    }
     retrieveUser();
-  }, [user_id, workYear]);
+    getGoalApproval();
+  }, [user_id, workYear, goalOwner]);
   return !loading ? (
     <div className="flex flex-col gap-2">
-      {console.log(workYear)}
       <div className="flex flex-row gap-2 items-center justify-between">
         <div className="flex flex-row items-center gap-2">
           <label htmlFor="workyear"> Select Work Year:</label>
@@ -113,12 +161,16 @@ export default function Goals({
               className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
               href="/main_goals/edit"
               onClick={() => {
-                localStorage.setItem("goal_user", user_id);
+                if (goalOwner) {
+                  localStorage.setItem("goal_user", goalOwner);
+                } else {
+                  localStorage.setItem("goal_user", user_id);
+                }
               }}
             >
               Edit Goals
             </a>
-            {id && user_id !== id && (
+            {!goalStatus && id && user_id !== id && (
               <button
                 type="button"
                 onClick={() => {

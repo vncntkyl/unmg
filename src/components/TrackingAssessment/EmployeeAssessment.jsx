@@ -26,20 +26,26 @@ export default function EmployeeAssessment() {
             empID: employee_id,
           },
         });
+        console.log(response.data);
+        setAchievements(response.data);
         const quarterlyAchievements = response.data.map((item) => {
           return {
-            first_part_id: item.first_part_id && item.first_part_id,
+            first_part_id:
+              item.first_part_id !== "" && item.first_part_id !== null,
             fq_ratee_achievement:
-              item.fq_ratee_achievement && item.fq_ratee_achievement,
+              item.fq_ratee_achievement !== "" &&
+              item.fq_ratee_achievement !== null,
             myr_ratee_achievement:
-              item.myr_ratee_achievement && item.myr_ratee_achievement,
+              item.myr_ratee_achievement !== "" &&
+              item.myr_ratee_achievement !== null,
             tq_ratee_achievement:
-              item.tq_ratee_achievement && item.tq_ratee_achievement,
+              item.tq_ratee_achievement !== "" &&
+              item.tq_ratee_achievement !== null,
             yee_ratee_achievement:
-              item.yee_ratee_achievement && item.yee_ratee_achievement,
+              item.yee_ratee_achievement !== "" &&
+              item.yee_ratee_achievement !== null,
           };
         });
-        console.log(quarterlyAchievements);
         setCheckAchievements(quarterlyAchievements);
       } catch (error) {
         console.log(error.message);
@@ -98,7 +104,7 @@ export default function EmployeeAssessment() {
         <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
           <label className="font-semibold">Status:</label>
           <Badge
-            message={"Badge In Progress"}
+            message={"BADGE IN PROGRESS"}
             className={"text-[.8rem] px-1"}
           />
         </div>
