@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 27, 2023 at 11:59 AM
+-- Generation Time: Jul 31, 2023 at 09:37 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -58,8 +58,7 @@ CREATE TABLE `hr_departments` (
 --
 
 INSERT INTO `hr_departments` (`department_id`, `company_id`, `department_name`, `deleted`, `inactive`) VALUES
-(1, 1, 'Information Technology and Systems Integration', 0, 0),
-(11, 1, 'Board Of Director', 0, 0);
+(1, 1, 'Information Technology and Systems Integration', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -81,14 +80,6 @@ CREATE TABLE `hr_eval_form` (
   `CreationDate` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hr_eval_form`
---
-
-INSERT INTO `hr_eval_form` (`hr_eval_form_id`, `users_id`, `myr_rater_1`, `myr_rater_2`, `myr_rater_3`, `rater_1`, `rater_2`, `rater_3`, `ratees_comment`, `recommendation`, `CreationDate`) VALUES
-(1, 19, 0, 0, 0, NULL, NULL, NULL, '', '', 1),
-(2, 13, 0, 0, 0, NULL, NULL, NULL, '', '', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -101,14 +92,6 @@ CREATE TABLE `hr_eval_form_fp` (
   `created_by` int(11) NOT NULL,
   `approved_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_fp`
---
-
-INSERT INTO `hr_eval_form_fp` (`hr_eval_form_fp_id`, `eval_form_id`, `created_by`, `approved_by`) VALUES
-(1, 1, 13, 14),
-(2, 2, 19, NULL);
 
 -- --------------------------------------------------------
 
@@ -124,17 +107,6 @@ CREATE TABLE `hr_eval_form_pillars` (
   `pillar_percentage` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hr_eval_form_pillars`
---
-
-INSERT INTO `hr_eval_form_pillars` (`hr_eval_form_pillar_id`, `hr_eval_form_id`, `hr_eval_form_fp_id`, `pillar_id`, `pillar_percentage`) VALUES
-(1, 1, 1, 1, 30),
-(2, 1, 1, 2, 35),
-(3, 1, 1, 3, 20),
-(4, 1, 1, 4, 15),
-(5, 2, 2, 1, 25);
-
 -- --------------------------------------------------------
 
 --
@@ -145,14 +117,6 @@ CREATE TABLE `hr_eval_form_sp` (
   `hr_eval_form_sp_id` int(11) NOT NULL,
   `eval_form_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_sp`
---
-
-INSERT INTO `hr_eval_form_sp` (`hr_eval_form_sp_id`, `eval_form_id`) VALUES
-(1, 1),
-(2, 2);
 
 -- --------------------------------------------------------
 
@@ -171,43 +135,6 @@ CREATE TABLE `hr_eval_form_sp_fq` (
   `hr_eval_form_sp_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hr_eval_form_sp_fq`
---
-
-INSERT INTO `hr_eval_form_sp_fq` (`ID`, `achievements`, `results`, `weighted`, `remarks`, `fq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, 'hello', '', 0.00, '', '0000-00-00', 1, 1),
-(2, '', '', 0.00, '', '0000-00-00', 2, 1),
-(3, '', '', 0.00, '', '0000-00-00', 3, 1),
-(4, '', '', 0.00, '', '0000-00-00', 4, 1),
-(5, '', '', 0.00, '', '0000-00-00', 5, 1),
-(6, '', '', 0.00, '', '0000-00-00', 6, 1),
-(7, '', '', 0.00, '', '0000-00-00', 7, 1),
-(8, '', '', 0.00, '', '0000-00-00', 8, 1),
-(9, '', '', 0.00, '', '0000-00-00', 9, 1),
-(10, '', '', 0.00, '', '0000-00-00', 10, 1),
-(11, '', '', 0.00, '', '0000-00-00', 11, 1),
-(12, '', '', 0.00, '', '0000-00-00', 12, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `hr_eval_form_sp_fq_rating`
---
-
-CREATE TABLE `hr_eval_form_sp_fq_rating` (
-  `fq_rating_id` int(11) NOT NULL,
-  `hr_eval_form_sp_id` int(11) NOT NULL,
-  `ratee_achievement` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_sp_fq_rating`
---
-
-INSERT INTO `hr_eval_form_sp_fq_rating` (`fq_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`) VALUES
-(1, 1, '');
-
 -- --------------------------------------------------------
 
 --
@@ -225,47 +152,6 @@ CREATE TABLE `hr_eval_form_sp_myr` (
   `hr_eval_form_sp_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hr_eval_form_sp_myr`
---
-
-INSERT INTO `hr_eval_form_sp_myr` (`ID`, `achievements`, `results`, `status`, `remarks`, `myr_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, '', '1', '', '', '0000-00-00', 1, 1),
-(2, '', '1', '', '', '0000-00-00', 2, 1),
-(3, '', '1', '', '', '0000-00-00', 3, 1),
-(4, '', '1', '', '', '0000-00-00', 4, 1),
-(5, '', '1', '', '', '0000-00-00', 5, 1),
-(6, '', '1', '', '', '0000-00-00', 6, 1),
-(7, '', '1', '', '', '0000-00-00', 7, 1),
-(8, '', '1', '', '', '0000-00-00', 8, 1),
-(9, '', '1', '', '', '0000-00-00', 9, 1),
-(10, '', '1', '', '', '0000-00-00', 10, 1),
-(11, '', '1', '', '', '0000-00-00', 11, 1),
-(12, '', '1', '', '', '0000-00-00', 12, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `hr_eval_form_sp_myr_rating`
---
-
-CREATE TABLE `hr_eval_form_sp_myr_rating` (
-  `myr_rating_id` int(11) NOT NULL,
-  `hr_eval_form_sp_id` int(11) NOT NULL,
-  `ratee_achievement` text NOT NULL,
-  `rater_1` int(11) DEFAULT NULL,
-  `rater_2` int(11) DEFAULT NULL,
-  `rater_3` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_sp_myr_rating`
---
-
-INSERT INTO `hr_eval_form_sp_myr_rating` (`myr_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`, `rater_1`, `rater_2`, `rater_3`) VALUES
-(1, 0, '1', NULL, NULL, NULL),
-(2, 1, 'Hello this is norvin and this is my second quarter achievements', NULL, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -281,16 +167,6 @@ CREATE TABLE `hr_eval_form_sp_pillar_ratings` (
   `fourthQuarterTotalResult` decimal(10,2) DEFAULT NULL COMMENT 'for Probationary',
   `YearEndTotalResult` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_sp_pillar_ratings`
---
-
-INSERT INTO `hr_eval_form_sp_pillar_ratings` (`eval_form_sp_pillar_ratings_id`, `eval_form_pillars_id`, `firstQuarterTotalResult`, `midYearTotalResult`, `ThirdQuarterTotalResult`, `fourthQuarterTotalResult`, `YearEndTotalResult`) VALUES
-(1, 1, 0.35, 0.70, 1.05, NULL, 1.40),
-(2, 2, 0.30, 0.60, 0.90, NULL, 1.20),
-(3, 3, 0.20, 0.40, 0.60, NULL, 0.60),
-(4, 4, 0.15, 0.30, 0.45, NULL, 0.45);
 
 -- --------------------------------------------------------
 
@@ -308,13 +184,6 @@ CREATE TABLE `hr_eval_form_sp_quarterly_ratings` (
   `YearEndRating` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hr_eval_form_sp_quarterly_ratings`
---
-
-INSERT INTO `hr_eval_form_sp_quarterly_ratings` (`quarterly_ratings_id`, `eval_form_id`, `FirstQuarterRating`, `MidYearRating`, `ThirdQuarterRating`, `FourthQuarterRating`, `YearEndRating`) VALUES
-(1, 1, 1.00, 2.00, 3.00, NULL, 3.65);
-
 -- --------------------------------------------------------
 
 --
@@ -331,43 +200,6 @@ CREATE TABLE `hr_eval_form_sp_tq` (
   `hr_eval_form_sp_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hr_eval_form_sp_tq`
---
-
-INSERT INTO `hr_eval_form_sp_tq` (`ID`, `achievements`, `results`, `remarks`, `tq_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, '', '', '', '0000-00-00', 1, 1),
-(2, '', '', '', '0000-00-00', 2, 1),
-(3, '', '', '', '0000-00-00', 3, 1),
-(4, '', '', '', '0000-00-00', 4, 1),
-(5, '', '', '', '0000-00-00', 5, 1),
-(6, '', '', '', '0000-00-00', 6, 1),
-(7, '', '', '', '0000-00-00', 7, 1),
-(8, '', '', '', '0000-00-00', 8, 1),
-(9, '', '', '', '0000-00-00', 9, 1),
-(10, '', '', '', '0000-00-00', 10, 1),
-(11, '', '', '', '0000-00-00', 11, 1),
-(12, '', '', '', '0000-00-00', 12, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `hr_eval_form_sp_tq_rating`
---
-
-CREATE TABLE `hr_eval_form_sp_tq_rating` (
-  `tq_rating_id` int(11) NOT NULL,
-  `hr_eval_form_sp_id` int(11) NOT NULL,
-  `ratee_achievement` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_sp_tq_rating`
---
-
-INSERT INTO `hr_eval_form_sp_tq_rating` (`tq_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`) VALUES
-(1, 1, '');
-
 -- --------------------------------------------------------
 
 --
@@ -380,48 +212,11 @@ CREATE TABLE `hr_eval_form_sp_yee` (
   `results` text NOT NULL,
   `remarks` text NOT NULL,
   `agreed_rating` decimal(10,0) NOT NULL,
-  `wtd_rating` decimal(10,0) NOT NULL,
+  `wtd_rating` decimal(10,2) NOT NULL,
   `yee_review_date` date NOT NULL,
   `hr_eval_form_kpi_id` int(11) NOT NULL,
   `hr_eval_form_sp_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_sp_yee`
---
-
-INSERT INTO `hr_eval_form_sp_yee` (`ID`, `achievements`, `results`, `remarks`, `agreed_rating`, `wtd_rating`, `yee_review_date`, `hr_eval_form_kpi_id`, `hr_eval_form_sp_id`) VALUES
-(1, '', '', '', 0, 0, '0000-00-00', 1, 1),
-(2, '', '', '', 0, 0, '0000-00-00', 2, 1),
-(3, '', '', '', 0, 0, '0000-00-00', 3, 1),
-(4, '', '', '', 0, 0, '0000-00-00', 4, 1),
-(5, '', '', '', 0, 0, '0000-00-00', 5, 1),
-(6, '', '', '', 0, 0, '0000-00-00', 6, 1),
-(7, '', '', '', 0, 0, '0000-00-00', 7, 1),
-(8, '', '', '', 0, 0, '0000-00-00', 8, 1),
-(9, '', '', '', 0, 0, '0000-00-00', 9, 1),
-(10, '', '', '', 0, 0, '0000-00-00', 10, 1),
-(11, '', '', '', 0, 0, '0000-00-00', 11, 1),
-(12, '', '', '', 0, 0, '0000-00-00', 12, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `hr_eval_form_sp_yee_rating`
---
-
-CREATE TABLE `hr_eval_form_sp_yee_rating` (
-  `yee_rating_id` int(11) NOT NULL,
-  `hr_eval_form_sp_id` int(11) NOT NULL,
-  `ratee_achievement` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_eval_form_sp_yee_rating`
---
-
-INSERT INTO `hr_eval_form_sp_yee_rating` (`yee_rating_id`, `hr_eval_form_sp_id`, `ratee_achievement`) VALUES
-(1, 1, 'gfddfgdgdfgg');
 
 -- --------------------------------------------------------
 
@@ -435,24 +230,6 @@ CREATE TABLE `hr_kpi` (
   `kpi_desc` text NOT NULL,
   `kpi_weight` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_kpi`
---
-
-INSERT INTO `hr_kpi` (`kpi_id`, `objective_id`, `kpi_desc`, `kpi_weight`) VALUES
-(1, 1, 'Accomplishments need to be at least 85% accurate.', 10),
-(2, 1, 'Tasks need to be at least 85% complete.', 10),
-(3, 1, 'Completion should be within the set timeline.', 10),
-(4, 2, 'Complete and complete all pending lark approval procedures.', 10),
-(5, 2, 'Correct and complete all information to be indicated on organizational management.', 5),
-(6, 3, 'Receive a satisfactory rating from the key stakeholders.', 20),
-(7, 4, 'proper and comprehensive process documentation for IT activities, services, and processes.', 10),
-(8, 4, 'signed-off IT process documentations', 5),
-(9, 4, 'signed-off IT activities documentations.', 5),
-(10, 5, 'Processes', 5),
-(11, 5, 'Assessments', 5),
-(12, 5, 'Recording/Monitoring', 5);
 
 -- --------------------------------------------------------
 
@@ -487,17 +264,6 @@ CREATE TABLE `hr_objectives` (
   `hr_eval_form_fp_id` int(11) NOT NULL,
   `objective` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_objectives`
---
-
-INSERT INTO `hr_objectives` (`objective_id`, `hr_eval_form_pillar_id`, `hr_eval_form_fp_id`, `objective`) VALUES
-(1, 1, 1, 'To measure overall quality of work'),
-(2, 2, 1, 'To correct and complete all pending Lark approval procedures and organizational management.'),
-(3, 2, 1, 'To receive a stakeholders feedback to improve team support.'),
-(4, 3, 1, 'Creation of process documentations for IT activities, services, and processes.'),
-(5, 4, 1, 'To develop documentation skills');
 
 -- --------------------------------------------------------
 
@@ -534,15 +300,6 @@ CREATE TABLE `hr_request_discussion` (
   `creation_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hr_request_discussion`
---
-
-INSERT INTO `hr_request_discussion` (`ID`, `consultation_subject`, `description`, `creation_date`) VALUES
-(1, 'Hello', 'Goodbye', '2023-07-16 23:34:55'),
-(2, 'sdfsfsfd', 'sdfsfsdfsdf', '2023-07-17 03:09:35'),
-(3, 'title', 'hello', '2023-07-18 07:27:01');
-
 -- --------------------------------------------------------
 
 --
@@ -555,60 +312,6 @@ CREATE TABLE `hr_target_metrics` (
   `target_metrics_desc` text NOT NULL,
   `kpi_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hr_target_metrics`
---
-
-INSERT INTO `hr_target_metrics` (`target_metrics_id`, `target_metrics_score`, `target_metrics_desc`, `kpi_id`) VALUES
-(1, 1, 'Quality of work is below expected, completion are below expected as well. Timelines weren\'t followed.', 1),
-(2, 2, 'Quality of work is 85% accurate, 85% complete, but completed late.', 1),
-(3, 3, 'Quality of work delivered is 85% accurate, 85% complete, and completed within the deadline.', 1),
-(4, 4, 'Quality of work delivered is 100% accurate, 100% complete, and completed prior the deadline.', 1),
-(5, 1, 'Quality of work is below expected, completion are below expected as well. Timelines weren\'t followed.', 2),
-(6, 2, 'Quality of work is 85% accurate, 85% complete, but completed late.', 2),
-(7, 3, 'Quality of work delivered is 85% accurate, 85% complete, and completed within the deadline.', 2),
-(8, 4, 'Quality of work delivered is 100% accurate, 100% complete, and completed prior the deadline.', 2),
-(9, 1, 'Quality of work is below expected, completion are below expected as well. Timelines weren\'t followed.', 3),
-(10, 2, 'Quality of work is 85% accurate, 85% complete, but completed late.', 3),
-(11, 3, 'Quality of work delivered is 85% accurate, 85% complete, and completed within the deadline.', 3),
-(12, 4, 'Quality of work delivered is 100% accurate, 100% complete, and completed prior the deadline.', 3),
-(13, 1, 'Corrected and completed only few of all pending approval procedures, not all information has shown in organization management. Back-jobs are redundant and has repetitive concerns.', 4),
-(14, 2, 'Corrected and completed less than 100% of all pending lark approval procedures and all information shown in organizational management, also has back-jobs and concerns.', 4),
-(15, 3, 'Corrected and completed 100%  of all pending lark approval procedures and all information shown in organizational management, but with pending back-jobs and consents.', 4),
-(16, 4, 'Corrected and completed 100% of all pending lark approval procedures and all information shown in the organizational management, with no back-jobs and concerns.', 4),
-(17, 1, 'Corrected and completed only few of all pending approval procedures, not all information has shown in organization management. Back-jobs are redundant and has repetitive concerns.', 5),
-(18, 2, 'Corrected and completed less than 100% of all pending lark approval procedures and all information shown in organizational management, also has back-jobs and concerns.', 5),
-(19, 3, 'Corrected and completed 100%  of all pending lark approval procedures and all information shown in organizational management, but with pending back-jobs and consents.', 5),
-(20, 4, 'Corrected and completed 100% of all pending lark approval procedures and all information shown in the organizational management, with no back-jobs and concerns.', 5),
-(21, 1, 'Receive less than 75% rating from key stakeholders', 6),
-(22, 2, 'Receive less than 85% satisfactory rating from key stakeholders.', 6),
-(23, 3, 'Receive at least 85% satisfactory rating from key stakeholders.', 6),
-(24, 4, 'Receive more than 85% satisfactory rating from key stakeholders.', 6),
-(25, 1, 'Drafted processes documentations, but haven\'t signed off anything.', 7),
-(26, 2, 'Signed off not less than 3 comprehenisive process documentation for IT processes and activities', 7),
-(27, 3, 'Signed off not less than 5 comprehensive process documentation for IT processes and activities.', 7),
-(28, 4, 'Signed off more than 10 comprehensive process documentation for IT processes and activities.', 7),
-(29, 1, 'Drafted processes documentations, but haven\'t signed off anything.', 8),
-(30, 2, 'Signed off not less than 3 comprehenisive process documentation for IT processes and activities', 8),
-(31, 3, 'Signed off not less than 5 comprehensive process documentation for IT processes and activities.', 8),
-(32, 4, 'Signed off more than 10 comprehensive process documentation for IT processes and activities.', 8),
-(33, 1, 'Drafted processes documentations, but haven\'t signed off anything.', 9),
-(34, 2, 'Signed off not less than 3 comprehenisive process documentation for IT processes and activities', 9),
-(35, 3, 'Signed off not less than 5 comprehensive process documentation for IT processes and activities.', 9),
-(36, 4, 'Signed off more than 10 comprehensive process documentation for IT processes and activities.', 9),
-(37, 1, 'Shows interest in the activity but did the tasks just to comply', 10),
-(38, 2, 'Need more exposure to learn and to be more creative', 10),
-(39, 3, 'Documentation shows informative information that will let the department productive', 10),
-(40, 4, 'Documentation shows exceptional and usable information for decision making and growth.', 10),
-(41, 1, 'Shows interest in the activity but did the tasks just to comply', 11),
-(42, 2, 'Need more exposure to learn and to be more creative', 11),
-(43, 3, 'Documentation shows informative information that will let the department productive', 11),
-(44, 4, 'Documentation shows exceptional and usable information for decision making and growth.', 11),
-(45, 1, 'Shows interest in the activity but did the tasks just to comply', 12),
-(46, 2, 'Need more exposure to learn and to be more creative', 12),
-(47, 3, 'Documentation shows informative information that will let the department productive', 12),
-(48, 4, 'Documentation shows exceptional and usable information for decision making and growth.', 12);
 
 -- --------------------------------------------------------
 
@@ -648,15 +351,7 @@ CREATE TABLE `hr_users` (
 --
 
 INSERT INTO `hr_users` (`users_id`, `employee_id`, `picture`, `salutation`, `last_name`, `first_name`, `middle_name`, `suffix`, `nickname`, `company`, `department`, `team`, `job_description`, `contract_type`, `contact_no`, `address`, `primary_evaluator`, `secondary_evaluator`, `tertiary_evaluator`, `employment_category`, `nationality`, `hire_date`, `request_consult`, `for_regularization`) VALUES
-(1, 1010101, NULL, NULL, 'Root', 'Admin', '', NULL, 'Super Admin', 1, 1, NULL, 'Super Admin', 'consultant', '09999999999', '4th Floor HPL Bldg, Sen. Gil Puyat Ave., Makati, Philippines', 23052908, NULL, NULL, 'LOCAL', 'Filipino', '0001-01-01', NULL, NULL),
-(10, 22081701, NULL, NULL, 'Leynes', 'Christopher', 'Patena', NULL, 'Chris', 1, 1, 'Information Systems & Technology Integration', 'It Specialist - External', 'regular', '09991113498', 'Makati, Philippines', 21020804, 21020804, 21020804, 'LOCAL', 'Filipino', '2023-02-20', NULL, NULL),
-(11, 12010238, NULL, NULL, 'Lim', 'Jobert', 'De Ocampo', NULL, 'Jobert', 1, 1, 'Information Systems & Technology Integration', 'Senior It Specialist', 'regular', '09991113498', 'Makati, Philippines', 21020804, 21020804, 21020804, 'LOCAL', 'Filipino', '2012-01-02', NULL, NULL),
-(12, 21100522, NULL, NULL, 'Monserrate', 'Anthony', 'Gumop-as', 'Jr.', 'Anthony', 1, 1, 'Information Systems & Technology Integration', 'It Associate', 'regular', '09991113498', 'Makati, Philippines', 21020804, 21020804, 21020804, 'LOCAL', 'Filipino', '2021-10-05', NULL, NULL),
-(13, 22111627, NULL, NULL, 'Perez', 'Jacqueline', 'Suazo', NULL, 'Jackie', 1, 1, 'Information Systems & Technology Integration', 'It Associate', 'probationary', '09991113498', 'Makati, Philippines', 21020804, 21020804, 21020804, 'LOCAL', 'Filipino', '2022-11-16', NULL, NULL),
-(14, 21020804, NULL, NULL, 'Ramilo', 'Michael', 'Lauta', NULL, 'Mike', 1, 1, 'Information Systems & Technology Integration', 'Information Technology & Systems Integration Head', 'regular', '09991113498', 'Makati, Philippines', 88010102, 88010102, 88010102, 'LOCAL', 'Filipino', '2021-02-08', NULL, NULL),
-(15, 22111602, NULL, NULL, 'Ramos', 'Lorraine Ann', '.', NULL, 'Raine', 1, 1, 'Information Systems & Technology Integration', 'Web Developer', 'regular', '09991113498', 'Makati, Philippines', 21020804, 21020804, 21020804, 'LOCAL', 'Filipino', '2023-05-29', NULL, NULL),
-(16, 88010102, NULL, NULL, 'Lim', 'Daniel Christopher', 'Chua', NULL, 'Danny', 1, 11, 'Board Of Director', 'Ceo/managing Director', 'regular', '09991113498', 'Makati, Philippines', NULL, NULL, NULL, 'LOCAL', 'Filipino', '1991-03-01', NULL, NULL),
-(19, 23052906, NULL, 'Mr.', 'Perez', 'Norvin Kyle', 'Benitez', NULL, 'Norvin', 1, 1, 'Information Systems & Technology Integration', 'Developer', 'regular', '09123456789', 'malate manila', 22081701, 12010238, 21020804, 'LOCAL', 'Filipino', '2023-07-17', 3, NULL);
+(1, 1010101, NULL, NULL, 'Root', 'Admin', '', NULL, 'Super Admin', 1, 1, NULL, 'Super Admin', 'consultant', '09999999999', '4th Floor HPL Bldg, Sen. Gil Puyat Ave., Makati, Philippines', 23052908, NULL, NULL, 'LOCAL', 'Filipino', '0001-01-01', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -680,15 +375,7 @@ CREATE TABLE `hr_user_accounts` (
 --
 
 INSERT INTO `hr_user_accounts` (`account_id`, `users_id`, `username`, `password`, `email_address`, `user_type`, `user_status`, `account_status`) VALUES
-(1, 1, 'admin', '17c4520f6cfd1ab53d8745e84681eb49', 'admin@admin.com', 1, 'active', 'active'),
-(2, 10, '22081701', '74acfff97151e8467617bc6f3778ad61', 'christopher.leynes@unitedneon.com', 6, 'active', 'active'),
-(3, 11, '12010238', '28aae2e53f32e77253668682916113d4', 'jobert.lim@unitedneon.com', 6, 'active', 'active'),
-(4, 12, '21100522', 'ca63fafb3fbb76875fd35fb58ac4258b', 'anthonyjr..monserrate@unitedneon.com', 6, 'active', 'active'),
-(5, 13, '22111627', '925efb9db79e593ba23631d2b3dce8ca', 'jacqueline.perez@unitedneon.com', 6, 'active', 'active'),
-(6, 14, '21020804', '0192023a7bbd73250516f069df18b500', 'michael.ramilo@unitedneon.com', 4, 'active', 'active'),
-(7, 15, '22111602', '4f6e87d9dfa01c7a7b7704f554e649e5', 'lorraineann.ramos@unitedneon.com', 6, 'active', 'active'),
-(8, 16, '88010102', '4f8f5631fd4406c206cfb7c4b8cf8fd9', 'danielchristopher.lim@unitedneon.com', 3, 'active', 'active'),
-(9, 19, 'norvinkyle', '0192023a7bbd73250516f069df18b500', 'norvinkyle@gmail.com', 6, 'active', 'active');
+(1, 1, 'admin', '17c4520f6cfd1ab53d8745e84681eb49', 'admin@admin.com', 1, 'active', 'active');
 
 -- --------------------------------------------------------
 
@@ -771,29 +458,12 @@ ALTER TABLE `hr_eval_form_sp_fq`
   ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`);
 
 --
--- Indexes for table `hr_eval_form_sp_fq_rating`
---
-ALTER TABLE `hr_eval_form_sp_fq_rating`
-  ADD PRIMARY KEY (`fq_rating_id`),
-  ADD KEY `hr_eval_form_sp_fq_rating_ibfk_1` (`hr_eval_form_sp_id`);
-
---
 -- Indexes for table `hr_eval_form_sp_myr`
 --
 ALTER TABLE `hr_eval_form_sp_myr`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `hr_eval_form_pillars_id` (`hr_eval_form_kpi_id`),
   ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`);
-
---
--- Indexes for table `hr_eval_form_sp_myr_rating`
---
-ALTER TABLE `hr_eval_form_sp_myr_rating`
-  ADD PRIMARY KEY (`myr_rating_id`),
-  ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`),
-  ADD KEY `rater_1` (`rater_1`),
-  ADD KEY `rater_2` (`rater_2`),
-  ADD KEY `rater_3` (`rater_3`);
 
 --
 -- Indexes for table `hr_eval_form_sp_pillar_ratings`
@@ -816,26 +486,12 @@ ALTER TABLE `hr_eval_form_sp_tq`
   ADD KEY `hr_eval_form_sp_id` (`hr_eval_form_sp_id`);
 
 --
--- Indexes for table `hr_eval_form_sp_tq_rating`
---
-ALTER TABLE `hr_eval_form_sp_tq_rating`
-  ADD PRIMARY KEY (`tq_rating_id`),
-  ADD KEY `hr_eval_form_sp_tq_rating_ibfk_1` (`hr_eval_form_sp_id`);
-
---
 -- Indexes for table `hr_eval_form_sp_yee`
 --
 ALTER TABLE `hr_eval_form_sp_yee`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `hr_eval_form_pillars_id` (`hr_eval_form_kpi_id`),
   ADD KEY `hr_eval_form_sp_yee_ibfk_2` (`hr_eval_form_sp_id`);
-
---
--- Indexes for table `hr_eval_form_sp_yee_rating`
---
-ALTER TABLE `hr_eval_form_sp_yee_rating`
-  ADD PRIMARY KEY (`yee_rating_id`),
-  ADD KEY `hr_eval_form_sp_yee_id` (`hr_eval_form_sp_id`);
 
 --
 -- Indexes for table `hr_kpi`
@@ -924,91 +580,67 @@ ALTER TABLE `hr_departments`
 -- AUTO_INCREMENT for table `hr_eval_form`
 --
 ALTER TABLE `hr_eval_form`
-  MODIFY `hr_eval_form_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `hr_eval_form_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_fp`
 --
 ALTER TABLE `hr_eval_form_fp`
-  MODIFY `hr_eval_form_fp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `hr_eval_form_fp_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_pillars`
 --
 ALTER TABLE `hr_eval_form_pillars`
-  MODIFY `hr_eval_form_pillar_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `hr_eval_form_pillar_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp`
 --
 ALTER TABLE `hr_eval_form_sp`
-  MODIFY `hr_eval_form_sp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `hr_eval_form_sp_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_fq`
 --
 ALTER TABLE `hr_eval_form_sp_fq`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT for table `hr_eval_form_sp_fq_rating`
---
-ALTER TABLE `hr_eval_form_sp_fq_rating`
-  MODIFY `fq_rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_myr`
 --
 ALTER TABLE `hr_eval_form_sp_myr`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT for table `hr_eval_form_sp_myr_rating`
---
-ALTER TABLE `hr_eval_form_sp_myr_rating`
-  MODIFY `myr_rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_pillar_ratings`
 --
 ALTER TABLE `hr_eval_form_sp_pillar_ratings`
-  MODIFY `eval_form_sp_pillar_ratings_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `eval_form_sp_pillar_ratings_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_quarterly_ratings`
 --
 ALTER TABLE `hr_eval_form_sp_quarterly_ratings`
-  MODIFY `quarterly_ratings_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `quarterly_ratings_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_tq`
 --
 ALTER TABLE `hr_eval_form_sp_tq`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT for table `hr_eval_form_sp_tq_rating`
---
-ALTER TABLE `hr_eval_form_sp_tq_rating`
-  MODIFY `tq_rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_eval_form_sp_yee`
 --
 ALTER TABLE `hr_eval_form_sp_yee`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT for table `hr_eval_form_sp_yee_rating`
---
-ALTER TABLE `hr_eval_form_sp_yee_rating`
-  MODIFY `yee_rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_kpi`
 --
 ALTER TABLE `hr_kpi`
-  MODIFY `kpi_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `kpi_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_kpi_year_duration`
@@ -1020,7 +652,7 @@ ALTER TABLE `hr_kpi_year_duration`
 -- AUTO_INCREMENT for table `hr_objectives`
 --
 ALTER TABLE `hr_objectives`
-  MODIFY `objective_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `objective_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_pillars`
@@ -1032,13 +664,13 @@ ALTER TABLE `hr_pillars`
 -- AUTO_INCREMENT for table `hr_request_discussion`
 --
 ALTER TABLE `hr_request_discussion`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_target_metrics`
 --
 ALTER TABLE `hr_target_metrics`
-  MODIFY `target_metrics_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `target_metrics_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hr_users`
