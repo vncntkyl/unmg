@@ -3,7 +3,7 @@ import axios from "axios";
 import AssessmentTrackingDetails from "./AssessmentTrackingDetails";
 import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
 
 export default function AssessmentEmployeeTracking({ emp_id }) {

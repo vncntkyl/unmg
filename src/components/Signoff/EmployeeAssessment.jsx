@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { CiCircleMore } from "react-icons/ci";
 import axios from "axios";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 export default function EmployeeAssessment(emp_id) {
   const [employeeType, setEmployeeType] = useState("0");
   const [employees, setEmployees] = useState([]);

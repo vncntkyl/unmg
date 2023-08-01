@@ -4,7 +4,7 @@ import AssessmentTrackingDetails from "./AssessmentTrackingDetails";
 import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 
 export default function AssessmentEmployeeTracking({ emp_id }) {
   const [finalUserPerformance, setfinalUserPerformance] = useState([]);

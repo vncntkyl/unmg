@@ -7,7 +7,7 @@ import GoalTable from "./GoalTableHeader";
 import classNames from "classnames";
 import { format } from "date-fns";
 import { useAuth } from "../../context/authContext";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 export default function Goals({
   user_id,
   pillars = [],

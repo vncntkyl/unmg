@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AssessmentTrackingDetails from "./AssessmentTrackingDetails";
 import Badge from "../../misc/Badge";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 import { format } from "date-fns";
 export default function AssessmentTracking({
   emp_id,

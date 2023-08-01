@@ -3,7 +3,7 @@ import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import Badge from "../../misc/Badge";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGrade({
   employee_id,

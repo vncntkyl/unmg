@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { CiCircleMore } from "react-icons/ci";
 import axios from "axios";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 
 export default function EmployeeSignOff() {
   const [status, setStatus] = useState("All");

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 import { AiOutlinePlus } from "react-icons/ai";
 
 export default function AssessmentTrackingDetails({ quarter, emp_id }) {

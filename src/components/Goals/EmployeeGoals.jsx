@@ -5,7 +5,7 @@ import DataTable from "./DataTable";
 import { useFunction } from "../../context/FunctionContext";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 
 export default function EmployeeGoals({
   pillars = [],

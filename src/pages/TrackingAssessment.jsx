@@ -10,7 +10,7 @@ import Toggle from "../components/Toggle";
 import axios from "axios";
 import EmployeeAssessmentGradeEdit from "../components/TrackingAssessment/EmployeeAssessmentGradeEdit";
 import { useAuth } from "../context/authContext";
-import { developmentAPIs as url } from "../context/apiList";
+import { releaseAPIs as url } from "../context/apiList";
 
 export default function TrackingAssessment() {
   const [loading, toggleLoading] = useState(true);

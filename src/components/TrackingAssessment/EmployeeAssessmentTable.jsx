@@ -4,7 +4,7 @@ import axios from "axios";
 import TrackingAction from "./TrackingAction";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentTable({ emp_id }) {
   const [employeeType, setEmployeeType] = useState(0);
