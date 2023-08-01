@@ -5,6 +5,7 @@ import DataTable from "./DataTable";
 import { useFunction } from "../../context/FunctionContext";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeGoals({
   pillars = [],
@@ -21,8 +22,6 @@ export default function EmployeeGoals({
 
   useEffect(() => {
     const fetchUsers = async () => {
-      let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
-      //let url = "../api/retrieveUsers.php";
       const parameters = {
         params: {
           employee_goals: true,
@@ -37,7 +36,7 @@ export default function EmployeeGoals({
       }
 
       try {
-        const response = await axios.get(url, parameters);
+        const response = await axios.get(url.getEmployeeGoals, parameters);
         setEmployees(response.data);
         console.log(response.data);
         toggleLoading(false);

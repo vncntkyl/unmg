@@ -4,6 +4,7 @@ import AssessmentTrackingDetails from "./AssessmentTrackingDetails";
 import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function AssessmentEmployeeTracking({ emp_id }) {
   const [finalUserPerformance, setfinalUserPerformance] = useState([]);
@@ -20,7 +21,7 @@ export default function AssessmentEmployeeTracking({ emp_id }) {
     const getfinalUserPerformance = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveTracking.php",
+          url.retrieveTracking,
           {
             params: {
               userTracking: true,
@@ -133,9 +134,8 @@ export default function AssessmentEmployeeTracking({ emp_id }) {
   //working
   useEffect(() => {
     const getScores = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTrackingScores.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTrackingScores, {
           params: {
             trackingMetrics: true,
             empID: emp_id,

@@ -7,6 +7,7 @@ import axios from "axios";
 import Toggle from "../components/Toggle";
 import EditGoals from "../components/Goals/EditGoals";
 import { useAuth } from "../context/authContext";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
@@ -38,10 +39,8 @@ export default function MainGoals() {
 
   useEffect(() => {
     const getPillars = async () => {
-      const url = "http://localhost/unmg_pms/api/retrievePillars.php";
-      //const url = "../api/retrievePillars.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrievePillars, {
           params: {
             pillars: true,
           },
@@ -52,8 +51,6 @@ export default function MainGoals() {
       }
     };
     const verifyEvaluator = async () => {
-      let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
-      //let url = "../api/retrieveUsers.php";
       const parameters = {
         params: {
           employee_goals: true,
@@ -63,7 +60,7 @@ export default function MainGoals() {
         },
       };
       try {
-        const response = await axios.get(url, parameters);
+        const response = await axios.get(url.getEmployeeGoals, parameters);
         setIsEvaluator(response.data > 0);
       } catch (e) {
         console.log(e.message);

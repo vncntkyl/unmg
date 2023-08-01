@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { CiCircleMore } from "react-icons/ci";
 import axios from "axios";
-
+import { developmentAPIs as url } from "../../context/apiList";
 export default function EmployeeAssessment(emp_id) {
   const [employeeType, setEmployeeType] = useState("0");
   const [employees, setEmployees] = useState([]);
@@ -10,7 +10,7 @@ export default function EmployeeAssessment(emp_id) {
     const getemployee = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveTrackingEmployee.php",
+          url.retrieveTrackingEmployee,
           {
             params: {
               employeeType: employeeType,

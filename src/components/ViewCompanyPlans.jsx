@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { developmentAPIs as url } from "../context/apiList";
 const ViewCompanyPlans = ({
   selectedYear,
   filterSelectedObjectiveOrPillar,
@@ -18,7 +18,7 @@ const ViewCompanyPlans = ({
     const fetchPillarOrObjectives = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveKpiDescAndPillarPercentage.php",
+          url.retrieveKPIDescAndPillarPercentage,
           {
             params: { pillarDesc: true },
           }
@@ -26,20 +26,20 @@ const ViewCompanyPlans = ({
         const axiosFetchedData = response.data;
         const displayedPillarEmployeeIds = new Set();
         const extractedObjectivesOrPillar = [];
-  
+
         for (let i = 0; i < axiosFetchedData.length; i += 4) {
           const batch = axiosFetchedData.slice(i, i + 4);
           const uniqueBatch = [];
-          
+
           for (const pillar of batch) {
             const pillarEmployeeId = pillar.employee_id;
             const pillarIdCombination = `${pillar.pillar_id}-${pillarEmployeeId}`;
-            
+
             if (!displayedPillarEmployeeIds.has(pillarIdCombination)) {
               displayedPillarEmployeeIds.add(pillarIdCombination);
               uniqueBatch.push(pillar);
             }
-            
+
             if (uniqueBatch.length === 4) {
               break;
             }
@@ -51,11 +51,9 @@ const ViewCompanyPlans = ({
         console.log(error.message);
       }
     };
-  
+
     fetchPillarOrObjectives();
   }, [selectedYear]);
-  
-  
 
   const RenderTable = () => {
     if (filterSelectedObjectiveOrPillar === "Pillar Percentage") {
@@ -254,10 +252,7 @@ const ViewCompanyPlans = ({
                   {row.Job_Title}
                 </td>
                 {row.objective.slice(0, 4).map((rating, index) => (
-                  <td
-                    className="text-center bg-gray-200 px-4 py-2"
-                    key={index}
-                  >
+                  <td className="text-center bg-gray-200 px-4 py-2" key={index}>
                     {rating}
                   </td>
                 ))}

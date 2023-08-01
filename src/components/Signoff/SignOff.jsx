@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BiRightArrowAlt } from "react-icons/bi";
-import SignOffModal from "../../misc/SignOffModal";
+import { developmentAPIs as url } from "../../context/apiList";
 import classNames from "classnames";
 
 export default function SignOff({ emp_id }) {
@@ -16,15 +15,12 @@ export default function SignOff({ emp_id }) {
   useEffect(() => {
     const getfinalUserPerformance = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveSignOff.php",
-          {
-            params: {
-              signoff: true,
-              empID: emp_id,
-            },
-          }
-        );
+        const response = await axios.get(url.retrieveSignOff, {
+          params: {
+            signoff: true,
+            empID: emp_id,
+          },
+        });
 
         setGrades(response.data);
 

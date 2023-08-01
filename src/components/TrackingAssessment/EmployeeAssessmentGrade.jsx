@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import AssessmentInstructions from "./AssessmentInstructions";
 import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
-import { error } from "jquery";
 import Badge from "../../misc/Badge";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGrade({
   employee_id,
@@ -21,9 +20,8 @@ export default function EmployeeAssessmentGrade({
   const navigate = useNavigate();
   useEffect(() => {
     const getGrades = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTracking, {
           params: {
             userTrackingIndividualEmployeeGrades: true,
             workYear: workYear,
@@ -36,9 +34,8 @@ export default function EmployeeAssessmentGrade({
       }
     };
     const getMetrics = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTracking, {
           params: {
             metrics: true,
             workYear: workYear,

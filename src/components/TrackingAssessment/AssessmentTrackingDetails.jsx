@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { developmentAPIs as url } from "../../context/apiList";
 import { AiOutlinePlus } from "react-icons/ai";
 
 export default function AssessmentTrackingDetails({ quarter, emp_id }) {
@@ -16,9 +17,8 @@ export default function AssessmentTrackingDetails({ quarter, emp_id }) {
   const [ifResultsExists, setIfResultsExists] = useState(false);
   useEffect(() => {
     const getfinalUserPerformance = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTracking, {
           params: {
             checkUserAchievements: true,
             empID: emp_id,

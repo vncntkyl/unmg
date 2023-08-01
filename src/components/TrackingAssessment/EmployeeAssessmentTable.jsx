@@ -4,6 +4,7 @@ import axios from "axios";
 import TrackingAction from "./TrackingAction";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentTable({ emp_id }) {
   const [employeeType, setEmployeeType] = useState(0);
@@ -52,16 +53,13 @@ export default function EmployeeAssessmentTable({ emp_id }) {
   useEffect(() => {
     const getemployeesRecords = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveTrackingEmployee.php",
-          {
-            params: {
-              employeeType: employeeType,
-              empID: JSON.parse(currentUser).user_type === "1" ? 1 : emp_id,
-              workYear: workYear,
-            },
-          }
-        );
+        const response = await axios.get(url.retrieveTrackingEmployee, {
+          params: {
+            employeeType: employeeType,
+            empID: JSON.parse(currentUser).user_type === "1" ? 1 : emp_id,
+            workYear: workYear,
+          },
+        });
         const employeeRecords = response.data.map((item) => {
           return {
             employee_id: item.employee_id,

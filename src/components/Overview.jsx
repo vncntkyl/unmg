@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import classNames from "classnames";
+import { developmentAPIs as url } from "../context/apiList";
 import axios from "axios";
 import Counter from "../misc/Counter";
 import { format, startOfToday } from "date-fns";
@@ -32,13 +32,11 @@ export default function Overview() {
 
   useEffect(() => {
     const retrieveOverviewContent = async () => {
-      const url = "http://localhost/unmg_pms/api/fetchOverview.php";
-      //const url = "../api/fetchOverview.php";
       const formData = new FormData();
 
       formData.append("getCount", "all");
       try {
-        const response = await axios.post(url, formData);
+        const response = await axios.post(url.fetchOverview, formData);
         setCards(response.data);
       } catch (e) {
         console.log(e);

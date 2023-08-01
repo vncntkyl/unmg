@@ -5,6 +5,7 @@ import { useFunction } from "../../context/FunctionContext";
 import classNames from "classnames";
 import GoalTable from "./GoalTableHeader";
 import { useAuth } from "../../context/authContext";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EditGoals({ pillars = [], workYear }) {
   const [goalData, setGoalData] = useState([]);
@@ -58,15 +59,8 @@ export default function EditGoals({ pillars = [], workYear }) {
     try {
       const formdata = new FormData();
       formdata.append("goalData", JSON.stringify(tableData));
-
-      let url = "http://localhost/unmg_pms/api/updateGoals.php";
-      //let url = "../api/updateGoals.php";
-
-      const response = await axios.post(url, formdata);
-
+      const response = await axios.post(url.updateGoals, formdata);
       if (response.data === 1) {
-        let url = "http://localhost/unmg_pms/api/sendmail.php";
-        //let url = "../api/sendmail.php";
         const notificationData = new FormData();
         notificationData.append("sendNotification", true);
 
@@ -105,7 +99,7 @@ export default function EditGoals({ pillars = [], workYear }) {
         notificationData.append("link", "");
         notificationData.append("linkMessage", "View updates");
 
-        const response = await axios.post(url, notificationData);
+        const response = await axios.post(url.sendMail, notificationData);
         if (response.data === 1) {
           if(alert("You have successfully updated your goals")){
             navigate("/main_goals")
@@ -127,8 +121,6 @@ export default function EditGoals({ pillars = [], workYear }) {
     const retrieveUser = async () => {
       const response = await fetchUsers();
       setUsers(response);
-      const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
-      //const url = "../api/fetchGoals.php";
 
       const formData = new FormData();
       const goal_owner = parseInt(localStorage.getItem("goal_user"));
@@ -137,7 +129,7 @@ export default function EditGoals({ pillars = [], workYear }) {
       formData.append("user_id", goal_owner);
       formData.append("work_year", work_year);
       try {
-        const response = await axios.post(url, formData);
+        const response = await axios.post(url.fetchAllGoals, formData);
         if (response.data != 0) {
           setGoalData(response.data);
           let previousObjective = "";

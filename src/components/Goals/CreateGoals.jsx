@@ -5,6 +5,7 @@ import GoalsInstructions from "./GoalsInstructions";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
 import { useFunction } from "../../context/FunctionContext";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function CreateGoals({
   pillars = [],
@@ -188,15 +189,13 @@ export default function CreateGoals({
     }
 
     try {
-      const url = "http://localhost/unmg_pms/api/formCreation.php";
-      //const url = "../api/formCreation.php";
       const formData = new FormData();
       formData.append("submit", true);
       formData.append("userID", user.length != 0 ? user : user_id);
       formData.append("current_user_id", user_id);
       formData.append("goals", JSON.stringify(goals));
       formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url.formCreation, formData);
 
       alert(response.data);
     } catch (e) {

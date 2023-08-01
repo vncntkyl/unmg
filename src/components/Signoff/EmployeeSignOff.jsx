@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { CiCircleMore } from "react-icons/ci";
 import axios from "axios";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeSignOff() {
   const [status, setStatus] = useState("All");
@@ -11,14 +12,11 @@ export default function EmployeeSignOff() {
   useEffect(() => {
     const getuser = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveUsers.php",
-          {
-            params: {
-              users: "regular",
-            },
-          }
-        );
+        const response = await axios.get(url.retrieveUsers, {
+          params: {
+            users: "regular",
+          },
+        });
         setUsers(response.data);
       } catch (error) {
         console.log(error.message);

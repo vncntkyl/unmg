@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function adminAndSuperAdminContent({
   selectedQuarter,
@@ -20,7 +21,7 @@ export default function adminAndSuperAdminContent({
     const fetchEvaluations = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveEvaluation.php",
+          url.retrieveEvaluation,
           {
             params: { evals: true },
           }

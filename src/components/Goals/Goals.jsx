@@ -7,6 +7,7 @@ import GoalTable from "./GoalTableHeader";
 import classNames from "classnames";
 import { format } from "date-fns";
 import { useAuth } from "../../context/authContext";
+import { developmentAPIs as url } from "../../context/apiList";
 export default function Goals({
   user_id,
   pillars = [],
@@ -37,13 +38,11 @@ export default function Goals({
     if (creator === approver) return;
 
     try {
-      const url = "http://localhost/unmg_pms/api/approveGoals.php";
-      //const url = "../api/approveGoals.php";
       const formData = new FormData();
       formData.append("approve", true);
       formData.append("approver", approver);
       formData.append("id", goalData[0].hr_eval_form_fp_id);
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url.approveGoals, formData);
       if (response.data == 1) {
         alert("Goals successfully approved.");
       } else {
@@ -58,13 +57,12 @@ export default function Goals({
     if (!user_id) return;
 
     const retrieveUser = async () => {
-      const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
-      //const url = "../api/fetchGoals.php";
+
       const formData = new FormData();
       formData.append("user_id", id ? id : user_id);
       formData.append("work_year", workYear);
       try {
-        const response = await axios.post(url, formData);
+        const response = await axios.post(url.fetchAllGoals, formData);
         if (response.data) {
           setGoalData(response.data);
           let previousObjective = "";
@@ -96,8 +94,6 @@ export default function Goals({
       }
     };
     const getGoalApproval = async () => {
-      const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
-      //const url = "../api/fetchAllGoals.php";
       if (headList.length < 1) return;
 
       const response = await fetchUsers();
@@ -115,7 +111,7 @@ export default function Goals({
         formData.append("workYear", workYear);
         formData.append("creator", goalOwner ? goalOwner : user_id);
         formData.append("approver", approver.users_id);
-        const response = await axios.post(url, formData);
+        const response = await axios.post(url.fetchAllGoals, formData);
         setGoalStatus(response.data == 1);
       } catch (e) {
         console.log(e.message);

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AssessmentTrackingDetails from "./AssessmentTrackingDetails";
-import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
-import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
+import { developmentAPIs as url } from "../../context/apiList";
 import { format } from "date-fns";
 export default function AssessmentTracking({
   emp_id,
@@ -41,17 +40,14 @@ export default function AssessmentTracking({
   useEffect(() => {
     const getUserPerformance = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveTracking.php",
-          {
-            params: {
-              userTracking: true,
-              workYear: workYear,
-              quarter: quarter,
-              empID: emp_id,
-            },
-          }
-        );
+        const response = await axios.get(url.retrieveTracking, {
+          params: {
+            userTracking: true,
+            workYear: workYear,
+            quarter: quarter,
+            empID: emp_id,
+          },
+        });
         console.log(response.data);
         setUserPerformance(response.data);
 
@@ -113,15 +109,12 @@ export default function AssessmentTracking({
     //addional for tracking and assessment
     const getTotalPerformance = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveTracking.php",
-          {
-            params: {
-              totalTracking: true,
-              empID: emp_id,
-            },
-          }
-        );
+        const response = await axios.get(url.retrieveTracking, {
+          params: {
+            totalTracking: true,
+            empID: emp_id,
+          },
+        });
         setTotalPerformance(response.data);
       } catch (error) {
         console.log(error.message);

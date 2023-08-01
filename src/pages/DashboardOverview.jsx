@@ -16,6 +16,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { format } from "date-fns";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function DashboardOverview() {
   const [performanceData, setPerformanceData] = useState([]);
@@ -52,10 +53,8 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     const fetchGoals = async () => {
-      let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.getEmployeeGoals, {
           params: {
             employee_goals: true,
             count: true,
@@ -68,10 +67,8 @@ export default function DashboardOverview() {
       }
     };
     const countUsers = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             count_employees: true,
           },
@@ -82,10 +79,8 @@ export default function DashboardOverview() {
       }
     };
     const fetchUsers = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             get_grades: true,
           },

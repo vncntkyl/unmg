@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import classNames from "classnames";
-import { Route, Router, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
 import EmployeeAssessmentTable from "../components/TrackingAssessment/EmployeeAssessmentTable";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
@@ -11,6 +10,7 @@ import Toggle from "../components/Toggle";
 import axios from "axios";
 import EmployeeAssessmentGradeEdit from "../components/TrackingAssessment/EmployeeAssessmentGradeEdit";
 import { useAuth } from "../context/authContext";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function TrackingAssessment() {
   const [loading, toggleLoading] = useState(true);
@@ -35,8 +35,6 @@ export default function TrackingAssessment() {
     }
   };
   const verifyEvaluator = async () => {
-    let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
-    //let url = "../api/retrieveUsers.php";
     const parameters = {
       params: {
         employee_goals: true,
@@ -46,7 +44,7 @@ export default function TrackingAssessment() {
       },
     };
     try {
-      const response = await axios.get(url, parameters);
+      const response = await axios.get(url.getEmployeeGoals, parameters);
       setIsEvaluator(response.data > 0);
       toggleLoading(false);
     } catch (e) {

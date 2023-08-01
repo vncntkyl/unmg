@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { error } from "jquery";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function CreateEmployeeAssessment({ emp_id }) {
   const [finalUserPerformance, setfinalUserPerformance] = useState([]);
@@ -22,14 +22,13 @@ export default function CreateEmployeeAssessment({ emp_id }) {
       const formspID = finalUserPerformance.find(
         (item) => item.hr_eval_form_sp_id
       ).hr_eval_form_sp_id;
-      const url = "http://localhost/unmg_pms/api/userSubmitAchievements.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("tbl_name", tbl_name);
       fData.append("formspID", formspID);
       fData.append("achievements", achievements);
       axios
-        .post(url, fData)
+        .post(url.userSubmitAchievements, fData)
         .then((response) => alert(response.data))
         .catch((error) => alert(error));
     }
@@ -56,9 +55,8 @@ export default function CreateEmployeeAssessment({ emp_id }) {
 
   useEffect(() => {
     const getfinalUserPerformance = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTracking, {
           params: {
             userTracking: true,
             empID: emp_id,

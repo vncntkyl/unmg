@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import Modal from "react-modal";
+import { developmentAPIs as url } from "../context/apiList";
 
 Modal.setAppElement("#root"); // Set the app root element for accessibility
 
@@ -32,8 +33,6 @@ const DateRangePicker = ({ showModalOnLoad }) => {
     );
     if (confirmSave) {
       try {
-        const url = "http://localhost/unmg_pms/api/saveDate.php";
-        //const url = "../api/formCreation.php";
         const formData = new FormData();
         const formattedStartDate = startDate
           ? startDate.toISOString().split("T")[0]
@@ -43,7 +42,7 @@ const DateRangePicker = ({ showModalOnLoad }) => {
           : null;
         formData.append("startDate", formattedStartDate);
         formData.append("endDate", formattedEndDate);
-        const response = await axios.post(url, formData);
+        const response = await axios.post(url.saveDate, formData);
 
         alert("Successfully saved");
         window.location.reload();

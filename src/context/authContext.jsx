@@ -61,10 +61,8 @@ export function AuthProvider({ children }) {
     }
   };
   const fetchUsers = async () => {
-    let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-    //let url = "../api/retrieveUsers.php";
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(url.retrieveUsers, {
         params: {
           users: true,
         },
@@ -79,14 +77,12 @@ export function AuthProvider({ children }) {
     }
   };
   const addCompany = async (companyData) => {
-    const url = "http://localhost/unmg_pms/api/manageCompany.php";
-    //const url = "../api/manageCompany.php";
     const formData = new FormData();
     formData.append("add_company", true);
     formData.append("company_data", JSON.stringify(companyData));
 
     try {
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url.manageCompany, formData);
       if (response.data === "success") {
         return true;
       }
@@ -95,15 +91,13 @@ export function AuthProvider({ children }) {
     }
   };
   const addDepartment = async (companyID, department_list) => {
-    const url = "http://localhost/unmg_pms/api/manageCompany.php";
-    //const url = "../api/manageCompany.php";
     const formData = new FormData();
     formData.append("add_department", true);
     formData.append("company_id", companyID);
     formData.append("department_list", JSON.stringify(department_list));
 
     try {
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url.manageCompany, formData);
       if (response.data === "success") {
         return true;
       }
@@ -112,14 +106,12 @@ export function AuthProvider({ children }) {
     }
   };
   const deleteDepartment = async (departmentID) => {
-    const url = "http://localhost/unmg_pms/api/manageCompany.php";
-    //const url = "../api/manageCompany.php";
     const formData = new FormData();
     formData.append("delete_department", true);
     formData.append("departmentID", departmentID);
 
     try {
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url.manageCompany, formData);
       console.log(response.data);
       // if (response.data === "success") {
       //   return true;
@@ -129,10 +121,8 @@ export function AuthProvider({ children }) {
     }
   };
   const getBusinessUnits = async () => {
-    const url = "http://localhost/unmg_pms/api/conglomerate.php";
-    //const url = "../api/conglomerate.php";
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(url.conglomerate, {
         params: {
           company: true,
         },
@@ -145,10 +135,8 @@ export function AuthProvider({ children }) {
     }
   };
   const getDepartments = async () => {
-    const url = "http://localhost/unmg_pms/api/conglomerate.php";
-    //const url = "../api/conglomerate.php";
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(url.conglomerate, {
         params: {
           department: true,
         },
@@ -180,64 +168,64 @@ export function AuthProvider({ children }) {
     nav(location);
   };
 
-  const registerRole = async (role_data) => {
-    const url = "http://localhost/unmg_pms/api/manageRoles.php";
-    //const url = "../api/manageRoles.php";
-    const formData = new FormData();
-    formData.append("action", "register");
-    formData.append("role_data", JSON.stringify(role_data));
+  // const registerRole = async (role_data) => {
+  //   const url = "http://localhost/unmg_pms/api/manageRoles.php";
+  //   //const url = "../api/manageRoles.php";
+  //   const formData = new FormData();
+  //   formData.append("action", "register");
+  //   formData.append("role_data", JSON.stringify(role_data));
 
-    try {
-      const response = await axios.post(url, formData);
-      return response.data === "success";
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
+  //   try {
+  //     const response = await axios.post(url, formData);
+  //     return response.data === "success";
+  //   } catch (e) {
+  //     console.log(e.message);
+  //   }
+  // };
 
-  const updateUserRole = async (user_id, role_id) => {
-    const url = "http://localhost/unmg_pms/api/manageRoles.php";
-    //const url = "../api/manageRoles.php";
-    const formData = new FormData();
-    formData.append("action", "update");
-    formData.append("user_id", user_id);
-    formData.append("role_id", role_id);
+  // const updateUserRole = async (user_id, role_id) => {
+  //   const url = "http://localhost/unmg_pms/api/manageRoles.php";
+  //   //const url = "../api/manageRoles.php";
+  //   const formData = new FormData();
+  //   formData.append("action", "update");
+  //   formData.append("user_id", user_id);
+  //   formData.append("role_id", role_id);
 
-    try {
-      const response = await axios.post(url, formData);
-      return response.data === "success";
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-  const unassignUser = async (user_id) => {
-    const url = "http://localhost/unmg_pms/api/manageRoles.php";
-    //const url = "../api/manageRoles.php";
-    const formData = new FormData();
-    formData.append("action", "remove");
-    formData.append("user_id", user_id);
+  //   try {
+  //     const response = await axios.post(url, formData);
+  //     return response.data === "success";
+  //   } catch (e) {
+  //     console.log(e.message);
+  //   }
+  // };
+  // const unassignUser = async (user_id) => {
+  //   const url = "http://localhost/unmg_pms/api/manageRoles.php";
+  //   //const url = "../api/manageRoles.php";
+  //   const formData = new FormData();
+  //   formData.append("action", "remove");
+  //   formData.append("user_id", user_id);
 
-    try {
-      const response = await axios.post(url, formData);
-      return response.data === "success";
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-  const deleteRole = async (roleList) => {
-    const url = "http://localhost/unmg_pms/api/manageRoles.php";
-    //const url = "../api/manageRoles.php";
-    const formData = new FormData();
-    formData.append("action", "delete");
-    formData.append("roles", JSON.stringify(roleList));
+  //   try {
+  //     const response = await axios.post(url, formData);
+  //     return response.data === "success";
+  //   } catch (e) {
+  //     console.log(e.message);
+  //   }
+  // };
+  // const deleteRole = async (roleList) => {
+  //   const url = "http://localhost/unmg_pms/api/manageRoles.php";
+  //   //const url = "../api/manageRoles.php";
+  //   const formData = new FormData();
+  //   formData.append("action", "delete");
+  //   formData.append("roles", JSON.stringify(roleList));
 
-    try {
-      const response = await axios.post(url, formData);
-      return response.data === "success";
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
+  //   try {
+  //     const response = await axios.post(url, formData);
+  //     return response.data === "success";
+  //   } catch (e) {
+  //     console.log(e.message);
+  //   }
+  // };
 
   const uploadProfilePicture = async (file) => {
     const imageURL = `../src/assets/images/profile_${
@@ -281,11 +269,8 @@ export function AuthProvider({ children }) {
     if (localStorage.getItem("currentUser")) {
       setCurrentUser(localStorage.getItem("currentUser"));
     }
-    const url = "http://localhost/unmg_pms/api/conglomerate.php";
-    //const url = "../api/conglomerate.php";
-
     axios
-      .get(url, {
+      .get(url.conglomerate, {
         params: {
           company: true,
         },
@@ -310,10 +295,8 @@ export function AuthProvider({ children }) {
         console.log(e.message);
       });
     const fetchHeads = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             heads: true,
           },
@@ -326,9 +309,7 @@ export function AuthProvider({ children }) {
     };
     const retrieveUserTypes = async () => {
       try {
-        const url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-        //const url = "../api/retrieveUsers.php";
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             usertype: true,
           },
@@ -340,8 +321,7 @@ export function AuthProvider({ children }) {
     };
     const retrieveKPIYear = async () => {
       try {
-        const url = "http://localhost/unmg_pms/api/fetchKpiDuration.php";
-        const response = await axios.get(url, {
+        const response = await axios.get(url.fetchKPIDuration, {
           params: {
             kpiDuration: true,
           },
@@ -371,12 +351,12 @@ export function AuthProvider({ children }) {
     uploadUsers,
     updateUser,
     fetchUsers,
-    deleteRole,
+    //deleteRole,
     registerUser,
-    registerRole,
-    unassignUser,
+    //registerRole,
+    //unassignUser,
     addDepartment,
-    updateUserRole,
+    //updateUserRole,
     getDepartments,
     setCurrentUser,
     getBusinessUnits,

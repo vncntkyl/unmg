@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import AssessmentInstructions from "./AssessmentInstructions";
 import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGradeEdit() {
   const employee_id = sessionStorage.getItem("assessment_id");
@@ -32,9 +32,8 @@ export default function EmployeeAssessmentGradeEdit() {
   const [remarks, setRemarks] = useState([]);
   useEffect(() => {
     const getGrades = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTracking, {
           params: {
             userTrackingIndividualEmployeeGrades: true,
             workYear: workYear,
@@ -159,9 +158,8 @@ export default function EmployeeAssessmentGradeEdit() {
       }
     };
     const getMetrics = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTracking, {
           params: {
             metrics: true,
             workYear: workYear,
@@ -289,7 +287,6 @@ export default function EmployeeAssessmentGradeEdit() {
     const kpiId = grades.map((item) => item.kpi_kpi_id);
     const kpiWeight = grades.map((item) => item.kpi_weight);
     const formspID = grades.find((item) => item.sp_id).sp_id;
-    const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("quarter", quarter);
@@ -302,7 +299,7 @@ export default function EmployeeAssessmentGradeEdit() {
     fData.append("agreed_rating", JSON.stringify(agree));
     fData.append("total_remarks", JSON.stringify(remark));
     axios
-      .post(url, fData)
+      .post(url.userSubmitTrackingEmployee, fData)
       .then((response) => alert(response.data))
       .catch((error) => alert(error));
     navigate(-1);

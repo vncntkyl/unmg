@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { error } from "jquery";
 import Badge from "../../misc/Badge";
-import classNames from "classnames";
 import Toggle from "../Toggle";
 import EmployeeAssessmentGrade from "./EmployeeAssessmentGrade";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessment() {
   const employee_id = sessionStorage.getItem("assessment_id");
@@ -18,9 +17,8 @@ export default function EmployeeAssessment() {
 
   useEffect(() => {
     const getAchievements = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveTracking, {
           params: {
             userTrackingAchievements: true,
             empID: employee_id,
