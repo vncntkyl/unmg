@@ -7,6 +7,7 @@ require_once '../config/companyController.php';
 $user = new User();
 
 if (isset($_POST['employees'])) {
+    $status = array();
     $company = new Companies();
     $companies_data = array();
     $departments_data = array();
@@ -115,7 +116,14 @@ if (isset($_POST['employees'])) {
 
     foreach ($data as $key => $emp) {
         if($emp->contract_type !== "project based" && $emp->contract_type !== "consultant"){
-            echo $user->insertAcc($emp);
+            if($user->checkUser($emp->employee_id) == 0){
+                array_push($status, $user->insertAcc($emp) ? 1 : 0);
+            }
         }
+    }
+    if(in_array(0, $status)){
+        echo 0;
+    }else{
+        echo 1;
     }
 }

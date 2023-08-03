@@ -37,7 +37,8 @@ export default function DataTable({
         sortEmployees(data.filter((user) => user.status == 3));
         break;
     }
-  }, [statusIdx,data]);
+    setKPIYear(workYear);
+  }, [statusIdx, data, workYear]);
 
   const filterEmployees = (employees) => {
     if (usertype === "all") return employees;
@@ -88,15 +89,15 @@ export default function DataTable({
             {statusIdx === 0 && (
               <td align="center" className="p-2">
                 <Badge
-                    message={statusList[item.status - 1]}
-                    type={
-                      parseInt(item.status) === 1
-                        ? "success"
-                        : parseInt(item.status) === 2
-                        ? "warning"
-                        : "default"
-                    }
-                  />
+                  message={statusList[item.status - 1]}
+                  type={
+                    parseInt(item.status) === 1
+                      ? "success"
+                      : parseInt(item.status) === 2
+                      ? "warning"
+                      : "default"
+                  }
+                />
               </td>
             )}
             {JSON.parse(currentUser).users_id != 1 && (
@@ -142,6 +143,13 @@ export default function DataTable({
                             <a
                               href={`/main_goals/${item.users_id}`}
                               className="hover:bg-default w-full px-2 text-start"
+                              onClick={() => {
+                                localStorage.setItem(
+                                  "goal_user",
+                                  item.users_id
+                                );
+                                localStorage.setItem("work_year", workYear);
+                              }}
                             >
                               View Goals
                             </a>
@@ -153,7 +161,7 @@ export default function DataTable({
                                   "goal_user",
                                   item.users_id
                                 );
-                                localStorage.setItem("work_year", workYear);
+                                localStorage.setItem("work_year", kpiYear);
                               }}
                             >
                               Edit Goals

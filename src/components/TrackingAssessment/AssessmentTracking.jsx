@@ -5,6 +5,8 @@ import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
 import { format } from "date-fns";
+import { developmentAPIs as url } from "../../context/apiList";
+
 export default function AssessmentTracking({
   emp_id,
   kpiYears = [],
@@ -22,7 +24,6 @@ export default function AssessmentTracking({
   const quarter_id = quarter == 1 ? "fq_" : quarter == 2 ? "myr_" : quarter == 3 ? "tq_" : quarter == 4 ? "yee_" : "";
   //total performance
   const [totalPerformance, setTotalPerformance] = useState([]);
-  const [totalQuarterlyResults, setTotalQuarterlyResults] = useState([]);
   //checkers
   const [checkForm, setcheckForm] = useState(false);
   const [checkResult, setCheckResults] = useState(false);
@@ -31,18 +32,16 @@ export default function AssessmentTracking({
 
   useEffect(() => {
     const getUserPerformance = async () => {
+      const parameters = {
+        params: {
+          userTracking: true,
+          workYear: workYear,
+          quarter: quarter,
+          empID: emp_id,
+        }
+      }
       try {
-        const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveTracking.php",
-          {
-            params: {
-              userTracking: true,
-              workYear: workYear,
-              quarter: quarter,
-              empID: emp_id,
-            },
-          }
-        );
+        const response = await axios.get(url.retrieveTracking, parameters);
         setUserPerformance(response.data);
 
         const form = response.data.some(
@@ -104,16 +103,15 @@ export default function AssessmentTracking({
 
     //addional for tracking and assessment
     const getTotalPerformance = async () => {
+      const parameters =  
+      {
+        params: {
+          totalTracking: true,
+          empID: emp_id,
+        }
+      }
       try {
-        const response = await axios.get(
-          "http://localhost/unmg_pms/api/retrieveTracking.php",
-          {
-            params: {
-              totalTracking: true,
-              empID: emp_id,
-            },
-          }
-        );
+        const response = await axios.get(url.retrieveTracking, parameters);
         setTotalPerformance(response.data);
 
       } catch (error) {

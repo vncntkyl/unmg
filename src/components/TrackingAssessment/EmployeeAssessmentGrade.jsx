@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { error } from "jquery";
 import Badge from "../../misc/Badge";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGrade({
   employee_id,
@@ -21,38 +22,39 @@ export default function EmployeeAssessmentGrade({
   const navigate = useNavigate();
   useEffect(() => {
     const getGrades = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      const parameters = {
+        params: {
+          userTrackingIndividualEmployeeGrades: true,
+          workYear: workYear,
+          empID: employee_id,
+        }
+      }
+
       try {
-        const response = await axios.get(url, {
-          params: {
-            userTrackingIndividualEmployeeGrades: true,
-            workYear: workYear,
-            empID: employee_id,
-          },
-        });
+        const response = await axios.get(url.retrieveTracking, parameters);
         setGrades(response.data);
       } catch (error) {
         console.log(error.message);
       }
     };
     const getMetrics = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      const parameters = {
+        params: {
+          metrics: true,
+          workYear: workYear,
+          empID: employee_id,
+        }
+      }
       try {
-        const response = await axios.get(url, {
-          params: {
-            metrics: true,
-            workYear: workYear,
-            empID: employee_id,
-          },
-        });
+        const response = await axios.get(url.retrieveTracking, parameters);
         setMetrics(response.data);
       } catch (error) {
         console.log(error.message);
       }
     };
-    toggleLoading(false);
     getMetrics();
     getGrades();
+    toggleLoading(false);
   }, [employee_id, workYear]);
 
   const edit = () => {
@@ -132,24 +134,6 @@ export default function EmployeeAssessmentGrade({
                             <div className="px-4">
                               <span>Objectives</span>
                             </div>
-                            {grades
-                              .filter(
-                                (object) => object.obj_objective.trim() !== ""
-                              )
-                              .filter(
-                                (objectives) =>
-                                  objectives.obj_eval_pillar_id ===
-                                  pillar.eval_pillar_id
-                              )
-                              .map((objectives) => (
-                                <div
-                                  key={
-                                    "objective - " +
-                                    objectives.obj_objective_id +
-                                    oCounter++
-                                  }
-                                ></div>
-                              ))}
                             <div className="flex gap-2 p-2 overflow-x-auto w-full">
                               {grades
                                 .filter(

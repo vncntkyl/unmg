@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios, { all } from "axios";
 import { AiOutlinePlus } from "react-icons/ai";
+import { developmentAPIs as url } from "../../context/apiList";
+
 
 export default function AssessmentTrackingDetails({
   quarter,
@@ -8,6 +10,7 @@ export default function AssessmentTrackingDetails({
   workYear,
 }) {
   const [loading, toggleLoading] = useState(true);
+
   const quarterName =
     quarter == 1
       ? "First Quarter"
@@ -19,17 +22,19 @@ export default function AssessmentTrackingDetails({
   const [achievements, setAchievements] = useState([]);
   const [ifAchievementsExists, setIfAchievementsExists] = useState(false);
   const [ifResultsExists, setIfResultsExists] = useState(false);
+
+
   useEffect(() => {
     const getfinalUserPerformance = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      const parameters = {
+        params: {
+          checkUserAchievements: true,
+          workYear: workYear,
+          empID: emp_id,
+        }
+      }
       try {
-        const response = await axios.get(url, {
-          params: {
-            checkUserAchievements: true,
-            workYear: workYear,
-            empID: emp_id,
-          },
-        });
+        const response = await axios.get(url.retrieveTracking, parameters);
         setAchievements(response.data);
         const achievements = response.data.map((item) => {
           return {

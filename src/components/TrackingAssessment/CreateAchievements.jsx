@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function CreateAchievements({ emp_id }) {
   const navigate = useNavigate();
@@ -52,7 +53,6 @@ export default function CreateAchievements({ emp_id }) {
       const resultkpi_id = achievements.map(item => item.kpi_id);
       const resultachievement = achievements.map(item => item.achievement);
       const formspID = finalUserAchievements.find((item) => item.hr_eval_form_sp_id).hr_eval_form_sp_id;
-      const url = "http://localhost/unmg_pms/api/userSubmitAchievements.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("tbl_name", tbl_name);
@@ -60,7 +60,7 @@ export default function CreateAchievements({ emp_id }) {
       fData.append("achievement", JSON.stringify(resultachievement));
       fData.append("formspID", formspID);
       axios
-        .post(url, fData)
+        .post(url.userSubmitAchievements, fData)
         .then((response) => alert(response.data))
         .catch((error) => alert(error));
         navigate(
@@ -71,15 +71,15 @@ export default function CreateAchievements({ emp_id }) {
   // Usage
   useEffect(() => {
     const getfinalUserAchievements = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      const parameters = {
+        params: {
+          checkUserAchievements: true,
+          workYear: sessionStorage.getItem("workYear"),
+          empID: emp_id,
+        }
+      }
       try {
-        const response = await axios.get(url, {
-          params: {
-            checkUserAchievements: true,
-            workYear: sessionStorage.getItem("workYear"),
-            empID: emp_id,
-          },
-        });
+        const response = await axios.get(url.retrieveTracking, parameters);
         setfinalUserAchievements(response.data);
 
         const filteredAchievements = response.data.map(item => ({

@@ -5,9 +5,11 @@ header('Access-Control-Allow-Headers: Origin, Content-Type');
 require_once '../config/formController.php';
 $formController = new Form();
 
-if (isset($_POST['startDate']) && isset($_POST['endDate'])) {
-    $fromDate = $_POST['startDate'];
-    $toDate = $_POST['endDate'];
-    $formController->insertKpiDuration($fromDate, $toDate);
-}
+    if(isset($_POST['startDate']) && isset($_POST['endDate']))
+    {
+        $fromDate = $_POST['startDate'];
+        $toDate = $_POST['endDate'];
+        $formController->insertKpiDuration($fromDate, $toDate);
+    }
+
 ?>

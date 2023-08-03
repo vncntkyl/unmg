@@ -4,6 +4,7 @@ import axios from "axios";
 import RoleRow from "./Roles/RoleRow";
 import { GrFormSearch } from "react-icons/gr";
 import { useFunction } from "../context/FunctionContext";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function UnassignedEmployeeTable({ toggleModal, setEmployee, setMembers, members }) {
   const { companyList, departmentList } = useAuth();
@@ -16,10 +17,8 @@ export default function UnassignedEmployeeTable({ toggleModal, setEmployee, setM
 
   useEffect(() => {
     const fetchUsers = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             users: "regular",
           },

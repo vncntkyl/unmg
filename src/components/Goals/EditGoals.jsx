@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import JSONCheck from "../../misc/JSONCheck";
 import axios from "axios";
 import { useFunction } from "../../context/FunctionContext";
 import classNames from "classnames";
 import GoalTable from "./GoalTableHeader";
+import { useAuth } from "../../context/authContext";
+import { developmentAPIs as url } from "../../context/apiList";
 
-export default function EditGoals({ pillars = [] }) {
+export default function EditGoals({ pillars = [], workYear }) {
   const [goalData, setGoalData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPillar, setPillar] = useState(1);
   const [tableData, setTableData] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const navigate = useNavigate();
   const { removeSubText } = useFunction();
+  const { currentUser, fetchUsers } = useAuth();
 
   const updateData = (part, index, event) => {
     const tempData = [...tableData];
@@ -54,16 +57,57 @@ export default function EditGoals({ pillars = [] }) {
 
   const saveData = async () => {
     try {
-      console.log(tableData);
       const formdata = new FormData();
       formdata.append("goalData", JSON.stringify(tableData));
+      const response = await axios.post(url.updateGoals, formdata);
+      if (response.data === 1) {
+        const notificationData = new FormData();
+        notificationData.append("sendNotification", true);
 
-      let url = "http://localhost/unmg_pms/api/updateGoals.php";
-      //let url = "../api/updateGoals.php";
+        const receipients = [];
+        const loggedUser = JSON.parse(currentUser);
+        const goalOwner = tableData[0].users_id;
+        const editor = loggedUser.users_id;
+        const supervisor = users.find(
+          (user) => user.employee_id == loggedUser.primary_evaluator
+        );
+        const supervisorName = `${supervisor.salutation} ${supervisor.first_name} ${supervisor.last_name}`;
+        const employee = `${loggedUser.salutation} ${loggedUser.first_name} ${loggedUser.last_name}`;
+        if (goalOwner === editor) {
+          receipients.push({
+            user_type: "superior",
+            name: supervisorName,
+            email: supervisor.email_address,
+            message:
+              "One of your employees has made some changes to their goals. Please take a moment to review the edited goals and provide your feedback or remarks.",
+            subject: employee + " Updated Their Goals",
+          });
+          receipients.push({
+            user_type: "employee",
+            name: employee,
+            email: loggedUser.email_address,
+            message: "You have successfully updated your goals!",
+            subject: "Successfully Updated Goals",
+          });
+          notificationData.append("employeeName", employee);
+        } else {
+          //email si employee lang
+        }
 
-      const response = await axios.post(url, formdata);
+        console.log(receipients);
+        notificationData.append("receipients", JSON.stringify(receipients));
+        notificationData.append("link", "");
+        notificationData.append("linkMessage", "View updates");
 
-      console.log(response.data);
+        const response = await axios.post(url.sendMail, notificationData);
+        if (response.data === 1) {
+          if(alert("You have successfully updated your goals")){
+            navigate("/main_goals")
+          }
+        }
+      } else {
+        alert("An error has occured. Please Contact the IT Department");
+      }
     } catch (e) {
       console.log(e.message);
     }
@@ -75,18 +119,17 @@ export default function EditGoals({ pillars = [] }) {
     }
 
     const retrieveUser = async () => {
-      const url = "http://localhost/unmg_pms/api/fetchAllGoals.php";
-      //const url = "../api/fetchGoals.php";
+      const response = await fetchUsers();
+      setUsers(response);
 
       const formData = new FormData();
-      const goal_owner = localStorage.getItem("goal_user");
-      const work_year = localStorage.getItem("work_year");
+      const goal_owner = parseInt(localStorage.getItem("goal_user"));
+      const work_year = parseInt(localStorage.getItem("work_year"));
 
       formData.append("user_id", goal_owner);
       formData.append("work_year", work_year);
       try {
-        const response = await axios.post(url, formData);
-        console.log(response.data)
+        const response = await axios.post(url.fetchAllGoals, formData);
         if (response.data != 0) {
           setGoalData(response.data);
           let previousObjective = "";
@@ -115,9 +158,10 @@ export default function EditGoals({ pillars = [] }) {
         console.log(e.message);
       }
     };
+
     retrieveUser();
-  }, []);
-  return !loading ? (
+  }, [workYear]);
+  return !loading && pillars ? (
     <>
       <div className="flex flex-row flex-wrap gap-2">
         {pillars.map((pillar, index) => {

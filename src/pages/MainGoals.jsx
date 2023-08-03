@@ -1,6 +1,5 @@
-import classNames from "classnames";
 import React, { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { CreateGoals, EmployeeGoals, Goals } from "../components/Goals";
 import { useFunction } from "../context/FunctionContext";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
@@ -8,6 +7,7 @@ import axios from "axios";
 import Toggle from "../components/Toggle";
 import EditGoals from "../components/Goals/EditGoals";
 import { useAuth } from "../context/authContext";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
@@ -39,10 +39,8 @@ export default function MainGoals() {
 
   useEffect(() => {
     const getPillars = async () => {
-      const url = "http://localhost/unmg_pms/api/retrievePillars.php";
-      //const url = "../api/retrievePillars.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrievePillars, {
           params: {
             pillars: true,
           },
@@ -53,8 +51,6 @@ export default function MainGoals() {
       }
     };
     const verifyEvaluator = async () => {
-      let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
-      //let url = "../api/retrieveUsers.php";
       const parameters = {
         params: {
           employee_goals: true,
@@ -64,7 +60,7 @@ export default function MainGoals() {
         },
       };
       try {
-        const response = await axios.get(url, parameters);
+        const response = await axios.get(url.getEmployeeGoals, parameters);
         setIsEvaluator(response.data > 0);
       } catch (e) {
         console.log(e.message);
@@ -78,6 +74,9 @@ export default function MainGoals() {
     setEmployeeID(user.users_id);
     if (user.user_type == 3 || user.users_id == 1) {
       setPanel("Employee Goals");
+    }
+    if (localStorage.getItem("work_year")) {
+      setWorkYear(localStorage.getItem("work_year"));
     }
   }, []);
   return (
@@ -162,7 +161,7 @@ export default function MainGoals() {
                 )}
 
                 <Route
-                  path="/create/*"
+                  path="/create"
                   element={
                     <CreateGoals
                       pillars={pillars}
@@ -173,7 +172,7 @@ export default function MainGoals() {
                 />
                 <Route
                   path="/edit/*"
-                  element={<EditGoals pillars={pillars} />}
+                  element={<EditGoals pillars={pillars} workYear={workYear} />}
                 />
               </Routes>
             </div>

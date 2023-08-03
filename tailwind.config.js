@@ -77,6 +77,7 @@ export default {
       "un-yellow-light": "#fdf6b4",
       "un-yellow-dark": "#807519",
       "un-green-light": "#B5FDB4",
+      "un-green": "#2da947",
       "un-green-dark": "#198065",
       default: "#efedf8",
       "default-dark": "#dbd8eb",

@@ -4,6 +4,7 @@ import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGradeEdit() {
   const employee_id = sessionStorage.getItem("assessment_id");
@@ -25,15 +26,15 @@ export default function EmployeeAssessmentGradeEdit() {
   const [remarks, setRemarks] = useState([]);
   useEffect(() => {
     const getGrades = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      const parameters = {
+        params: {
+          userTrackingIndividualEmployeeGrades: true,
+          workYear: workYear,
+          empID: employee_id,
+        }
+      };
       try {
-        const response = await axios.get(url, {
-          params: {
-            userTrackingIndividualEmployeeGrades: true,
-            workYear: workYear,
-            empID: employee_id,
-          },
-        });
+        const response = await axios.get(url.retrieveTracking, parameters);
         setGrades(response.data);
 
         const initialResults = response.data
@@ -154,15 +155,15 @@ export default function EmployeeAssessmentGradeEdit() {
       }
     };
     const getMetrics = async () => {
-      const url = "http://localhost/unmg_pms/api/retrieveTracking.php";
+      const parameters = {
+        params: {
+          metrics: true,
+          workYear: workYear,
+          empID: employee_id,
+        }
+      }
       try {
-        const response = await axios.get(url, {
-          params: {
-            metrics: true,
-            workYear: workYear,
-            empID: employee_id,
-          },
-        });
+        const response = await axios.get(url.retrieveTracking, parameters);
         setMetrics(response.data);
       } catch (error) {
         console.log(error.message);

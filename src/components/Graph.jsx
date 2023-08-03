@@ -10,6 +10,7 @@ export default function Graph({
   chartHeight,
   chart,
   table = false,
+  dropdown,
 }) {
   return (
     <div
@@ -19,8 +20,9 @@ export default function Graph({
         className
       )}
     >
-      <div className="flex items-center pb-2">
+      <div className="flex items-center pb-2 justify-between">
         <p className="font-semibold text-black">{title}</p>
+        {dropdown}
       </div>
       {!table ? (
         <ResponsiveContainer width={chartWidth} height={chartHeight}>

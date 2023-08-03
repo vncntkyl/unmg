@@ -37,6 +37,7 @@ export default function Navbar({
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const setImg = async () => {
+      if (!currentUser["picture"]) return;
       try {
         const image = await import("./" + currentUser["picture"]);
         setImgProfile(image.default);

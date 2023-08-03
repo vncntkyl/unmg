@@ -14,22 +14,30 @@ import Graph from "../components/Graph";
 import classNames from "classnames";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import { format } from "date-fns";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function DashboardOverview() {
   const [performanceData, setPerformanceData] = useState([]);
   const [employeeCount, setEmployeeCount] = useState([]);
+  const [workYear, setKpiDuration] = useState(1);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const { kpiDurations } = useAuth();
+
   const onPerformanceStatusClick = (e) => {
     const employeeFilter = e.activeLabel;
     switch (employeeFilter) {
       case "Awaiting Submission":
         localStorage.setItem("goalstatus", 3);
+        localStorage.setItem("work_year", workYear);
         navigate("/main_goals");
         break;
       case "Pending Approval":
         localStorage.setItem("goalstatus", 2);
+        localStorage.setItem("work_year", workYear);
         navigate("/main_goals");
         break;
       case "Awaiting Evaluation":
@@ -45,13 +53,12 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     const fetchGoals = async () => {
-      let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.getEmployeeGoals, {
           params: {
             employee_goals: true,
             count: true,
+            work_year: workYear,
           },
         });
         setPerformanceData(response.data);
@@ -60,10 +67,8 @@ export default function DashboardOverview() {
       }
     };
     const countUsers = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             count_employees: true,
           },
@@ -74,15 +79,12 @@ export default function DashboardOverview() {
       }
     };
     const fetchUsers = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             get_grades: true,
           },
         });
-        console.log(response.data);
         setData(response.data);
       } catch (e) {
         console.log(e.message);
@@ -103,6 +105,37 @@ export default function DashboardOverview() {
           title="Performance Evaluation Status"
           className="md:col-[1/3] lg:col-[1/5]"
           chartHeight={275}
+          dropdown={
+            <div className="flex flex-row gap-2 items-center">
+              <label htmlFor="workyear" className="font-semibold">
+                Select Work Year:
+              </label>
+              <select
+                id="workyear"
+                className="bg-default rounded-md p-1 px-2"
+                onChange={(e) => {
+                  setKpiDuration(parseInt(e.target.value));
+                }}
+              >
+                <option value="-1" disabled selected={workYear === -1}>
+                  --Select Year--
+                </option>
+                {kpiDurations.length > 0 &&
+                  kpiDurations.map((year) => {
+                    return (
+                      <option
+                        value={year.kpi_year_duration_id}
+                        selected={year.kpi_year_duration_id === workYear}
+                      >
+                        {format(new Date(year.from_date), "MMM d, yyyy") +
+                          " - " +
+                          format(new Date(year.to_date), "MMM d, yyyy")}
+                      </option>
+                    );
+                  })}
+              </select>
+            </div>
+          }
           chart={
             <BarChart
               onClick={(e) => onPerformanceStatusClick(e)}
@@ -122,12 +155,14 @@ export default function DashboardOverview() {
                 {
                   name: "Awaiting Evaluation",
                   [`Regular Employees`]: performanceData.pending_regular,
-                  [`Probationary Employees`]: performanceData.pending_probationary,
+                  [`Probationary Employees`]:
+                    performanceData.pending_probationary,
                 },
                 {
                   name: "Approved Evaluation",
                   [`Regular Employees`]: performanceData.pending_regular,
-                  [`Probationary Employees`]: performanceData.pending_probationary,
+                  [`Probationary Employees`]:
+                    performanceData.pending_probationary,
                 },
               ]}
             >

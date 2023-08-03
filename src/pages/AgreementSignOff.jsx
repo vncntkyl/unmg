@@ -7,6 +7,7 @@ import { useFunction } from "../context/FunctionContext";
 import { useAuth } from "../context/authContext";
 import Toggle from "../components/Toggle";
 import axios from "axios";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function AgreementSignOff() {
   const [loading, toggleLoading] = useState(true);
@@ -18,8 +19,6 @@ export default function AgreementSignOff() {
   const { getPath } = useFunction();
 
   const verifyEvaluator = async () => {
-    let url = "http://localhost/unmg_pms/api/getEmployeeGoals.php";
-    //let url = "../api/retrieveUsers.php";
     const parameters = {
       params: {
         employee_goals: true,
@@ -29,7 +28,7 @@ export default function AgreementSignOff() {
       },
     };
     try {
-      const response = await axios.get(url, parameters);
+      const response = await axios.get(url.getEmployeeGoals, parameters);
       setIsEvaluator(response.data > 0);
       toggleLoading(false);
     } catch (e) {
@@ -40,6 +39,7 @@ export default function AgreementSignOff() {
   if (!localStorage.getItem("currentUser")) {
     localStorage.setItem("redirect_to", window.location.pathname);
   }
+  
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     setEmployeeID(currentUser.employee_id);
@@ -117,7 +117,12 @@ export default function AgreementSignOff() {
             <Routes>
               {panel === "My Evaluation" ? <Route
                 path="/"
-                element={<SignOff emp_id={employeeID}/>}
+                element={<SignOff 
+                  emp_id={employeeID}
+                  kpiYears={kpiDurations}
+                  workYear={workYear}
+                  setKpiDuration={setWorkYear}
+                  />}
               /> : <Route
                 path="/"
                 element={<EmployeeSignOff emp_id={employeeID}/>}
