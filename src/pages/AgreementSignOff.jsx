@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Route, Router, Routes } from "react-router-dom";
 import SignOff from "../components/Signoff/SignOff";
-import EmployeeSignOff from "../components/Signoff/EmployeeSignOff";
+import EmployeeSignOffTable from "../components/Signoff/EmployeeSignOffTable";
 import { useFunction } from "../context/FunctionContext";
 import { useAuth } from "../context/authContext";
 import Toggle from "../components/Toggle";
@@ -124,7 +124,7 @@ export default function AgreementSignOff() {
                   />}
               /> : <Route
                 path="/"
-                element={<EmployeeSignOff emp_id={employeeID}/>}
+                element={<EmployeeSignOffTable emp_id={employeeID}/>}
               />}</Routes>
           </div>
         </div>
