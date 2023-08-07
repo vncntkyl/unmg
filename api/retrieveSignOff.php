@@ -9,9 +9,15 @@ if(isset($_GET['empID']))
     if (isset($_GET['signoff'])) {
         echo json_encode($form->selectUserFinalGrade($empID, $creation_date));
     }
+    
     if (isset($_GET['metrics']))
     {
         echo json_encode($form->selectTrackingGradingMetrics($empID, $creation_date));
+    }
+    
+    if (isset($_GET['signature']))
+    {
+        echo json_encode($form->selectApprover($empID, $creation_date));
     }
 }
 ?>
