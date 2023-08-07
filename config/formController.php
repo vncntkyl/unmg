@@ -1493,7 +1493,8 @@ AND hr_eval_form.CreationDate = :creation_date
         CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
         CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
         IF(hr_eval_form.users_id IS NULL AND hr_eval_form.CreationDate IS NULL, 0, IF(hr_eval_form.CreationDate = :creation_date, 1, 0)) AS creation_date,
-        hr_eval_form.*
+        hr_eval_form.*,
+        hr_eval_form_sp_quarterly_ratings.YearEndRating
         
         FROM hr_users AS employee
         LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
@@ -1503,6 +1504,8 @@ AND hr_eval_form.CreationDate = :creation_date
         hr_user_accounts ON hr_user_accounts.users_id = employee.users_id
         LEFT JOIN
         hr_eval_form ON hr_eval_form.users_id = employee.users_id
+        LEFT JOIN
+        hr_eval_form_sp_quarterly_ratings ON hr_eval_form_sp_quarterly_ratings.eval_form_id = hr_eval_form.hr_eval_form_id
         LEFT JOIN
         hr_kpi_year_duration ON hr_kpi_year_duration.kpi_year_duration_id = hr_eval_form.CreationDate
         WHERE 

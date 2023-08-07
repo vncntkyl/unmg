@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import { developmentAPIs as url } from "../../context/apiList";
+import Badge from "../../misc/Badge";
 export default function SignOff({
   emp_id,
   kpiYears = [],
@@ -28,7 +29,6 @@ export default function SignOff({
       };
       try {
         const response = await axios.get(url.retrieveSignOff, parameters);
-        console.table(response.data);
         const form = response.data.length > 0;
         setIsForm(form);
         setFinalGrade(response.data);
@@ -164,7 +164,7 @@ export default function SignOff({
                                 (objectives) =>
                                   objectives.obj_objective.length > 0 &&
                                   objectives.obj_eval_pillar_id ===
-                                    pillar.eval_pillar_id
+                                  pillar.eval_pillar_id
                               )
                               .map((objectives) => (
                                 <div
@@ -360,13 +360,46 @@ export default function SignOff({
                 </div>
               </div>
               <div className="bg-default w-full h-[19vh] rounded-md p-2 mt-2">
-                <div className="bg-white flex flex-col w-full h-full rounded-md p-2">
-                  <span className="font-semibold text-[1.1rem] p-2">
-                    Summary:
-                  </span>
-                  <span className="p-2">Total:</span>
-                </div>
-                <span className="p-2"></span>
+                {signature.map((item) => (
+                  <div className="bg-white flex flex-col w-full h-full rounded-md p-2">
+                    <span className="font-semibold text-[1.1rem] p-2">
+                      Summary:
+                    </span>
+                    <span className="p-2 text-[1.5rem] flex items-center justify-end gap-2 font-semibold">Total: 
+                    {item.YearEndRating >= 1.00 && item.YearEndRating <= 1.75 ? 
+                    <Badge
+                    message={item.YearEndRating}
+                    type={"failure"}
+                    className={"text-[1.2rem] px-1"}
+                    /> 
+                    : item.YearEndRating >= 1.76 && item.YearEndRating <= 2.50 ?
+                    <Badge
+                    message={item.YearEndRating}
+                    type={"warning"}
+                    className={"text-[1.2rem] px-1"}
+                    /> 
+                    : item.YearEndRating >= 2.51 && item.YearEndRating <= 3.25 ?
+                    <Badge
+                    message={item.YearEndRating}
+                    type={"success"}
+                    className={"text-[1.2rem] px-1"}
+                    /> 
+                    : item.YearEndRating >= 3.26 && item.YearEndRating <= 4.00 ?
+                    <Badge
+                    message={item.YearEndRating}
+                    type={"success"}
+                    className={"text-[1.2rem] px-1"}
+                    /> 
+                    :
+                    <Badge
+                    message={"Internal Error"}
+                    className={"text-[1.5rem] px-1"}
+                    /> 
+                    }
+                    </span>
+                    
+                  </div>
+                ))}
               </div>
             </>
           )}
