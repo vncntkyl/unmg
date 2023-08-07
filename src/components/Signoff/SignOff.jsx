@@ -138,7 +138,7 @@ export default function SignOff({
                         key={"pillar - " + pillar.eval_pillar_id + pCounter++}
                       >
                         <div className="w-full flex justify-between gap-2">
-                          <div className="w-full min-h-[70vh] bg-default p-2 m-2">
+                          <div className="w-full min-h-[60vh] bg-default p-2 m-2">
                             <div className="sticky top-0 bg-default flex justify-between rounded-b-md">
                               <span className="text-[1.1rem] font-semibold py-4">
                                 {`${pillar.pillar_name} (${pillar.pillar_description}) - ${pillar.pillar_percentage}%`}
@@ -365,39 +365,46 @@ export default function SignOff({
                     <span className="font-semibold text-[1.1rem] p-2">
                       Summary:
                     </span>
-                    <span className="p-2 text-[1.5rem] flex items-center justify-end gap-2 font-semibold">Total: 
-                    {item.YearEndRating >= 1.00 && item.YearEndRating <= 1.75 ? 
-                    <Badge
-                    message={item.YearEndRating}
-                    type={"failure"}
-                    className={"text-[1.2rem] px-1"}
-                    /> 
-                    : item.YearEndRating >= 1.76 && item.YearEndRating <= 2.50 ?
-                    <Badge
-                    message={item.YearEndRating}
-                    type={"warning"}
-                    className={"text-[1.2rem] px-1"}
-                    /> 
-                    : item.YearEndRating >= 2.51 && item.YearEndRating <= 3.25 ?
-                    <Badge
-                    message={item.YearEndRating}
-                    type={"success"}
-                    className={"text-[1.2rem] px-1"}
-                    /> 
-                    : item.YearEndRating >= 3.26 && item.YearEndRating <= 4.00 ?
-                    <Badge
-                    message={item.YearEndRating}
-                    type={"success"}
-                    className={"text-[1.2rem] px-1"}
-                    /> 
-                    :
-                    <Badge
-                    message={"Internal Error"}
-                    className={"text-[1.5rem] px-1"}
-                    /> 
-                    }
+                    <span className="p-2 text-[1.2rem] flex items-center justify-end gap-2 font-semibold">Total:
+                      {item.YearEndRating >= 1.00 && item.YearEndRating <= 1.75 ?
+                        <Badge
+                          message={item.YearEndRating}
+                          type={"failure"}
+                          className={"text-[1.2rem] px-1"}
+                        />
+                        : item.YearEndRating >= 1.76 && item.YearEndRating <= 2.50 ?
+                          <Badge
+                            message={item.YearEndRating}
+                            type={"warning"}
+                            className={"text-[1.2rem] px-1"}
+                          />
+                          : item.YearEndRating >= 2.51 && item.YearEndRating <= 3.25 ?
+                            <Badge
+                              message={item.YearEndRating}
+                              type={"success"}
+                              className={"text-[1.2rem] px-1"}
+                            />
+                            : item.YearEndRating >= 3.26 && item.YearEndRating <= 4.00 ?
+                              <Badge
+                                message={item.YearEndRating}
+                                type={"success"}
+                                className={"text-[1.2rem] px-1"}
+                              />
+                              :
+                              <Badge
+                                message={"Internal Error"}
+                                className={"text-[1.2rem] px-1"}
+                              />
+                      }
                     </span>
-                    
+                    <div className="grid grid-cols-2">
+                      <div className="font-semibold">
+                        Sign Off:
+                      </div>
+                      <div className="font-semibold">
+                        Recommendation:
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
