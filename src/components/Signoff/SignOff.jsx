@@ -359,51 +359,120 @@ export default function SignOff({
                     ))}
                 </div>
               </div>
-              <div className="bg-default w-full h-[19vh] rounded-md p-2 mt-2">
+              <div className="bg-default w-full rounded-md p-2 mt-2">
                 {signature.map((item) => (
                   <div className="bg-white flex flex-col w-full h-full rounded-md p-2">
-                    <span className="font-semibold text-[1.1rem] p-2">
-                      Summary:
-                    </span>
-                    <span className="p-2 text-[1.2rem] flex items-center justify-end gap-2 font-semibold">Total:
-                      {item.YearEndRating >= 1.00 && item.YearEndRating <= 1.75 ?
-                        <Badge
-                          message={item.YearEndRating}
-                          type={"failure"}
-                          className={"text-[1.2rem] px-1"}
-                        />
-                        : item.YearEndRating >= 1.76 && item.YearEndRating <= 2.50 ?
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-[1.1rem] p-2">
+                        Summary:
+                      </span>
+                      <span className="p-2 text-[1.2rem] flex items-center justify-end gap-2 font-semibold">Total:
+                        {item.YearEndRating >= 1.00 && item.YearEndRating <= 1.75 ?
                           <Badge
                             message={item.YearEndRating}
-                            type={"warning"}
+                            type={"failure"}
                             className={"text-[1.2rem] px-1"}
                           />
-                          : item.YearEndRating >= 2.51 && item.YearEndRating <= 3.25 ?
+                          : item.YearEndRating >= 1.76 && item.YearEndRating <= 2.50 ?
                             <Badge
                               message={item.YearEndRating}
-                              type={"success"}
+                              type={"warning"}
                               className={"text-[1.2rem] px-1"}
                             />
-                            : item.YearEndRating >= 3.26 && item.YearEndRating <= 4.00 ?
+                            : item.YearEndRating >= 2.51 && item.YearEndRating <= 3.25 ?
                               <Badge
                                 message={item.YearEndRating}
                                 type={"success"}
                                 className={"text-[1.2rem] px-1"}
                               />
-                              :
-                              <Badge
-                                message={"Internal Error"}
-                                className={"text-[1.2rem] px-1"}
-                              />
-                      }
-                    </span>
+                              : item.YearEndRating >= 3.26 && item.YearEndRating <= 4.00 ?
+                                <Badge
+                                  message={item.YearEndRating}
+                                  type={"success"}
+                                  className={"text-[1.2rem] px-1"}
+                                />
+                                :
+                                <Badge
+                                  message={"Internal Error"}
+                                  type={"failure"}
+                                  className={"text-[1.2rem] px-1"}
+                                />
+                        }
+                      </span>
+                    </div>
                     <div className="grid grid-cols-2">
-                      <div className="font-semibold">
-                        Sign Off:
+                      <div className="flex flex-col">
+                        <span className="font-semibold px-4">Sign Off:</span>
+                        <div className="grid grid-cols-2 mx-2 gap-2">
+                          <span className="font-semibold">Name</span>
+                          <span className="font-semibold text-center">Status</span>
+
+                          <span className="flex flex-col">{item.employee_name}
+                            <span className="text-[.8rem]">Ratee</span>
+                          </span>
+                          <span className="flex items-center justify-center">
+                            {item.ratee ? <Badge
+                              message={"Approved"}
+                              type={"success"}
+                              className={"text-[.8rem] w-fit px-1 text-center"}
+                            />
+                              : <Badge
+                                message={"Pending"}
+                                className={"text-[.8rem] w-fit px-1 text-center"}
+                              />}
+                          </span>
+
+                          <span className="flex flex-col">{item.primary_eval_name ? item.primary_eval_name : "-"}
+                            <span className="text-[.8rem]">Primary Evaluator</span>
+                          </span>
+                          <span className="flex items-center justify-center">
+                            {item.rater_1 ? <Badge
+                              message={"Approved"}
+                              type={"success"}
+                              className={"text-[.8rem] w-fit px-1 text-center"}
+                            />
+                              : <Badge
+                                message={"Pending"}
+                                className={"text-[.8rem] w-fit px-1 text-center"}
+                              />}
+                          </span>
+
+                          <span className="flex flex-col">{item.secondary_eval_name ? item.secondary_eval_name : "-"}
+                            <span className="text-[.8rem]">Secondary Evaluator</span>
+                          </span>
+                          <span className="flex items-center justify-center">
+                            {item.rater_2 ? <Badge
+                              message={"Approved"}
+                              type={"success"}
+                              className={"text-[.8rem] w-fit px-1 text-center"}
+                            />
+                              : <Badge
+                                message={"Pending"}
+                                className={"text-[.8rem] w-fit px-1 text-center"}
+                              />}
+                          </span>
+
+                          <span className="flex flex-col">{item.tertiary_eval_name ? item.tertiary_eval_name : "-"}
+                            <span className="text-[.8rem]">Tertiary Evaluator</span>
+                          </span>
+                          <span className="flex items-center justify-center">
+                            {item.rater_3 ? <Badge
+                              message={"Approved"}
+                              type={"success"}
+                              className={"text-[.8rem] w-fit px-1 text-center"}
+                            />
+                              : <Badge
+                                message={"Pending"}
+                                className={"text-[.8rem] w-fit px-1 text-center"}
+                              />}
+                          </span>
+                        </div>
                       </div>
                       <div className="font-semibold">
-                        Recommendation:
+                        <span>Ratee's Comment:<p className="font-normal">{item.ratees_comment}</p></span>
+                        <span>Recommendations:<p className="font-normal">{item.recommendation}</p></span>
                       </div>
+                      <span></span>
                     </div>
                   </div>
                 ))}
