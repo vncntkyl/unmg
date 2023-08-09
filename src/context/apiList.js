@@ -25,6 +25,7 @@ export const developmentAPIs = {
   retrieveEvaluation: "http://localhost/unmg_pms/api/retrieveEvaluation.php",
   retrieveTrackingEmployee: "http://localhost/unmg_pms/api/retrieveTrackingEmployee.php",
   retrieveSignOff: "http://localhost/unmg_pms/api/retrieveSignOff.php",
+  retrieveSignOffEmployee: "http://localhost/unmg_pms/api/retrieveSignOffEmployee.php",
   fetchKPIDuration: "http://localhost/unmg_pms/api/fetchKpiDuration.php",
 
   };
@@ -56,5 +57,6 @@ export const releaseAPIs = {
   retrieveEvaluation: "../api/retrieveEvaluation.php",
   retrieveTrackingEmployee: "../api/retrieveTrackingEmployee.php",
   retrieveSignOff: "../api/retrieveSignOff.php",
+  retrieveSignOffEmployee: "../api/retrieveSignOffEmployee.php",
   fetchKPIDuration: "../api/fetchKpiDuration.php",
 };

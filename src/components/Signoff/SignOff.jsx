@@ -323,36 +323,9 @@ export default function SignOff({
                                         </tbody>
                                       </table>
                                     </div>
-                                    {/* <div className="flex justify-end">
-                                      <span className="p-2">
-                                        Total per Objective:{" "}
-                                        {finalGrade
-                                          .filter(
-                                            (grade) =>
-                                              grade.kpi_objective_id ===
-                                              objectives.obj_objective_id
-                                          )
-                                          .reduce(
-                                            (grade, index) =>
-                                              grade +
-                                              parseFloat(index.wtd_rating || 0),
-                                            0
-                                          )
-                                          .toFixed(2)}
-                                      </span>
-                                    </div> */}
                                   </div>
                                 </div>
                               ))}
-                            {/* <div className="flex justify-end">
-                              <span className="p-2">
-                                Total per Pillar:{" "}
-                                {finalGrade.filter((objectives) => objectives.obj_objective.length > 0 && objectives.obj_eval_pillar_id === pillar.eval_pillar_id)
-                                  .map((objectives) => finalGrade.filter((grade) => grade.kpi_objective_id === objectives.obj_objective_id)
-                                  .reduce((grade, index) => grade + parseFloat(index.wtd_rating || 0), 0).toFixed(2)
-                                  )}
-                              </span>
-                            </div> */}
                           </div>
                         </div>
                       </React.Fragment>
@@ -422,7 +395,7 @@ export default function SignOff({
                               />}
                           </span>
 
-                          <span className="flex flex-col">{item.primary_eval_name ? item.primary_eval_name : "-"}
+                          <span className="flex flex-col">{item.primary_eval_name != null ? item.primary_eval_name : "-"}
                             <span className="text-[.8rem]">Primary Evaluator</span>
                           </span>
                           <span className="flex items-center justify-center">
@@ -437,7 +410,7 @@ export default function SignOff({
                               />}
                           </span>
 
-                          <span className="flex flex-col">{item.secondary_eval_name ? item.secondary_eval_name : "-"}
+                          <span className="flex flex-col">{item.secondary_eval_name != null ? item.secondary_eval_name : "-"}
                             <span className="text-[.8rem]">Secondary Evaluator</span>
                           </span>
                           <span className="flex items-center justify-center">
@@ -452,7 +425,7 @@ export default function SignOff({
                               />}
                           </span>
 
-                          <span className="flex flex-col">{item.tertiary_eval_name ? item.tertiary_eval_name : "-"}
+                          <span className="flex flex-col">{item.tertiary_eval_name != null ? item.tertiary_eval_name : "-"}
                             <span className="text-[.8rem]">Tertiary Evaluator</span>
                           </span>
                           <span className="flex items-center justify-center">
