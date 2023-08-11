@@ -1490,6 +1490,7 @@ class Form extends Controller
         employee.users_id,
         employee.employee_id AS employee_id,
         employee.contract_type,
+        employee.first_name,
         CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
         CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
         CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
@@ -1518,5 +1519,6 @@ class Form extends Controller
         }
         return $this->statement->fetchAll();
     }
+     
 
 }

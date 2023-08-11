@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import Badge from "../../misc/Badge";
 import axios from "axios";
-import TrackingAction from "./TrackingAction";
+import SignOffAction from "./SignOffAction";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
 import { developmentAPIs as url } from "../../context/apiList";
-import {AiFillCheckCircle} from "react-icons/ai";
+import { AiFillCheckCircle } from "react-icons/ai";
+import classNames from "classnames";
 
 export default function EmployeeSignOffTable({ emp_id }) {
     const [employeeType, setEmployeeType] = useState(0);
@@ -60,7 +61,6 @@ export default function EmployeeSignOffTable({ emp_id }) {
             }
             try {
                 const response = await axios.get(url.retrieveSignOffEmployee, parameters);
-                console.table(response.data);
                 const employeeRecords = response.data.map((item) => {
                     return {
                         employee_id: item.employee_id,
@@ -188,24 +188,26 @@ export default function EmployeeSignOffTable({ emp_id }) {
                                                     )}
                                                 </div>
                                             </td>
-                                            <td align="center" className="flex justify-start items-center gap-2 m-auto w-fit">
-                                                <span>{employee.check_primary_sign ? <AiFillCheckCircle className="text-un-green"/> : <AiFillCheckCircle className="text-white"/>}</span>
-                                                <span>{employee.primary_eval_name != null ? employee.primary_eval_name : "-"}</span>
+                                            <td>
+                                                <div className="w-auto grid grid-cols-[3fr_6fr] gap-2">
+                                                    <span className="flex items-center justify-end"><AiFillCheckCircle className={classNames(employee.check_primary_sign ? "text-un-green" : "text-white")} /></span>
+                                                    <span>{employee.primary_eval_name != null ? employee.primary_eval_name : "-"}</span>
+                                                </div>
                                             </td>
                                             <td>
-                                                <div className="flex justify-start items-center gap-2 m-auto w-fit">
-                                                    <span>{employee.check_secondary_sign ? <AiFillCheckCircle className="text-un-green"/> : <AiFillCheckCircle className="text-white"/>}</span>
+                                                <div className="w-auto grid grid-cols-[3fr_6fr] gap-2">
+                                                    <span className="flex items-center justify-end"><AiFillCheckCircle className={classNames(employee.check_secondary_sign ? "text-un-green" : "text-white")} /></span>
                                                     <span>{employee.secondary_eval_name != null ? employee.secondary_eval_name : "-"}</span>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className="flex justify-start items-center gap-2 m-auto w-fit">
-                                                    <span>{employee.check_tertiary_sign ? <AiFillCheckCircle className="text-un-green"/> : <AiFillCheckCircle className="text-white"/>}</span>
+                                                <div className="w-auto grid grid-cols-[3fr_6fr] gap-2">
+                                                    <span className="flex items-center justify-end"><AiFillCheckCircle className={classNames(employee.check_tertiary_sign ? "text-un-green" : "text-white")} /></span>
                                                     <span>{employee.tertiary_eval_name != null ? employee.tertiary_eval_name : "-"}</span>
                                                 </div>
                                             </td>
                                             <td>
-                                                <TrackingAction
+                                                <SignOffAction
                                                     toggleActionVisibility={
                                                         toggleActionVisibility
                                                     }
@@ -213,10 +215,6 @@ export default function EmployeeSignOffTable({ emp_id }) {
                                                     sp_id={employee.sp_id}
                                                     employee_id={employee.employee_id}
                                                     first_name={employee.first_name}
-                                                    myr_results={employee.myr_results}
-                                                    yee_results={employee.yee_results}
-                                                    myr_achievements={employee.myr_achievements}
-                                                    yee_achievements={employee.yee_achievements}
                                                 />
                                             </td>
                                         </tr>

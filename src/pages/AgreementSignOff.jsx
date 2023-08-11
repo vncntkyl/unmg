@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Route, Router, Routes } from "react-router-dom";
 import SignOff from "../components/Signoff/SignOff";
 import EmployeeSignOffTable from "../components/Signoff/EmployeeSignOffTable";
+import EmployeeSignOffAssessment from "../components/Signoff/EmployeeSignOffAssessment";
 import { useFunction } from "../context/FunctionContext";
 import { useAuth } from "../context/authContext";
 import Toggle from "../components/Toggle";
@@ -16,6 +17,17 @@ export default function AgreementSignOff() {
   const [workYear, setWorkYear] = useState(-1);
   const { currentUser, kpiDurations } = useAuth();
   const { getPath } = useFunction();
+  const setHeader = (path) => {
+    switch (path) {
+      case "/sign_off":
+      case "/sign_off/":
+        if (panel === "My Evaluation") {
+          return "Agreement Sign Off";
+        } else {
+          return "Employee's Sign Off";
+        }
+    }
+  }
 
   const verifyEvaluator = async () => {
     const parameters = {
@@ -38,7 +50,7 @@ export default function AgreementSignOff() {
   if (!localStorage.getItem("currentUser")) {
     localStorage.setItem("redirect_to", window.location.pathname);
   }
-  
+
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     setEmployeeID(currentUser.employee_id);
@@ -63,41 +75,10 @@ export default function AgreementSignOff() {
             {/* HEADER */}
             <div className="flex flex-col items-center justify-between md:flex-row">
               <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
-                Agreement Sign Off
+                {setHeader(getPath())}
               </span>
               {/* TOGGLE */}
-              {/* <div
-                className={classNames(
-                  "toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]",
-                  panel !== "my evaluations" && "on"
-                )}
-              >
-                <button
-                  type="button"
-                  className={classNames(
-                    "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] text-center w-1/2 md:text-[.8rem]",
-                    panel === "my evaluations" ? "text-white" : "text-black"
-                  )}
-                  onClick={() => {
-                    setPanel("my evaluations");
-                  }}
-                >
-                  My Evaluations
-                </button>
-                <button
-                  type="button"
-                  className={classNames(
-                    "toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem]",
-                    panel === "Employee Evaluations" ? "text-white" : "text-black"
-                  )}
-                  onClick={() => {
-                    setPanel("Employee Evaluations");
-                  }}
-                >
-                  Employee Evaluation
-                </button>
-              </div> */}
-                  {JSON.parse(currentUser).user_type != 3 && (
+              {JSON.parse(currentUser).user_type != 3 && (
                 <>
                   {isEvaluator && (
                     <Toggle
@@ -111,21 +92,22 @@ export default function AgreementSignOff() {
                 </>
               )}
             </div>
-            <div className="flex flex-row pt-4">
+            <div className="flex flex-col">
+              <Routes>
+                {panel === "My Evaluation" ? <Route
+                  path="/"
+                  element={<SignOff
+                    emp_id={employeeID}
+                    kpiYears={kpiDurations}
+                    workYear={workYear}
+                    setKpiDuration={setWorkYear} />}
+                /> : <Route
+                  path="/"
+                  element={<EmployeeSignOffTable emp_id={employeeID} />}
+                />}
+                <Route path="/employee_sign_off_assessment/:id" element={<EmployeeSignOffAssessment />} />
+              </Routes>
             </div>
-            <Routes>
-              {panel === "My Evaluation" ? <Route
-                path="/"
-                element={<SignOff 
-                  emp_id={employeeID}
-                  kpiYears={kpiDurations}
-                  workYear={workYear}
-                  setKpiDuration={setWorkYear}
-                  />}
-              /> : <Route
-                path="/"
-                element={<EmployeeSignOffTable emp_id={employeeID}/>}
-              />}</Routes>
           </div>
         </div>
       </section>
