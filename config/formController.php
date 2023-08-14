@@ -1330,15 +1330,16 @@ class Form extends Controller
 
     //assessment approval
     //select where is the rater placed
-    function selectRaterPlacement($rater_id, $employee_id)
+    //Mid Year
+    function selectRaterPlacementMyr($rater_id, $employee_id)
     {
         $this->setStatement("
             SELECT 
                 hr_eval_form.hr_eval_form_id AS form_id,
                 CASE
-                    WHEN hr_users.primary_evaluator = :rater_id THEN 'rater_1'
-                    WHEN hr_users.secondary_evaluator = :rater_id THEN 'rater_2'
-                    WHEN hr_users.tertiary_evaluator = :rater_id THEN 'rater_3'
+                    WHEN hr_users.primary_evaluator = :rater_id THEN 'myr_rater_1'
+                    WHEN hr_users.secondary_evaluator = :rater_id THEN 'myr_rater_2'
+                    WHEN hr_users.tertiary_evaluator = :rater_id THEN 'myr_rater_3'
                 END AS evaluator
             FROM hr_users
             JOIN hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
@@ -1348,10 +1349,30 @@ class Form extends Controller
         $this->statement->execute([':rater_id' => $rater_id, ':employee_id' => $employee_id]);
         return $this->statement->fetch();
     }
+    //Year End
+    function selectRaterPlacementYee($rater_id, $employee_id)
+    {
+        $this->setStatement("
+            SELECT 
+                hr_eval_form.hr_eval_form_id AS form_id,
+                CASE
+                    WHEN hr_users.primary_evaluator = :rater_id THEN 'yee_rater_1'
+                    WHEN hr_users.secondary_evaluator = :rater_id THEN 'yee_rater_2'
+                    WHEN hr_users.tertiary_evaluator = :rater_id THEN 'yee_rater_3'
+                END AS evaluator
+            FROM hr_users
+            JOIN hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
+            WHERE (hr_users.primary_evaluator = :rater_id OR hr_users.secondary_evaluator = :rater_id OR hr_users.tertiary_evaluator = :rater_id)
+            AND hr_users.employee_id = :employee_id
+        ");
+        $this->statement->execute([':rater_id' => $rater_id, ':employee_id' => $employee_id]);
+        return $this->statement->fetch();
+    }
+
     //update midyear
     function midyearApproveAssessment($rater, $rater_id, $sp_id)
     {
-        $this->setStatement("UPDATE hr_eval_form_sp_myr_rating SET {$rater} = :rater_id WHERE hr_eval_form_sp_id = :sp_id");
+        $this->setStatement("UPDATE hr_eval_form SET {$rater} = :rater_id WHERE hr_eval_form_id = :sp_id");
         return $this->statement->execute([':rater_id' => $rater_id, ':sp_id' => $sp_id]);
     }
 
@@ -1373,6 +1394,7 @@ class Form extends Controller
         $this->setStatement("
         SELECT 
         hr_users.employee_id,
+        CONCAT(hr_users.first_name, ' ', LEFT(hr_users.middle_name, 1), '. ', hr_users.last_name) AS employee_name,
         hr_eval_form.hr_eval_form_id,
         hr_eval_form_pillars.hr_eval_form_pillar_id AS eval_pillar_id,
         hr_pillars.pillar_id AS pillar_id,
@@ -1401,7 +1423,10 @@ class Form extends Controller
                 THEN hr_objectives.objective
             ELSE ''
         END AS obj_objective,
-    
+
+
+        hr_kpi_year_duration.from_date,
+        hr_kpi_year_duration.to_date,
         hr_kpi.kpi_id AS kpi_kpi_id,
         hr_kpi.objective_id AS kpi_objective_id,
         hr_kpi.kpi_desc,
@@ -1428,6 +1453,8 @@ class Form extends Controller
         LEFT JOIN 
             hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
         LEFT JOIN
+            hr_kpi_year_duration ON hr_kpi_year_duration.kpi_year_duration_id = hr_eval_form.CreationDate
+        LEFT JOIN
             hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
         LEFT JOIN
         hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
@@ -1450,6 +1477,9 @@ class Form extends Controller
         SELECT
         employee.users_id,
         employee.employee_id AS employee_id,
+        employee.primary_evaluator,
+        employee.secondary_evaluator,
+        employee.tertiary_evaluator,
         employee.first_name,
         employee.contract_type,
         CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
@@ -1518,6 +1548,33 @@ class Form extends Controller
             $this->statement->execute([':creation_date' => $workYear, ':rater_id' => $empID]);
         }
         return $this->statement->fetchAll();
+    }
+
+    //Agreement Sign Off Select Evaluator
+    function selectEvaluator($empID, $evaluator_id)
+    {
+        $this->setStatement("
+            SELECT 
+                hr_eval_form.hr_eval_form_id AS form_id,
+                CASE
+                    WHEN hr_users.primary_evaluator = :rater_id THEN 'rater_1'
+                    WHEN hr_users.secondary_evaluator = :rater_id THEN 'rater_2'
+                    WHEN hr_users.tertiary_evaluator = :rater_id THEN 'rater_3'
+                END AS evaluator
+            FROM hr_users
+            JOIN hr_eval_form ON hr_eval_form.users_id = hr_users.users_id
+            WHERE (hr_users.primary_evaluator = :rater_id OR hr_users.secondary_evaluator = :rater_id OR hr_users.tertiary_evaluator = :rater_id)
+            AND hr_users.employee_id = :employee_id
+        ");
+        $this->statement->execute([':rater_id' => $evaluator_id, ':employee_id' => $empID]);
+        return $this->statement->fetch();
+    }
+
+    //Sign Assessment
+    function finalApproveAssessment($eval_id, $rater_id, $evaluator_tier, $recommendation, $recommendation_id)
+    {
+        $this->setStatement("UPDATE hr_eval_form SET {$evaluator_tier} = :rater_id, {$recommendation_id} = :recommendation WHERE hr_eval_form_id = :eval_id");
+        return $this->statement->execute([':rater_id' => $rater_id, ':eval_id' => $eval_id, 'recommendation' => $recommendation]);
     }
      
 

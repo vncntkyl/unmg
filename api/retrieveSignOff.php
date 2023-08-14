@@ -19,5 +19,11 @@ if(isset($_GET['empID']))
     {
         echo json_encode($form->selectApprover($empID, $creation_date));
     }
+
+    if (isset($_GET['evaluator']))
+    {
+        $evaluator_id = $_GET['evaluator_id'];
+        echo json_encode($form->selectEvaluator($empID, $evaluator_id));
+    }
 }
 ?>

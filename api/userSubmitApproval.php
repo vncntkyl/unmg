@@ -13,15 +13,15 @@ if (isset($_POST['submit'])) {
 
 
             if ($approval_type == "midyear") {
-                $check = $approval->selectRaterPlacement($rater_id, $employee_id);
+                $check = $approval->selectRaterPlacementMyr($rater_id, $employee_id);
                 $rater = $check->evaluator;
-                if ($rater === 'rater_1') {
+                if ($rater === 'myr_rater_1') {
                     $result = $approval->midyearApproveAssessment($rater, $rater_id, $sp_id);
                 } 
-                elseif ($rater === 'rater_2') {
+                elseif ($rater === 'myr_rater_2') {
                     $result = $approval->midyearApproveAssessment($rater, $rater_id, $sp_id);
                 } 
-                elseif ($rater === 'rater_3') {
+                elseif ($rater === 'myr_rater_3') {
                     $result = $approval->midyearApproveAssessment($rater, $rater_id, $sp_id);
                 } 
                 else {
@@ -35,16 +35,16 @@ if (isset($_POST['submit'])) {
                 }
             } 
             else if ($approval_type == "yearend") {
-                $check = $approval->selectRaterPlacement($rater_id, $employee_id);
+                $check = $approval->selectRaterPlacementYee($rater_id, $employee_id);
                 $form_id = $check->form_id;
                 $rater = $check->evaluator;
-                if ($rater === 'rater_1') {
+                if ($rater === 'yee_rater_1') {
                     $result = $approval->yearendApproveAssessment($rater, $rater_id, $form_id);
                 } 
-                elseif ($rater === 'rater_2') {
+                elseif ($rater === 'yee_rater_2') {
                     $result = $approval->yearendApproveAssessment($rater, $rater_id, $form_id);
                 } 
-                elseif ($rater === 'rater_3') {
+                elseif ($rater === 'yee_rater_3') {
                     $result = $approval->yearendApproveAssessment($rater, $rater_id, $form_id);
                 } 
                 else {
