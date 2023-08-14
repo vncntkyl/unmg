@@ -139,7 +139,7 @@ export default function AssessmentTracking({
         </label>
         <select
           id="workyear"
-          className="bg-default rounded-md p-1 px-2"
+          className="bg-default rounded-md p-1 px-2" 
           onChange={(e) => {
             setKpiDuration(parseInt(e.target.value));
           }}

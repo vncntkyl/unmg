@@ -49,7 +49,7 @@ export default function EmployeeAssessmentTable({ emp_id }) {
     employeesRecords.every(
       (employee) => !employee.creation_date && !employee.creation_date
     );
-
+console.table(employeesRecords);
   useEffect(() => {
     const getemployeesRecords = async () => {
       const parameters = {

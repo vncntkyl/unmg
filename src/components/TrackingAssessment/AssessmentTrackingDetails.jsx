@@ -3,7 +3,6 @@ import axios, { all } from "axios";
 import { AiOutlinePlus } from "react-icons/ai";
 import { developmentAPIs as url } from "../../context/apiList";
 
-
 export default function AssessmentTrackingDetails({
   quarter,
   emp_id,
@@ -22,7 +21,7 @@ export default function AssessmentTrackingDetails({
   const [achievements, setAchievements] = useState([]);
   const [ifAchievementsExists, setIfAchievementsExists] = useState(false);
   const [ifResultsExists, setIfResultsExists] = useState(false);
-
+  const [metrics, setMetrics] = useState(false);
 
   useEffect(() => {
     const getfinalUserPerformance = async () => {
@@ -31,8 +30,8 @@ export default function AssessmentTrackingDetails({
           checkUserAchievements: true,
           workYear: workYear,
           empID: emp_id,
-        }
-      }
+        },
+      };
       try {
         const response = await axios.get(url.retrieveTracking, parameters);
         setAchievements(response.data);
@@ -69,8 +68,23 @@ export default function AssessmentTrackingDetails({
         console.log(error.message);
       }
     };
-    if (!emp_id) return;
+    const getMetrics = async () => {
+      const parameters = {
+        params: {
+          metrics: true,
+          workYear: sessionStorage.getItem("workYear"),
+          empID: emp_id,
+        },
+      };
+      try {
+        const response = await axios.get(url.retrieveTracking, parameters);
+        setMetrics(response.data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
     toggleLoading(false);
+    getMetrics();
     getfinalUserPerformance();
   }, [emp_id, workYear]);
 
@@ -78,443 +92,639 @@ export default function AssessmentTrackingDetails({
     "Loading..."
   ) : (
     <>
-        {quarter == 1 ? (
-          <>
-            {ifAchievementsExists.fq_achievements ? (
-              <>
-                {ifResultsExists &&
-                  ifResultsExists.map((checkresult, index) => (
-                    <React.Fragment key={index}>
-                      {checkresult.checkfq === true ? (
-                        ""
-                      ) : (
-                        <>
-                          {ifAchievementsExists.fq_achievements ? (
-                            <React.Fragment>
-                              <span className="w-full flex justify-center">
-                                Please wait for your supervisor to grade your
-                                KPI.
-                              </span>
-                              <span className="w-full block pt-8 pb-2">
-                                Achievements Submitted:
-                              </span>
-                              <div className="bg-white rounded-md text-black font-normal">
-                                <table className="w-full">
-                                  <thead>
-                                    <tr>
-                                      <th className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
-                                        <div className="text-white flex justify-center">
-                                          KPI Description
-                                        </div>
-                                      </th>
-                                      <th className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
-                                        <div className="text-white flex justify-center">
-                                          Achievements
-                                        </div>
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  {achievements.map((achievement) => (
-                                    <tbody key={achievement.kpi_id}>
-                                      <tr className="shadow">
-                                        <td>
-                                          <div className="px-10 pb-2">
-                                            {achievement.kpi_desc}
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <div className="px-10">
-                                                  {achievement.fq_achievements}
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  ))}
-                                </table>
-                              </div>
-                              <div className="pt-2 flex justify-end">
-                                <a href="/tracking_and_assessment/create"
-                                  className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                                  onClick={() => {
-                                    sessionStorage.setItem("assessment_quarter", quarter);
-                                    sessionStorage.setItem("quarter_name", quarterName);
-                                    sessionStorage.setItem("workYear", workYear);
-                                  }}
-                                >
-                                  Edit
-                                </a>
-                              </div>
-                            </React.Fragment>
-                          ) : null}
-                        </>
-                      )}
-                    </React.Fragment>
-                  ))}
-              </>
-            ) : (
-              <>
-                <span className="flex justify-center py-2">
-                  You have not yet submitted your achievements for the{" "}
-                  {quarterName}.
-                </span>
-                <div className="flex justify-center py-2">
-                  <a
-                    href="/tracking_and_assessment/create"
-                    className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-                    onClick={() => {
-                      sessionStorage.setItem("assessment_quarter", quarter);
-                      sessionStorage.setItem("quarter_name", quarterName);
-                      sessionStorage.setItem("workYear", workYear);
-                    }}
-                  >
-                    <AiOutlinePlus />
-                    Add Quarter Evaluation
-                  </a>
-                </div>
-              </>
-            )}
-          </>
-        ) : quarter == 2 ? (
-          <>
-            {ifAchievementsExists.myr_achievements ? (
-              <>
-                {ifResultsExists &&
-                  ifResultsExists.map((checkresult, index) => (
-                    <React.Fragment key={index}>
-                      {checkresult.checkmyr === true ? (
-                        ""
-                      ) : (
-                        <>
-                          {ifAchievementsExists.myr_achievements ? (
-                            <React.Fragment>
-                              <span className="w-full flex justify-center">
-                                Please wait for your supervisor to grade your
-                                KPI.
-                              </span>
-                              <span className="w-full block pt-8 pb-2">
-                                Achievements Submitted:
-                              </span>
-                              <div className="bg-white rounded-md text-black font-normal">
-                                <table className="w-full">
-                                  <thead>
-                                    <tr>
-                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
-                                        <div className="text-white flex justify-center">
-                                          KPI Description
+      {quarter == 1 ? (
+        <>
+          {ifAchievementsExists.fq_achievements ? (
+            <>
+              {ifResultsExists &&
+                ifResultsExists.map((checkresult, index) => (
+                  <React.Fragment key={index}>
+                    {checkresult.checkfq === true ? (
+                      ""
+                    ) : (
+                      <>
+                        {ifAchievementsExists.fq_achievements ? (
+                          <React.Fragment>
+                            <span className="w-full flex justify-center">
+                              Please wait for your supervisor to grade your KPI.
+                            </span>
+                            <span className="w-full block pt-8 pb-2">
+                              Achievements Submitted:
+                            </span>
+                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                              <table className="w-full">
+                                <thead className="sticky top-0">
+                                  <tr>
+                                    <th className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
+                                      <div className="text-white flex justify-center">
+                                        KPI Description
+                                      </div>
+                                    </th>
+                                    <th className="w-1/3 bg-un-blue-light font-semibold">
+                                      <div className="text-white flex justify-center">
+                                        Target Metrics
+                                      </div>
+                                    </th>
+                                    <th className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
+                                      <div className="text-white flex justify-center">
+                                        Achievements
+                                      </div>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                {achievements.map((achievement) => (
+                                  <tbody key={achievement.kpi_id}>
+                                    <tr className="shadow">
+                                      <td className="w-1/3">
+                                        <div className="px-10 pb-2">
+                                          {achievement.kpi_desc}
                                         </div>
                                       </td>
-                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
-                                        <div className="text-white flex justify-center">
-                                          Achievements
+                                      <td className="w-1/3">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                            <table>
+                                              {metrics
+                                                .filter(
+                                                  (metric) =>
+                                                    metric.kpi_id ===
+                                                    achievement.kpi_id
+                                                )
+                                                .map((metric) => (
+                                                  <tr
+                                                    key={
+                                                      metric.target_metrics_id
+                                                    }
+                                                  >
+                                                    <td
+                                                      valign="top"
+                                                      className="whitespace-nowrap"
+                                                    >
+                                                      <span>
+                                                        {
+                                                          metric.target_metrics_score
+                                                        }
+                                                      </span>
+                                                      {" - "}
+                                                    </td>
+                                                    <td className="whitespace-break-spaces">
+                                                      {
+                                                        metric.target_metrics_desc
+                                                      }
+                                                    </td>
+                                                  </tr>
+                                                ))}
+                                            </table>
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td className="w-1/3">
+                                        <div className="px-10">
+                                          {achievement.fq_achievements}
                                         </div>
                                       </td>
                                     </tr>
-                                  </thead>
-                                  {achievements.map((achievement) => (
-                                    <tbody key={achievement.kpi_id}>
-                                      <tr className="shadow">
-                                        <td>
-                                          <div className="px-10 pb-2">
-                                            {achievement.kpi_desc}
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <div className="px-10">
-                                                  {achievement.myr_achievements}
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  ))}
-                                </table>
-                              </div>
-                              <div className="pt-2 flex justify-end">
-                                <a href="/tracking_and_assessment/create"
-                                  className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                                  onClick={() => {
-                                    sessionStorage.setItem("assessment_quarter", quarter);
-                                    sessionStorage.setItem("quarter_name", quarterName);
-                                    sessionStorage.setItem("workYear", workYear);
-                                  }}
-                                >
-                                  Edit
-                                </a>
-                              </div>
-                            </React.Fragment>
-                          ) : (
-                            ""
-                          )}
-                        </>
-                      )}
-                    </React.Fragment>
-                  ))}
-              </>
-            ) : (
-              <>
-                {!ifAchievementsExists.fq_achievements &&
-                !ifResultsExists.checkfq ? (
-                  <>
-                    <span className="flex justify-center py-2">
-                      This quarter is still unavailable. Please submit
-                      achievements on the First Quarter
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="flex justify-center py-2">
-                      You have not yet submitted your achievements for the{" "}
-                      {quarterName}.
-                    </span>
-                    <div className="flex justify-center py-2">
-                      <a
-                        href="/tracking_and_assessment/create"
-                        className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-                        onClick={() => {
-                          sessionStorage.setItem("assessment_quarter", quarter);
-                          sessionStorage.setItem("quarter_name", quarterName);
-                          sessionStorage.setItem("workYear", workYear);
-                        }}
-                      >
-                        <AiOutlinePlus />
-                        Add Quarter Evaluation
-                      </a>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-          </>
-        ) : quarter == 3 ? (
-          <>
-            {ifAchievementsExists.tq_achievements ? (
-              <>
-                {ifResultsExists &&
-                  ifResultsExists.map((checkresult, index) => (
-                    <React.Fragment key={index}>
-                      {checkresult.checktq === true ? (
-                        ""
-                      ) : (
-                        <>
-                          {ifAchievementsExists.tq_achievements ? (
-                            <React.Fragment>
-                              <span className="w-full flex justify-center">
-                                Please wait for your supervisor to grade your
-                                KPI.
-                              </span>
-                              <span className="w-full block pt-8 pb-2">
-                                Achievements Submitted:
-                              </span>
-                              <div className="bg-white rounded-md text-black font-normal">
-                                <table className="w-full">
-                                  <thead>
-                                    <tr>
-                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
-                                        <div className="text-white flex justify-center">
-                                          KPI Description
+                                  </tbody>
+                                ))}
+                              </table>
+                            </div>
+                            <div className="pt-2 flex justify-end">
+                              <a
+                                href="/tracking_and_assessment/create"
+                                className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                                onClick={() => {
+                                  sessionStorage.setItem(
+                                    "assessment_quarter",
+                                    quarter
+                                  );
+                                  sessionStorage.setItem(
+                                    "quarter_name",
+                                    quarterName
+                                  );
+                                  sessionStorage.setItem("workYear", workYear);
+                                }}
+                              >
+                                Edit
+                              </a>
+                            </div>
+                          </React.Fragment>
+                        ) : null}
+                      </>
+                    )}
+                  </React.Fragment>
+                ))}
+            </>
+          ) : (
+            <>
+              <span className="flex justify-center py-2">
+                You have not yet submitted your achievements for the{" "}
+                {quarterName}.
+              </span>
+              <div className="flex justify-center py-2">
+                <a
+                  href="/tracking_and_assessment/create"
+                  className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
+                  onClick={() => {
+                    sessionStorage.setItem("assessment_quarter", quarter);
+                    sessionStorage.setItem("quarter_name", quarterName);
+                    sessionStorage.setItem("workYear", workYear);
+                  }}
+                >
+                  <AiOutlinePlus />
+                  Add Quarter Evaluation
+                </a>
+              </div>
+            </>
+          )}
+        </>
+      ) : quarter == 2 ? (
+        <>
+          {ifAchievementsExists.myr_achievements ? (
+            <>
+              {ifResultsExists &&
+                ifResultsExists.map((checkresult, index) => (
+                  <React.Fragment key={index}>
+                    {checkresult.checkmyr === true ? (
+                      ""
+                    ) : (
+                      <>
+                        {ifAchievementsExists.myr_achievements ? (
+                          <React.Fragment>
+                            <span className="w-full flex justify-center">
+                              Please wait for your supervisor to grade your KPI.
+                            </span>
+                            <span className="w-full block pt-8 pb-2">
+                              Achievements Submitted:
+                            </span>
+                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                              <table className="w-full">
+                                <thead className="sticky top-0">
+                                  <tr>
+                                    <th className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
+                                      <div className="text-white flex justify-center">
+                                        KPI Description
+                                      </div>
+                                    </th>
+                                    <th className="w-1/3 bg-un-blue-light font-semibold">
+                                      <div className="text-white flex justify-center">
+                                        Target Metrics
+                                      </div>
+                                    </th>
+                                    <th className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
+                                      <div className="text-white flex justify-center">
+                                        Achievements
+                                      </div>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                {achievements.map((achievement) => (
+                                  <tbody key={achievement.kpi_id}>
+                                    <tr className="shadow">
+                                      <td className="w-1/3">
+                                        <div className="px-10 pb-2">
+                                          {achievement.kpi_desc}
                                         </div>
                                       </td>
-                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
-                                        <div className="text-white flex justify-center">
-                                          Achievements
+                                      <td className="w-1/3">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                            <table>
+                                              {metrics
+                                                .filter(
+                                                  (metric) =>
+                                                    metric.kpi_id ===
+                                                    achievement.kpi_id
+                                                )
+                                                .map((metric) => (
+                                                  <tr
+                                                    key={
+                                                      metric.target_metrics_id
+                                                    }
+                                                  >
+                                                    <td
+                                                      valign="top"
+                                                      className="whitespace-nowrap"
+                                                    >
+                                                      <span>
+                                                        {
+                                                          metric.target_metrics_score
+                                                        }
+                                                      </span>
+                                                      {" - "}
+                                                    </td>
+                                                    <td className="whitespace-break-spaces">
+                                                      {
+                                                        metric.target_metrics_desc
+                                                      }
+                                                    </td>
+                                                  </tr>
+                                                ))}
+                                            </table>
+                                          </div>
                                         </div>
                                       </td>
-                                    </tr>
-                                  </thead>
-                                  {achievements.map((achievement) => (
-                                    <tbody key={achievement.kpi_id}>
-                                      <tr className="shadow">
-                                        <td>
-                                          <div className="px-10 pb-2">
-                                            {achievement.kpi_desc}
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <div className="px-10">
-                                                  {achievement.tq_achievements}
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  ))}
-                                </table>
-                              </div>
-                              <div className="pt-2 flex justify-end">
-                                <a href="/tracking_and_assessment/create"
-                                  className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                                  onClick={() => {
-                                    sessionStorage.setItem("assessment_quarter", quarter);
-                                    sessionStorage.setItem("quarter_name", quarterName);
-                                    sessionStorage.setItem("workYear", workYear);
-                                  }}
-                                >
-                                  Edit
-                                </a>
-                              </div>
-                            </React.Fragment>
-                          ) : (
-                            ""
-                          )}
-                        </>
-                      )}
-                    </React.Fragment>
-                  ))}
-              </>
-            ) : (
-              <>
-                {!ifAchievementsExists.myr_achievements &&
-                !ifResultsExists.checkmyr ? (
-                  <>
-                    <span className="flex justify-center py-2">
-                      This quarter is still unavailable. Please submit
-                      achievements on the Mid Year Quarter
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="flex justify-center py-2">
-                      You have not yet submitted your achievements for the{" "}
-                      {quarterName}.
-                    </span>
-                    <div className="flex justify-center py-2">
-                      <a
-                        href="/tracking_and_assessment/create"
-                        className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-                        onClick={() => {
-                          sessionStorage.setItem("assessment_quarter", quarter);
-                          sessionStorage.setItem("quarter_name", quarterName);
-                          sessionStorage.setItem("workYear", workYear);
-                        }}
-                      >
-                        <AiOutlinePlus />
-                        Add Quarter Evaluation
-                      </a>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-          </>
-        ) : quarter == 4 ? (
-          <>
-            {ifAchievementsExists.yee_achievements ? (
-              <>
-                {ifResultsExists &&
-                  ifResultsExists.map((checkresult, index) => (
-                    <React.Fragment key={index}>
-                      {checkresult.checkyee === true ? (
-                        ""
-                      ) : (
-                        <>
-                          {ifAchievementsExists.yee_achievements ? (
-                            <React.Fragment>
-                              <span className="w-full flex justify-center">
-                                Please wait for your supervisor to grade your
-                                KPI.
-                              </span>
-                              <span className="w-full block pt-8 pb-2">
-                                Achievements Submitted:
-                              </span>
-                              <div className="bg-white rounded-md text-black font-normal">
-                                <table className="w-full">
-                                  <thead>
-                                    <tr>
-                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
-                                        <div className="text-white flex justify-center">
-                                          KPI Description
-                                        </div>
-                                      </td>
-                                      <td className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
-                                        <div className="text-white flex justify-center">
-                                          Achievements
+                                      <td className="w-1/3">
+                                        <div className="px-10">
+                                          {achievement.myr_achievements}
                                         </div>
                                       </td>
                                     </tr>
-                                  </thead>
-                                  {achievements.map((achievement) => (
-                                    <tbody key={achievement.kpi_id}>
-                                      <tr className="shadow">
-                                        <td>
-                                          <div className="px-10 pb-2">
-                                            {achievement.kpi_desc}
+                                  </tbody>
+                                ))}
+                              </table>
+                            </div>
+                            <div className="pt-2 flex justify-end">
+                              <a
+                                href="/tracking_and_assessment/create"
+                                className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                                onClick={() => {
+                                  sessionStorage.setItem(
+                                    "assessment_quarter",
+                                    quarter
+                                  );
+                                  sessionStorage.setItem(
+                                    "quarter_name",
+                                    quarterName
+                                  );
+                                  sessionStorage.setItem("workYear", workYear);
+                                }}
+                              >
+                                Edit
+                              </a>
+                            </div>
+                          </React.Fragment>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </React.Fragment>
+                ))}
+            </>
+          ) : (
+            <>
+              {!ifAchievementsExists.fq_achievements &&
+              !ifResultsExists.checkfq ? (
+                <>
+                  <span className="flex justify-center py-2">
+                    This quarter is still unavailable. Please submit
+                    achievements on the First Quarter
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="flex justify-center py-2">
+                    You have not yet submitted your achievements for the{" "}
+                    {quarterName}.
+                  </span>
+                  <div className="flex justify-center py-2">
+                    <a
+                      href="/tracking_and_assessment/create"
+                      className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
+                      onClick={() => {
+                        sessionStorage.setItem("assessment_quarter", quarter);
+                        sessionStorage.setItem("quarter_name", quarterName);
+                        sessionStorage.setItem("workYear", workYear);
+                      }}
+                    >
+                      <AiOutlinePlus />
+                      Add Quarter Evaluation
+                    </a>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </>
+      ) : quarter == 3 ? (
+        <>
+          {ifAchievementsExists.tq_achievements ? (
+            <>
+              {ifResultsExists &&
+                ifResultsExists.map((checkresult, index) => (
+                  <React.Fragment key={index}>
+                    {checkresult.checktq === true ? (
+                      ""
+                    ) : (
+                      <>
+                        {ifAchievementsExists.tq_achievements ? (
+                          <React.Fragment>
+                            <span className="w-full flex justify-center">
+                              Please wait for your supervisor to grade your KPI.
+                            </span>
+                            <span className="w-full block pt-8 pb-2">
+                              Achievements Submitted:
+                            </span>
+                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                              <table className="w-full">
+                                <thead className="sticky top-0">
+                                  <tr>
+                                    <td className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
+                                      <div className="text-white flex justify-center">
+                                        KPI Description
+                                      </div>
+                                    </td>
+                                    <td className="w-1/3 bg-un-blue-light font-semibold">
+                                      <div className="text-white flex justify-center">
+                                        Target Metrics
+                                      </div>
+                                    </td>
+                                    <td className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
+                                      <div className="text-white flex justify-center">
+                                        Achievements
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </thead>
+                                {achievements.map((achievement) => (
+                                  <tbody key={achievement.kpi_id}>
+                                    <tr className="shadow">
+                                      <td className="w-1/3">
+                                        <div className="px-10 pb-2">
+                                          {achievement.kpi_desc}
+                                        </div>
+                                      </td>
+                                      <td className="w-1/3">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                            <table>
+                                              {metrics
+                                                .filter(
+                                                  (metric) =>
+                                                    metric.kpi_id ===
+                                                    achievement.kpi_id
+                                                )
+                                                .map((metric) => (
+                                                  <tr
+                                                    key={
+                                                      metric.target_metrics_id
+                                                    }
+                                                  >
+                                                    <td
+                                                      valign="top"
+                                                      className="whitespace-nowrap"
+                                                    >
+                                                      <span>
+                                                        {
+                                                          metric.target_metrics_score
+                                                        }
+                                                      </span>
+                                                      {" - "}
+                                                    </td>
+                                                    <td className="whitespace-break-spaces">
+                                                      {
+                                                        metric.target_metrics_desc
+                                                      }
+                                                    </td>
+                                                  </tr>
+                                                ))}
+                                            </table>
                                           </div>
-                                        </td>
-                                        <td>
-                                          <div className="px-10">
-                                                  {achievement.yee_achievements}
+                                        </div>
+                                      </td>
+                                      <td className="w-1/3">
+                                        <div className="px-10">
+                                          {achievement.tq_achievements}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                ))}
+                              </table>
+                            </div>
+                            <div className="pt-2 flex justify-end">
+                              <a
+                                href="/tracking_and_assessment/create"
+                                className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                                onClick={() => {
+                                  sessionStorage.setItem(
+                                    "assessment_quarter",
+                                    quarter
+                                  );
+                                  sessionStorage.setItem(
+                                    "quarter_name",
+                                    quarterName
+                                  );
+                                  sessionStorage.setItem("workYear", workYear);
+                                }}
+                              >
+                                Edit
+                              </a>
+                            </div>
+                          </React.Fragment>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </React.Fragment>
+                ))}
+            </>
+          ) : (
+            <>
+              {!ifAchievementsExists.myr_achievements &&
+              !ifResultsExists.checkmyr ? (
+                <>
+                  <span className="flex justify-center py-2">
+                    This quarter is still unavailable. Please submit
+                    achievements on the Mid Year Quarter
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="flex justify-center py-2">
+                    You have not yet submitted your achievements for the{" "}
+                    {quarterName}.
+                  </span>
+                  <div className="flex justify-center py-2">
+                    <a
+                      href="/tracking_and_assessment/create"
+                      className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
+                      onClick={() => {
+                        sessionStorage.setItem("assessment_quarter", quarter);
+                        sessionStorage.setItem("quarter_name", quarterName);
+                        sessionStorage.setItem("workYear", workYear);
+                      }}
+                    >
+                      <AiOutlinePlus />
+                      Add Quarter Evaluation
+                    </a>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </>
+      ) : quarter == 4 ? (
+        <>
+          {ifAchievementsExists.yee_achievements ? (
+            <>
+              {ifResultsExists &&
+                ifResultsExists.map((checkresult, index) => (
+                  <React.Fragment key={index}>
+                    {checkresult.checkyee === true ? (
+                      ""
+                    ) : (
+                      <>
+                        {ifAchievementsExists.yee_achievements ? (
+                          <React.Fragment>
+                            <span className="w-full flex justify-center">
+                              Please wait for your supervisor to grade your KPI.
+                            </span>
+                            <span className="w-full block pt-8 pb-2">
+                              Achievements Submitted:
+                            </span>
+                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                              <table className="w-full">
+                                <thead className="sticky top-0">
+                                  <tr>
+                                    <td className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
+                                      <div className="text-white flex justify-center">
+                                        KPI Description
+                                      </div>
+                                    </td>
+                                    <td className="w-1/3 bg-un-blue-light font-semibold">
+                                      <div className="text-white flex justify-center">
+                                        Target Metrics
+                                      </div>
+                                    </td>
+                                    <td className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
+                                      <div className="text-white flex justify-center">
+                                        Achievements
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </thead>
+                                {achievements.map((achievement) => (
+                                  <tbody key={achievement.kpi_id}>
+                                    <tr className="shadow">
+                                      <td className="w-1/3">
+                                        <div className="px-10 pb-2">
+                                          {achievement.kpi_desc}
+                                        </div>
+                                      </td>
+                                      <td className="w-1/3">
+                                        <div className="p-2 flex items-center justify-center">
+                                          <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                            <table>
+                                              {metrics
+                                                .filter(
+                                                  (metric) =>
+                                                    metric.kpi_id ===
+                                                    achievement.kpi_id
+                                                )
+                                                .map((metric) => (
+                                                  <tr
+                                                    key={
+                                                      metric.target_metrics_id
+                                                    }
+                                                  >
+                                                    <td
+                                                      valign="top"
+                                                      className="whitespace-nowrap"
+                                                    >
+                                                      <span>
+                                                        {
+                                                          metric.target_metrics_score
+                                                        }
+                                                      </span>
+                                                      {" - "}
+                                                    </td>
+                                                    <td className="whitespace-break-spaces">
+                                                      {
+                                                        metric.target_metrics_desc
+                                                      }
+                                                    </td>
+                                                  </tr>
+                                                ))}
+                                            </table>
                                           </div>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  ))}
-                                </table>
-                              </div>
-                              <div className="pt-2 flex justify-end">
-                                <a href="/tracking_and_assessment/create"
-                                  className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-                                  onClick={() => {
-                                    sessionStorage.setItem("assessment_quarter", quarter);
-                                    sessionStorage.setItem("quarter_name", quarterName);
-                                    sessionStorage.setItem("workYear", workYear);
-                                  }}
-                                >
-                                  Edit
-                                </a>
-                              </div>
-                            </React.Fragment>
-                          ) : !ifAchievementsExists.tq_achievements &&
-                            !checkresult.checktq ? (
-                            <>
-                              <span className="flex justify-center py-2">
-                                This quarter is still unavailable. Please submit
-                                achievements on the First Quarter
-                              </span>
-                            </>
-                          ) : (
-                            ""
-                          )}
-                        </>
-                      )}
-                    </React.Fragment>
-                  ))}
-              </>
-            ) : (
-              <>
-                {!ifAchievementsExists.tq_achievements &&
-                !ifResultsExists.checktq ? (
-                  <>
-                    <span className="flex justify-center py-2">
-                      This quarter is still unavailable. Please submit
-                      achievements on the Third Quarter
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="flex justify-center py-2">
-                      You have not yet submitted your achievements for the{" "}
-                      {quarterName}.
-                    </span>
-                    <div className="flex justify-center py-2">
-                      <a
-                        href="/tracking_and_assessment/create"
-                        className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-                        onClick={() => {
-                          sessionStorage.setItem("assessment_quarter", quarter);
-                          sessionStorage.setItem("quarter_name", quarterName);
-                          sessionStorage.setItem("workYear", workYear);
-                        }}
-                      >
-                        <AiOutlinePlus />
-                        Add Quarter Evaluation
-                      </a>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-          </>
-        ) : (
-          ""
-        )}
+                                        </div>
+                                      </td>
+                                      <td className="w-1/3">
+                                        <div className="px-10">
+                                          {achievement.yee_achievements}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                ))}
+                              </table>
+                            </div>
+                            <div className="pt-2 flex justify-end">
+                              <a
+                                href="/tracking_and_assessment/create"
+                                className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                                onClick={() => {
+                                  sessionStorage.setItem(
+                                    "assessment_quarter",
+                                    quarter
+                                  );
+                                  sessionStorage.setItem(
+                                    "quarter_name",
+                                    quarterName
+                                  );
+                                  sessionStorage.setItem("workYear", workYear);
+                                }}
+                              >
+                                Edit
+                              </a>
+                            </div>
+                          </React.Fragment>
+                        ) : !ifAchievementsExists.tq_achievements &&
+                          !checkresult.checktq ? (
+                          <>
+                            <span className="flex justify-center py-2">
+                              This quarter is still unavailable. Please submit
+                              achievements on the First Quarter
+                            </span>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </React.Fragment>
+                ))}
+            </>
+          ) : (
+            <>
+              {!ifAchievementsExists.tq_achievements &&
+              !ifResultsExists.checktq ? (
+                <>
+                  <span className="flex justify-center py-2">
+                    This quarter is still unavailable. Please submit
+                    achievements on the Third Quarter
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="flex justify-center py-2">
+                    You have not yet submitted your achievements for the{" "}
+                    {quarterName}.
+                  </span>
+                  <div className="flex justify-center py-2">
+                    <a
+                      href="/tracking_and_assessment/create"
+                      className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
+                      onClick={() => {
+                        sessionStorage.setItem("assessment_quarter", quarter);
+                        sessionStorage.setItem("quarter_name", quarterName);
+                        sessionStorage.setItem("workYear", workYear);
+                      }}
+                    >
+                      <AiOutlinePlus />
+                      Add Quarter Evaluation
+                    </a>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </>
+      ) : (
+        ""
+      )}
     </>
   );
 }
