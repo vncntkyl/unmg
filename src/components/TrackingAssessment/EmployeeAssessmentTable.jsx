@@ -9,6 +9,8 @@ import { developmentAPIs as url } from "../../context/apiList";
 export default function EmployeeAssessmentTable({ emp_id }) {
   const [employeeType, setEmployeeType] = useState(0);
   const [employeesRecords, setEmployeesRecords] = useState([]);
+  const [getEmployees, setGetEmployees] = useState([]);
+  const [checkRecords, setCheckRecords] = useState([]);
   const [loading, toggleLoading] = useState(true);
   const [actionVisibility, setActionVisibility] = useState(false);
   const { currentUser, kpiDurations } = useAuth();
@@ -18,47 +20,47 @@ export default function EmployeeAssessmentTable({ emp_id }) {
     setActionVisibility((prev) => !prev);
   };
 
-  //check columns
   const fqisColumnAllFalse =
-    employeesRecords.length > 0 &&
-    employeesRecords.every(
+    checkRecords.length > 0 &&
+    checkRecords.every(
       (employee) => !employee.fq_achievements && !employee.fq_results
     );
   const myrisColumnAllFalse =
-    employeesRecords.length > 0 &&
-    employeesRecords.every(
+    checkRecords.length > 0 &&
+    checkRecords.every(
       (employee) => !employee.myr_achievements && !employee.myr_results
     );
   const tqisColumnAllFalse =
-    employeesRecords.length > 0 &&
-    employeesRecords.every(
+    checkRecords.length > 0 &&
+    checkRecords.every(
       (employee) => !employee.tq_achievements && !employee.tq_results
     );
   const yeeisColumnAllFalse =
-    employeesRecords.length > 0 &&
-    employeesRecords.every(
+    checkRecords.length > 0 &&
+    checkRecords.every(
       (employee) => !employee.yee_achievements && !employee.yee_results
     );
   const yeeagreedisColumnAllFalse =
-    employeesRecords.length > 0 &&
-    employeesRecords.every(
+    checkRecords.length > 0 &&
+    checkRecords.every(
       (employee) => !employee.agreed_rating && !employee.yee_results
     );
+
+    
   const creation_dateColumnAllFalse =
     employeesRecords.length > 0 &&
     employeesRecords.every(
       (employee) => !employee.creation_date && !employee.creation_date
     );
-console.table(employeesRecords);
   useEffect(() => {
     const getemployeesRecords = async () => {
       const parameters = {
         params: {
-          employeeType: employeeType,
+          empRecords: true,
           empID: JSON.parse(currentUser).user_type === "1" ? 1 : emp_id,
           workYear: workYear,
-        }
-      }
+        },
+      };
       try {
         const response = await axios.get(url.retrieveTrackingEmployee, parameters);
         const employeeRecords = response.data.map((item) => {
@@ -68,28 +70,38 @@ console.table(employeesRecords);
             employee_name: item.employee_name,
             sp_id: item.sp_id,
             creation_date: item.creation_date > 0 && item.creation_date !== null,
+          };
+        });
+        setEmployeesRecords(employeeRecords);
+
+        const empType = employeeType == 1 ? response.data.filter((item) => item.contract_type === "regular") : employeeType == 2 ? response.data.filter( (item) => item.contract_type === "probationary") : response.data.filter((item) => item.contract_type);
+        setGetEmployees(empType);
+        const emp = response.data.map((item) => {
+          return {
+            employee_id: item.employee_id,
+            first_name: item.first_name,
+            employee_name: item.employee_name,
+            sp_id: item.sp_id,
+            creation_date: item.creation_date > 0 && item.creation_date !== null,
               myr_rater_1: item.myr_rater_1 !== null && item.myr_rater_1 !== 0,
               myr_rater_2: item.myr_rater_2 !== null && item.myr_rater_2 !== 0,
               myr_rater_3: item.myr_rater_3 !== null && item.myr_rater_3 !== 0,
-
               yee_rater_1: item.yee_rater_1 !== null && item.yee_rater_1 !== 0,
               yee_rater_2: item.yee_rater_2 !== null && item.yee_rater_2 !== 0,
               yee_rater_3: item.yee_rater_3 !== null && item.yee_rater_3 !== 0,
-
             fq_achievements: item.fq_achievements !== "" && item.fq_achievements !== null,
             myr_achievements: item.myr_achievements !== "" && item.myr_achievements !== null,
             tq_achievements: item.tq_achievements !== "" && item.tq_achievements !== null,
             yee_achievements: item.yee_achievements !== "" && item.yee_achievements !== null,
-
             fq_results: item.fq_results != "" && item.fq_results !== null,
             myr_results: item.myr_results != "" && item.myr_results !== null,
             tq_results: item.tq_results != "" && item.tq_results !== null,
             yee_results: item.yee_results != "" && item.yee_results !== null,
-            agreed_rating: item.agreed_rating != "" && item.agreed_rating !== null,
+            agreed_rating: item.agreed_rating != "" && item.agreed_rating !== null && item.agreed_rating != 0,
           };
-        });
-        console.table(employeeRecords);
-        setEmployeesRecords(employeeRecords);
+        })
+        setCheckRecords(emp);
+        
       } catch (error) {
         console.log(error.message);
       }
@@ -140,18 +152,6 @@ console.table(employeesRecords);
             </select>
           </div>
         </div>
-        {/* <div className="flex flex-row p-2 items-center gap-3">
-          <span>Status:</span>
-          <select className=" text-black rounded-md p-1 px-2 outline-none">
-            <option value="All">All</option>
-            <option value="For Verification/Validation">
-              For Verification/Validation
-            </option>
-            <option value="Pending">Pending</option>
-            <option value="To Sign">To Sign</option>
-            <option value="Completed">Completed</option>
-          </select>
-        </div> */}
         {workYear != -1 ? (
           <>
             {!creation_dateColumnAllFalse ? (
@@ -163,9 +163,7 @@ console.table(employeesRecords);
                         <div className="flex justify-center px-2">Name</div>
                       </td>
                       <td>
-                        <div className="flex justify-center px-2">
-                          Status
-                        </div>
+                        <div className="flex justify-center px-2">Status</div>
                       </td>
                       <td>
                         <div className="flex justify-center px-2">
@@ -194,12 +192,12 @@ console.table(employeesRecords);
                     </tr>
                   </thead>
                   <tbody>
-                    {employeesRecords.length !== 0 &&
-                      employeesRecords.map((employee, index) => (
+                    {getEmployees.length !== 0 &&
+                      getEmployees.map((employee, index) => (
                         <React.Fragment key={index}>
                           {index === 0 ||
                           employee.employee_id !==
-                            employeesRecords[index - 1].employee_id ? (
+                            getEmployees[index - 1].employee_id ? (
                             <tr>
                               <td>
                                 <div className="pl-4 pt-2">
@@ -208,17 +206,17 @@ console.table(employeesRecords);
                               </td>
                               <td>
                                 <div className="flex items-center justify-center pt-2">
-                                  {!employee.creation_date ? (
+                                  {employee.creation_date == 0? (
                                     <Badge
                                       message={"No goals yet"}
                                       className={"text-[.8rem] px-2"}
                                     />
                                   ) : (
                                     <Badge
-                                    message={"Ongoing"}
-                                    type="success"
-                                    className={"text-[.8rem] px-1"}
-                                  />
+                                      message={"Ongoing"}
+                                      type="success"
+                                      className={"text-[.8rem] px-1"}
+                                    />
                                   )}
                                 </div>
                               </td>
