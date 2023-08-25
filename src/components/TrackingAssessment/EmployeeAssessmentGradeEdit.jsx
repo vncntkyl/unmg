@@ -7,9 +7,9 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGradeEdit() {
-  const employee_id = sessionStorage.getItem("assessment_id");
-  const assesssment_quarter = sessionStorage.getItem("assessment_quarter");
-  const workYear = sessionStorage.getItem("work_year");
+  const employee_id = localStorage.getItem("assessment_id");
+  const assesssment_quarter = localStorage.getItem("assessment_quarter");
+  const workYear = localStorage.getItem("work_year");
   const [grades, setGrades] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [loading, toggleLoading] = useState(true);
@@ -272,9 +272,6 @@ export default function EmployeeAssessmentGradeEdit() {
   }
   const tbl_name = getTableName(quarter);
 
-  
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const totalResults = results.flat(Infinity);
@@ -288,12 +285,14 @@ export default function EmployeeAssessmentGradeEdit() {
     const kpiId = grades.map(item => item.kpi_kpi_id);
     const kpiWeight = grades.map(item => item.kpi_weight);
     const formspID = grades.find((item) => item.sp_id).sp_id;
+    const evalID = grades.find((item) => item.hr_eval_form_id).hr_eval_form_id;
       const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("quarter", quarter);
       fData.append("tbl_name", tbl_name);
       fData.append("formspID", formspID);
+      fData.append("evalID", evalID);
       fData.append("kpi_id", JSON.stringify(kpiId));
       fData.append("kpi_weight", JSON.stringify(kpiWeight));
       fData.append("total_results", JSON.stringify(result));
@@ -341,7 +340,7 @@ export default function EmployeeAssessmentGradeEdit() {
             onChange={(event) => {
               const selectedQuarter = event.target.value;
               setQuarter(selectedQuarter);
-              sessionStorage.setItem("assessment_quarter", selectedQuarter);
+              localStorage.setItem("assessment_quarter", selectedQuarter);
             }}
             value={quarter}
           >
@@ -365,7 +364,7 @@ export default function EmployeeAssessmentGradeEdit() {
         </>
       ) : quarter == 1 ? (
         <>
-          <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+          <div className="w-full h-[71.4vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
             <div className="w-full pb-4">
               <span className="font-bold text-dark-gray">Employee Grades:</span>
             </div>
@@ -520,7 +519,8 @@ export default function EmployeeAssessmentGradeEdit() {
                                           </div>
                                         </td>
                                         <td className="w-[20%]">
-                                          <div className="p-2 flex items-center justify-center">
+                                          <div className="p-2 flex flex-col items-center justify-center">
+                                            <div className="w-full bg-default">{grade.fq_achievements ? grade.fq_achievements : ""}</div>
                                             <textarea
                                               className="h-40 w-full bg-default"
                                               name="achievements"
@@ -595,7 +595,7 @@ export default function EmployeeAssessmentGradeEdit() {
         </>
       ) : quarter == 2 ? (
         <>
-        <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+        <div className="w-full h-[71.4vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
           <div className="w-full pb-4">
             <span className="font-bold text-dark-gray">Employee Grades:</span>
           </div>
@@ -755,7 +755,9 @@ export default function EmployeeAssessmentGradeEdit() {
                                         </div>
                                       </td>
                                       <td className="w-[20%]">
-                                        <div className="p-2 flex items-center justify-center">
+                                        
+                                        <div className="p-2 flex flex-col items-center justify-center">
+                                        <div className="w-full bg-default">{grade.myr_achievements ? grade.myr_achievements : ""}</div>  
                                           <textarea
                                             className="h-40 w-full bg-default"
                                             name="achievements"
@@ -852,7 +854,7 @@ export default function EmployeeAssessmentGradeEdit() {
         </>
       ) : quarter == 3 ? (
         <>
-        <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+        <div className="w-full h-[71.4vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
           <div className="w-full pb-4">
             <span className="font-bold text-dark-gray">Employee Grades:</span>
           </div>
@@ -1007,7 +1009,8 @@ export default function EmployeeAssessmentGradeEdit() {
                                         </div>
                                       </td>
                                       <td className="w-[20%]">
-                                        <div className="p-2 flex items-center justify-center">
+                                      <div className="p-2 flex flex-col items-center justify-center">
+                                        <div className="w-full bg-default">{grade.tq_achievements ? grade.tq_achievements : ""}</div>  
                                           <textarea
                                             className="h-40 w-full bg-default"
                                             name="achievements"
@@ -1082,7 +1085,7 @@ export default function EmployeeAssessmentGradeEdit() {
         </>
       ) : quarter == 4 ? (
         <>
-        <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+        <div className="w-full h-[71.4vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
           <div className="w-full pb-4">
             <span className="font-bold text-dark-gray">Employee Grades:</span>
           </div>
@@ -1242,7 +1245,8 @@ export default function EmployeeAssessmentGradeEdit() {
                                         </div>
                                       </td>
                                       <td className="w-[20%]">
-                                        <div className="p-2 flex items-center justify-center">
+                                      <div className="p-2 flex flex-col items-center justify-center">
+                                        <div className="w-full bg-default">{grade.yee_achievements ? grade.yee_achievements : ""}</div>  
                                           <textarea
                                             className="h-40 w-full bg-default"
                                             name="achievements"
@@ -1270,7 +1274,13 @@ export default function EmployeeAssessmentGradeEdit() {
                                       <td className="w-[10%]">
                                       <div className="p-2 flex items-center justify-center">
                                       <select 
-                                        className="rounded-md px-4 flex content-center bg-default"
+                                        className={classNames(
+                                          "rounded-md px-4 flex content-center",
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 1 || grade.yee_status == 1 ? 'bg-un-red-light-1 text-un-red-dark' : 
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 2 || grade.yee_status == 2 ? 'bg-un-yellow-light text-un-yellow-dark' : 
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 3 || grade.yee_status == 3 ? 'bg-un-green-light text-un-green-dark' : 
+                                          status[pillarIndex]?.[objectiveIndex]?.[gradeIndex] == 4 || grade.yee_status == 4 ? 'bg-un-green-light text-un-green-dark' : 
+                                          'bg-default')}
                                         value={agreed[pillarIndex]?.[objectiveIndex]?.[gradeIndex]?.value || (grade.agreed_rating != "null" ? grade.agreed_rating: "")}
                                         onChange={(event) =>
                                           handleAgreedChange(
@@ -1281,10 +1291,10 @@ export default function EmployeeAssessmentGradeEdit() {
                                             event
                                           )}>
                                           <option value={0} disabled>---</option>
-                                          <option value={1}>1</option>
-                                          <option value={2}>2</option>
-                                          <option value={3}>3</option>
-                                          <option value={4}>4</option>
+                                          <option value={1} className="bg-un-red-light-1 text-un-red-dark ">1</option>
+                                          <option value={2} className="bg-un-yellow-light text-un-yellow-dark">2</option>
+                                          <option value={3} className="bg-un-green-light text-un-green-dark">3</option>
+                                          <option value={4} className="bg-un-green-light text-un-green-dark">4</option>
                                         </select>
                                       </div>
                                       </td>

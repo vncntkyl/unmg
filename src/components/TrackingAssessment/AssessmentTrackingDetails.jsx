@@ -72,7 +72,7 @@ export default function AssessmentTrackingDetails({
       const parameters = {
         params: {
           metrics: true,
-          workYear: sessionStorage.getItem("workYear"),
+          workYear: workYear,
           empID: emp_id,
         },
       };
@@ -83,9 +83,9 @@ export default function AssessmentTrackingDetails({
         console.log(error.message);
       }
     };
-    toggleLoading(false);
     getMetrics();
     getfinalUserPerformance();
+    toggleLoading(false);
   }, [emp_id, workYear]);
 
   return loading ? (
@@ -193,15 +193,15 @@ export default function AssessmentTrackingDetails({
                                 href="/tracking_and_assessment/create"
                                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                                 onClick={() => {
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "assessment_quarter",
                                     quarter
                                   );
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "quarter_name",
                                     quarterName
                                   );
-                                  sessionStorage.setItem("workYear", workYear);
+                                  localStorage.setItem("workYear", workYear);
                                 }}
                               >
                                 Edit
@@ -225,9 +225,9 @@ export default function AssessmentTrackingDetails({
                   href="/tracking_and_assessment/create"
                   className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
                   onClick={() => {
-                    sessionStorage.setItem("assessment_quarter", quarter);
-                    sessionStorage.setItem("quarter_name", quarterName);
-                    sessionStorage.setItem("workYear", workYear);
+                    localStorage.setItem("assessment_quarter", quarter);
+                    localStorage.setItem("quarter_name", quarterName);
+                    localStorage.setItem("workYear", workYear);
                   }}
                 >
                   <AiOutlinePlus />
@@ -338,15 +338,15 @@ export default function AssessmentTrackingDetails({
                                 href="/tracking_and_assessment/create"
                                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                                 onClick={() => {
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "assessment_quarter",
                                     quarter
                                   );
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "quarter_name",
                                     quarterName
                                   );
-                                  sessionStorage.setItem("workYear", workYear);
+                                  localStorage.setItem("workYear", workYear);
                                 }}
                               >
                                 Edit
@@ -382,9 +382,9 @@ export default function AssessmentTrackingDetails({
                       href="/tracking_and_assessment/create"
                       className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
                       onClick={() => {
-                        sessionStorage.setItem("assessment_quarter", quarter);
-                        sessionStorage.setItem("quarter_name", quarterName);
-                        sessionStorage.setItem("workYear", workYear);
+                        localStorage.setItem("assessment_quarter", quarter);
+                        localStorage.setItem("quarter_name", quarterName);
+                        localStorage.setItem("workYear", workYear);
                       }}
                     >
                       <AiOutlinePlus />
@@ -497,15 +497,15 @@ export default function AssessmentTrackingDetails({
                                 href="/tracking_and_assessment/create"
                                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                                 onClick={() => {
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "assessment_quarter",
                                     quarter
                                   );
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "quarter_name",
                                     quarterName
                                   );
-                                  sessionStorage.setItem("workYear", workYear);
+                                  localStorage.setItem("workYear", workYear);
                                 }}
                               >
                                 Edit
@@ -541,9 +541,9 @@ export default function AssessmentTrackingDetails({
                       href="/tracking_and_assessment/create"
                       className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
                       onClick={() => {
-                        sessionStorage.setItem("assessment_quarter", quarter);
-                        sessionStorage.setItem("quarter_name", quarterName);
-                        sessionStorage.setItem("workYear", workYear);
+                        localStorage.setItem("assessment_quarter", quarter);
+                        localStorage.setItem("quarter_name", quarterName);
+                        localStorage.setItem("workYear", workYear);
                       }}
                     >
                       <AiOutlinePlus />
@@ -656,15 +656,15 @@ export default function AssessmentTrackingDetails({
                                 href="/tracking_and_assessment/create"
                                 className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded px-2 py-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                                 onClick={() => {
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "assessment_quarter",
                                     quarter
                                   );
-                                  sessionStorage.setItem(
+                                  localStorage.setItem(
                                     "quarter_name",
                                     quarterName
                                   );
-                                  sessionStorage.setItem("workYear", workYear);
+                                  localStorage.setItem("workYear", workYear);
                                 }}
                               >
                                 Edit
@@ -708,9 +708,9 @@ export default function AssessmentTrackingDetails({
                       href="/tracking_and_assessment/create"
                       className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
                       onClick={() => {
-                        sessionStorage.setItem("assessment_quarter", quarter);
-                        sessionStorage.setItem("quarter_name", quarterName);
-                        sessionStorage.setItem("workYear", workYear);
+                        localStorage.setItem("assessment_quarter", quarter);
+                        localStorage.setItem("quarter_name", quarterName);
+                        localStorage.setItem("workYear", workYear);
                       }}
                     >
                       <AiOutlinePlus />

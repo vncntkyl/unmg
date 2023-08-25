@@ -15,7 +15,7 @@ export default function EmployeeAssessmentTable({ emp_id }) {
   const [actionVisibility, setActionVisibility] = useState(false);
   const { currentUser, kpiDurations } = useAuth();
   const [workYear, setWorkYear] = useState(-1);
-  sessionStorage.setItem("assessment_quarter", 0);
+  localStorage.setItem("assessment_quarter", 0);
   const toggleActionVisibility = () => {
     setActionVisibility((prev) => !prev);
   };

@@ -1071,7 +1071,7 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
-    function select($empID, $workYear)
+    function selectTrackingEmployees($empID, $workYear)
     {
         $this->setStatement("
         SELECT
@@ -1390,6 +1390,10 @@ class Form extends Controller
     {
         $this->setStatement("UPDATE {$tbl_name} SET results = :results, agreed_rating = :agreed_rating, wtd_rating = :wtd_rating, remarks = :remarks WHERE hr_eval_form_kpi_id = :hr_eval_form_kpi_id AND hr_eval_form_sp_id = :hr_eval_form_sp_id");
         return $this->statement->execute([':results' => $currenttotal_results, ':agreed_rating' => $currenttotal_rating, ':wtd_rating' => $currenttotal_weight, ':remarks' => $currenttotal_remarks, ':hr_eval_form_kpi_id' => $currentKpiId, ':hr_eval_form_sp_id' => $formspID]);
+    }
+    function updateTotalQuarterlyRating($yeetotal, $column, $evalID){
+        $this->setStatement("UPDATE hr_eval_form_sp_quarterly_ratings SET $column = :res WHERE eval_form_id = :eval_id");
+        return $this->statement->execute([':res' => $yeetotal, 'eval_id' => $evalID]);
     }
 
 

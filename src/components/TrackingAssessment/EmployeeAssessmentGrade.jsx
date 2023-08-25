@@ -63,8 +63,8 @@ export default function EmployeeAssessmentGrade({
     sessionStorage.setItem("assessment_id", employee_id);
     navigate(
       "/tracking_and_assessment/employee_assessment/" +
-        sessionStorage.getItem("assessment_name") +
-        "/grade_edit"
+      sessionStorage.getItem("assessment_name") +
+      "/grade_edit"
     );
   };
   let wtd = 0;
@@ -108,7 +108,7 @@ export default function EmployeeAssessmentGrade({
                 </>
               ) : (
                 <>
-                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                  <div className="w-full h-[66.2vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
                     <div className="w-full pb-4">
                       <span className="font-bold text-dark-gray">
                         Employee Grades:
@@ -268,8 +268,9 @@ export default function EmployeeAssessmentGrade({
                                                   </div>
                                                 </td>
                                                 <td className="w-[20%]">
-                                                  <div className="p-2 flex items-center justify-center">
-                                                    {grade.fq_results}
+                                                  <div className="p-2">
+                                                  {grade.fq_achievements ? (<><span className="font-semibold flex flex-col">Achievement<span className="font-normal pl-4">{grade.fq_achievements}</span></span></>) : ""}
+                                                    {grade.fq_results ? (<><span className="font-semibold flex flex-col">Rater's Note:<span className="font-normal pl-4">{grade.fq_results}</span></span></>) : ""}
                                                   </div>
                                                 </td>
                                                 <td className="w-[20%]">
@@ -324,7 +325,7 @@ export default function EmployeeAssessmentGrade({
                 </>
               ) : (
                 <>
-                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                  <div className="w-full h-[66.2vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
                     <div className="w-full pb-4">
                       <span className="font-bold text-dark-gray">
                         Employee Grades:
@@ -507,37 +508,38 @@ export default function EmployeeAssessmentGrade({
                                                   </div>
                                                 </td>
                                                 <td className="w-[20%]">
-                                                  <div className="p-2 flex items-center justify-center">
-                                                    {grade.myr_results}
+                                                  <div className="p-2">
+                                                    {grade.myr_achievements ? (<><span className="font-semibold flex flex-col">Achievement<span className="font-normal pl-4">{grade.myr_achievements}</span></span></>) : ""}
+                                                    {grade.myr_results ? (<><span className="font-semibold flex flex-col">Rater's Note:<span className="font-normal pl-4">{grade.myr_results}</span></span></>) : ""}
                                                   </div>
                                                 </td>
                                                 <td className="w-[10%]">
                                                   <div className="p-2 flex items-center justify-center">
-                                                    {grade.myr_status  == 1 ? (
-                                                    <Badge
-                                                    message={"Struggling/Help!"}
-                                                    type={"failure"}
-                                                    className={"text-[.8rem] px-1"}
-                                                    />
-                                                    ): grade.myr_status == 2 ? (
-                                                        <Badge
+                                                    {grade.myr_status == 1 ? (
+                                                      <Badge
+                                                        message={"Struggling/Help!"}
+                                                        type={"failure"}
+                                                        className={"text-[.8rem] px-1"}
+                                                      />
+                                                    ) : grade.myr_status == 2 ? (
+                                                      <Badge
                                                         message={"Lagging/Behind"}
                                                         type={"warning"}
                                                         className={"text-[.8rem] px-1"}
-                                                        />
-                                                    ): grade.myr_status == 3 ? (
-                                                      <Badge
-                                                      message={"Ontrack/Completed"}
-                                                      type={"success"}
-                                                      className={"text-[.8rem] px-1"}
                                                       />
-                                                  ): grade.myr_status == 4 ? (
-                                                    <Badge
-                                                    message={"Ontrack/Completed"}
-                                                    type={"success"}
-                                                    className={"text-[.8rem] px-1"}
-                                                    />
-                                                  ) : "Loading..."}
+                                                    ) : grade.myr_status == 3 ? (
+                                                      <Badge
+                                                        message={"Ontrack/Completed"}
+                                                        type={"success"}
+                                                        className={"text-[.8rem] px-1"}
+                                                      />
+                                                    ) : grade.myr_status == 4 ? (
+                                                      <Badge
+                                                        message={"Ontrack/Completed"}
+                                                        type={"success"}
+                                                        className={"text-[.8rem] px-1"}
+                                                      />
+                                                    ) : "Loading..."}
                                                   </div>
                                                 </td>
                                                 <td className="w-[20%]">
@@ -592,7 +594,7 @@ export default function EmployeeAssessmentGrade({
                 </>
               ) : (
                 <>
-                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                  <div className="w-full h-[66.2vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
                     <div className="w-full pb-4">
                       <span className="font-bold text-dark-gray">
                         Employee Grades:
@@ -770,8 +772,9 @@ export default function EmployeeAssessmentGrade({
                                                   </div>
                                                 </td>
                                                 <td className="w-[20%]">
-                                                  <div className="p-2 flex items-center justify-center">
-                                                    {grade.tq_results}
+                                                <div className="p-2">
+                                                  {grade.tq_achievements ? (<><span className="font-semibold flex flex-col">Achievement<span className="font-normal pl-4">{grade.tq_achievements}</span></span></>) : ""}
+                                                    {grade.tq_results ? (<><span className="font-semibold flex flex-col">Rater's Note:<span className="font-normal pl-4">{grade.tq_results}</span></span></>) : ""}
                                                   </div>
                                                 </td>
                                                 <td className="w-[20%]">
@@ -826,7 +829,7 @@ export default function EmployeeAssessmentGrade({
                 </>
               ) : (
                 <>
-                  <div className="w-full h-[36.8rem] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
+                  <div className="w-full h-[66.2vh] bg-default px-2 pb-4 pt-2 rounded-md overflow-y-scroll">
                     <div className="w-full pb-4">
                       <span className="font-bold text-dark-gray">
                         Employee Grades:
@@ -1014,8 +1017,9 @@ export default function EmployeeAssessmentGrade({
                                                   </div>
                                                 </td>
                                                 <td className="w-[20%]">
-                                                  <div className="p-2 flex items-center justify-center">
-                                                    {grade.yee_results}
+                                                <div className="p-2">
+                                                  {grade.yee_achievements ? (<><span className="font-semibold flex flex-col">Achievement<span className="font-normal pl-4">{grade.yee_achievements}</span></span></>) : ""}
+                                                    {grade.yee_results ? (<><span className="font-semibold flex flex-col">Rater's Note:<span className="font-normal pl-4">{grade.yee_results}</span></span></>) : ""}
                                                   </div>
                                                 </td>
                                                 <td className="w-[5%]">
@@ -1048,8 +1052,42 @@ export default function EmployeeAssessmentGrade({
                       ))}
                   </div>
                   <div className="w-full flex justify-between pt-4">
-                    <div>
-                    {quarter == 4 && (<>Total Weighted Score: <span className="text-[1.1rem] font-semibold">{wtd.toFixed(2)}</span>/4</>)}
+                    <div className="flex items-center">
+                      {quarter == 4 && (<>Total Weighted Score: <span className="text-[1.1rem] font-semibold">
+                        <div>
+                        {wtd.toFixed(2) >= 1.00 && wtd.toFixed(2) <= 1.75 ?
+                          <Badge
+                            message={wtd.toFixed(2)}
+                            type={"failure"}
+                            className={"text-[1.2rem] px-1"}
+                          />
+                          : wtd.toFixed(2) >= 1.76 && wtd.toFixed(2) <= 2.50 ?
+                            <Badge
+                              message={wtd.toFixed(2)}
+                              type={"warning"}
+                              className={"text-[1.2rem] px-1"}
+                            />
+                            : wtd.toFixed(2) >= 2.51 && wtd.toFixed(2) <= 3.25 ?
+                              <Badge
+                                message={wtd.toFixed(2)}
+                                type={"success"}
+                                className={"text-[1.2rem] px-1"}
+                              />
+                              : wtd.toFixed(2) >= 3.26 && wtd.toFixed(2) <= 4.00 ?
+                                <Badge
+                                  message={wtd.toFixed(2)}
+                                  type={"success"}
+                                  className={"text-[1.2rem] px-1"}
+                                />
+                                :
+                                <Badge
+                                  message={"Internal Error"}
+                                  type={"failure"}
+                                  className={"text-[1.2rem] px-1"}
+                                />
+                        }
+                        </div>
+                        </span>/4</>)}
                     </div>
                     <button
                       className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"

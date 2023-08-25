@@ -59,7 +59,7 @@ if (isset($_GET['empRecords']))
         else {
             $empID = $_GET['empID'];
             $workYear = $_GET['workYear'];
-            $json_employee = json_encode($form->select($empID, $workYear), JSON_UNESCAPED_UNICODE);
+            $json_employee = json_encode($form->selectTrackingEmployees($empID, $workYear), JSON_UNESCAPED_UNICODE);
             echo $json_employee;
         }
 }

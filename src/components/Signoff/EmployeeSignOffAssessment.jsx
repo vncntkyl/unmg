@@ -10,8 +10,8 @@ import classNames from "classnames";
 export default function EmployeeSignOffAssessment() {
   const [loading, toggleLoading] = useState(true);
   const navigate = useNavigate();
-  const emp_id = sessionStorage.getItem("assessment_id");
-  const workYear = sessionStorage.getItem("work_year");
+  const emp_id = localStorage.getItem("assessment_id");
+  const workYear = localStorage.getItem("work_year");
   const evaluator_id = JSON.parse(localStorage.getItem("currentUser")).employee_id;
   const [finalGrade, setFinalGrade] = useState([]);
   const [metrics, setMetrics] = useState([]);

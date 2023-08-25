@@ -227,7 +227,7 @@
             onChange={(event) => {
               const selectedQuarter = event.target.value;
               setQuarter(selectedQuarter);
-              sessionStorage.setItem("assessment_quarter", selectedQuarter);
+              localStorage.setItem("assessment_quarter", selectedQuarter);
             }}
             value={quarter}
           >

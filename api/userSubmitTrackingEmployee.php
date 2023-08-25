@@ -31,6 +31,7 @@ if (isset($_POST['submit'])) {
         else if($quarter == 4)
         {
             $tbl_name = $_POST['tbl_name'];
+            $evalID = $_POST['evalID'];
             $formspID = $_POST['formspID'];
             $kpi_id = json_decode($_POST['kpi_id']);
             $kpi_weight = json_decode($_POST['kpi_weight']);
@@ -40,6 +41,14 @@ if (isset($_POST['submit'])) {
             foreach ($kpi_weight as $index => $weight) {
                 $currentWeight[] = ($weight / 100) * $agreed_rating[$index];
             }
+            $sum = 0;
+            foreach ($currentWeight as $key => $w){
+                $sum += $w;
+            }
+            $yeetotal = $sum;
+            $column = 'YearEndRating';
+            $res = $submitGrade->updateTotalQuarterlyRating($yeetotal, $column, $evalID);
+
 
             $count = count($kpi_id);
             for ($i = 0; $i < $count; $i++) {

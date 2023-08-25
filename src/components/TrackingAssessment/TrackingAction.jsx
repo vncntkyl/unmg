@@ -32,18 +32,18 @@ export default function TrackingAction({
   };
   const { formatName } = useFunction();
   const viewUserAssessment = () => {
-    sessionStorage.setItem("work_year", workYear);
-    sessionStorage.setItem("assessment_id", employee_id);
-    sessionStorage.setItem("assessment_name", formatName(first_name));
+    localStorage.setItem("work_year", workYear);
+    localStorage.setItem("assessment_id", employee_id);
+    localStorage.setItem("assessment_name", formatName(first_name));
     navigate(
       "/tracking_and_assessment/employee_assessment/" + formatName(first_name)
     );
   };
 
   const gradeUserAssessment = () => {
-    sessionStorage.setItem("work_year", workYear);
-    sessionStorage.setItem("assessment_id", employee_id);
-    sessionStorage.setItem("assessment_name", formatName(first_name));
+    localStorage.setItem("work_year", workYear);
+    localStorage.setItem("assessment_id", employee_id);
+    localStorage.setItem("assessment_name", formatName(first_name));
     navigate(
       "/tracking_and_assessment/employee_assessment/" +
         formatName(first_name) +
@@ -52,9 +52,9 @@ export default function TrackingAction({
   };
 
   const approveUserAssessment = () => {
-    sessionStorage.setItem("work_year", workYear);
-    sessionStorage.setItem("assessment_id", employee_id);
-    sessionStorage.setItem("assessment_name", formatName(first_name));
+    localStorage.setItem("work_year", workYear);
+    localStorage.setItem("assessment_id", employee_id);
+    localStorage.setItem("assessment_name", formatName(first_name));
     navigate(
       "/tracking_and_assessment/employee_assessment/" +
         formatName(first_name) +

@@ -9,8 +9,8 @@ import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessment() {
   const [loading, toggleLoading] = useState(true);
-  const employee_id = sessionStorage.getItem("assessment_id");
-  const workYear = sessionStorage.getItem("work_year");
+  const employee_id = localStorage.getItem("assessment_id");
+  const workYear = localStorage.getItem("work_year");
   const [panel, setPanel] = useState("Achievements");
   const [quarter, setQuarter] = useState(0);
   const [achievements, setAchievements] = useState([]);
@@ -90,9 +90,9 @@ export default function EmployeeAssessment() {
         <Toggle
           paths={[
             "/tracking_and_assessment/employee_assessment/" +
-              sessionStorage.getItem("assessment_name"),
+              localStorage.getItem("assessment_name"),
             "/tracking_and_assessment/employee_assessment/" +
-              sessionStorage.getItem("assessment_name") +
+              localStorage.getItem("assessment_name") +
               "/",
           ]}
           panel={panel}

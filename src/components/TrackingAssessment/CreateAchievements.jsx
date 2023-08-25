@@ -6,7 +6,7 @@ import { developmentAPIs as url } from "../../context/apiList";
 export default function CreateAchievements({ emp_id }) {
   const [loading, toggleLoading] = useState(true);
   const navigate = useNavigate();
-  const quarter = sessionStorage.getItem("assessment_quarter");
+  const quarter = localStorage.getItem("assessment_quarter");
   const quarter_id =
     quarter == 1
       ? "fq_"
@@ -15,7 +15,7 @@ export default function CreateAchievements({ emp_id }) {
       : quarter == 3
       ? "tq_"
       : "yee_";
-  const quarter_name = sessionStorage.getItem("quarter_name");
+  const quarter_name = localStorage.getItem("quarter_name");
   const [finalUserAchievements, setfinalUserAchievements] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [metrics, setMetrics] = useState([]);
@@ -85,7 +85,7 @@ export default function CreateAchievements({ emp_id }) {
       const parameters = {
         params: {
           checkUserAchievements: true,
-          workYear: sessionStorage.getItem("workYear"),
+          workYear: localStorage.getItem("workYear"),
           empID: emp_id,
         },
       };
@@ -108,7 +108,7 @@ export default function CreateAchievements({ emp_id }) {
       const parameters = {
         params: {
           metrics: true,
-          workYear: sessionStorage.getItem("workYear"),
+          workYear: localStorage.getItem("workYear"),
           empID: emp_id,
         },
       };
