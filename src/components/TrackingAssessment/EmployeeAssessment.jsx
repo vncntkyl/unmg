@@ -13,6 +13,7 @@ export default function EmployeeAssessment() {
   const workYear = localStorage.getItem("work_year");
   const [panel, setPanel] = useState("Achievements");
   const [quarter, setQuarter] = useState(0);
+  const [metrics, setMetrics] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [checkAchievements, setCheckAchievements] = useState([]);
   const navigate = useNavigate();
@@ -23,8 +24,8 @@ export default function EmployeeAssessment() {
           userTrackingIndividualEmployeeAchievements: true,
           workYear: workYear,
           empID: employee_id,
-        }
-      }
+        },
+      };
       try {
         const response = await axios.get(url.retrieveTracking, parameters);
         setAchievements(response.data);
@@ -66,8 +67,25 @@ export default function EmployeeAssessment() {
         console.log(error.message);
       }
     };
-    toggleLoading(false);
+    const getMetrics = async () => {
+      const parameters = {
+        params: {
+          metrics: true,
+          workYear: workYear,
+          empID: employee_id,
+        },
+      };
+      try {
+        const response = await axios.get(url.retrieveTracking, parameters);
+        setMetrics(response.data);
+        console.table(response.data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getMetrics();
     getAchievements();
+    toggleLoading(false);
   }, [employee_id, quarter]);
   return loading ? (
     "Loading..."
@@ -287,16 +305,21 @@ export default function EmployeeAssessment() {
                       <span className="w-full block p-2">
                         Achievements Submitted:
                       </span>
-                      <div className="bg-white rounded-md text-black font-normal">
+                      <div className="bg-white rounded-md text-black font-normal h-[65.4vh] overflow-y-scroll">
                         <table className="w-full">
-                          <thead>
+                          <thead className="sticky top-0">
                             <tr>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
                                 <div className="text-white flex justify-center">
                                   KPI Description
                                 </div>
                               </th>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold">
+                                <div className="text-white flex justify-center">
+                                  Metrics
+                                </div>
+                              </th>
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
                                 <div className="text-white flex justify-center">
                                   Achievements
                                 </div>
@@ -309,6 +332,36 @@ export default function EmployeeAssessment() {
                                 <td>
                                   <div className="px-10 pb-2">
                                     {achievement.kpi_desc}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="p-2 flex items-center">
+                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                      <table>
+                                        {metrics
+                                          .filter(
+                                            (metric) =>
+                                              metric.metric_kpi_id ===
+                                              achievement.kpi_kpi_id
+                                          )
+                                          .map((metric) => (
+                                            <tr key={metric.target_metrics_id}>
+                                              <td
+                                                valign="top"
+                                                className="whitespace-nowrap"
+                                              >
+                                                <span>
+                                                  {metric.target_metrics_score}
+                                                </span>
+                                                {" - "}
+                                              </td>
+                                              <td className="whitespace-break-spaces">
+                                                {metric.target_metrics_desc}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                      </table>
+                                    </div>
                                   </div>
                                 </td>
                                 <td>
@@ -338,16 +391,21 @@ export default function EmployeeAssessment() {
                       <span className="w-full block p-2">
                         Achievements Submitted:
                       </span>
-                      <div className="bg-white rounded-md text-black font-normal">
+                      <div className="bg-white rounded-md text-black font-normal h-[65.4vh] overflow-y-scroll">
                         <table className="w-full">
-                          <thead>
+                          <thead className="sticky top-0">
                             <tr>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
                                 <div className="text-white flex justify-center">
                                   KPI Description
                                 </div>
                               </th>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold">
+                                <div className="text-white flex justify-center">
+                                  Metrics
+                                </div>
+                              </th>
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
                                 <div className="text-white flex justify-center">
                                   Achievements
                                 </div>
@@ -360,6 +418,36 @@ export default function EmployeeAssessment() {
                                 <td>
                                   <div className="px-10 pb-2">
                                     {achievement.kpi_desc}
+                                  </div>
+                                </td>
+                                <td>
+                                <div className="p-2 flex items-center">
+                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                      <table>
+                                        {metrics
+                                          .filter(
+                                            (metric) =>
+                                              metric.metric_kpi_id ===
+                                              achievement.kpi_kpi_id
+                                          )
+                                          .map((metric) => (
+                                            <tr key={metric.target_metrics_id}>
+                                              <td
+                                                valign="top"
+                                                className="whitespace-nowrap"
+                                              >
+                                                <span>
+                                                  {metric.target_metrics_score}
+                                                </span>
+                                                {" - "}
+                                              </td>
+                                              <td className="whitespace-break-spaces">
+                                                {metric.target_metrics_desc}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                      </table>
+                                    </div>
                                   </div>
                                 </td>
                                 <td>
@@ -389,16 +477,21 @@ export default function EmployeeAssessment() {
                       <span className="w-full block p-2">
                         Achievements Submitted:
                       </span>
-                      <div className="bg-white rounded-md text-black font-normal">
+                      <div className="bg-white rounded-md text-black font-normal h-[65.4vh] overflow-y-scroll">
                         <table className="w-full">
-                          <thead>
+                          <thead className="sticky top-0">
                             <tr>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
                                 <div className="text-white flex justify-center">
                                   KPI Description
                                 </div>
                               </th>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold">
+                                <div className="text-white flex justify-center">
+                                  Metrics
+                                </div>
+                              </th>
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
                                 <div className="text-white flex justify-center">
                                   Achievements
                                 </div>
@@ -411,6 +504,36 @@ export default function EmployeeAssessment() {
                                 <td>
                                   <div className="px-10 pb-2">
                                     {achievement.kpi_desc}
+                                  </div>
+                                </td>
+                                <td>
+                                <div className="p-2 flex items-center">
+                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                      <table>
+                                        {metrics
+                                          .filter(
+                                            (metric) =>
+                                              metric.metric_kpi_id ===
+                                              achievement.kpi_kpi_id
+                                          )
+                                          .map((metric) => (
+                                            <tr key={metric.target_metrics_id}>
+                                              <td
+                                                valign="top"
+                                                className="whitespace-nowrap"
+                                              >
+                                                <span>
+                                                  {metric.target_metrics_score}
+                                                </span>
+                                                {" - "}
+                                              </td>
+                                              <td className="whitespace-break-spaces">
+                                                {metric.target_metrics_desc}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                      </table>
+                                    </div>
                                   </div>
                                 </td>
                                 <td>
@@ -435,21 +558,26 @@ export default function EmployeeAssessment() {
                 </>
               ) : quarter == 4 ? (
                 <>
-                {checkAchievements.yee_achievements ? (
+                  {checkAchievements.yee_achievements ? (
                     <>
                       <span className="w-full block p-2">
                         Achievements Submitted:
                       </span>
-                      <div className="bg-white rounded-md text-black font-normal">
+                      <div className="bg-white rounded-md text-black font-normal h-[65.4vh] overflow-y-scroll">
                         <table className="w-full">
-                          <thead>
+                          <thead className="sticky top-0">
                             <tr>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tl-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tl-md">
                                 <div className="text-white flex justify-center">
                                   KPI Description
                                 </div>
                               </th>
-                              <th className="w-1/2 bg-un-blue-light font-semibold rounded-tr-md">
+                              <th className="w-1/3 bg-un-blue-light font-semibold">
+                                <div className="text-white flex justify-center">
+                                  Metrics
+                                </div>
+                              </th>
+                              <th className="w-1/3 bg-un-blue-light font-semibold rounded-tr-md">
                                 <div className="text-white flex justify-center">
                                   Achievements
                                 </div>
@@ -462,6 +590,36 @@ export default function EmployeeAssessment() {
                                 <td>
                                   <div className="px-10 pb-2">
                                     {achievement.kpi_desc}
+                                  </div>
+                                </td>
+                                <td>
+                                <div className="p-2 flex items-center">
+                                    <div className="p-2 flex text-[.8rem] justify-center items-start">
+                                      <table>
+                                        {metrics
+                                          .filter(
+                                            (metric) =>
+                                              metric.metric_kpi_id ===
+                                              achievement.kpi_kpi_id
+                                          )
+                                          .map((metric) => (
+                                            <tr key={metric.target_metrics_id}>
+                                              <td
+                                                valign="top"
+                                                className="whitespace-nowrap"
+                                              >
+                                                <span>
+                                                  {metric.target_metrics_score}
+                                                </span>
+                                                {" - "}
+                                              </td>
+                                              <td className="whitespace-break-spaces">
+                                                {metric.target_metrics_desc}
+                                              </td>
+                                            </tr>
+                                          ))}
+                                      </table>
+                                    </div>
                                   </div>
                                 </td>
                                 <td>
@@ -502,7 +660,12 @@ export default function EmployeeAssessment() {
       {/* Grades */}
 
       {panel === "Grades" && (
-        <EmployeeAssessmentGrade employee_id={employee_id} quarter={quarter} workYear={workYear} checkAchievements={checkAchievements} />
+        <EmployeeAssessmentGrade
+          employee_id={employee_id}
+          quarter={quarter}
+          workYear={workYear}
+          checkAchievements={checkAchievements}
+        />
       )}
     </>
   );

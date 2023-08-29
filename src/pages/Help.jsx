@@ -31,7 +31,7 @@ export default function Help({}) {
     <>
       <section className="relative">
         <div className="w-full min-h-[175px] bg-un-blue" />
-        <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[24.5rem] xl:pr-32">
+        <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
           <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between">
             <div>
               <span className="text-un-blue text-[1.2rem] font-semibold">

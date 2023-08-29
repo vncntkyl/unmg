@@ -99,7 +99,7 @@ export default function DashboardOverview() {
     <>
       {/* overview */}
       <Overview />
-      <div className=" bg-default m-2 grid gap-2 md:grid-cols-2 lg:grid-cols-6 lg:ml-[18rem] lg:mr-6 xl:ml-[24.5rem] xl:mr-32">
+      <div className=" bg-default m-2 grid gap-2 md:grid-cols-2 lg:grid-cols-6 lg:ml-[18rem] lg:mr-6 xl:ml-[18.5rem] xl:mr-[1.5rem]">
         {/* HEADER */}
         <Graph
           title="Performance Evaluation Status"

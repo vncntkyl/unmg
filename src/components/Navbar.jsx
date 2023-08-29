@@ -50,7 +50,7 @@ export default function Navbar({
   return (
     user_data && (
       <>
-        <nav className="w-[100%] bg-un-blue mx-auto px-4 py-2 grid grid-cols-[.5fr 1fr 1fr] gap-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-32 z-[10]">
+        <nav className="w-[100%] bg-un-blue mx-auto px-4 py-2 grid grid-cols-[.5fr 1fr 1fr] gap-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-18 z-[10]">
           <div className=" col-[1/2] flex flex-row gap-2 py-2 items-center w-fit">
             <img
               src={logo}

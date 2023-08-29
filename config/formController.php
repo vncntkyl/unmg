@@ -1005,6 +1005,7 @@ class Form extends Controller
         hr_kpi_year_duration.from_date,
         hr_kpi_year_duration.to_date,
         hr_kpi.kpi_desc,
+        hr_kpi.kpi_id AS kpi_kpi_id,
         hr_eval_form_fp.hr_eval_form_fp_id AS first_part_id,
         hr_eval_form.myr_rater_1 AS myr_rater_1,
         hr_eval_form.myr_rater_2 AS myr_rater_2,

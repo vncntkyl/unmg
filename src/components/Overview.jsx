@@ -48,7 +48,7 @@ export default function Overview() {
   return (
     <>
       {/* top overview */}
-      <div className="w-full bg-un-blue min-h-[100px] px-4 pb-4 lg:pl-[18rem] lg:pr-6 xl:pl-[24.5rem] xl:pr-32">
+      <div className="w-full bg-un-blue min-h-[100px] px-4 pb-4 lg:pl-[18rem] lg:pr-6 xl:pl-[18.5rem] xl:pr-[1.1rem]">
         <div className="pb-2 flex flex-col xs:flex-row xs:items-end xs:justify-between">
           <p className="text-white font-semibold text-[1.1rem] ">
             Admin Overview
