@@ -4,9 +4,10 @@ import { useAuth } from "../context/authContext";
 import ViewCompanyPlans from "../components/ViewCompanyPlans";
 import DateRangePicker from "../components/DateRangePicker";
 import { GrFormSearch, GrUnorderedList } from "react-icons/gr";
+
 export default function CompanyPlans({}) {
   const currentYear = new Date().getFullYear();
-  const { companyList, departmentList } = useAuth();
+  const { companyList, departmentList, currentUser } = useAuth();
   const [selectedYear, setselectedYear] = useState(currentYear);
   const [selectedCompanyID, setSelectedCompanyID] = useState("All");
   const [departments, completeDepartments] = useState([]);
@@ -54,11 +55,11 @@ export default function CompanyPlans({}) {
 
     fetchCompanyDepartments();
   }, [selectedCompanyID]);
-
+  const userType = JSON.parse(currentUser).user_type;
   return (
     <>
       <section className="relative">
-        <div className="w-full min-h-[175px] bg-un-blue" />
+      <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
         <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
           <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between ">
             {/* HEADER */}

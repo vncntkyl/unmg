@@ -47,10 +47,11 @@ export default function Navbar({
     };
     setImg();
   }, []);
+  const userType = JSON.parse(currentUser).user_type
   return (
     user_data && (
       <>
-        <nav className="w-[100%] bg-un-blue mx-auto px-4 py-2 grid grid-cols-[.5fr 1fr 1fr] gap-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-18 z-[10]">
+        <nav className={classNames("w-[100%] mx-auto px-4 py-2 grid grid-cols-[.5fr_1fr_s1fr] gap-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-18 z-[10]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")}>
           <div className=" col-[1/2] flex flex-row gap-2 py-2 items-center w-fit">
             <img
               src={logo}

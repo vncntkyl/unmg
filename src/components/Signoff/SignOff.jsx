@@ -108,11 +108,12 @@ export default function SignOff({
             })}
         </select>
         </div>
-        {workYear && workYear != -1 ? (
+        {workYear && workYear != -1 && isForm ? (
         <div>
           <button
             className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
             onClick={() => {
+              
             }}
           >
             Sign Assessment

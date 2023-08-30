@@ -8,6 +8,7 @@ import { useAuth } from "../context/authContext";
 import Toggle from "../components/Toggle";
 import axios from "axios";
 import { developmentAPIs as url } from "../context/apiList";
+import classNames from "classnames";
 
 export default function AgreementSignOff() {
   const [loading, toggleLoading] = useState(true);
@@ -64,12 +65,13 @@ export default function AgreementSignOff() {
     const currentUser = JSON.parse(localStorage.getItem("currentUser")).employee_id;
     setEmployeeID(currentUser);
   }, []);
+  const userType = JSON.parse(currentUser).user_type;
   return employeeID !== -1 && (loading ? (
     "Loading..."
   ) : (
     <>
       <section className="relative">
-        <div className="w-full min-h-[175px] bg-un-blue" />
+      <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
         <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
           <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between">
             {/* HEADER */}

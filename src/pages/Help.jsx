@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import PurposeHelp from "../components/PurposeHelp";
 import InstructionsHelp from "../components/InstructionsHelp";
 import FAQsHelp from "../components/FAQsHelp";
 import classNames from "classnames";
 import { useFunction } from "../context/FunctionContext";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { useAuth } from "../context/authContext";
 
 export default function Help({}) {
   const { getPath } = useFunction();
   const [links, toggleLinks] = useState(false);
+  const { currentUser } = useAuth();
 
-  const Link = ({ link, title }) => {
+  const CustomLink = ({ link, title }) => {
     return (
-      <a
-        href={link}
+      <Link
+        to={link}
         className={classNames(
           getPath() === link ||
             (getPath() === "/help" && link === "/help/purpose")
@@ -24,13 +26,14 @@ export default function Help({}) {
         )}
       >
         {title}
-      </a>
+      </Link>
     );
   };
+  const userType = JSON.parse(currentUser).user_type;
   return (
     <>
       <section className="relative">
-        <div className="w-full min-h-[175px] bg-un-blue" />
+      <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
         <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
           <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between">
             <div>
@@ -54,17 +57,17 @@ export default function Help({}) {
                     : "pointer-events-none max-h-[0px] translate-y-[-100%] opacity-0"
                 )}
               >
-                <Link link={"/help/purpose"} title={"Purpose"} />
-                <Link link={"/help/instructions"} title={"Instructions"} />
-                <Link
+                <CustomLink link={"/help/purpose"} title={"Purpose"} />
+                <CustomLink link={"/help/instructions"} title={"Instructions"} />
+                <CustomLink
                   link={"/help/FAQs"}
                   title={"Frequently Asked Questions (FAQs)"}
                 />
               </div>
               <div className="hidden lg:flex flex-row">
-                <Link link={"/help/purpose"} title={"Purpose"} />
-                <Link link={"/help/instructions"} title={"Instructions"} />
-                <Link
+                <CustomLink link={"/help/purpose"} title={"Purpose"} />
+                <CustomLink link={"/help/instructions"} title={"Instructions"} />
+                <CustomLink
                   link={"/help/FAQs"}
                   title={"Frequently Asked Questions (FAQs)"}
                 />

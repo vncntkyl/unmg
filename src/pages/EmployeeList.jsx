@@ -7,6 +7,7 @@ import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
 import BulkEmployeeAdd from "../components/BulkEmployeeAdd";
 import { useAuth } from "../context/authContext";
+import classNames from "classnames";
 
 export default function EmployeeList() {
   const { getPath } = useFunction();
@@ -30,10 +31,11 @@ export default function EmployeeList() {
     document.title =
       "Employees | United Neon Media Group Performance Management System";
   }, []);
+  const userType = JSON.parse(currentUser).user_type;
   return (
     <>
       <section className="relative">
-        <div className="w-full min-h-[175px] bg-un-blue" />
+      <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
         <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
           <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">

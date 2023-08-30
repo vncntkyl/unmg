@@ -29,6 +29,7 @@ export default function Roles() {
     unassignUser,
     updateUserRole,
     departmentList,
+    currentUser
   } = useAuth();
   const { getPath, capitalizeSentence } = useFunction();
 
@@ -97,10 +98,11 @@ export default function Roles() {
     };
     getSuperAdmin();
   }, []);
+  const usertype = JSON.parse(currentUser).user_type;
   return (
     <>
       <section className="relative">
-        <div className="w-full min-h-[175px] bg-un-blue" />
+      <div className={classNames("w-full min-h-[175px]", usertype <= 2 ? "bg-un-blue" : usertype >= 3 && usertype <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
         <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
           <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
