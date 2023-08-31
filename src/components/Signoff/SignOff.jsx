@@ -3,6 +3,8 @@ import axios from "axios";
 import { format } from "date-fns";
 import { developmentAPIs as url } from "../../context/apiList";
 import Badge from "../../misc/Badge";
+import SignOffModal from "../../misc/SignOffModal";
+import classNames from "classnames";
 export default function SignOff({
   emp_id,
   kpiYears = [],
@@ -14,7 +16,8 @@ export default function SignOff({
   const [finalGrade, setFinalGrade] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [signature, setSignature] = useState([]);
-  const [totalPillar, setTotalPillar] = useState([]);
+  const [signModal, setsignModal] = useState(false);
+  const [checkSignature, setCheckSignature] = useState([]);
   let pCounter,
     oCounter,
     kCounter = 1;
@@ -66,6 +69,11 @@ export default function SignOff({
       try {
         const response = await axios.get(url.retrieveSignOff, parameters);
         setSignature(response.data);
+        const check_signature = response.data.every(
+          (item) =>
+            item.ratee === null || item.ratee === undefined || item.ratee === ""
+        );
+        setCheckSignature(check_signature);
       } catch (error) {
         console.log(error.message);
       }
@@ -75,51 +83,81 @@ export default function SignOff({
     getFinalGrade();
     toggleLoading(false);
   }, [emp_id, workYear]);
-
+  console.log(checkSignature);
+  const eval_id = signature.map((item) => item.hr_eval_form_id);
+  const full_name = finalGrade.length > 0 && finalGrade[0].employee_name;
   return loading ? (
     "Loading..."
   ) : (
     <>
+      {signModal && (
+        <SignOffModal
+          modalType={"ratee"}
+          closeModal={setsignModal}
+          eval_id={JSON.parse(eval_id)}
+          title={"Approve Assessment"}
+          employee_id={JSON.parse(emp_id)}
+          full_name={full_name}
+          continuebutton={"Confirm"}
+        />
+      )}
+      <div
+        className={classNames(
+          "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
+          signModal === false && "z-[-1] hidden pointer-events-none"
+        )}
+        onClick={() => {
+          setsignModal(false);
+        }}
+      />
       <div className="flex flex-row pb-2 px-2 gap-2 items-center justify-between">
         <div>
-        <label htmlFor="workyear" className="font-semibold mr-2">
-          Select Work Year:
-        </label>
-        <select
-          id="workyear"
-          className="bg-default rounded-md p-1 px-2"
-          defaultValue={-1}
-          onChange={(e) => {
-            setKpiDuration(parseInt(e.target.value));
-          }}
-        >
-          <option value="-1" disabled>
-            --Select Year--
-          </option>
-          {kpiYears.length > 0 &&
-            kpiYears.map((year) => {
-              return (
-                <option value={year.kpi_year_duration_id}>
-                  {format(new Date(year.from_date), "MMM d, yyyy") +
-                    " - " +
-                    format(new Date(year.to_date), "MMM d, yyyy")}
-                </option>
-              );
-            })}
-        </select>
-        </div>
-        {workYear && workYear != -1 && isForm ? (
-        <div>
-          <button
-            className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
-            onClick={() => {
-              
+          <label htmlFor="workyear" className="font-semibold mr-2">
+            Select Work Year:
+          </label>
+          <select
+            id="workyear"
+            className="bg-default rounded-md p-1 px-2"
+            defaultValue={-1}
+            onChange={(e) => {
+              setKpiDuration(parseInt(e.target.value));
             }}
           >
-            Sign Assessment
-          </button>
+            <option value="-1" disabled>
+              --Select Year--
+            </option>
+            {kpiYears.length > 0 &&
+              kpiYears.map((year) => {
+                return (
+                  <option value={year.kpi_year_duration_id}>
+                    {format(new Date(year.from_date), "MMM d, yyyy") +
+                      " - " +
+                      format(new Date(year.to_date), "MMM d, yyyy")}
+                  </option>
+                );
+              })}
+          </select>
         </div>
-        ): ""}
+        {workYear && workYear != -1 && isForm ? (
+          <>
+            {checkSignature ? (
+              <div>
+                <button
+                  className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue-light text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                  onClick={() => {
+                    setsignModal(true);
+                  }}
+                >
+                  Sign Assessment
+                </button>
+              </div>
+            ) : (
+              ""
+            )}
+          </>
+        ) : (
+          ""
+        )}
       </div>
       {workYear && workYear === -1 ? (
         <>

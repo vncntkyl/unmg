@@ -3,68 +3,16 @@ import { GrClose } from "react-icons/gr";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 export default function SignOffModal({
   modalType,
   closeModal,
-  eval_id,
-  employee_id,
-  evaluator_id,
-  evaluator,
-  full_name,
   title,
-  continuebutton,
+  description
 }) {
-  const navigate = useNavigate();
-  const [recommendation, setRecommendation] = useState("");
-  const [comments, setComments] = useState("");
-  const handleSignOffRecommendationsSubmit = (e) => {
-    e.preventDefault();
-    if (recommendation.length === 0) {
-      alert("Please fill all the fields!");
-    }
-    else{
-      const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
-      let fData = new FormData();
-      fData.append("submit", true);
-      fData.append("rater", true);
-      fData.append("eval_id", eval_id);
-      fData.append("rater_id", evaluator_id);
-      fData.append("evaluator_tier", evaluator);
-      fData.append("full_name", full_name);
-      fData.append("recommendation", recommendation);
-      axios
-        .post(url, fData)
-        .then((response) => alert(response.data))
-        .catch((error) => alert(error));
-      closeModal(false);
-      navigate("/sign_off");
-    }
-  };
 
-  const handleSignOffCommentsSubmit = (e) => {
-    e.preventDefault();
-    if (comments.length === 0) {
-      alert("Please fill all the fields!");
-    } else {
-      const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
-      let fData = new FormData();
-      fData.append("submit", true);
-      fData.append("ratee", true);
-      fData.append("eval_id", eval_id);
-      fData.append("employee_id", employee_id);
-      fData.append("comments", comments);
-      axios
-        .post(url, fData)
-        .then((response) => alert(response.data))
-        .catch((error) => alert(error));
-      closeModal(false);
-      navigate("/sign_off");
-    }
-  };
   return (
     <>
-      {modalType && modalType === "rater" ? (
+      {modalType && modalType === "signOffRater" ? (
         <>
           <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
             <form>
@@ -124,7 +72,7 @@ export default function SignOffModal({
             </form>
           </div>
         </>
-      ) : modalType === "ratee" ? (
+      ) : modalType === "signOffRater" ? (
         <>
           <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
             <form>

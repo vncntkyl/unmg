@@ -1656,9 +1656,14 @@ class Form extends Controller
     }
 
     //Sign Assessment
-    function finalApproveAssessment($eval_id, $rater_id, $evaluator_tier, $recommendation, $recommendation_id)
+    function finalApproveAssessmentRater($eval_id, $rater_id, $evaluator_tier, $recommendation, $recommendation_id)
     {
         $this->setStatement("UPDATE hr_eval_form SET {$evaluator_tier} = :rater_id, {$recommendation_id} = :recommendation WHERE hr_eval_form_id = :eval_id");
         return $this->statement->execute([':rater_id' => $rater_id, ':eval_id' => $eval_id, 'recommendation' => $recommendation]);
+    }
+    function finalApproveAssessmentRatee($eval_id, $employee_id, $comments)
+    {
+        $this->setStatement("UPDATE hr_eval_form SET ratee = :employee_id, ratees_comment = :comments WHERE hr_eval_form_id = :eval_id");
+        return $this->statement->execute([':employee_id' => $employee_id, ':eval_id' => $eval_id, 'comments' => $comments]);
     }
 }

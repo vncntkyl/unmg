@@ -71,9 +71,10 @@ export default function EmployeeSignOffTable({ emp_id }) {
                         tertiary_eval_name: item.tertiary_eval_name,
                         sp_id: item.sp_id,
                         creation_date: item.creation_date > 0 && item.creation_date !== null,
-                        check_primary_sign: item.rater_1 !== null,
-                        check_secondary_sign: item.rater_2 !== null,
-                        check_tertiary_sign: item.rater_3 !== null
+                        check_ratee_sign: item.ratee !== null && item.ratee !== 0,
+                        check_primary_sign: item.rater_1 !== null && item.rater_1 !== 0,
+                        check_secondary_sign: item.rater_2 !== null && item.rater_2 !== 0,
+                        check_tertiary_sign: item.rater_3 !== null && item.rater_3 !== 0
                     };
                 });
                 setEmployeesRecords(employeeRecords);
@@ -168,8 +169,9 @@ export default function EmployeeSignOffTable({ emp_id }) {
                                     <React.Fragment key={index}>
                                         <tr>
                                             <td>
-                                                <div className="pl-4 pt-2">
-                                                    {employee.employee_name}
+                                                <div className="w-auto grid grid-cols-[1fr_6fr] gap-2">
+                                                    <span className="flex items-center justify-end"><AiFillCheckCircle className={classNames(employee.check_ratee_sign ? "text-un-green" : "text-white")} /></span>
+                                                    <span>{employee.employee_name != null ? employee.employee_name : "-"}</span>
                                                 </div>
                                             </td>
                                             <td>
