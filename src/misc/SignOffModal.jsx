@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { GrClose } from "react-icons/gr";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import SubmissionModal from "./SubmissionModal";
 
 
 export default function SignOffModal({
@@ -18,6 +19,7 @@ export default function SignOffModal({
   const navigate = useNavigate();
   const [recommendation, setRecommendation] = useState("");
   const [comments, setComments] = useState("");
+  const [submissionModal, setSubmissionModal] = useState(false);
   const handleSignOffRecommendationsSubmit = (e) => {
     e.preventDefault();
     if (recommendation.length === 0) {

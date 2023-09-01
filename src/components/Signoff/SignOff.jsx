@@ -216,7 +216,7 @@ export default function SignOff({
                                 (objectives) =>
                                   objectives.obj_objective.length > 0 &&
                                   objectives.obj_eval_pillar_id ===
-                                    pillar.eval_pillar_id
+                                  pillar.eval_pillar_id
                               )
                               .map((objectives) => (
                                 <div
@@ -394,7 +394,7 @@ export default function SignOff({
                       <span className="p-2 text-[1.2rem] flex items-center justify-end gap-2 font-semibold">
                         Total:
                         {item.YearEndRating >= 1.0 &&
-                        item.YearEndRating <= 1.75 ? (
+                          item.YearEndRating <= 1.75 ? (
                           <Badge
                             message={item.YearEndRating}
                             type={"failure"}
@@ -430,132 +430,188 @@ export default function SignOff({
                         )}
                       </span>
                     </div>
-                    <div className="grid grid-cols-2">
-                      <div className="flex flex-col">
-                        <span className="font-semibold px-4">Sign Off:</span>
-                        <div className="grid grid-cols-2 mx-2 gap-2">
-                          <span className="font-semibold">Name</span>
-                          <span className="font-semibold text-center">
-                            Status
-                          </span>
-
-                          <span className="flex flex-col">
-                            {item.employee_name}
-                            <span className="text-[.8rem]">Ratee</span>
-                          </span>
-                          <span className="flex items-center justify-center">
-                            {item.ratee ? (
-                              <Badge
-                                message={"Approved"}
-                                type={"success"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            ) : (
-                              <Badge
-                                message={"Pending"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            )}
-                          </span>
-
-                          <span className="flex flex-col">
-                            {item.primary_eval_name != null
-                              ? item.primary_eval_name
-                              : "-"}
-                            <span className="text-[.8rem]">
-                              Primary Evaluator
-                            </span>
-                          </span>
-                          <span className="flex items-center justify-center">
-                            {item.rater_1 ? (
-                              <Badge
-                                message={"Approved"}
-                                type={"success"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            ) : (
-                              <Badge
-                                message={"Pending"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            )}
-                          </span>
-
-                          <span className="flex flex-col">
-                            {item.secondary_eval_name != null
-                              ? item.secondary_eval_name
-                              : "-"}
-                            <span className="text-[.8rem]">
-                              Secondary Evaluator
-                            </span>
-                          </span>
-                          <span className="flex items-center justify-center">
-                            {item.rater_2 ? (
-                              <Badge
-                                message={"Approved"}
-                                type={"success"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            ) : (
-                              <Badge
-                                message={"Pending"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            )}
-                          </span>
-
-                          <span className="flex flex-col">
-                            {item.tertiary_eval_name != null
-                              ? item.tertiary_eval_name
-                              : "-"}
-                            <span className="text-[.8rem]">
-                              Tertiary Evaluator
-                            </span>
-                          </span>
-                          <span className="flex items-center justify-center">
-                            {item.rater_3 ? (
-                              <Badge
-                                message={"Approved"}
-                                type={"success"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            ) : (
-                              <Badge
-                                message={"Pending"}
-                                className={
-                                  "text-[.8rem] w-fit px-1 text-center"
-                                }
-                              />
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="font-semibold">
-                        <span>
-                          Ratee's Comment:
-                          <p className="font-normal">{item.ratees_comment}</p>
-                        </span>
-                        <span>
-                          Recommendations:
-                          <p className="font-normal">{item.recommendation}</p>
-                        </span>
-                      </div>
-                      <span></span>
+                    <span className="font-semibold px-4">Sign Off:</span>
+                    <div className="px-4">
+                      <table className="w-full">
+                        <thead>
+                          <tr>
+                            <th className="w-[30%]">Name</th>
+                            <th className="w-[20%]">Status</th>
+                            <th className="w-[50%]">Recommendation</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="w-[30%]">
+                              <span className="flex flex-col">
+                                {item.employee_name}
+                                <span className="text-[.8rem]">Ratee</span>
+                              </span>
+                            </td>
+                            <td className="w-[20%]">
+                              <span className="flex flex-col items-center">
+                                {item.ratee ? (
+                                  <Badge
+                                    message={"Approved"}
+                                    type={"success"}
+                                    className={"text-[.8rem] w-fit px-1 text-center"}
+                                  />
+                                ) : (
+                                  <Badge
+                                    message={"Pending"}
+                                    className={"text-[.8rem] w-fit px-1 text-center"}
+                                  />
+                                )}
+                              </span>
+                            </td>
+                            <td className="w-[50%]">
+                              <span className="font-semibold">
+                                Ratee's Comment:
+                                <p className="font-normal whitespace-pre-line pl-4">
+                                  {item.ratees_comment ? item.ratees_comment : "-"}
+                                </p>
+                              </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="w-[30%]">
+                              <span className="flex flex-col">
+                                {item.primary_eval_name != null
+                                  ? item.primary_eval_name
+                                  : "-"}
+                                <span className="text-[.8rem]">Primary Evaluator</span>
+                              </span>
+                            </td>
+                            <td className="w-[20%]">
+                              <span className="flex items-center justify-center">
+                                {item.primary_eval_name === null ? (
+                                  "-"
+                                ) : (
+                                  <>
+                                    {item.rater_1 ? (
+                                      <Badge
+                                        message={"Approved"}
+                                        type={"success"}
+                                        className={
+                                          "text-[.8rem] w-fit px-1 text-center"
+                                        }
+                                      />
+                                    ) : (
+                                      <Badge
+                                        message={"Pending"}
+                                        className={
+                                          "text-[.8rem] w-fit px-1 text-center"
+                                        }
+                                      />
+                                    )}
+                                  </>
+                                )}
+                              </span>
+                            </td>
+                            <td className="w-[50%]">
+                              <span className="font-semibold">
+                                Primary Evaluator's Comment:
+                                <p className="font-normal whitespace-pre-line pl-4">
+                                  {item.recommendation_1 ? item.recommendation_1 : "-"}
+                                </p>
+                              </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="w-[30%]">
+                              <span className="flex flex-col">
+                                {item.secondary_eval_name != null
+                                  ? item.secondary_eval_name
+                                  : "-"}
+                                <span className="text-[.8rem]">
+                                  Secondary Evaluator
+                                </span>
+                              </span>
+                            </td>
+                            <td className="w-[20%]">
+                              <span className="flex items-center justify-center">
+                                {item.secondary_eval_name === null ? (
+                                  "-"
+                                ) : (
+                                  <>
+                                    {item.rater_2 ? (
+                                      <Badge
+                                        message={"Approved"}
+                                        type={"success"}
+                                        className={
+                                          "text-[.8rem] w-fit px-1 text-center"
+                                        }
+                                      />
+                                    ) : (
+                                      <Badge
+                                        message={"Pending"}
+                                        className={
+                                          "text-[.8rem] w-fit px-1 text-center"
+                                        }
+                                      />
+                                    )}
+                                  </>
+                                )}
+                              </span>
+                            </td>
+                            <td className="w-[50%]">
+                              <span className="font-semibold">
+                                Secondary Evaluator's Comment:
+                                <p className="font-normal whitespace-pre-line pl-4">
+                                  {item.recommendation_2 ? item.recommendation_2 : "-"}
+                                </p>
+                              </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="w-[30%]">
+                              <span className="flex flex-col">
+                                {item.tertiary_eval_name != null
+                                  ? item.tertiary_eval_name
+                                  : "-"}
+                                <span className="text-[.8rem]">Tertiary Evaluator</span>
+                              </span>
+                            </td>
+                            <td className="w-[20%]">
+                              <span className="flex items-center justify-center">
+                                {item.tertiary_eval_name === null ? (
+                                  "-"
+                                ) : (
+                                  <>
+                                    {item.rater_3 ? (
+                                      <Badge
+                                        message={"Approved"}
+                                        type={"success"}
+                                        className={
+                                          "text-[.8rem] w-fit px-1 text-center"
+                                        }
+                                      />
+                                    ) : (
+                                      <Badge
+                                        message={"Pending"}
+                                        className={
+                                          "text-[.8rem] w-fit px-1 text-center"
+                                        }
+                                      />
+                                    )}
+                                  </>
+                                )}
+                              </span>
+                            </td>
+                            <td className="w-[50%]">
+                              <span className="font-semibold">
+                                Tertiary Evaluator's Comment:
+                                <p className="font-normal whitespace-pre-line pl-4">
+                                  {item.recommendation_3 ? item.recommendation_3 : "-"}
+                                </p>
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
+
+
                   </div>
                 ))}
               </div>

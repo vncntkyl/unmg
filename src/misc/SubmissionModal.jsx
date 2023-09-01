@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { GrClose } from "react-icons/gr";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 export default function SignOffModal({
   modalType,
@@ -12,7 +10,7 @@ export default function SignOffModal({
 
   return (
     <>
-      {modalType && modalType === "signOffRater" ? (
+      {modalType && modalType === "signOff" ? (
         <>
           <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
             <form>
@@ -35,19 +33,10 @@ export default function SignOffModal({
                   >
                     Recommendations
                   </label>
-                  <textarea
-                    id="recommendation"
-                    type="text"
-                    rows={4}
-                    className="bg-default block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-md resize-none"
-                    placeholder="Enter your recommendations..."
-                    value={recommendation}
-                    onChange={(e) => setRecommendation(e.target.value)}
-                  ></textarea>
                 </div>
                 <div className="py-2">
                   <span>
-                    I confirm that the evaluation of this employee {full_name}{" "}
+                    I confirm that the evaluation of this employee
                     for this work year is accurate and appropriate based on
                     their performance over the past and their job
                     responsibilities.
