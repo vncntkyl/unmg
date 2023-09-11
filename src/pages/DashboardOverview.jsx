@@ -293,7 +293,7 @@ export default function DashboardOverview() {
             chart={
               <>
                 <div className="h-[375px] overflow-y-auto rounded-md shadow-md">
-                  {data !== [] && (
+                  {data != [] && (
                     <table className="w-full">
                       <thead>
                         <tr className="bg-un-blue-light text-white sticky top-0 shadow-md">

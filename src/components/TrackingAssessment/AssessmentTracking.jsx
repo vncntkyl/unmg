@@ -26,12 +26,12 @@ export default function AssessmentTracking({
     quarter == 1
       ? "fq_"
       : quarter == 2
-      ? "myr_"
-      : quarter == 3
-      ? "tq_"
-      : quarter == 4
-      ? "yee_"
-      : "";
+        ? "myr_"
+        : quarter == 3
+          ? "tq_"
+          : quarter == 4
+            ? "yee_"
+            : "";
   //checkers
   const [checkForm, setcheckForm] = useState(false);
   const [checkResult, setCheckResults] = useState(false);
@@ -200,37 +200,41 @@ export default function AssessmentTracking({
                   </select>
                 </div>
                 <div className="flex flex-row items-center gap-2  justify-between md:justify-start">
-                  <label className="font-semibold">Status:</label>
-                  {!checkResult && !checkAchievements ? (
-                    <Badge
-                      message={"Awaiting Submission"}
-                      className={"text-[.8rem] px-1"}
-                    />
-                  ) : !checkResult && checkAchievements ? (
-                    <Badge
-                      message={"Achievements Submitted"}
-                      type="warning"
-                      className={"text-[.8rem] px-1"}
-                    />
-                  ) : checkResult && !checkAchievements ? (
-                    <Badge
-                      message={"Graded/No Achievements"}
-                      type="success"
-                      className={"text-[.8rem] px-1"}
-                    />
-                  ) : checkResult && checkAchievements ? (
-                    <Badge
-                      message={"Graded"}
-                      type="success"
-                      className={"text-[.8rem] px-1"}
-                    />
-                  ) : (
-                    <Badge
-                      message={"Internal Error"}
-                      type="failure"
-                      className={"text-[.8rem] px-1"}
-                    />
-                  )}
+                  {quarter != 0 ? (
+                    <>
+                      <label className="font-semibold">Status:</label>
+                      {!checkResult && !checkAchievements ? (
+                        <Badge
+                          message={"Awaiting Submission"}
+                          className={"text-[.8rem] px-1"}
+                        />
+                      ) : !checkResult && checkAchievements ? (
+                        <Badge
+                          message={"Achievements Submitted"}
+                          type="warning"
+                          className={"text-[.8rem] px-1"}
+                        />
+                      ) : checkResult && !checkAchievements ? (
+                        <Badge
+                          message={"Graded/No Achievements"}
+                          type="success"
+                          className={"text-[.8rem] px-1"}
+                        />
+                      ) : checkResult && checkAchievements ? (
+                        <Badge
+                          message={"Graded"}
+                          type="success"
+                          className={"text-[.8rem] px-1"}
+                        />
+                      ) : (
+                        <Badge
+                          message={"Internal Error"}
+                          type="failure"
+                          className={"text-[.8rem] px-1"}
+                        />
+                      )}
+                    </>
+                  ) : ""}
                 </div>
               </div>
               {quarter == 0 ? (
@@ -243,36 +247,24 @@ export default function AssessmentTracking({
               ) : (
                 <>
                   {(checkResult && checkAchievements) ||
-                  (checkResult && !checkAchievements) ? (
+                    (checkResult && !checkAchievements) ? (
                     <>
-                      <div className="md:text-[.8rem] px-2 lg:text-[1rem]">
+                      <div className="md:text-[.8rem] lg:text-[1rem]">
                         {pillarName.map((pillar, index) => (
                           <button
                             key={pillar.pillar_id}
                             className={`px-2 text-[1rem]
-                                 ${index > 0 ? "border-1" : ""}
-                                 ${
-                                   index < pillarName.length - 1
-                                     ? "border-r"
-                                     : ""
-                                 }
-                                 ${
-                                   selectedPillar !== index
-                                     ? "hover:border-b-2 border-b-un-red-light"
-                                     : ""
-                                 } 
-                                 ${
-                                   selectedPillar === index
-                                     ? "border-b-4 border-b-un-red-light"
-                                     : ""
-                                 }`}
+                                 ${selectedPillar === index
+                                ? "p-2 font-semibold bg-default rounded-t-md"
+                                : ""
+                              }`}
                             onClick={() => setSelectedPillar(index)}
                           >
                             {pillar.pillar_name}
                           </button>
                         ))}
                       </div>
-                      <div className="bg-default rounded-md p-2">
+                      <div className="bg-default rounded-b-md rounded-tr-md p-2">
                         {pillarName
                           .filter(
                             (pillar) =>
@@ -290,7 +282,7 @@ export default function AssessmentTracking({
                               </div>
                               <div className="pt-10 px-2 w-full">
                                 {quarter == 2 ? (
-                                  <div className="w-full flex flex-col h-[63.2vh] overflow-y-scroll">
+                                  <div className="w-full flex flex-col h-[61vh] overflow-y-scroll">
                                     <span className="font-semibold">
                                       Objective
                                     </span>
@@ -438,7 +430,7 @@ export default function AssessmentTracking({
                                                     <td className="w-[10%] p-2 bg-white">
                                                       <div className="flex items-center justify-center">
                                                         {performance.status ==
-                                                        1 ? (
+                                                          1 ? (
                                                           <Badge
                                                             message={
                                                               "Struggling/Help!"
@@ -499,7 +491,7 @@ export default function AssessmentTracking({
                                       ))}
                                   </div>
                                 ) : quarter == 4 ? (
-                                  <div className="w-full flex flex-col h-[60vh] overflow-y-scroll">
+                                  <div className="w-full flex flex-col h-[58vh] overflow-y-scroll">
                                     <span className="font-semibold">
                                       Objective
                                     </span>
@@ -674,7 +666,7 @@ export default function AssessmentTracking({
                                       ))}
                                   </div>
                                 ) : (
-                                  <div className="w-full flex flex-col h-[63.2vh] overflow-y-scroll">
+                                  <div className="w-full flex flex-col h-[61vh] overflow-y-scroll">
                                     <span className="font-semibold">
                                       Objective
                                     </span>
@@ -837,7 +829,7 @@ export default function AssessmentTracking({
                               <span className="text-[1.1rem] font-semibold">
                                 <div>
                                   {wtd.toFixed(2) >= 1.0 &&
-                                  wtd.toFixed(2) <= 1.75 ? (
+                                    wtd.toFixed(2) <= 1.75 ? (
                                     <Badge
                                       message={wtd.toFixed(2)}
                                       type={"failure"}

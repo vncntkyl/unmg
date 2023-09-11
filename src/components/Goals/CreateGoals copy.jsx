@@ -6,7 +6,6 @@ import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
 import { useFunction } from "../../context/FunctionContext";
 import { developmentAPIs as url } from "../../context/apiList";
-import classNames from "classnames";
 
 export default function CreateGoals({
   pillars = [],
@@ -17,11 +16,10 @@ export default function CreateGoals({
   const [user, setUser] = useState("");
   const [duration, setDuration] = useState();
   const [users, setUsers] = useState([]);
-  const [disablePillar, setDisablePillar] = useState([]);
   const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
   const { kpiDurations, fetchUsers } = useAuth();
   const { capitalizeSentence } = useFunction();
-  console.log(disablePillar);
+
   const addObjective = (i) => {
     const objectiveTemplate = {
       objective_description: "",
@@ -319,17 +317,6 @@ export default function CreateGoals({
     }
   }, [pillars]);
 
-
-  //for disabling purposes
-  useEffect(() => {
-    setDisablePillar(new Array(pillars.length).fill(true).map((item, idx) => {
-      return idx === 0 ? !item : item
-    }));
-  }, [pillars]);
-
-
-
-
   useEffect(() => {
     const setup = async () => {
       setUsers(await fetchUsers());
@@ -426,7 +413,7 @@ export default function CreateGoals({
             goals.map((goal, index) => {
               return (
                 <>
-                  <div className={classNames("bg-default p-2 rounded-md", disablePillar[index] ? "pointer-events-none text-default-dark" : "")}>
+                  <div className="bg-default p-2 rounded-md">
                     <div className="flex flex-row items-center justify-between gap-1 p-1 lg:w-1/2">
                       <label htmlFor="pillar_name" className="font-bold">
                         {goal.pillar_name}
@@ -628,24 +615,15 @@ export default function CreateGoals({
                           </>
                         );
                       })}
-                      <div className="flex items-center justify-between mt-2">
-                        {getTotalKpiCount(goals) < 12 && (
-                          <button
-                            type="button"
-                            className={classNames(" p-1 px-2 rounded", disablePillar[index] ? "bg-mid-gray text-gray-400" : "bg-dark-gray text-white")}
-                            onClick={() => addObjective(index)}
-                          >
-                            Add Objective
-                          </button>
-                        )}
+                      {getTotalKpiCount(goals) < 12 && (
                         <button
                           type="button"
-                          className={classNames("text-white p-1 px-2 rounded m-2", disablePillar[index] ? "bg-un-blue-light-1" : "bg-un-blue-light")}
-                          onClick={() => setDisablePillar(index)}
+                          className="bg-un-blue-light text-white p-1 px-2 rounded"
+                          onClick={() => addObjective(index)}
                         >
-                          Finish
+                          Add Objective
                         </button>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </>

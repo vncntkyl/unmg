@@ -111,7 +111,7 @@ export default function AssessmentTrackingDetails({
                             <span className="w-full block pt-8 pb-2">
                               Achievements Submitted:
                             </span>
-                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                            <div className="bg-white rounded-md text-black font-normal h-[61vh] overflow-auto hide_scroll">
                               <table className="w-full">
                                 <thead className="sticky top-0">
                                   <tr>
@@ -256,7 +256,7 @@ export default function AssessmentTrackingDetails({
                             <span className="w-full block pt-8 pb-2">
                               Achievements Submitted:
                             </span>
-                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                            <div className="bg-white rounded-md text-black font-normal h-[61vh] overflow-auto hide_scroll">
                               <table className="w-full">
                                 <thead className="sticky top-0">
                                   <tr>
@@ -415,7 +415,7 @@ export default function AssessmentTrackingDetails({
                             <span className="w-full block pt-8 pb-2">
                               Achievements Submitted:
                             </span>
-                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                            <div className="bg-white rounded-md text-black font-normal h-[61vh] overflow-auto hide_scroll">
                               <table className="w-full">
                                 <thead className="sticky top-0">
                                   <tr>
@@ -574,7 +574,7 @@ export default function AssessmentTrackingDetails({
                             <span className="w-full block pt-8 pb-2">
                               Achievements Submitted:
                             </span>
-                            <div className="bg-white rounded-md text-black font-normal h-[62vh] overflow-auto hide_scroll">
+                            <div className="bg-white rounded-md text-black font-normal h-[61vh] overflow-auto hide_scroll">
                               <table className="w-full">
                                 <thead className="sticky top-0">
                                   <tr>
