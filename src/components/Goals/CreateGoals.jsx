@@ -223,6 +223,21 @@ export default function CreateGoals({
     localStorage.setItem("progress_goals", progress);
     alert("Current progress is saved.");
   };
+
+  const handleButtonClick = (index) => {
+    setDisablePillar(prevDisablePillar => {
+      const newDisablePillar = [...prevDisablePillar];
+      newDisablePillar[index] = true;
+
+      if (index < newDisablePillar.length - 1) {
+
+        newDisablePillar[index + 1] = false;
+      }
+
+      return newDisablePillar;
+    });
+  };
+  
   function areObjectsEqual(obj1, obj2) {
     if (Object.keys(obj1).length !== Object.keys(obj2).length) {
       return false;
@@ -329,7 +344,6 @@ export default function CreateGoals({
 
 
 
-
   useEffect(() => {
     const setup = async () => {
       setUsers(await fetchUsers());
@@ -357,7 +371,6 @@ export default function CreateGoals({
             setSaveStatus("Progress saved");
           }
         }
-        console.log("reading");
       }
     };
     checkProgress();
@@ -641,7 +654,7 @@ export default function CreateGoals({
                         <button
                           type="button"
                           className={classNames("text-white p-1 px-2 rounded m-2", disablePillar[index] ? "bg-un-blue-light-1" : "bg-un-blue-light")}
-                          onClick={() => setDisablePillar(index)}
+                          onClick={() => handleButtonClick(index)}
                         >
                           Finish
                         </button>

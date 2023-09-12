@@ -15,7 +15,7 @@ export default function Graph({
   return (
     <div
       className={classNames(
-        "bg-white p-2 shadow-md rounded-md",
+        "bg-white p-2 shadow-md",
         containerWidth,
         className
       )}

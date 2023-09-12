@@ -66,6 +66,7 @@ export default function DashboardOverview() {
         console.log(e.message);
       }
     };
+
     const countUsers = async () => {
       try {
         const response = await axios.get(url.retrieveUsers, {
@@ -78,6 +79,7 @@ export default function DashboardOverview() {
         console.log(e.message);
       }
     };
+
     const fetchUsers = async () => {
       try {
         const response = await axios.get(url.retrieveUsers, {
@@ -100,12 +102,126 @@ export default function DashboardOverview() {
     <>
       {/* overview */}
       <section className="relative">
-      <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
+        <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
         <div className="absolute top-0 left-0 w-full grid gap-2 md:grid-cols-2 lg:grid-cols-6  px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
+          <div className="md:col-[1/3] lg:col-[1/7] lg:row-[1/2] grid grid-cols-3">
+            <Graph
+              title="Performance Evaluation Status (Regular)"
+              className="rounded-l-md"
+              chartHeight={375}
+              chart={
+                <BarChart
+                  onClick={(e) => onPerformanceStatusClick(e)}
+                  data={[
+                    {
+                      name: "Goal",
+                      [`No of Regular Employees`]: employeeCount.regular,
+                      [`Awaiting Submission`]: 2,
+                      [`Submitted`]: 4,
+                      [`Approved`]: 1,
+                    },
+
+                  ]}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="No of Regular Employees" fill="#306088" />
+                  <Bar dataKey="Awaiting Submission" fill="#d22735" />
+                  <Bar dataKey="Submitted" fill="#ed9036" />
+                  <Bar dataKey="Approved" fill="#2da947" />
+                </BarChart>
+              }
+
+            />
+            <Graph
+              className="rounded-r-md col-span-2"
+              chartHeight={375}
+              dropdown={
+                <div className="flex flex-row gap-2 items-center">
+                  <label htmlFor="workyear" className="font-semibold">
+                    Select Work Year:
+                  </label>
+                  <select
+                    id="workyear"
+                    className="bg-default rounded-md p-1 px-2"
+                    onChange={(e) => {
+                      setKpiDuration(parseInt(e.target.value));
+                    }}
+                  >
+                    <option value="-1" disabled selected={workYear === -1}>
+                      --Select Year--
+                    </option>
+                    {kpiDurations.length > 0 &&
+                      kpiDurations.map((year) => {
+                        return (
+                          <option
+                            value={year.kpi_year_duration_id}
+                            selected={year.kpi_year_duration_id === workYear}
+                          >
+                            {format(new Date(year.from_date), "MMM d, yyyy") +
+                              " - " +
+                              format(new Date(year.to_date), "MMM d, yyyy")}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </div>
+              }
+              chart={
+                <BarChart
+                  onClick={(e) => onPerformanceStatusClick(e)}
+                  data={[
+                    {
+                      name: "No of Regular Employees",
+                      [`Regular Employees`]: employeeCount.regular,
+                    },
+                    {
+                      name: "First Quarter",
+                      [`Awaiting Submission`]: employeeCount.regular,
+                      [`Submitted`]: employeeCount.regular,
+                    },
+                    {
+                      name: "Mid Year",
+                      [`Awaiting Submission`]: employeeCount.regular,
+                      [`Submitted`]: employeeCount.regular,
+                      [`Approved`]: employeeCount.regular,
+                    },
+                    {
+                      name: "Third Quarter",
+                      [`Awaiting Submission`]: employeeCount.regular,
+                      [`Submitted`]: employeeCount.regular,
+                    },
+                    {
+                      name: "Year End",
+                      [`Awaiting Submission`]: employeeCount.regular,
+                      [`Submitted`]: employeeCount.regular,
+                      [`Approved`]: employeeCount.regular,
+                      [`Signoff`]: employeeCount.regular,
+                    },
+                  ]}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="Regular Employees" fill="#306088" />
+                  <Bar dataKey="Awaiting Submission" fill="#d22735" />
+                  <Bar dataKey="Submitted" fill="#ed9036" />
+                  <Bar dataKey="Approved" fill="#2da947" />
+                  <Bar dataKey="Signoff" fill="#198065" />
+                </BarChart>
+              }
+
+            />
+
+
+          </div>
           {/* HEADER */}
-          <Graph
+          {/* <Graph
             title="Performance Evaluation Status (Regular)"
-            className="md:col-[1/3] lg:col-[1/7] lg:row-[1/2]"
+            className="md:col-[1/3] lg:col-[1/3] lg:row-[1/2]"
             chartHeight={375}
             dropdown={
               <div className="flex flex-row gap-2 items-center">
@@ -143,36 +259,22 @@ export default function DashboardOverview() {
                 onClick={(e) => onPerformanceStatusClick(e)}
                 data={[
                   {
-                    name: "Awaiting Submission",
-                    [`Regular Employees`]: performanceData.waiting_regular,
+                    name: "No of Regular Employees",
+                    [`Regular Employees`]: employeeCount.regular,
                   },
                   {
-                    name: "Pending Approval",
-                    [`Regular Employees`]: performanceData.pending_regular,
-                  },
-                  {
-                    name: "Awaiting Evaluation",
-                    [`Regular Employees`]: performanceData.pending_regular,
-                  },
-                  {
-                    name: "Approved Evaluation",
-                    [`Regular Employees`]: performanceData.pending_regular,
-                  },
-                  {
-                    name: "Awaiting Submission",
-                    [`Regular Employees`]: performanceData.waiting_regular,
-                  },
-                  {
-                    name: "Pending Approval",
-                    [`Regular Employees`]: performanceData.pending_regular,
+                    name: "Goal Submission",
+                    [`Goal Awaiting Submission`]: employeeCount.regular,
+                    [`Goal Submitted`]: employeeCount.regular,
+                    [`Goal Approved`]: employeeCount.regular,
                   },
                   {
                     name: "Awaiting Evaluation",
-                    [`Regular Employees`]: performanceData.pending_regular,
+                    [`Regular Employees`]: employeeCount.regular,
                   },
                   {
                     name: "Approved Evaluation",
-                    [`Regular Employees`]: performanceData.pending_regular,
+                    [`Regular Employees`]: employeeCount.regular,
                   },
                   {
                     name: "Awaiting Submission",
@@ -180,15 +282,31 @@ export default function DashboardOverview() {
                   },
                   {
                     name: "Pending Approval",
-                    [`Regular Employees`]: performanceData.pending_regular,
+                    [`Regular Employees`]: employeeCount.regular,
                   },
                   {
                     name: "Awaiting Evaluation",
-                    [`Regular Employees`]: performanceData.pending_regular,
+                    [`Regular Employees`]: employeeCount.regular,
                   },
                   {
                     name: "Approved Evaluation",
-                    [`Regular Employees`]: performanceData.pending_regular,
+                    [`Regular Employees`]: employeeCount.regular,
+                  },
+                  {
+                    name: "Awaiting Submission",
+                    [`Regular Employees`]: performanceData.waiting_regular,
+                  },
+                  {
+                    name: "Pending Approval",
+                    [`Regular Employees`]: employeeCount.regular,
+                  },
+                  {
+                    name: "Awaiting Evaluation",
+                    [`Regular Employees`]: employeeCount.regular,
+                  },
+                  {
+                    name: "Approved Evaluation",
+                    [`Regular Employees`]: employeeCount.regular,
                   },
                 ]}
               >
@@ -197,98 +315,132 @@ export default function DashboardOverview() {
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="Regular Employees" fill="#306088" />
-                <Bar dataKey="Probationary Employees" fill="#d43953" />
+                <Bar dataKey="Goal Awaiting Submission" fill="#306088" />
+                <Bar dataKey="Goal Submitted" fill="#306088" />
+                <Bar dataKey="Goal Approved" fill="#306088" />
               </BarChart>
-            }
-          />
-          <Graph
-            title={"Performance Evaluation Status (Probationary)"}
-            className="md:col-[1/3] lg:col-[1/5] lg:row-[2/3] h-fit"
-            chartHeight={375}
-            dropdown={
-              <div className="flex flex-row gap-2 items-center">
-                <label htmlFor="workyear" className="font-semibold">
-                  Select Work Year:
-                </label>
-                <select
-                  id="workyear"
-                  className="bg-default rounded-md p-1 px-2"
-                  onChange={(e) => {
-                    setKpiDuration(parseInt(e.target.value));
-                  }}
+          }
+            
+          /> */}
+          <div className="md:col-[1/3] lg:col-[1/5] lg:row-[2/3] h-fit grid grid-cols-3">
+            <Graph
+              title={"Performance Evaluation Status (Probationary)"}
+              className="rounded-md"
+              chartHeight={375}
+              chart={
+                <BarChart
+                  onClick={(e) => onPerformanceStatusClick(e)}
+                  data={[
+                    {
+                      name: "Goal",
+                      [`No of Regular Employees`]: 3,
+                      [`Awaiting Submission`]: 2,
+                      [`Submitted`]: 4,
+                      [`Approved`]: 1,
+                    },
+
+                  ]}
                 >
-                  <option value="-1" disabled selected={workYear === -1}>
-                    --Select Year--
-                  </option>
-                  {kpiDurations.length > 0 &&
-                    kpiDurations.map((year) => {
-                      return (
-                        <option
-                          value={year.kpi_year_duration_id}
-                          selected={year.kpi_year_duration_id === workYear}
-                        >
-                          {format(new Date(year.from_date), "MMM d, yyyy") +
-                            " - " +
-                            format(new Date(year.to_date), "MMM d, yyyy")}
-                        </option>
-                      );
-                    })}
-                </select>
-              </div>
-            }
-            chart={
-              <BarChart
-                onClick={(e) => onPerformanceStatusClick(e)}
-                data={[
-                  {
-                    name: "Awaiting Submission",
-                    [`Probationary Employees`]:
-                      performanceData.waiting_probationary,
-                  },
-                  {
-                    name: "Pending Approval",
-                    [`Probationary Employees`]:
-                      performanceData.pending_probationary,
-                  },
-                  {
-                    name: "Awaiting Evaluation",
-                    [`Probationary Employees`]:
-                      performanceData.pending_probationary,
-                  },
-                  {
-                    name: "Approved Evaluation",
-                    [`Probationary Employees`]:
-                      performanceData.pending_probationary,
-                  },
-                  {
-                    name: "Awaiting Submission",
-                    [`Probationary Employees`]:
-                      performanceData.waiting_probationary,
-                  },
-                  {
-                    name: "Pending Approval",
-                    [`Probationary Employees`]:
-                      performanceData.pending_probationary,
-                  },
-                  {
-                    name: "Awaiting Evaluation",
-                    [`Probationary Employees`]:
-                      performanceData.pending_probationary,
-                  },
-                ]}
-              >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Regular Employees" fill="#306088" />
-                <Bar dataKey="Probationary Employees" fill="#d43953" />
-              </BarChart>
-            }
-          />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="No of Probationary Employees" fill="#306088" />
+                  <Bar dataKey="Awaiting Submission" fill="#d22735" />
+                  <Bar dataKey="Submitted" fill="#ed9036" />
+                  <Bar dataKey="Approved" fill="#2da947" />
+                </BarChart>
+
+              }
+            />
+            <Graph
+              title={"Performance Evaluation Status (Probationary)"}
+              className="rounded-md col-span-2"
+              chartHeight={375}
+              dropdown={
+                <div className="flex flex-row gap-2 items-center">
+                  <label htmlFor="workyear" className="font-semibold">
+                    Select Work Year:
+                  </label>
+                  <select
+                    id="workyear"
+                    className="bg-default rounded-md p-1 px-2"
+                    onChange={(e) => {
+                      setKpiDuration(parseInt(e.target.value));
+                    }}
+                  >
+                    <option value="-1" disabled selected={workYear === -1}>
+                      --Select Year--
+                    </option>
+                    {kpiDurations.length > 0 &&
+                      kpiDurations.map((year) => {
+                        return (
+                          <option
+                            value={year.kpi_year_duration_id}
+                            selected={year.kpi_year_duration_id === workYear}
+                          >
+                            {format(new Date(year.from_date), "MMM d, yyyy") +
+                              " - " +
+                              format(new Date(year.to_date), "MMM d, yyyy")}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </div>
+              }
+              chart={
+                <BarChart
+                  onClick={(e) => onPerformanceStatusClick(e)}
+                  data={[
+                    {
+                      name: "Awaiting Submission",
+                      [`Probationary Employees`]:
+                        employeeCount.probationary,
+                    },
+                    {
+                      name: "Pending Approval",
+                      [`Probationary Employees`]:
+                        performanceData.pending_probationary,
+                    },
+                    {
+                      name: "Awaiting Evaluation",
+                      [`Probationary Employees`]:
+                        performanceData.pending_probationary,
+                    },
+                    {
+                      name: "Approved Evaluation",
+                      [`Probationary Employees`]:
+                        performanceData.pending_probationary,
+                    },
+                    {
+                      name: "Awaiting Submission",
+                      [`Probationary Employees`]:
+                        performanceData.waiting_probationary,
+                    },
+                    {
+                      name: "Pending Approval",
+                      [`Probationary Employees`]:
+                        performanceData.pending_probationary,
+                    },
+                    {
+                      name: "Awaiting Evaluation",
+                      [`Probationary Employees`]:
+                        performanceData.pending_probationary,
+                    },
+                  ]}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="Probationary Employees" fill="#d43953" />
+                </BarChart>
+              }
+            />
+          </div>
           <Graph
             title="Performance Evaluation Ranking"
-            className="md:col-[1/3] lg:col-[5/7] lg:row-[2/3]"
+            className="md:col-[1/3] lg:col-[5/7] lg:row-[2/3] rounded-md col-span-2"
             table
             chart={
               <>
@@ -317,11 +469,11 @@ export default function DashboardOverview() {
                                         ? "bg-un-green-light text-un-green-dark"
                                         : employee.grade <= 3.25 &&
                                           employee.grade >= 2.51
-                                        ? "bg-un-yellow-light text-un-yellow-dark"
-                                        : employee.grade <= 2.5 &&
-                                          employee.grade >= 1.76
-                                        ? "bg-un-orange-light text-un-orange-dark"
-                                        : "bg-un-red-light-1 text-un-red-dark"
+                                          ? "bg-un-yellow-light text-un-yellow-dark"
+                                          : employee.grade <= 2.5 &&
+                                            employee.grade >= 1.76
+                                            ? "bg-un-orange-light text-un-orange-dark"
+                                            : "bg-un-red-light-1 text-un-red-dark"
                                     )}
                                   >
                                     {employee.grade}
