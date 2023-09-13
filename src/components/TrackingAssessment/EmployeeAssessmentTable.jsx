@@ -57,12 +57,15 @@ export default function EmployeeAssessmentTable({ emp_id }) {
       const parameters = {
         params: {
           empRecords: true,
+          employeeType: employeeType,
           empID: JSON.parse(currentUser).user_type === "1" ? 1 : emp_id,
           workYear: workYear,
         },
       };
       try {
         const response = await axios.get(url.retrieveTrackingEmployee, parameters);
+        console.log(response.data);
+
         const employeeRecords = response.data.map((item) => {
           return {
             employee_id: item.employee_id,
@@ -218,6 +221,61 @@ export default function EmployeeAssessmentTable({ emp_id }) {
                                       className={"text-[.8rem] px-1"}
                                     />
                                   )}
+                                  {/* SELECT
+        employee.users_id,
+        employee.employee_id AS employee_id,
+        employee.first_name,
+        employee.contract_type,
+        CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
+        IF(hr_eval_form.users_id IS NULL AND hr_eval_form.CreationDate IS NULL, 0, IF(hr_eval_form.CreationDate = :creation_date, 1, 0)) AS creation_date,
+
+        hr_eval_form.myr_rater_1 AS myr_rater_1,
+        hr_eval_form.myr_rater_2 AS myr_rater_2,
+        hr_eval_form.myr_rater_3 AS myr_rater_3,
+        
+        hr_eval_form.rater_1 AS yee_rater_1,
+        hr_eval_form.rater_2 AS yee_rater_2,
+        hr_eval_form.rater_3 AS yee_rater_3,
+        
+        hr_eval_form_sp.hr_eval_form_sp_id AS sp_id,
+        
+        CASE WHEN hr_eval_form_sp_fq.achievements <> '' THEN 1 ELSE 0 END AS fq_achievements,
+        CASE WHEN hr_eval_form_sp_fq.results <> '' OR hr_eval_form_sp_fq.remarks <> '' THEN 1 ELSE 0 END AS fq_results_remarks,
+        
+        CASE WHEN hr_eval_form_sp_myr.achievements <> '' THEN 1 ELSE 0 END AS myr_achievements,
+        CASE WHEN hr_eval_form_sp_myr.results <> '' OR hr_eval_form_sp_myr.remarks <> '' THEN 1 ELSE 0 END AS myr_results_remarks,
+        
+        CASE WHEN hr_eval_form_sp_tq.achievements <> '' THEN 1 ELSE 0 END AS tq_achievements,
+        CASE WHEN hr_eval_form_sp_tq.results <> '' OR hr_eval_form_sp_tq.remarks <> '' THEN 1 ELSE 0 END AS tq_results_remarks,
+        
+        CASE WHEN hr_eval_form_sp_yee.achievements <> '' THEN 1 ELSE 0 END AS yee_achievements,
+        CASE WHEN hr_eval_form_sp_yee.results <> '' OR hr_eval_form_sp_yee.remarks <> '' THEN 1 ELSE 0 END AS yee_results_remarks,
+        hr_eval_form_sp_quarterly_ratings.YearEndRating AS agreed_rating
+    
+        
+        FROM hr_users AS employee
+        
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator 
+        LEFT JOIN hr_user_accounts ON hr_user_accounts.users_id = employee.users_id
+        LEFT JOIN hr_eval_form ON hr_eval_form.users_id = employee.users_id
+        LEFT JOIN hr_eval_form_fp ON hr_eval_form_fp.eval_form_id = hr_eval_form.hr_eval_form_id
+        LEFT JOIN hr_eval_form_pillars ON hr_eval_form_pillars.hr_eval_form_fp_id = hr_eval_form_fp.hr_eval_form_fp_id
+        LEFT JOIN hr_pillars ON hr_pillars.pillar_id = hr_eval_form_pillars.pillar_id
+        LEFT JOIN hr_objectives ON hr_objectives.hr_eval_form_pillar_id = hr_eval_form_pillars.hr_eval_form_pillar_id
+        LEFT JOIN hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
+        LEFT JOIN hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
+        LEFT JOIN hr_eval_form_sp_quarterly_ratings ON hr_eval_form_sp_quarterly_ratings.eval_form_id = hr_eval_form.hr_eval_form_id
+        LEFT JOIN hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
+        LEFT JOIN hr_eval_form_sp_myr ON hr_eval_form_sp_myr.hr_eval_form_kpi_id = hr_kpi.kpi_id  
+        LEFT JOIN hr_eval_form_sp_tq ON hr_eval_form_sp_tq.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        LEFT JOIN hr_eval_form_sp_yee ON hr_eval_form_sp_yee.hr_eval_form_kpi_id = hr_kpi.kpi_id
+        WHERE 
+        (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
+        AND employee.contract_type IN ('regular', 'probationary')
+        GROUP BY employee.users_id
+        ORDER BY hr_user_accounts.user_type ASC, employee.last_name ASC */}
                                 </div>
                               </td>
                               <td>

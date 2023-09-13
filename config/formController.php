@@ -463,6 +463,172 @@ class Form extends Controller
 
 
     //CODE NI NORVIN
+    // DASHBOARD
+    // DASHBOARD FETCH GOALS
+    function adminFetchGoals($creation_date)
+    {
+        $this->setStatement("SELECT
+        COUNT(CASE WHEN contract_type = 'regular' THEN 1 END) AS regular,
+        COUNT(CASE WHEN contract_type = 'probationary' THEN 1 END) AS probationary,
+        COUNT(CASE WHEN status = 3 AND contract_type = 'regular' THEN 1 END) AS waiting_regular,
+		COUNT(CASE WHEN status = 3 AND contract_type = 'probationary' THEN 1 END) AS waiting_probationary,
+        COUNT(CASE WHEN status = 2 AND contract_type = 'regular' THEN 1 END) AS submitted_regular,
+		COUNT(CASE WHEN status = 2 AND contract_type = 'probationary' THEN 1 END) AS submitted_probationary,
+        COUNT(CASE WHEN status = 1 AND contract_type = 'regular' THEN 1 END) AS approved_regular,
+		COUNT(CASE WHEN status = 1 AND contract_type = 'probationary' THEN 1 END) AS approved_probationary
+            FROM (SELECT
+                    u.users_id,
+                    CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
+                   IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :creation_date, 1, 0)) AS creation_date,
+                    u.contract_type,
+                    CASE
+                        WHEN ef.users_id IS NULL THEN 0
+                        ELSE 1
+                    END AS has_eval,
+                    MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '' END) AS pillar_1,
+                    MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '' END) AS pillar_2,
+                    MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '' END) AS pillar_3,
+                    MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '' END) AS pillar_4,
+                    CASE
+                        WHEN fp.created_by <> '' AND fp.approved_by <> '' THEN '1'
+                        WHEN fp.created_by <> '' OR fp.approved_by <> '' THEN '2'
+                        ELSE '3'
+                    END AS status
+                FROM
+                    hr_users u
+                    LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
+                    LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
+                    LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
+                    LEFT JOIN hr_user_accounts ua ON ua.users_id = u.users_id 
+                WHERE
+                    u.contract_type IN ('regular', 'probationary')
+                AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')
+                  AND ua.user_type >= 4
+                GROUP BY
+                    u.users_id) AS subquery");
+            $this->statement->execute(['creation_date' => $creation_date]);
+            return $this->statement->fetch();
+    }
+
+    // DASHBOARD FETCH EVALUATIONS
+    function adminFetchEvaluations($creation_date)
+    {
+        $this->setStatement("             SELECT
+        COUNT(CASE WHEN contract_type = 'regular' THEN 1 END) AS regular,
+        COUNT(CASE WHEN has_first_quarter = 0 AND contract_type = 'regular' THEN 1 END) AS waiting_first_quarter_regular,
+        COUNT(CASE WHEN has_first_quarter = 1 AND contract_type = 'regular' THEN 1 END) AS first_quarter_regular,
+        
+        COUNT(CASE WHEN has_mid_year = 0 AND contract_type = 'regular' THEN 1 END) AS waiting_mid_year_regular,
+        COUNT(CASE WHEN has_mid_year = 1 AND contract_type = 'regular' THEN 1 END) AS mid_year_regular,
+        COUNT(CASE WHEN rate_myr = 1 AND contract_type = 'regular' THEN 1 END) AS rate_myr_regular,
+        
+        COUNT(CASE WHEN has_third_quarter = 0 AND contract_type = 'regular' THEN 1 END) AS waiting_third_quarter_regular,
+        COUNT(CASE WHEN has_third_quarter = 1 AND contract_type = 'regular' THEN 1 END) AS third_quarter_regular,
+        
+        COUNT(CASE WHEN has_year_end = 0 AND contract_type = 'regular' THEN 1 END) AS waiting_year_end_regular,
+        COUNT(CASE WHEN has_year_end = 1 AND contract_type = 'regular' THEN 1 END) AS year_end_regular,
+        COUNT(CASE WHEN rate_yee = 1 AND contract_type = 'regular' THEN 1 END) AS rate_yee_regular,
+        COUNT(CASE WHEN finish_yee = 1 AND contract_type = 'regular' THEN 1 END) AS finish_yee_regular,
+        
+        COUNT(CASE WHEN contract_type = 'probationary' THEN 1 END) AS probationary,
+        
+        COUNT(CASE WHEN has_first_quarter = 0 AND contract_type = 'probationary' THEN 1 END) AS waiting_first_quarter_probationary,
+        COUNT(CASE WHEN has_first_quarter = 1 AND contract_type = 'probationary' THEN 1 END) AS first_quarter_probationary,
+        
+        COUNT(CASE WHEN has_mid_year = 0 AND contract_type = 'probationary' THEN 1 END) AS waiting_mid_year_probationary,
+        COUNT(CASE WHEN has_mid_year = 1 AND contract_type = 'probationary' THEN 1 END) AS mid_year_probationary,
+        COUNT(CASE WHEN rate_myr = 1 AND contract_type = 'probationary' THEN 1 END) AS rate_myr_probationary,
+        
+        COUNT(CASE WHEN has_third_quarter = 0 AND contract_type = 'probationary' THEN 1 END) AS waiting_third_quarter_probationary,
+        COUNT(CASE WHEN has_third_quarter = 1 AND contract_type = 'probationary' THEN 1 END) AS third_quarter_probationary,
+        
+        COUNT(CASE WHEN has_year_end = 0 AND contract_type = 'probationary' THEN 1 END) AS waiting_year_end_probationary,
+        COUNT(CASE WHEN has_year_end = 1 AND contract_type = 'probationary' THEN 1 END) AS year_end_probationary,
+        COUNT(CASE WHEN rate_yee = 1 AND contract_type = 'probationary' THEN 1 END) AS rate_yee_probationary,
+        COUNT(CASE WHEN finish_yee = 1 AND contract_type = 'probationary' THEN 1 END) AS finish_yee_probationary
+        FROM(SELECT
+            u.users_id,
+            CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
+            IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :creation_date, 1, 0)) AS creation_date,
+            u.contract_type,
+            CASE
+            WHEN ef.users_id IS NULL THEN 0
+            ELSE 1
+            END AS has_eval,
+            
+            CASE
+            WHEN fq.achievements <> '' OR fq.results <> '' THEN 1
+            ELSE 0
+            END AS has_first_quarter,
+            
+            CASE
+            WHEN myr.achievements <> '' OR myr.results <> '' OR myr.status <> '' THEN 1
+            ELSE 0
+            END AS has_mid_year,
+            
+            CASE
+            WHEN tq.achievements <> '' OR tq.results <> '' THEN 1
+            ELSE 0
+            END AS has_third_quarter,
+            
+            CASE
+            WHEN yee.achievements <> '' OR yee.results <> '' OR yee.agreed_rating <> '' THEN 1
+            ELSE 0
+            END AS has_year_end,
+            
+            CASE
+            WHEN ef.myr_rater_1 <> '' OR ef.myr_rater_2 <> '' OR ef.myr_rater_3 <> '' THEN 1
+            ELSE 0
+            END AS rate_myr,
+            
+            CASE
+                WHEN ef.yee_rater_1 <> 0 OR ef.yee_rater_2 <> 0 OR ef.yee_rater_3 <> 0 THEN 1
+                ELSE 0
+            END AS rate_yee,
+            CASE
+                WHEN ef.yee_rater_1 <> 0 AND ef.yee_rater_2 <> 0 AND ef.yee_rater_3 <> 0 THEN 1
+                ELSE 0
+            END AS finish_yee
+            FROM
+            hr_users u
+            LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
+            LEFT JOIN hr_eval_form_sp sp ON sp.eval_form_id = ef.hr_eval_form_id
+            LEFT JOIN hr_eval_form_sp_fq fq ON fq.hr_eval_form_sp_id = sp.hr_eval_form_sp_id
+            LEFT JOIN hr_eval_form_sp_myr myr ON myr.hr_eval_form_sp_id = sp.hr_eval_form_sp_id
+            LEFT JOIN hr_eval_form_sp_tq tq ON tq.hr_eval_form_sp_id = sp.hr_eval_form_sp_id
+            LEFT JOIN hr_eval_form_sp_yee yee ON yee.hr_eval_form_sp_id = sp.hr_eval_form_sp_id
+            LEFT JOIN hr_user_accounts ua ON ua.users_id = u.users_id 
+        WHERE
+            u.contract_type IN ('regular', 'probationary')
+        AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')
+          AND ua.user_type >= 4
+        GROUP BY
+            u.users_id) AS subquery");
+         $this->statement->execute(['creation_date' => $creation_date]);
+         return $this->statement->fetch();
+    }
+
+    // DASHBOARD FETCH RANKINGS
+    function adminFetchRankings($creation_date)
+    {
+        $this->setStatement("SELECT
+        u.users_id,
+        CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
+        IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :creation_date, 1, 0)) AS creation_date,
+        spq.YearEndRating AS grade
+        FROM
+        hr_users u
+        LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
+        LEFT JOIN hr_eval_form_sp_quarterly_ratings spq ON spq.eval_form_id = ef.hr_eval_form_id
+        LEFT JOIN hr_user_accounts ua ON ua.users_id = u.users_id 
+        WHERE
+        u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')
+        AND ua.user_type >= 4
+        ORDER BY spq.YearEndRating DESC");
+        $this->statement->execute(['creation_date' => $creation_date]);
+        return $this->statement->fetchAll();
+    }
+
     //main tracking and assessment code
     function selectUserAssessment($table_name_results, $empID, $creation_date)
     {
@@ -907,10 +1073,6 @@ class Form extends Controller
         CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
         hr_user_accounts.user_type,
         IF(hr_eval_form.users_id IS NULL AND hr_eval_form.CreationDate IS NULL, 0, IF(hr_eval_form.CreationDate = :creation_date, 1, 0)) AS creation_date,
-        hr_eval_form_sp_fq_rating.ratee_achievement AS fq_achievements,
-        hr_eval_form_sp_myr_rating.ratee_achievement AS myr_achievements,
-        hr_eval_form_sp_tq_rating.ratee_achievement AS tq_achievements,
-        hr_eval_form_sp_yee_rating.ratee_achievement AS yee_achievements,
       
         hr_eval_form.myr_rater_1 AS myr_rater_1,
         hr_eval_form.myr_rater_2 AS myr_rater_2,
@@ -955,15 +1117,6 @@ class Form extends Controller
         hr_kpi ON hr_kpi.objective_id = hr_objectives.objective_id
         LEFT JOIN
             hr_eval_form_sp ON hr_eval_form_sp.eval_form_id = hr_eval_form.hr_eval_form_id
-         
-        LEFT JOIN
-            hr_eval_form_sp_fq_rating ON hr_eval_form_sp_fq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-        LEFT JOIN
-            hr_eval_form_sp_myr_rating ON hr_eval_form_sp_myr_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-        LEFT JOIN
-            hr_eval_form_sp_tq_rating ON hr_eval_form_sp_tq_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
-        LEFT JOIN
-            hr_eval_form_sp_yee_rating ON hr_eval_form_sp_yee_rating.hr_eval_form_sp_id = hr_eval_form_sp.hr_eval_form_sp_id
          
         LEFT JOIN
             hr_eval_form_sp_fq ON hr_eval_form_sp_fq.hr_eval_form_kpi_id = hr_kpi.kpi_id   
@@ -1392,7 +1545,8 @@ class Form extends Controller
         $this->setStatement("UPDATE {$tbl_name} SET results = :results, agreed_rating = :agreed_rating, wtd_rating = :wtd_rating, remarks = :remarks WHERE hr_eval_form_kpi_id = :hr_eval_form_kpi_id AND hr_eval_form_sp_id = :hr_eval_form_sp_id");
         return $this->statement->execute([':results' => $currenttotal_results, ':agreed_rating' => $currenttotal_rating, ':wtd_rating' => $currenttotal_weight, ':remarks' => $currenttotal_remarks, ':hr_eval_form_kpi_id' => $currentKpiId, ':hr_eval_form_sp_id' => $formspID]);
     }
-    function updateTotalQuarterlyRating($yeetotal, $column, $evalID){
+    function updateTotalQuarterlyRating($yeetotal, $column, $evalID)
+    {
         $this->setStatement("UPDATE hr_eval_form_sp_quarterly_ratings SET $column = :res WHERE eval_form_id = :eval_id");
         return $this->statement->execute([':res' => $yeetotal, 'eval_id' => $evalID]);
     }

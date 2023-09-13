@@ -19,14 +19,14 @@ import { format } from "date-fns";
 import { developmentAPIs as url } from "../context/apiList";
 
 export default function DashboardOverview() {
-  const [performanceData, setPerformanceData] = useState([]);
-  const [employeeCount, setEmployeeCount] = useState([]);
   const [workYear, setKpiDuration] = useState(1);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   const { kpiDurations, currentUser } = useAuth();
-
+  const [goals, setGoals] = useState([]);
+  const [evaluations, setEvaluations] = useState([]);
+  const [ranking, setRanking] = useState([]);
   const onPerformanceStatusClick = (e) => {
     const employeeFilter = e.activeLabel;
     switch (employeeFilter) {
@@ -52,30 +52,47 @@ export default function DashboardOverview() {
   };
 
   useEffect(() => {
-    const fetchGoals = async () => {
+    const fetchDashboardGoals = async () => {
       try {
-        const response = await axios.get(url.getEmployeeGoals, {
+        const response = await axios.get(url.fetchDashboardData, {
           params: {
-            employee_goals: true,
-            count: true,
-            work_year: workYear,
+            compute_goals: true,
+            workYear: workYear,
           },
         });
-        setPerformanceData(response.data);
-      } catch (e) {
+        setGoals(response.data);
+      }
+      catch (e) {
         console.log(e.message);
       }
     };
 
-    const countUsers = async () => {
+    const fetchDashboardEvaluations = async () => {
       try {
-        const response = await axios.get(url.retrieveUsers, {
+        const response = await axios.get(url.fetchDashboardData, {
           params: {
-            count_employees: true,
+            compute_evaluations: true,
+            workYear: workYear,
           },
         });
-        setEmployeeCount(response.data);
-      } catch (e) {
+        setEvaluations(response.data);
+      }
+      catch (e) {
+        console.log(e.message);
+      }
+    };
+
+    const fetchDashboardRanking = async () => {
+      try {
+        const response = await axios.get(url.fetchDashboardData, {
+          params: {
+            compute_ranking: true,
+            workYear: workYear,
+          },
+        });
+        setRanking(response.data);
+      }
+      catch (e) {
         console.log(e.message);
       }
     };
@@ -92,11 +109,12 @@ export default function DashboardOverview() {
         console.log(e.message);
       }
     };
-    fetchGoals();
-    countUsers();
+    fetchDashboardGoals();
+    fetchDashboardEvaluations();
+    fetchDashboardRanking();
     fetchUsers();
     setLoading(false);
-  }, []);
+  }, [workYear]);
   const userType = JSON.parse(currentUser).user_type;
   return !loading ? (
     <>
@@ -115,10 +133,10 @@ export default function DashboardOverview() {
                   data={[
                     {
                       name: "Goal",
-                      [`No of Regular Employees`]: employeeCount.regular,
-                      [`Awaiting Submission`]: 2,
-                      [`Submitted`]: 4,
-                      [`Approved`]: 1,
+                      [`No of Regular Employees`]: goals.regular,
+                      [`Awaiting Submission`]: goals.waiting_regular,
+                      [`Submitted`]: goals.submitted_regular,
+                      [`Approved`]: goals.approved_regular,
                     },
 
                   ]}
@@ -150,9 +168,6 @@ export default function DashboardOverview() {
                       setKpiDuration(parseInt(e.target.value));
                     }}
                   >
-                    <option value="-1" disabled selected={workYear === -1}>
-                      --Select Year--
-                    </option>
                     {kpiDurations.length > 0 &&
                       kpiDurations.map((year) => {
                         return (
@@ -175,30 +190,30 @@ export default function DashboardOverview() {
                   data={[
                     {
                       name: "No of Regular Employees",
-                      [`Regular Employees`]: employeeCount.regular,
+                      [`Regular Employees`]: evaluations.regular,
                     },
                     {
                       name: "First Quarter",
-                      [`Awaiting Submission`]: employeeCount.regular,
-                      [`Submitted`]: employeeCount.regular,
+                      [`Awaiting Submission`]: evaluations.waiting_first_quarter_regular,
+                      [`Submitted`]: evaluations.first_quarter_regular,
                     },
                     {
                       name: "Mid Year",
-                      [`Awaiting Submission`]: employeeCount.regular,
-                      [`Submitted`]: employeeCount.regular,
-                      [`Approved`]: employeeCount.regular,
+                      [`Awaiting Submission`]: evaluations.waiting_mid_year_regular,
+                      [`Submitted`]: evaluations.mid_year_regular,
+                      [`Approved`]: evaluations.rate_myr_regular,
                     },
                     {
                       name: "Third Quarter",
-                      [`Awaiting Submission`]: employeeCount.regular,
-                      [`Submitted`]: employeeCount.regular,
+                      [`Awaiting Submission`]: evaluations.waiting_third_quarter_regular,
+                      [`Submitted`]: evaluations.third_quarter_regular,
                     },
                     {
                       name: "Year End",
-                      [`Awaiting Submission`]: employeeCount.regular,
-                      [`Submitted`]: employeeCount.regular,
-                      [`Approved`]: employeeCount.regular,
-                      [`Signoff`]: employeeCount.regular,
+                      [`Awaiting Submission`]: evaluations.waiting_year_end_regular,
+                      [`Submitted`]: evaluations.year_end_regular,
+                      [`Approved`]: evaluations.rate_yee_regular,
+                      [`Signoff`]: evaluations.finish_yee_regular,
                     },
                   ]}
                 >
@@ -218,114 +233,10 @@ export default function DashboardOverview() {
 
 
           </div>
-          {/* HEADER */}
-          {/* <Graph
-            title="Performance Evaluation Status (Regular)"
-            className="md:col-[1/3] lg:col-[1/3] lg:row-[1/2]"
-            chartHeight={375}
-            dropdown={
-              <div className="flex flex-row gap-2 items-center">
-                <label htmlFor="workyear" className="font-semibold">
-                  Select Work Year:
-                </label>
-                <select
-                  id="workyear"
-                  className="bg-default rounded-md p-1 px-2"
-                  onChange={(e) => {
-                    setKpiDuration(parseInt(e.target.value));
-                  }}
-                >
-                  <option value="-1" disabled selected={workYear === -1}>
-                    --Select Year--
-                  </option>
-                  {kpiDurations.length > 0 &&
-                    kpiDurations.map((year) => {
-                      return (
-                        <option
-                          value={year.kpi_year_duration_id}
-                          selected={year.kpi_year_duration_id === workYear}
-                        >
-                          {format(new Date(year.from_date), "MMM d, yyyy") +
-                            " - " +
-                            format(new Date(year.to_date), "MMM d, yyyy")}
-                        </option>
-                      );
-                    })}
-                </select>
-              </div>
-            }
-            chart={
-              <BarChart
-                onClick={(e) => onPerformanceStatusClick(e)}
-                data={[
-                  {
-                    name: "No of Regular Employees",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Goal Submission",
-                    [`Goal Awaiting Submission`]: employeeCount.regular,
-                    [`Goal Submitted`]: employeeCount.regular,
-                    [`Goal Approved`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Awaiting Evaluation",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Approved Evaluation",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Awaiting Submission",
-                    [`Regular Employees`]: performanceData.waiting_regular,
-                  },
-                  {
-                    name: "Pending Approval",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Awaiting Evaluation",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Approved Evaluation",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Awaiting Submission",
-                    [`Regular Employees`]: performanceData.waiting_regular,
-                  },
-                  {
-                    name: "Pending Approval",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Awaiting Evaluation",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                  {
-                    name: "Approved Evaluation",
-                    [`Regular Employees`]: employeeCount.regular,
-                  },
-                ]}
-              >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Regular Employees" fill="#306088" />
-                <Bar dataKey="Goal Awaiting Submission" fill="#306088" />
-                <Bar dataKey="Goal Submitted" fill="#306088" />
-                <Bar dataKey="Goal Approved" fill="#306088" />
-              </BarChart>
-          }
-            
-          /> */}
           <div className="md:col-[1/3] lg:col-[1/5] lg:row-[2/3] h-fit grid grid-cols-3">
             <Graph
               title={"Performance Evaluation Status (Probationary)"}
-              className="rounded-md"
+              className="rounded-l-md"
               chartHeight={375}
               chart={
                 <BarChart
@@ -333,10 +244,10 @@ export default function DashboardOverview() {
                   data={[
                     {
                       name: "Goal",
-                      [`No of Regular Employees`]: 3,
-                      [`Awaiting Submission`]: 2,
-                      [`Submitted`]: 4,
-                      [`Approved`]: 1,
+                      [`No of Probationary Employees`]: goals.probationary,
+                      [`Awaiting Submission`]: goals.waiting_probationary,
+                      [`Submitted`]: goals.submitted_probationary,
+                      [`Approved`]: goals.approved_probationary,
                     },
 
                   ]}
@@ -354,78 +265,38 @@ export default function DashboardOverview() {
               }
             />
             <Graph
-              title={"Performance Evaluation Status (Probationary)"}
-              className="rounded-md col-span-2"
+              className="rounded-r-md col-span-2 pt-10"
               chartHeight={375}
-              dropdown={
-                <div className="flex flex-row gap-2 items-center">
-                  <label htmlFor="workyear" className="font-semibold">
-                    Select Work Year:
-                  </label>
-                  <select
-                    id="workyear"
-                    className="bg-default rounded-md p-1 px-2"
-                    onChange={(e) => {
-                      setKpiDuration(parseInt(e.target.value));
-                    }}
-                  >
-                    <option value="-1" disabled selected={workYear === -1}>
-                      --Select Year--
-                    </option>
-                    {kpiDurations.length > 0 &&
-                      kpiDurations.map((year) => {
-                        return (
-                          <option
-                            value={year.kpi_year_duration_id}
-                            selected={year.kpi_year_duration_id === workYear}
-                          >
-                            {format(new Date(year.from_date), "MMM d, yyyy") +
-                              " - " +
-                              format(new Date(year.to_date), "MMM d, yyyy")}
-                          </option>
-                        );
-                      })}
-                  </select>
-                </div>
-              }
               chart={
                 <BarChart
                   onClick={(e) => onPerformanceStatusClick(e)}
                   data={[
                     {
-                      name: "Awaiting Submission",
-                      [`Probationary Employees`]:
-                        employeeCount.probationary,
+                      name: "No of Regular Employees",
+                      [`Regular Employees`]: evaluations.probationary,
                     },
                     {
-                      name: "Pending Approval",
-                      [`Probationary Employees`]:
-                        performanceData.pending_probationary,
+                      name: "First Quarter",
+                      [`Awaiting Submission`]: evaluations.waiting_first_quarter_probationary,
+                      [`Submitted`]: evaluations.first_quarter_probationary,
                     },
                     {
-                      name: "Awaiting Evaluation",
-                      [`Probationary Employees`]:
-                        performanceData.pending_probationary,
+                      name: "Mid Year",
+                      [`Awaiting Submission`]: evaluations.waiting_mid_year_probationary,
+                      [`Submitted`]: evaluations.mid_year_probationary,
+                      [`Approved`]: evaluations.rate_myr_probationary,
                     },
                     {
-                      name: "Approved Evaluation",
-                      [`Probationary Employees`]:
-                        performanceData.pending_probationary,
+                      name: "Third Quarter",
+                      [`Awaiting Submission`]: evaluations.waiting_third_quarter_probationary,
+                      [`Submitted`]: evaluations.third_quarter_probationary,
                     },
                     {
-                      name: "Awaiting Submission",
-                      [`Probationary Employees`]:
-                        performanceData.waiting_probationary,
-                    },
-                    {
-                      name: "Pending Approval",
-                      [`Probationary Employees`]:
-                        performanceData.pending_probationary,
-                    },
-                    {
-                      name: "Awaiting Evaluation",
-                      [`Probationary Employees`]:
-                        performanceData.pending_probationary,
+                      name: "Year End",
+                      [`Awaiting Submission`]: evaluations.waiting_year_end_probationary,
+                      [`Submitted`]: evaluations.year_end_probationary,
+                      [`Approved`]: evaluations.rate_yee_probationary,
+                      [`Signoff`]: evaluations.finish_yee_probationary,
                     },
                   ]}
                 >
@@ -433,7 +304,11 @@ export default function DashboardOverview() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="Probationary Employees" fill="#d43953" />
+                  <Bar dataKey="Regular Employees" fill="#306088" />
+                  <Bar dataKey="Awaiting Submission" fill="#d22735" />
+                  <Bar dataKey="Submitted" fill="#ed9036" />
+                  <Bar dataKey="Approved" fill="#2da947" />
+                  <Bar dataKey="Signoff" fill="#198065" />
                 </BarChart>
               }
             />
@@ -445,7 +320,7 @@ export default function DashboardOverview() {
             chart={
               <>
                 <div className="h-[375px] overflow-y-auto rounded-md shadow-md">
-                  {data != [] && (
+                  {ranking != [] && (
                     <table className="w-full">
                       <thead>
                         <tr className="bg-un-blue-light text-white sticky top-0 shadow-md">
@@ -454,29 +329,24 @@ export default function DashboardOverview() {
                         </tr>
                       </thead>
                       <tbody>
-                        {data
+                        {ranking
                           .sort((a, b) => b.grade - a.grade)
                           .map((employee, index) => {
                             return (
                               <tr key={index} className="hover:bg-default">
-                                <td className="p-2">{employee.name}</td>
+                                <td className="p-2">{employee.full_name}</td>
                                 <td align="center">
                                   <div
                                     className={classNames(
                                       "w-3/4 p-1 rounded-md font-semibold",
-                                      employee.grade <= 4.0 &&
-                                        employee.grade >= 3.26
-                                        ? "bg-un-green-light text-un-green-dark"
-                                        : employee.grade <= 3.25 &&
-                                          employee.grade >= 2.51
-                                          ? "bg-un-yellow-light text-un-yellow-dark"
-                                          : employee.grade <= 2.5 &&
-                                            employee.grade >= 1.76
-                                            ? "bg-un-orange-light text-un-orange-dark"
-                                            : "bg-un-red-light-1 text-un-red-dark"
+                                      employee.grade <= 4.0 && employee.grade >= 3.26 ? "bg-un-green-light text-un-green-dark" 
+                                      : employee.grade <= 3.25 && employee.grade >= 2.51 ? "bg-un-green-light text-un-green-dark"
+                                      : employee.grade <= 2.5 && employee.grade >= 1.76 ? "bg-un-yellow-light text-un-yellow-dark"
+                                      : employee.grade <= 1.75 && employee.grade >= 1.0 ? "bg-un-red-light-1 text-un-red-dark"
+                                      : ""
                                     )}
                                   >
-                                    {employee.grade}
+                                    {employee.grade ? employee.grade : "-"}
                                     {console.log()}
                                   </div>
                                 </td>
