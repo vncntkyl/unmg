@@ -182,7 +182,7 @@ export default function AssessmentTracking({
               <div className="flex pb-2 px-2 justify-between">
                 <div className="flex flex-row items-center gap-2 justify-between md:justify-start">
                   <label htmlFor="quarterPicker" className="font-semibold">
-                    Select Quarter:
+                    Evaluation Quarter:
                   </label>
                   <select
                     className="bg-default text-black rounded-md p-1 px-2 outline-none"

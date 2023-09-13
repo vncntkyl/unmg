@@ -81,7 +81,6 @@ export default function Goals({
               isFirstKpi,
             };
           });
-
           setTableData(updatedTableData);
           toggleSet(true);
           setLoading(false);

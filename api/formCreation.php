@@ -15,7 +15,6 @@ if (isset($_POST['submit'])) {
         if ($formID = $formController->createEvalForm($userID, $work_year)) {
             $latestFpID = $formController->createEvalFormFp($formID, $creator, $_POST['userID']);
             $latestSpID = $formController->createEvalFormSp($formID);
-            if ($formController->insertRatings($latestSpID)) {
                 foreach ($goals as $index => $goal) {
                     $pillarObjectives = $goal->objectives;
                     $pillarID = $index + 1;
@@ -61,9 +60,6 @@ if (isset($_POST['submit'])) {
                         array_push($status, 0);
                     }
                 }
-            } else {
-                array_push($status, 0);
-            }
         } else {
             array_push($status, 0);
         }
