@@ -13,6 +13,7 @@ import ViewEvaluation from "./ViewEvaluation";
 import CompanyPlans from "./CompanyPlans";
 import TrackingAssessment from "./TrackingAssessment";
 import AgreementSignOff from "./AgreementSignOff";
+import GlobalSettings from "./GlobalSettings";
 
 export default function Dashboard() {
   if (!localStorage.getItem("currentUser")) {
@@ -104,6 +105,7 @@ export default function Dashboard() {
             path="/tracking_and_assessment/*"
             element={<TrackingAssessment />}
           />
+          <Route path="/global_settings/*" element={<GlobalSettings />} />
           <Route path="/sign_off/*" element={<AgreementSignOff />} />
           <Route path="/view_evaluations/*" element={<ViewEvaluation />} />
           <Route path="/company_plans/*" element={<CompanyPlans />} />

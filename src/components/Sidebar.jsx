@@ -4,6 +4,9 @@ import logo from "../assets/unmg_logo_plain_colored.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { RxDashboard, RxCounterClockwiseClock } from "react-icons/rx";
 import { FaWpforms, FaSignature } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
+
+
 import {
   BsPeople,
   BsClipboard2Check,
@@ -85,7 +88,7 @@ export default function Sidebar({ sidebarToggler, className }) {
             >
               <NavButton
                 icon={<BsClipboard2Check />}
-                textLabel={"Main Goals"}
+                textLabel={"Performance Plan"}
                 slug={"main_goals"}
               />
               <NavButton
@@ -127,6 +130,11 @@ export default function Sidebar({ sidebarToggler, className }) {
               >
                 {JSON.parse(currentUser).user_type < 3 && (
                   <>
+                    <NavButton
+                      icon={<IoSettingsOutline />}
+                      textLabel={"Global Settings"}
+                      slug={"global_settings"}
+                    />
                     <NavButton
                       icon={<BsPeople />}
                       textLabel={"List of Employees"}
