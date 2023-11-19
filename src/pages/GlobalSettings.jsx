@@ -5,7 +5,7 @@ import { useAuth } from "../context/authContext";
 import classNames from "classnames";
 
 export default function GlobalSettings() {
-  const { currentUser, kpiDurations } = useAuth();
+  const { currentUser } = useAuth();
 
   const userType = JSON.parse(currentUser).user_type;
   return (

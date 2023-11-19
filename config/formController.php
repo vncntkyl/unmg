@@ -1820,4 +1820,17 @@ class Form extends Controller
         $this->setStatement("UPDATE hr_eval_form SET ratee = :employee_id, ratees_comment = :comments WHERE hr_eval_form_id = :eval_id");
         return $this->statement->execute([':employee_id' => $employee_id, ':eval_id' => $eval_id, 'comments' => $comments]);
     }
+
+    function selectGlobalSettings()
+    {
+        $this->setStatement("SELECT * FROM hr_global_settings LIMIT 1");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
+
+    function updateGlobalSettings($pillar_min, $pillar_max, $required_min, $required_max, $overall_percentage, $goal_status)
+    {
+        $this->setStatement("UPDATE hr_global_settings SET pillar_min = :pillar_min, pillar_max = :pillar_max, required_min = :required_min, required_max = :required_max, overall_percentage = :overall_percentage, goal_status = :goal_status");
+        return $this->statement->execute([':pillar_min' => $pillar_min, ':pillar_max' => $pillar_max, ':required_min' => $required_min, ':required_max' => $required_max, ':overall_percentage' => $overall_percentage, ':goal_status' => $goal_status]);
+    }
 }

@@ -6,12 +6,14 @@ import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
 import { useFunction } from "../../context/FunctionContext";
 import { developmentAPIs as url } from "../../context/apiList";
+import classNames from "classnames";
 
 export default function CreateGoals({
   pillars = [],
   user_id,
   kpi_work_year = null,
 }) {
+  const { globalSettings } = useAuth();
   const [goals, setGoals] = useState([]);
   const [user, setUser] = useState("");
   const [duration, setDuration] = useState();
@@ -426,8 +428,8 @@ export default function CreateGoals({
                       </label>
                       <input
                         type="number"
-                        min={15}
-                        max={35}
+                        min={globalSettings.pillar_min}
+                        max={globalSettings.pillar_max}
                         required
                         value={goal.pillar_percentage}
                         className="outline-none rounded-md p-1 text-center ml-auto"
@@ -621,7 +623,7 @@ export default function CreateGoals({
                           </>
                         );
                       })}
-                      {getTotalKpiCount(goals) < 12 && (
+                      {getTotalKpiCount(goals) < globalSettings.required_max && (
                         <button
                           type="button"
                           className="bg-un-blue-light text-white p-1 px-2 rounded"

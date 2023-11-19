@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
   const [usertypeList, setUsertypeList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [kpiDurations, setKpiDurations] = useState([]);
+  const [globalSettings, setGlobalSettings] = useState([]);
   const nav = useNavigate();
 
   const signInUser = async (username, password) => {
@@ -167,7 +168,6 @@ export function AuthProvider({ children }) {
   const navigate = (location) => {
     nav(location);
   };
-
   // const registerRole = async (role_data) => {
   //   const url = "http://localhost/unmg_pms/api/manageRoles.php";
   //   //const url = "../api/manageRoles.php";
@@ -331,9 +331,34 @@ export function AuthProvider({ children }) {
         console.log(e.message);
       }
     };
+    //nobrin dagdag
+    const getGlobalSettings = async () => {
+      try {
+        const response = await axios.get(url.retrieveGlobalSettings, {
+          params: {
+            globalSettings: true,
+          },
+        });
+        const settings = response.data.reduce((accumulator, setting) => {
+          return {
+            ...accumulator,
+            pillar_min: parseInt(setting.pillar_min, 10) || 0,
+            pillar_max: parseInt(setting.pillar_max, 10) || 0,
+            required_min: parseInt(setting.required_min, 10) || 0,
+            required_max: parseInt(setting.required_max, 10) || 0,
+            overall_percentage: parseInt(setting.overall_percentage, 10) || 0,
+            goal_status: parseInt(setting.goal_status, 10) || 0,
+          };
+        }, {});
+        setGlobalSettings(settings);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     retrieveKPIYear();
     fetchHeads();
     retrieveUserTypes();
+    getGlobalSettings();
   }, [currentUser]);
 
   const value = {
@@ -343,6 +368,7 @@ export function AuthProvider({ children }) {
     currentUser,
     companyList,
     headList,
+    globalSettings,
     nav,
     navigate,
     manageUser,
