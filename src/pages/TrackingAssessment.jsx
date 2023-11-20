@@ -4,9 +4,10 @@ import EmployeeAssessmentTable from "../components/TrackingAssessment/EmployeeAs
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
 import CreateAchievements from "../components/TrackingAssessment/CreateAchievements";
+import ShowConversations from "../components/Conversations/ShowConversations";
 import { developmentAPIs as url } from "../context/apiList";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { Route, Router, Routes } from "react-router-dom";
+import { useNavigate, Route, Router, Routes } from "react-router-dom";
 import { useFunction } from "../context/FunctionContext";
 import { useAuth } from "../context/authContext";
 import Toggle from "../components/Toggle";
@@ -33,6 +34,9 @@ export default function TrackingAssessment() {
       case "/tracking_and_assessment/create":
       case "/tracking_and_assessment/create/":
         return "Create Assessment";
+      case "/tracking_and_assessment/conversations":
+      case "/tracking_and_assessment/conversations/":
+        return "Conversations";
     }
   };
   const verifyEvaluator = async () => {
@@ -65,12 +69,17 @@ export default function TrackingAssessment() {
     toggleLoading(false);
   }, []);
   const userType = JSON.parse(currentUser).user_type;
+
+  const navigate = useNavigate();
+  const viewConversations = () => {
+    navigate("/tracking_and_assessment/conversations");
+  }
   return employeeID !== -1 && (loading ? (
     "Loading..."
   ) : (
     <>
       <section className="relative">
-      <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
+        <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
         <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
           <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between gap-2">
             {/* HEADER */}
@@ -103,6 +112,24 @@ export default function TrackingAssessment() {
                 </>
               )}
             </div>
+            <div>
+              {["/tracking_and_assessment/conversations", "/tracking_and_assessment/conversations/"].includes(getPath()) ? (
+                <a
+                  href="/tracking_and_assessment"
+                  className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
+                >
+                  <MdOutlineKeyboardArrowLeft />
+                  <span>Back</span>
+                </a>
+              ) : (
+                <button
+                  className="bg-mid-gray p-1 rounded-md text-white hover:bg-dark-gray"
+                  onClick={() => viewConversations()}>
+                  View Conversations
+                </button>
+              )
+              }
+            </div>
             <div className="flex flex-col">
               <Routes>
                 {panel === "My Assessment" ? <Route
@@ -122,6 +149,7 @@ export default function TrackingAssessment() {
                     <CreateAchievements emp_id={employeeID} />
                   }
                 />
+                <Route path="/conversations" element={<ShowConversations user_id={employeeID} />} />
                 <Route path="/employee_assessment/:id" element={<EmployeeAssessment />} />
                 <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessmentGradeEdit />} />
                 <Route path="/employee_assessment/:id/approve" element={<EmployeeAssessment />} />

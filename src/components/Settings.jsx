@@ -113,13 +113,13 @@ export default function Settings() {
         </span>
         <div className="ml-2 flex justify-between border-b-[1px] border-gray-400/50">
           <div className="flex flex-col gap-2 my-2">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
                 <label
                   For="minimum_required_objectives"
                   className="text-[1rem]"
                 >
-                  Min
+                  Minimum per pillar
                 </label>
                 <input
                   type="number"
@@ -136,7 +136,7 @@ export default function Settings() {
                   For="maximum_required_objectives"
                   className="text-[1rem]"
                 >
-                  Max
+                  Overall maximum no of objectives
                 </label>
                 <input
                   type="number"

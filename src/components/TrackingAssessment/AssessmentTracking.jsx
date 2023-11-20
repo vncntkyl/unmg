@@ -51,7 +51,6 @@ export default function AssessmentTracking({
       try {
         const response = await axios.get(url.retrieveTracking, parameters);
         setUserPerformance(response.data);
-        console.table(response.data);
         const form = response.data.some(
           (item) => item.hr_eval_form_id !== null
         );

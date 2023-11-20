@@ -174,15 +174,15 @@ export default function CreateGoals({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const pillarPercentage = checkPillarPercentage(goals);
-    if (pillarPercentage < 100) {
+    if (pillarPercentage < globalSettings.overall_percentage) {
       alert(
-        "Total pillar percentage is lacking " + (100 - pillarPercentage) + "%"
+        "Total pillar percentage is lacking " + (globalSettings.overall_percentage - pillarPercentage) + "%"
       );
       return;
     }
-    if (pillarPercentage > 100) {
+    if (pillarPercentage > globalSettings.overall_percentage) {
       alert(
-        "Total pillar percentage have exceeded the limit " + (pillarPercentage - 100) + "%"
+        "Total pillar percentage have exceeded the limit " + (pillarPercentage - globalSettings.overall_percentage) + "%"
       );
       return;
     }
@@ -253,77 +253,106 @@ export default function CreateGoals({
 
     return true;
   }
-
-  useEffect(() => {
-    if (localStorage.getItem("progress_goals")) {
-      setGoals(JSON.parse(localStorage.getItem("progress_goals")));
-    } else {
-      setGoals(
-        pillars.map((pillar) => {
+    useEffect(() => {
+      if (localStorage.getItem("progress_goals")) {
+        setGoals(JSON.parse(localStorage.getItem("progress_goals")));
+      } else {
+        const initialGoals = pillars.map((pillar) => {
+          const initialObjectives = Array.from({ length: globalSettings.required_min }, () => ({
+            objective_description: "",
+            kpi: [
+              {
+                kpi_description: "",
+                kpi_weight: 0,
+                target_metrics: Array.from({ length: 4 }, (_, index) => ({
+                  point: index + 1,
+                  metric_description: "",
+                })),
+              },
+            ],
+          }));
+ 
           return {
             pillar_name: pillar.pillar_name,
             pillar_percentage: 0,
-            objectives: [
-              {
-                objective_description: "",
-                kpi: [
-                  {
-                    kpi_description: "",
-                    kpi_weight: 0,
-                    target_metrics: [
-                      {
-                        point: 1,
-                        metric_description: "",
-                      },
-                      {
-                        point: 2,
-                        metric_description: "",
-                      },
-                      {
-                        point: 3,
-                        metric_description: "",
-                      },
-                      {
-                        point: 4,
-                        metric_description: "",
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                objective_description: "",
-                kpi: [
-                  {
-                    kpi_description: "",
-                    kpi_weight: 0,
-                    target_metrics: [
-                      {
-                        point: 1,
-                        metric_description: "",
-                      },
-                      {
-                        point: 2,
-                        metric_description: "",
-                      },
-                      {
-                        point: 3,
-                        metric_description: "",
-                      },
-                      {
-                        point: 4,
-                        metric_description: "",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
+            objectives: initialObjectives,
           };
-        })
-      );
-    }
-  }, [pillars]);
+        });
+ 
+        setGoals(initialGoals);
+      }
+    }, [pillars]);
+
+//  useEffect(() => {
+//    if (localStorage.getItem("progress_goals")) {
+//      setGoals(JSON.parse(localStorage.getItem("progress_goals")));
+//    } else {
+//      setGoals(
+//        pillars.map((pillar) => {
+//          return {
+//            pillar_name: pillar.pillar_name,
+//            pillar_percentage: 0,
+//            objectives: [
+//              {
+//                objective_description: "",
+//                kpi: [
+//                  {
+//                    kpi_description: "",
+//                    kpi_weight: 0,
+//                    target_metrics: [
+//                      {
+//                        point: 1,
+//                        metric_description: "",
+//                      },
+//                      {
+//                        point: 2,
+//                        metric_description: "",
+//                      },
+//                      {
+//                        point: 3,
+//                        metric_description: "",
+//                      },
+//                      {
+//                        point: 4,
+//                        metric_description: "",
+//                      },
+//                    ],
+//                  },
+//                ],
+//              },
+//              {
+//                objective_description: "",
+//                kpi: [
+//                  {
+//                    kpi_description: "",
+//                    kpi_weight: 0,
+//                    target_metrics: [
+//                      {
+//                        point: 1,
+//                        metric_description: "",
+//                      },
+//                      {
+//                        point: 2,
+//                        metric_description: "",
+//                      },
+//                      {
+//                        point: 3,
+//                        metric_description: "",
+//                      },
+//                      {
+//                        point: 4,
+//                        metric_description: "",
+//                      },
+//                    ],
+//                  },
+//                ],
+//              },
+//            ],
+//          };
+//        })
+//      );
+//    }
+//  }, [pillars]);
 
   useEffect(() => {
     const setup = async () => {
@@ -389,6 +418,7 @@ export default function CreateGoals({
           <span>Create goals for: {showGoalsOwner()}</span>
           <span>Status: {saveStatus}</span>
         </div>
+        {globalSettings.goal_status === 1 && "The creation of the performance plan has been disabled by the admin."}
         {user !== "" && (
           <div className="flex flex-row gap-2 items-center">
             <label htmlFor="workyear"> Select Work Year:</label>
@@ -421,7 +451,7 @@ export default function CreateGoals({
             goals.map((goal, index) => {
               return (
                 <>
-                  <div className="bg-default p-2 rounded-md">
+                  <div className={classNames("bg-default p-2 rounded-md", globalSettings.goal_status === 1 ? "pointer-events-none text-default-dark" : "")}>
                     <div className="flex flex-row items-center justify-between gap-1 p-1 lg:w-1/2">
                       <label htmlFor="pillar_name" className="font-bold">
                         {goal.pillar_name}
@@ -470,7 +500,7 @@ export default function CreateGoals({
                                       setGoals(updatedGoals);
                                     }}
                                   ></textarea>
-                                  {goal.objectives.length !== 2 && (
+                                  {goal.objectives.length !== globalSettings.required_min && (
                                     <button
                                       type="button"
                                       onClick={() =>
@@ -542,7 +572,7 @@ export default function CreateGoals({
                                                 %
                                               </span>
                                             </div>
-                                            {getTotalKpiCount(goals) < 12 && (
+                                            {getTotalKpiCount(goals) < globalSettings.required_max && (
                                               <button
                                                 type="button"
                                                 onClick={() =>
