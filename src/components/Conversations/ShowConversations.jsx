@@ -60,15 +60,12 @@ export default function ShowConversations({ user_id }) {
     ]
     return (
         <>
-            <div className="h-[47.5rem]">
+            <div className="h-[47.5rem] w-full">
                 <div className="flex">
                     <span className="ml-2 flex items-center justify-center gap-2 bg-default px-2 rounded-t-md"><FaInbox />Inbox</span>
                     <span className="flex items-center justify-center gap-2 px-2"><IoMdSend />Sent</span>
                 </div>
                 <div className="h-full outline outline-1 outline-mid-gray rounded-md p-2">
-                    <div className="flex justify-end mb-2">
-                        <button className="bg-mid-gray px-4 py-2 rounded-md text-white hover:bg-dark-gray flex items-center justify-center gap-2"><FaPencilAlt />Compose</button>
-                    </div>
                     {messages.map((msg, idx) => {
                         return <div className="group/item w-full flex border-b border-default-dark hover:bg-default py-2">
                             <span className="mx-2">{idx + 1}</span>
