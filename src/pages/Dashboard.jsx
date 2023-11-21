@@ -14,6 +14,7 @@ import CompanyPlans from "./CompanyPlans";
 import TrackingAssessment from "./TrackingAssessment";
 import AgreementSignOff from "./AgreementSignOff";
 import GlobalSettings from "./GlobalSettings";
+import Conversations from "./Conversations";
 
 export default function Dashboard() {
   if (!localStorage.getItem("currentUser")) {
@@ -101,10 +102,8 @@ export default function Dashboard() {
           {/* <Route path="/roles/*" element={<Roles />} /> */}
           <Route path="/help/*" element={<Help />} />
           <Route path="/main_goals/*" element={<MainGoals />} />
-          <Route
-            path="/tracking_and_assessment/*"
-            element={<TrackingAssessment />}
-          />
+          <Route path="/tracking_and_assessment/*" element={<TrackingAssessment />}/>
+          <Route path="/conversations/*" element={<Conversations />}/>
           <Route path="/global_settings/*" element={<GlobalSettings />} />
           <Route path="/sign_off/*" element={<AgreementSignOff />} />
           <Route path="/view_evaluations/*" element={<ViewEvaluation />} />

@@ -5,6 +5,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { RxDashboard, RxCounterClockwiseClock } from "react-icons/rx";
 import { FaWpforms, FaSignature } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
+import { CiChat1 } from "react-icons/ci";
 
 
 import {
@@ -72,8 +73,8 @@ export default function Sidebar({ sidebarToggler, className }) {
                 JSON.parse(currentUser).user_type <= 2
                   ? toggleDropdown
                   : () => {
-                      return;
-                    }
+                    return;
+                  }
               }
             />
             <div
@@ -100,6 +101,11 @@ export default function Sidebar({ sidebarToggler, className }) {
                 icon={<FaSignature />}
                 textLabel={"Agreement Sign-off"}
                 slug={"sign_off"}
+              />
+              <NavButton
+                icon={<CiChat1 />}
+                textLabel={"Conversations"}
+                slug={"conversations"}
               />
               {JSON.parse(currentUser).user_type > 3 && JSON.parse(currentUser).user_type <= 6 && (
                 <NavButton
