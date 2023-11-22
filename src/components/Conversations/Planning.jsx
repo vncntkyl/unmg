@@ -106,12 +106,12 @@ export default function Planning() {
   ]
   return (
     <>
-      <div className="w-full mt-4">
+      <div className="w-full mt-4 overflow-scroll">
         <div className="flex">
           <span className="ml-2 flex items-center justify-center gap-2 bg-default px-2 rounded-t-md"><FaInbox />Inbox</span>
           <span className="flex items-center justify-center gap-2 px-2"><IoMdSend />Sent</span>
         </div>
-        <div className="h-[90%] border border-default-dark rounded-md p-2 overflow-y-scroll">
+        <div className="w-full h-[90%] border border-default-dark rounded-md p-2 overflow-scroll">
             {messages.map((msg, idx) => {
               return (
                 <>
