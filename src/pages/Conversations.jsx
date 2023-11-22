@@ -19,8 +19,8 @@ export default function Conversations() {
   const [employeeID, setEmployeeID] = useState(-1);
   const { currentUser } = useAuth();
   const { getPath } = useFunction();
-  console.log(getPath());
-
+  const linkActive = getPath().split("/")[2];
+console.log(linkActive);
   useEffect(() => {
     const currentUser = JSON.parse(
       localStorage.getItem("currentUser")
@@ -50,40 +50,51 @@ export default function Conversations() {
             )}
           />
           <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
-            <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between">
+            <div className="h-[90vh] bg-white p-2 rounded-md flex flex-col shadow-md justify-between">
               {/* HEADER */}
               <div className="flex flex-col items-center justify-between md:flex-row">
                 <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
                   Conversations
                 </span>
               </div>
-              <div className="h-[85.5vh] w-full flex">
+              <div className="h-full w-full flex">
                 <ConversationSideBar>
                   <SidebarItem
-                    icon={<FaRegLightbulb className="text-[1rem] " />}
+                    icon={<FaRegLightbulb className="text-[0.8rem] lg:text-[1rem]" />}
                     text="Planning"
-                    active
+                    link="./planning"
+                    active={linkActive === "planning"}
                   />
                   <SidebarItem
-                    icon={<BsClipboard2Check className="text-[1rem] " />}
+                    icon={<BsClipboard2Check className="text-[0.8rem] lg:text-[1rem]" />}
                     text="Evaluations"
+                    link="./evaluations"
+                    active={linkActive === "evaluations"}
                   />
                   <SidebarItem
-                    icon={<FaPeopleArrows className="text-[1rem] " />}
+                    icon={<FaPeopleArrows className="text-[0.8rem] lg:text-[1rem]" />}
                     text="1 on 1"
+                    link="./1_on_1"
+                    active={linkActive === "1_on_1"}
                   />
                   <SidebarItem
-                    icon={<SlDirections className="text-[1rem] " />}
+                    icon={<SlDirections className="text-[0.8rem] lg:text-[1rem]" />}
                     text="Directional/Redirectional"
+                    link="./directional_redirectional"
+                    active={linkActive === "directional_redirectional"}
                   />
                   <SidebarItem
-                    icon={<FaHeadset className="text-[1rem] " />}
+                    icon={<FaHeadset className="text-[0.8rem] lg:text-[1rem]" />}
                     text="Coaching"
+                    link="./coaching"
+                    active={linkActive === "coaching"}
                     alert
                   />
                   <SidebarItem
-                    icon={<BsCalendar2Week className="text-[1rem] " />}
+                    icon={<BsCalendar2Week className="text-[0.8rem] lg:text-[1rem]" />}
                     text="PIP"
+                    link="./performance_improvement_plan"
+                    active={linkActive === "performance_improvement_plan"}
                     alert
                   />
                 </ConversationSideBar>
@@ -95,6 +106,7 @@ export default function Conversations() {
                   <Route path="/coaching" element={<Coaching />}/>
                   <Route path="/performance_improvement_plan" element={<PIP />}/>
                 </Routes>
+                {linkActive === undefined ? (<div className="w-full flex items-center justify-center text-[1.5rem] font-bold">No Conversation Selected</div>) : ""}
               </div>
             </div>
           </div>
