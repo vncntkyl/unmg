@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 
 const SidebarComponent = createContext();
 export default function ConversationSideBar({ children }) {
-  const [expanded, setExpanded] = useState(true);
+  const previousExpanded = sessionStorage.getItem("expanded");
+  const initialExpanded = previousExpanded !== null ? JSON.parse(previousExpanded) : true;
+  const [expanded, setExpanded] = useState(initialExpanded);
   return (
     <>
       <div className="lg:flex lg:flex-col mt-10 mr-2">
@@ -15,7 +17,13 @@ export default function ConversationSideBar({ children }) {
             <FaPencilAlt className="text-[0.8rem] lg:text-[1rem]" /><span className="hidden lg:block">{expanded && "Compose"}</span>
           </button>
           <button
-            onClick={() => setExpanded(previous => !previous)}
+            onClick={() => {
+              setExpanded((previous) => {
+                const newExpanded = !previous;
+                sessionStorage.setItem("expanded", newExpanded);
+                return newExpanded;
+              });
+            }}
             className="hidden lg:flex lg:items-center lg:justify-center w-10 px-3 py-1 bg-default hover:bg-default-dark text-center rounded-lg">
             {expanded ? <BsArrowBarLeft className="text-[2rem]" /> : <BsArrowBarRight className="text-[2rem]" />}
           </button>
@@ -38,11 +46,11 @@ export function SidebarItem({ icon, text, active, alert, link }) {
       <span className={classNames("overflow-hidden whitespace-nowrap transition-all", expanded ? "w-0 ml-0 lg:w-52 lg:ml-3" : "w-0")}>{text}</span>
       {alert && (
         <div
-          className={classNames("absolute right-2 w-2 h-2 rounded bg-un-red-light",!expanded ? "top-2" : "top-2 lg:top-4")}
+          className={classNames("absolute right-2 w-2 h-2 rounded bg-un-red-light", !expanded ? "top-2" : "top-2 lg:top-4")}
         ></div>
       )}
 
-      {!expanded && <div className="absolute left-full whitespace-nowrap rounded-md px-2 py-1 ml-6 bg-black text-white text-sm invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0">{text}</div>}
+      {!expanded && <div className="absolute z-10 left-full whitespace-nowrap rounded-md px-2 py-1 ml-6 bg-black text-white text-sm invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0">{text}</div>}
     </Link>
   );
 }

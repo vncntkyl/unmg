@@ -106,7 +106,7 @@ export default function Planning() {
   ]
   return (
     <>
-      <div className="w-full mt-4 overflow-scroll">
+      <div className="w-full mt-4">
         <div className="flex">
           <span className="ml-2 flex items-center justify-center gap-2 bg-default px-2 rounded-t-md"><FaInbox />Inbox</span>
           <span className="flex items-center justify-center gap-2 px-2"><IoMdSend />Sent</span>
@@ -119,10 +119,10 @@ export default function Planning() {
                     <span className="lg:mx-2 hidden md:block text-[0.9rem]">{idx + 1}</span>
                     <span className="hidden md:block mx-2 font-semibold lg:whitespace-nowrap px-10 min-w-[150px] text-[.8rem]">{msg.name}</span>
                     <div className="flex flex-col">
-                      <span className="lg:mx-2 font-semibold md:whitespace-nowrap overflow-x-hidden text-left text-[.8rem]">{msg.subject}</span>
-                      <span className="lg:mx-2 w-[8rem] sm:w-[15rem] whitespace-nowrap overflow-x-hidden text-[0.6rem] text-mid-gray lg:text-[0.8rem]">{msg.message.substring(0, 70)}...</span>
+                      <span className="lg:mx-2 font-semibold lg:whitespace-nowrap overflow-x-hidden text-left text-[.8rem]">{msg.subject}</span>
+                      <span className="lg:mx-2 w-[8rem] sm:w-[15rem] lg:w-[10rem] whitespace-nowrap overflow-x-hidden text-[0.6rem] text-mid-gray lg:text-[0.8rem]">{msg.message}...</span>
                     </div>
-                    <div className="w-full flex justify-end items-center"><span className="hidden group-hover/item:block px-2"><FaRegTrashAlt /></span><span className="flex flex-col lg:flex-row lg:gap-2 group-hover/item:hidden px-2 text-[0.8rem]"><span>11/24/23</span><span className="text-[0.6rem] lg:text-[0.8rem] text-right">09:00 PM</span></span></div>
+                    <div className="w-full flex justify-end items-center"><span className="hidden group-hover/item:block px-2"><FaRegTrashAlt /></span><span className="flex flex-col lg:flex-row lg:gap-2 group-hover/item:hidden px-2 text-[0.8rem] whitespace-nowrap"><span>11/24/23</span><span className="text-[0.6rem] lg:text-[0.8rem] text-right">09:00 PM</span></span></div>
                   </div>
                 </>
               )

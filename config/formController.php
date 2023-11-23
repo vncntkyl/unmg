@@ -1827,10 +1827,23 @@ class Form extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
-
+    
     function updateGlobalSettings($pillar_min, $pillar_max, $required_min, $required_max, $overall_percentage, $goal_status)
     {
         $this->setStatement("UPDATE hr_global_settings SET pillar_min = :pillar_min, pillar_max = :pillar_max, required_min = :required_min, required_max = :required_max, overall_percentage = :overall_percentage, goal_status = :goal_status");
         return $this->statement->execute([':pillar_min' => $pillar_min, ':pillar_max' => $pillar_max, ':required_min' => $required_min, ':required_max' => $required_max, ':overall_percentage' => $overall_percentage, ':goal_status' => $goal_status]);
+    }
+
+    function selectConversations()
+    {
+        $this->setStatement("SELECT * FROM hr_conversations");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
+    function selectAdminConversations()
+    {
+        $this->setStatement("SELECT * FROM hr_conversations");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
     }
 }
