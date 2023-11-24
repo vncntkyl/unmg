@@ -4,7 +4,7 @@ header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Origin, Content-Type');
 require_once '../config/formController.php';
 $form = new Form(); 
-    if (isset($_GET['adminConversation'])) {
-        echo json_encode($form->selectAdminConversations());
+    if (isset($_GET['conversations'])) {
+        echo json_encode($form->selectConversations());
     }
 ?>

@@ -3,17 +3,21 @@ import classNames from "classnames";
 import { FaPencilAlt } from "react-icons/fa";
 import { BsArrowBarLeft, BsArrowBarRight } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import ConversationsModal from "../../misc/ConversationsModal";
 
 const SidebarComponent = createContext();
 export default function ConversationSideBar({ children }) {
   const previousExpanded = sessionStorage.getItem("expanded");
   const initialExpanded = previousExpanded !== null ? JSON.parse(previousExpanded) : true;
   const [expanded, setExpanded] = useState(initialExpanded);
+  const [newConvoModal, setNewConvoModal] = useState(false);
   return (
     <>
       <div className="lg:flex lg:flex-col mt-10 mr-2">
         <div className={`lg:ml-2 flex overflow-hidden transition-all gap-1 lg:mr-2 ${expanded ? "flex-col-reverse lg:flex-row lg:justify-between" : "flex-col-reverse"}`}>
-          <button className={`outline-none bg-mid-gray rounded-md text-white hover:bg-dark-gray flex items-center justify-center text-[0.8rem] lg:text-[1rem] transition-all overflow-hidden ${expanded ? "px-2 py-3 lg:w-32 lg:gap-2 lg:px-4 lg:py-2" : "w-10 px-2 py-3"}`}>
+          <button
+            className={classNames("outline-none bg-mid-gray rounded-md text-white hover:bg-dark-gray flex items-center justify-center text-[0.8rem] lg:text-[1rem] transition-all overflow-hidden", expanded ? "px-2 py-3 lg:w-32 lg:gap-2 lg:px-4 lg:py-2" : "w-10 px-2 py-3")}
+            onClick={() => { setNewConvoModal(true); }}>
             <FaPencilAlt className="text-[0.8rem] lg:text-[1rem]" /><span className="hidden lg:block">{expanded && "Compose"}</span>
           </button>
           <button
@@ -32,6 +36,21 @@ export default function ConversationSideBar({ children }) {
           <ul className="lg:px-2">{children}</ul>
         </SidebarComponent.Provider>
       </div>
+      {newConvoModal && (
+
+        <ConversationsModal
+          closeModal={setNewConvoModal}
+        />
+      )}
+      <div
+        className={classNames(
+          "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
+          newConvoModal === false && "z-[-1] hidden pointer-events-none"
+        )}
+        onClick={() => {
+          setNewConvoModal(false);
+        }}
+      />
     </>
   );
 }
