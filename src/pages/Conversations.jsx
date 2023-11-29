@@ -10,7 +10,7 @@ import Discussions from "../components/Conversations/Discussions";
 import DirectionalRedirectional from "../components/Conversations/DirectionalRedirectional";
 import Coaching from "../components/Conversations/Coaching";
 import PIP from "../components/Conversations/PIP";
-import { FaRegLightbulb, FaPeopleArrows, FaHeadset } from "react-icons/fa";
+import { FaRegLightbulb, FaHeadset } from "react-icons/fa";
 import { BsClipboard2Check, BsCalendar2Week } from "react-icons/bs";
 import { SlDirections } from "react-icons/sl";
 
@@ -61,7 +61,7 @@ console.log(linkActive);
                 <ConversationSideBar>
                   <SidebarItem
                     icon={<FaRegLightbulb className="text-[0.8rem] lg:text-[1rem]" />}
-                    text="Planning"
+                    text="Planning (KPI Setting)"
                     link="./planning"
                     active={linkActive === "planning"}
                   />
@@ -70,12 +70,6 @@ console.log(linkActive);
                     text="Evaluations"
                     link="./evaluations"
                     active={linkActive === "evaluations"}
-                  />
-                  <SidebarItem
-                    icon={<FaPeopleArrows className="text-[0.8rem] lg:text-[1rem]" />}
-                    text="1 on 1"
-                    link="./1_on_1"
-                    active={linkActive === "1_on_1"}
                   />
                   <SidebarItem
                     icon={<SlDirections className="text-[0.8rem] lg:text-[1rem]" />}
@@ -92,7 +86,7 @@ console.log(linkActive);
                   />
                   <SidebarItem
                     icon={<BsCalendar2Week className="text-[0.8rem] lg:text-[1rem]" />}
-                    text="PIP"
+                    text="Performance Improv Plan"
                     link="./performance_improvement_plan"
                     active={linkActive === "performance_improvement_plan"}
                     alert
