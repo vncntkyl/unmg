@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { GrClose } from "react-icons/gr";
 import { IoAttach } from "react-icons/io5";
 
@@ -7,7 +7,10 @@ export default function ConversationsModal({
     closeModal,
 }) {
 
-    const [type, setType] = React.useState("");
+    const [type, setType] = useState(0);
+    const [quarter, setQuarter] = useState(0);
+    const [coaching, setCoaching] = useState(0);
+    const [file, setFile] = useState("");
     return (
         <>
             <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
@@ -22,40 +25,76 @@ export default function ConversationsModal({
                     {/* MESSAGE */}
                     <div className="flex flex-col items-center">
                         <div className="py-2">
-                            <span>
-                                Type of conversation
-                            </span>
-                            <select
-                                className="text-black rounded-md p-1 px-2 outline-none"
-                                onChange={(e) => setType(e.target.value)}
-                            >
-                                <option value="" selected disabled>Select A Type of Conversation</option>
-                                <option value="1">Planning</option>
-                                <option value="2">Evaluations</option>
-                                <option value="3">Directional/Redirectional</option>
-                                <option value="4">Coaching</option>
-                                <option value="5">PIP</option>
-                            </select>
+                            <div className="flex items-center gap-2 justify-between mb-2">
+                                <span>
+                                    Type of conversation
+                                </span>
+                                <select
+                                    className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray"
+                                    onChange={(e) => setType(parseInt(e.target.value))}
+                                >
+                                    <option value={0} selected disabled>Select A Type of Conversation</option>
+                                    <option value={1}>Planning</option>
+                                    <option value={2}>Evaluations</option>
+                                    <option value={3}>Directional/Redirectional</option>
+                                    <option value={4}>Coaching</option>
+                                    <option value={5}>PIP</option>
+                                </select>
+                            </div>
+                            {type === 2 && (
+                                <div className="flex items-center gap-2 justify-between mb-2">
+                                    <span>
+                                        Quarter
+                                    </span>
+                                    <select
+                                        className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray"
+                                        onChange={(e) => setQuarter(parseInt(e.target.value))}
+                                    >
+                                        <option value={0} selected disabled>Select Quarter</option>
+                                        <option value={1}>First Quarter</option>
+                                        <option value={2}>Mid Year</option>
+                                        <option value={3}>Third Quarter</option>
+                                        <option value={4}>Year End</option>
+                                    </select>
+                                </div>
+                            )}
+                            {type === 4 && (
+                                <div className="flex items-center gap-2 justify-between mb-2">
+                                    <span>
+                                        Coaching Type
+                                    </span>
+                                    <select
+                                        className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray"
+                                        onChange={(e) => setCoaching(parseInt(e.target.value))}
+                                    >
+                                        <option value={0} selected disabled>Coaching Type</option>
+                                        <option value={1}>Directive</option>
+                                        <option value={2}>Developmental</option>
+                                    </select>
+                                </div>
+                            )}
                             <div>
-                                {type === "" ? (<span className="flex justify-center">No type selected</span>)
+                                {type === 0 ? (<span className="flex justify-center">No type selected</span>)
                                     : (
                                         <>
-                                            <div>
+                                            <div className="flex items-center gap-2 justify-between">
                                                 <span>
                                                     Recipient
                                                 </span>
                                                 <select
-                                                    className="text-black rounded-md p-1 px-2 outline-none"
+                                                    className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray"
                                                 >
                                                     <option value="" selected disabled>Select A Recipient</option>
                                                 </select>
                                             </div>
                                             <input type="text" className="text-black rounded-t-md p-1 px-2 outline-none w-full bg-default mt-2 border-b-[.1rem]" placeholder="Agenda" />
-                                            <div className="relative">
-                                                <textarea name="" id="" cols="30" rows="10" className="w-full bg-default rounded-b-md resize-none outline-none p-2" placeholder="Message"></textarea>
-                                                <div className="absolute bottom-2 left-0">
-                                                    <label htmlFor="fileUpload" className="cursor-pointer text-[1.5rem] text-dark-gray hover:text-gray"><IoAttach /></label>
-                                                    <input type="file" className="hidden" id="fileUpload" />
+                                            <div className="w-full bg-default rounded-b-md">
+                                            <textarea name="" id="" cols="30" rows="10" className="w-full bg-default rounded-b-md resize-none outline-none px-2 pt-2 pb-5" placeholder="Message"></textarea>
+                                                <div className="w-fit pb-2 px-2 flex items-center">
+                                                    <label htmlFor="fileUpload" className="w-fit cursor-pointer text-[1.5rem] text-dark-gray hover:text-gray"><IoAttach /></label>
+                                                    <input type="file" className="hidden" id="fileUpload" 
+                                                    onChange={(e) => setFile(e.target.files[0])}/>
+                                                    <p className="text-[0.8rem]">{file && file.name}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center my-4">

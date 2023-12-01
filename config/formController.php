@@ -1846,4 +1846,30 @@ class Form extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
+
+    function selectReceivers (){
+        $this->setStatement("
+        SELECT
+        employee.users_id,
+        employee.employee_id AS employee_id,
+        employee.first_name,
+        CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
+        CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
+        CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
+        CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
+        hr_user_accounts.user_type
+        FROM hr_users AS employee
+        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
+        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
+        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator 
+        LEFT JOIN 
+        hr_user_accounts ON hr_user_accounts.users_id = employee.users_id
+        LEFT JOIN
+        hr_eval_form ON hr_eval_form.users_id = employee.users_id
+        WHERE
+        (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
+        ");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
 }
