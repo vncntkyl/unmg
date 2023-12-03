@@ -1,16 +1,38 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { GrClose } from "react-icons/gr";
 import { IoAttach } from "react-icons/io5";
+import { developmentAPIs as url } from "../context/apiList";
+
 
 
 export default function ConversationsModal({
+    employee_id,
     closeModal,
 }) {
-
     const [type, setType] = useState(0);
     const [quarter, setQuarter] = useState(0);
     const [coaching, setCoaching] = useState(0);
     const [file, setFile] = useState("");
+    const [receivers, setReceivers] = useState([]);
+    useEffect(() => {
+        const getReceivers = async () => {
+            const parameters = {
+                params: {
+                    empID: employee_id
+                },
+            };
+            try {
+                const response = await axios.get(url.retrieveReceivers, parameters);
+                setReceivers(response.data);
+            }
+            catch (error) {
+                console.log(error.message);
+            }
+            };
+            getReceivers();
+    }, [employee_id]);
+
     return (
         <>
             <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
@@ -77,14 +99,19 @@ export default function ConversationsModal({
                                 {type === 0 ? (<span className="flex justify-center">No type selected</span>)
                                     : (
                                         <>
+                                        {console.log(receivers.map(receiver => receiver.receiver_id))}
                                             <div className="flex items-center gap-2 justify-between">
                                                 <span>
                                                     Recipient
                                                 </span>
-                                                <select
-                                                    className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray"
-                                                >
-                                                    <option value="" selected disabled>Select A Recipient</option>
+                                                <select className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray">
+                                                    <option value="" disabled selected>Select A Recipient</option>
+                                                    {receivers &&
+                                                    receivers.map((receiver) => receiver.receiver_id && (
+                                                        <option key={receiver.receiver_id} value={receiver.receiver_id}>
+                                                        {receiver.receivers}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </div>
                                             <input type="text" className="text-black rounded-t-md p-1 px-2 outline-none w-full bg-default mt-2 border-b-[.1rem]" placeholder="Agenda" />

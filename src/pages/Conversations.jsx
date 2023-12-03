@@ -20,7 +20,6 @@ export default function Conversations() {
   const { currentUser } = useAuth();
   const { getPath } = useFunction();
   const linkActive = getPath().split("/")[2];
-console.log(linkActive);
   useEffect(() => {
     const currentUser = JSON.parse(
       localStorage.getItem("currentUser")
@@ -58,7 +57,7 @@ console.log(linkActive);
                 </span>
               </div>
               <div className="h-full w-full flex">
-                <ConversationSideBar>
+                <ConversationSideBar employee_id={employeeID}>
                   <SidebarItem
                     icon={<FaRegLightbulb className="text-[0.8rem] lg:text-[1rem]" />}
                     text="Planning (KPI Setting)"

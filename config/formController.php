@@ -1847,29 +1847,63 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
-    function selectReceivers (){
+    function selectReceivers($employee_id){
         $this->setStatement("
         SELECT
-        employee.users_id,
-        employee.employee_id AS employee_id,
-        employee.first_name,
-        CONCAT(employee.first_name, ' ', LEFT(employee.middle_name, 1), '. ', employee.last_name) AS employee_name,
-        CONCAT(primary_eval.first_name, ' ', LEFT(primary_eval.middle_name, 1), '. ', primary_eval.last_name) AS primary_eval_name,
-        CONCAT(secondary_eval.first_name, ' ', LEFT(secondary_eval.middle_name, 1), '. ', secondary_eval.last_name) AS secondary_eval_name,
-        CONCAT(tertiary_eval.first_name, ' ', LEFT(tertiary_eval.middle_name, 1), '. ', tertiary_eval.last_name) AS tertiary_eval_name,
-        hr_user_accounts.user_type
-        FROM hr_users AS employee
-        LEFT JOIN hr_users AS primary_eval ON primary_eval.employee_id = employee.primary_evaluator
-        LEFT JOIN hr_users AS secondary_eval ON secondary_eval.employee_id = employee.secondary_evaluator
-        LEFT JOIN hr_users AS tertiary_eval ON tertiary_eval.employee_id = employee.tertiary_evaluator 
-        LEFT JOIN 
-        hr_user_accounts ON hr_user_accounts.users_id = employee.users_id
-        LEFT JOIN
-        hr_eval_form ON hr_eval_form.users_id = employee.users_id
+        primary_eval.employee_id AS receiver_id,
+        CASE 
+        WHEN primary_eval.middle_name IS NOT NULL AND primary_eval.middle_name <> '' THEN
+            CONCAT(primary_eval.first_name, ' ', SUBSTRING(primary_eval.middle_name, 1, 1), '. ', primary_eval.last_name)
+        ELSE
+            CONCAT(primary_eval.first_name, ' ', primary_eval.last_name)
+        END AS receivers
+        FROM hr_users
+        LEFT JOIN hr_users AS primary_eval ON hr_users.primary_evaluator = primary_eval.employee_id
+        WHERE hr_users.employee_id = :employee_id
+        
+        UNION ALL
+        
+        SELECT
+        secondary_eval.employee_id AS receiver_id,
+        CASE 
+        WHEN secondary_eval.middle_name IS NOT NULL AND secondary_eval.middle_name <> '' THEN
+            CONCAT(secondary_eval.first_name, ' ', SUBSTRING(secondary_eval.middle_name, 1, 1), '. ', secondary_eval.last_name)
+        ELSE
+            CONCAT(secondary_eval.first_name, ' ', secondary_eval.last_name)
+        END AS receivers
+        FROM hr_users
+        LEFT JOIN hr_users AS secondary_eval ON hr_users.secondary_evaluator = secondary_eval.employee_id
+        WHERE hr_users.employee_id = :employee_id
+        
+        UNION ALL
+        
+        SELECT
+        tertiary_eval.employee_id AS receiver_id,
+        CASE 
+        WHEN tertiary_eval.middle_name IS NOT NULL AND tertiary_eval.middle_name <> '' THEN
+            CONCAT(tertiary_eval.first_name, ' ', SUBSTRING(tertiary_eval.middle_name, 1, 1), '. ', tertiary_eval.last_name)
+        ELSE
+            CONCAT(tertiary_eval.first_name, ' ', tertiary_eval.last_name)
+        END AS receivers
+        FROM hr_users
+        LEFT JOIN hr_users AS tertiary_eval ON hr_users.tertiary_evaluator = tertiary_eval.employee_id
+        WHERE hr_users.employee_id = :employee_id
+        
+        UNION ALL
+        
+        SELECT
+        hr_users.employee_id AS receiver_id,
+        CASE 
+        WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
+            CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
+        ELSE
+            CONCAT(hr_users.first_name, ' ', hr_users.last_name)
+        END AS receivers
+        FROM hr_users
         WHERE
-        (employee.primary_evaluator = :rater_id OR employee.secondary_evaluator = :rater_id OR employee.tertiary_evaluator = :rater_id)
+        (hr_users.primary_evaluator = :employee_id OR hr_users.secondary_evaluator = :employee_id OR hr_users.tertiary_evaluator = :employee_id)
         ");
-        $this->statement->execute();
+        $this->statement->execute(["employee_id" => $employee_id]);
         return $this->statement->fetchAll();
     }
 }

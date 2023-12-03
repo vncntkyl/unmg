@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import ConversationsModal from "../../misc/ConversationsModal";
 
 const SidebarComponent = createContext();
-export default function ConversationSideBar({ children }) {
+export default function ConversationSideBar({ children, employee_id }) {
   const previousExpanded = sessionStorage.getItem("expanded");
   const initialExpanded = previousExpanded !== null ? JSON.parse(previousExpanded) : true;
   const [expanded, setExpanded] = useState(initialExpanded);
@@ -40,6 +40,7 @@ export default function ConversationSideBar({ children }) {
 
         <ConversationsModal
           closeModal={setNewConvoModal}
+          employee_id={employee_id}
         />
       )}
       <div
