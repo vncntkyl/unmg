@@ -30,6 +30,7 @@ export const developmentAPIs = {
   fetchKPIDuration: "http://localhost/unmg_pms/api/fetchKpiDuration.php",
   retrieveGlobalSettings: "http://localhost/unmg_pms/api/retrieveGlobalSettings.php",
   retrieveReceivers: "http://localhost/unmg_pms/api/retrieveReceivers.php",
+  retrieveConversations: "http://localhost/unmg_pms/api/retrieveConversations.php",
 
   };
 
@@ -65,4 +66,5 @@ export const releaseAPIs = {
   fetchKPIDuration: "../api/fetchKpiDuration.php",
   retrieveGlobalSettings: "../api/retrieveGlobalSettings.php",
   retrieveReceivers: "../api/retrieveReceivers.php",
+  retrieveConversations: "../api/retrieveConversations.php",
 };

@@ -13,8 +13,12 @@ export default function ConversationsModal({
     const [type, setType] = useState(0);
     const [quarter, setQuarter] = useState(0);
     const [coaching, setCoaching] = useState(0);
+    const [agenda, setAgenda] = useState("");
+    const [message, setMessage] = useState("");
     const [file, setFile] = useState("");
     const [receivers, setReceivers] = useState([]);
+    const [receiver, setReceiver] = useState(0);
+    const [seeAdmin, setSeeAdmin] = useState(0);
     useEffect(() => {
         const getReceivers = async () => {
             const parameters = {
@@ -32,6 +36,35 @@ export default function ConversationsModal({
             };
             getReceivers();
     }, [employee_id]);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const user_id = parseInt(employee_id);
+        const rec = receiver;
+        const convo_type = type;
+        const selected_quarter = quarter;
+        const selected_coaching = coaching;
+        const convo_agenda = agenda;
+        const convo_message = message;
+        const convo_file = file.name;
+        const see_admin = seeAdmin;
+        const url = "http://localhost/unmg_pms/api/userSubmitNewConversation.php";
+        let fData = new FormData();
+        fData.append("submit", true);
+        fData.append("user_id", user_id);
+        fData.append("rec", rec);
+        fData.append("convo_type", convo_type);
+        fData.append("selected_quarter", selected_quarter);
+        fData.append("selected_coaching", selected_coaching);
+        fData.append("convo_agenda", convo_agenda);
+        fData.append("convo_message", convo_message);
+        fData.append("convo_file", convo_file);
+        fData.append("see_admin", see_admin);
+        axios
+        .post(url, fData)
+        .then((response) => alert(response.data))
+        .catch((error) => alert(error));
+        closeModal(false);
+    }
 
     return (
         <>
@@ -90,7 +123,7 @@ export default function ConversationsModal({
                                         onChange={(e) => setCoaching(parseInt(e.target.value))}
                                     >
                                         <option value={0} selected disabled>Coaching Type</option>
-                                        <option value={1}>Directive</option>
+                                        <option value={1}>Corrective</option>
                                         <option value={2}>Developmental</option>
                                     </select>
                                 </div>
@@ -99,12 +132,12 @@ export default function ConversationsModal({
                                 {type === 0 ? (<span className="flex justify-center">No type selected</span>)
                                     : (
                                         <>
-                                        {console.log(receivers.map(receiver => receiver.receiver_id))}
                                             <div className="flex items-center gap-2 justify-between">
                                                 <span>
                                                     Recipient
                                                 </span>
-                                                <select className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray">
+                                                <select className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray"
+                                                onChange={(e) => setReceiver(parseInt(e.target.value))}>
                                                     <option value="" disabled selected>Select A Recipient</option>
                                                     {receivers &&
                                                     receivers.map((receiver) => receiver.receiver_id && (
@@ -114,9 +147,11 @@ export default function ConversationsModal({
                                                     ))}
                                                 </select>
                                             </div>
-                                            <input type="text" className="text-black rounded-t-md p-1 px-2 outline-none w-full bg-default mt-2 border-b-[.1rem]" placeholder="Agenda" />
+                                            <input type="text" className="text-black rounded-t-md p-1 px-2 outline-none w-full bg-default mt-2 border-b-[.1rem]" placeholder="Agenda"
+                                            onChange={(e) => setAgenda(e.target.value)} />
                                             <div className="w-full bg-default rounded-b-md">
-                                            <textarea name="" id="" cols="30" rows="10" className="w-full bg-default rounded-b-md resize-none outline-none px-2 pt-2 pb-5" placeholder="Message"></textarea>
+                                            <textarea name="" id="" cols="30" rows="10" className="w-full bg-default rounded-b-md resize-none outline-none px-2 pt-2 pb-5" placeholder="Message"
+                                            onChange={(e) => setMessage(e.target.value)}></textarea>
                                                 <div className="w-fit pb-2 px-2 flex items-center">
                                                     <label htmlFor="fileUpload" className="w-fit cursor-pointer text-[1.5rem] text-dark-gray hover:text-gray"><IoAttach /></label>
                                                     <input type="file" className="hidden" id="fileUpload" 
@@ -130,6 +165,7 @@ export default function ConversationsModal({
                                                         type="checkbox"
                                                         //checked={settings.goal_status === "1" || settings.goal_status === 1}
                                                         className="sr-only peer"
+                                                        onChange={(e) => setSeeAdmin(e.target.checked ? 2 : 1)}
                                                     //onChange={(event) => handleSettings("goal_status", event.target.checked ? 1 : 0)}
                                                     />
                                                     <div class="border-[1px] peer-checked:bg-un-blue w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -152,6 +188,7 @@ export default function ConversationsModal({
                         <input
                             type="submit"
                             className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
+                            onClick={handleSubmit}
                         />
                     </div>
                 </form>

@@ -1834,19 +1834,6 @@ class Form extends Controller
         return $this->statement->execute([':pillar_min' => $pillar_min, ':pillar_max' => $pillar_max, ':required_min' => $required_min, ':required_max' => $required_max, ':overall_percentage' => $overall_percentage, ':goal_status' => $goal_status]);
     }
 
-    function selectConversations()
-    {
-        $this->setStatement("SELECT * FROM hr_conversations");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
-    }
-    function selectAdminConversations()
-    {
-        $this->setStatement("SELECT * FROM hr_conversations");
-        $this->statement->execute();
-        return $this->statement->fetchAll();
-    }
-
     function selectReceivers($employee_id){
         $this->setStatement("
         SELECT
@@ -1904,6 +1891,48 @@ class Form extends Controller
         (hr_users.primary_evaluator = :employee_id OR hr_users.secondary_evaluator = :employee_id OR hr_users.tertiary_evaluator = :employee_id)
         ");
         $this->statement->execute(["employee_id" => $employee_id]);
+        return $this->statement->fetchAll();
+    }
+    //New conversations
+    function insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin){
+        $this->setStatement("INSERT INTO hr_convo_inbox (convo_type, evaluation_quarter, coaching_type, admin_access, agenda, last_sent_message, last_sent_user_id, deleted, last_modified, creation_date) VALUES (:convo_type, :evaluation_quarter, :coaching_type, :admin_access, :agenda, :last_sent_message, :last_sent_user_id, :deleted, :last_modified, :creation_date)");
+        $this->statement->execute([':convo_type' => $convo_type, ':evaluation_quarter' => $selected_quarter, ':coaching_type' => $selected_coach, 'agenda' => $convo_agenda, ':admin_access' => $see_admin, ':last_sent_message' => $convo_message, ':last_sent_user_id' => $user_id, ':deleted' => 0, ':last_modified' => date('Y-m-d H:i:s'), ':creation_date' => date('Y-m-d H:i:s')]);
+        return $this->connection->lastInsertId();
+    }
+    function insertParticipantConversation($inbox, $ID){
+        $this->setStatement("INSERT INTO hr_convo_participants (inbox_id, employee_id) VALUES (:inbox_id, :employee_id)");
+        return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $ID]);
+    }
+    function insertMessage($inbox, $user_id, $convo_message){
+        $this->setStatement("INSERT INTO hr_convo_messages (inbox_id, employee_id, message, creation_date) VALUES (:inbox_id, :employee_id, :message, :creation_date)");
+        return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $user_id, ':message' => $convo_message, ':creation_date' => date('Y-m-d H:i:s')]);
+    }
+    //For Planning Conversations
+    function selectPlanningConversations($user_id, $convo_type){
+        $this->setStatement("SELECT 
+        CASE 
+            WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
+                CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
+            ELSE
+                CONCAT(hr_users.first_name, ' ', hr_users.last_name)
+            END AS converse_name,
+        hr_convo_participants.*, 
+        hr_convo_inbox.*
+    FROM 
+        hr_convo_participants
+    LEFT JOIN 
+        hr_convo_inbox ON hr_convo_inbox.ID = hr_convo_participants.inbox_id
+    LEFT JOIN 
+        hr_convo_participants AS communicating_participant
+        ON hr_convo_inbox.ID = communicating_participant.inbox_id
+        AND hr_convo_participants.employee_id <> communicating_participant.employee_id
+    LEFT JOIN hr_users ON hr_users.employee_id = communicating_participant.employee_id
+    WHERE 
+        hr_convo_participants.employee_id = ? 
+        AND hr_convo_inbox.convo_type = ?
+    ORDER BY 
+        hr_convo_inbox.last_modified ASC");
+        $this->statement->execute([$user_id, $convo_type]);
         return $this->statement->fetchAll();
     }
 }

@@ -6,7 +6,6 @@ import classNames from "classnames";
 import ConversationSideBar, { SidebarItem } from "../components/Conversations/ConversationSideBar";
 import Planning from "../components/Conversations/Planning";
 import Evaluations from "../components/Conversations/Evaluations";
-import Discussions from "../components/Conversations/Discussions";
 import DirectionalRedirectional from "../components/Conversations/DirectionalRedirectional";
 import Coaching from "../components/Conversations/Coaching";
 import PIP from "../components/Conversations/PIP";
@@ -92,12 +91,11 @@ export default function Conversations() {
                   />
                 </ConversationSideBar>
                 <Routes>
-                  <Route path="/planning" element={<Planning/>}/>
-                  <Route path="/evaluations" element={<Evaluations />}/>
-                  <Route path="/1_on_1" element={<Discussions />}/>
-                  <Route path="/directional_redirectional" element={<DirectionalRedirectional />}/>
-                  <Route path="/coaching" element={<Coaching />}/>
-                  <Route path="/performance_improvement_plan" element={<PIP />}/>
+                  <Route path="/planning" element={<Planning employee_id={employeeID} convo_type={1}/>}/>
+                  <Route path="/evaluations" element={<Evaluations employee_id={employeeID} convo_type={2}/>}/>
+                  <Route path="/directional_redirectional" element={<DirectionalRedirectional employee_id={employeeID} convo_type={3}/>}/>
+                  <Route path="/coaching" element={<Coaching employee_id={employeeID} convo_type={4}/>}/>
+                  <Route path="/performance_improvement_plan" element={<PIP employee_id={employeeID} convo_type={5}/>}/>
                 </Routes>
                 {linkActive === undefined ? (<div className="w-full flex items-center justify-center text-[1.5rem] font-bold">No Conversation Selected</div>) : ""}
               </div>
