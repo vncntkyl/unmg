@@ -196,3 +196,80 @@ export default function ConversationsModal({
         </>
     )
 }
+export function ConversationsModalDelete({
+    employee_id,
+    closeModal,
+    employee_name,
+}) {
+        const [type, setType] = useState(0);
+        const [quarter, setQuarter] = useState(0);
+        const [coaching, setCoaching] = useState(0);
+        const [agenda, setAgenda] = useState("");
+        const [message, setMessage] = useState("");
+        const [file, setFile] = useState("");
+        const [receivers, setReceivers] = useState([]);
+        const [receiver, setReceiver] = useState(0);
+        const [seeAdmin, setSeeAdmin] = useState(0);
+        console.log(employee_id);
+        useEffect(() => {
+            const getReceivers = async () => {
+                const parameters = {
+                    params: {
+                        empID: employee_id
+                    },
+                };
+                try {
+                    const response = await axios.get(url.retrieveReceivers, parameters);
+                    setReceivers(response.data);
+                }
+                catch (error) {
+                    console.log(error.message);
+                }
+                };
+                getReceivers();
+        }, [employee_id]);
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            alert ("Deleted");
+        }
+    
+        return (
+            <>
+                <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
+                    <form>
+                        <div className="flex flex-row items-center justify-between border-b border-gray py-1">
+                            <span className="font-semibold text-[1.1rem]">Delete Confirmation</span>
+                            <button className="text-[.7rem] px-1"
+                                onClick={() => closeModal(false)}
+                            ><GrClose />
+                            </button>
+                        </div>
+                        {/* MESSAGE */}
+                        <div className="flex flex-col items-center">
+                            <div className="py-2">
+                                <div className="flex items-center gap-2 justify-between mb-2">
+                                    <span>
+                                        Are you sure you want to delete this conversation with {employee_name}?
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {/* FOOTER */}
+                        <div className="flex flex-row items-center justify-end gap-4 p-2">
+                            <button
+                                className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-gray hover:border-gray"
+                                onClick={() => closeModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <input
+                                type="submit"
+                                className="text-white bg-un-red border border-un-red p-1 px-2 rounded-md text-[.9rem] hover:bg-un-red-light disabled:bg-dark-gray"
+                                onClick={handleSubmit}
+                            />
+                        </div>
+                    </form>
+                </div>
+            </>
+        )
+    }

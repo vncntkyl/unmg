@@ -12,6 +12,7 @@ import PIP from "../components/Conversations/PIP";
 import { FaRegLightbulb, FaHeadset } from "react-icons/fa";
 import { BsClipboard2Check, BsCalendar2Week } from "react-icons/bs";
 import { SlDirections } from "react-icons/sl";
+import ConversationMessages from "../components/Conversations/ConversationMessages";
 
 export default function Conversations() {
   const [loading, toggleLoading] = useState(true);
@@ -96,6 +97,7 @@ export default function Conversations() {
                   <Route path="/directional_redirectional" element={<DirectionalRedirectional employee_id={employeeID} convo_type={3}/>}/>
                   <Route path="/coaching" element={<Coaching employee_id={employeeID} convo_type={4}/>}/>
                   <Route path="/performance_improvement_plan" element={<PIP employee_id={employeeID} convo_type={5}/>}/>
+                  <Route path="/:id/messages" element={<ConversationMessages/>}/>
                 </Routes>
                 {linkActive === undefined ? (<div className="w-full flex items-center justify-center text-[1.5rem] font-bold">No Conversation Selected</div>) : ""}
               </div>
