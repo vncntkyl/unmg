@@ -31,6 +31,7 @@ export const developmentAPIs = {
   retrieveGlobalSettings: "http://localhost/unmg_pms/api/retrieveGlobalSettings.php",
   retrieveReceivers: "http://localhost/unmg_pms/api/retrieveReceivers.php",
   retrieveConversations: "http://localhost/unmg_pms/api/retrieveConversations.php",
+  retrieveConvo:"http://localhost/unmg_pms/api/retrieveConvo.php",
 
   };
 
@@ -67,4 +68,5 @@ export const releaseAPIs = {
   retrieveGlobalSettings: "../api/retrieveGlobalSettings.php",
   retrieveReceivers: "../api/retrieveReceivers.php",
   retrieveConversations: "../api/retrieveConversations.php",
+  retrieveConvo:"../api/retrieveConvo.php",
 };

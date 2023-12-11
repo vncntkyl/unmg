@@ -97,7 +97,7 @@ export default function Conversations() {
                   <Route path="/directional_redirectional" element={<DirectionalRedirectional employee_id={employeeID} convo_type={3}/>}/>
                   <Route path="/coaching" element={<Coaching employee_id={employeeID} convo_type={4}/>}/>
                   <Route path="/performance_improvement_plan" element={<PIP employee_id={employeeID} convo_type={5}/>}/>
-                  <Route path="/:id/messages" element={<ConversationMessages/>}/>
+                  <Route path="/:id/messages" element={<ConversationMessages employee_id={employeeID}/>}/>
                 </Routes>
                 {linkActive === undefined ? (<div className="w-full flex items-center justify-center text-[1.5rem] font-bold">No Conversation Selected</div>) : ""}
               </div>
