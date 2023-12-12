@@ -1965,8 +1965,8 @@ class Form extends Controller
         return $this->statement->fetch();
     }
     function selectConvo($convo_id){
-        $this->setStatement("SELECT * FROM hr_convo_messages WHERE inbox_id = ?");
+        $this->setStatement("SELECT * FROM hr_convo_messages WHERE inbox_id = ? ORDER BY ID ASC");
         $this->statement->execute([$convo_id]);
-        return $this->statement->fetch();
+        return $this->statement->fetchAll();
     }
 }

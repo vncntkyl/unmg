@@ -27,6 +27,8 @@ export default function Planning({ employee_id, convo_type }) {
     };
     getPlanning();
     toggleLoading(false);
+    const interval = setInterval(getPlanning, 5000);
+    return () => clearInterval(interval);
   }, [employee_id, convo_type]);
   const handleClick = (convoID) => {
     localStorage.setItem("convoID", convoID);

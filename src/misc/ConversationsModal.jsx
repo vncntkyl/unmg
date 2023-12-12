@@ -160,7 +160,7 @@ export default function ConversationsModal({
                                                 </div>
                                             </div>
                                             <div className="flex items-center my-4">
-                                                <label class="relative inline-flex items-center cursor-pointer gap-2">
+                                                <label className="relative inline-flex items-center cursor-pointer gap-2">
                                                     <input
                                                         type="checkbox"
                                                         //checked={settings.goal_status === "1" || settings.goal_status === 1}
