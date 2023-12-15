@@ -29,7 +29,7 @@ export default function Coaching({ employee_id, convo_type }) {
     };
     getCoaching();
     toggleLoading(false);
-    const interval = setInterval(getCoaching, 5000);
+    const interval = setInterval(getCoaching, 2000);
     return () => clearInterval(interval);
   }, [employee_id, convo_type]);
 

@@ -26,7 +26,7 @@ export default function Evaluations({ employee_id, convo_type }) {
     };
     getEvaluations();
     toggleLoading(false);
-    const interval = setInterval(getEvaluations, 5000);
+    const interval = setInterval(getEvaluations, 2000);
     return () => clearInterval(interval);
   }, [employee_id, convo_type]);
   

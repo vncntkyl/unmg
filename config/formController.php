@@ -506,8 +506,8 @@ class Form extends Controller
                   AND ua.user_type >= 4
                 GROUP BY
                     u.users_id) AS subquery");
-            $this->statement->execute(['creation_date' => $creation_date]);
-            return $this->statement->fetch();
+        $this->statement->execute(['creation_date' => $creation_date]);
+        return $this->statement->fetch();
     }
 
     // DASHBOARD FETCH EVALUATIONS
@@ -604,8 +604,8 @@ class Form extends Controller
           AND ua.user_type >= 4
         GROUP BY
             u.users_id) AS subquery");
-         $this->statement->execute(['creation_date' => $creation_date]);
-         return $this->statement->fetch();
+        $this->statement->execute(['creation_date' => $creation_date]);
+        return $this->statement->fetch();
     }
 
     // DASHBOARD FETCH RANKINGS
@@ -1827,14 +1827,15 @@ class Form extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
-    
+
     function updateGlobalSettings($pillar_min, $pillar_max, $required_min, $required_max, $overall_percentage, $goal_status)
     {
         $this->setStatement("UPDATE hr_global_settings SET pillar_min = :pillar_min, pillar_max = :pillar_max, required_min = :required_min, required_max = :required_max, overall_percentage = :overall_percentage, goal_status = :goal_status");
         return $this->statement->execute([':pillar_min' => $pillar_min, ':pillar_max' => $pillar_max, ':required_min' => $required_min, ':required_max' => $required_max, ':overall_percentage' => $overall_percentage, ':goal_status' => $goal_status]);
     }
 
-    function selectReceivers($employee_id){
+    function selectReceivers($employee_id)
+    {
         $this->setStatement("
         SELECT
         primary_eval.employee_id AS receiver_id,
@@ -1894,21 +1895,25 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
     //New conversations
-    function insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin){
+    function insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin)
+    {
         $this->setStatement("INSERT INTO hr_convo_inbox (convo_type, evaluation_quarter, coaching_type, admin_access, agenda, last_sent_message, last_sent_user_id, deleted, last_modified, creation_date) VALUES (:convo_type, :evaluation_quarter, :coaching_type, :admin_access, :agenda, :last_sent_message, :last_sent_user_id, :deleted, :last_modified, :creation_date)");
         $this->statement->execute([':convo_type' => $convo_type, ':evaluation_quarter' => $selected_quarter, ':coaching_type' => $selected_coach, 'agenda' => $convo_agenda, ':admin_access' => $see_admin, ':last_sent_message' => $convo_message, ':last_sent_user_id' => $user_id, ':deleted' => 0, ':last_modified' => date('Y-m-d H:i:s'), ':creation_date' => date('Y-m-d H:i:s')]);
         return $this->connection->lastInsertId();
     }
-    function insertParticipantConversation($inbox, $ID){
+    function insertParticipantConversation($inbox, $ID)
+    {
         $this->setStatement("INSERT INTO hr_convo_participants (inbox_id, employee_id) VALUES (:inbox_id, :employee_id)");
         return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $ID]);
     }
-    function insertMessage($inbox, $user_id, $convo_message){
+    function insertMessage($inbox, $user_id, $convo_message)
+    {
         $this->setStatement("INSERT INTO hr_convo_messages (inbox_id, employee_id, message, creation_date) VALUES (:inbox_id, :employee_id, :message, :creation_date)");
         return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $user_id, ':message' => $convo_message, ':creation_date' => date('Y-m-d H:i:s')]);
     }
     //For Conversations
-    function selectConversations($user_id, $convo_type){
+    function selectConversations($user_id, $convo_type)
+    {
         $this->setStatement("SELECT 
         hr_users.employee_id AS converse_id,
              CASE 
@@ -1936,7 +1941,8 @@ class Form extends Controller
         $this->statement->execute([$user_id, $convo_type]);
         return $this->statement->fetchAll();
     }
-    function selectConvoSettings($employee_id, $convo_id){
+    function selectConvoSettings($employee_id, $convo_id)
+    {
         $this->setStatement("SELECT 
         hr_users.employee_id AS converse_id,
              CASE 
@@ -1964,9 +1970,43 @@ class Form extends Controller
         $this->statement->execute([$employee_id, $convo_id]);
         return $this->statement->fetch();
     }
-    function selectConvo($convo_id){
-        $this->setStatement("SELECT * FROM hr_convo_messages WHERE inbox_id = ? ORDER BY ID ASC");
+    function selectConvo($convo_id)
+    {
+        $this->setStatement("
+        SELECT 
+        CASE 
+        WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
+            CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
+        ELSE
+            CONCAT(hr_users.first_name, ' ', hr_users.last_name)
+        END AS employee_name,
+        hr_convo_messages.* FROM hr_convo_messages 
+        LEFT JOIN hr_users ON hr_users.employee_id = hr_convo_messages.employee_id
+        WHERE inbox_id = ?
+        ORDER BY ID ASC
+        ");
         $this->statement->execute([$convo_id]);
         return $this->statement->fetchAll();
+    }
+    function insertNewMessage($employee_id, $convo_id, $new_message)
+    {
+        $this->setStatement("
+        START TRANSACTION;
+        INSERT INTO hr_convo_messages (inbox_id, employee_id, message, creation_date)
+        VALUES (:inbox_id, :employee_id, :message, :creation_date);
+        
+        UPDATE hr_convo_inbox
+        SET last_sent_message = :message,
+            last_sent_user_id = :employee_id
+        WHERE ID = :inbox_id; -- Add the condition to match the appropriate record for update
+        
+        COMMIT;
+        ");
+        $this->statement->execute([":inbox_id" => $convo_id, ":employee_id" => $employee_id, ":message" => $new_message, ":creation_date" => date('Y-m-d H:i:s')]);
+        return $this->statement->fetchAll();
+    }
+    function deleteConversation ($convo_id) {
+        $this->setStatement("DELETE FROM hr_convo_inbox WHERE ID = ?");
+        return $this->statement->execute([$convo_id]);
     }
 }

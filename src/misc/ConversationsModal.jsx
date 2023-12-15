@@ -15,7 +15,10 @@ export default function ConversationsModal({
     const [coaching, setCoaching] = useState(0);
     const [agenda, setAgenda] = useState("");
     const [message, setMessage] = useState("");
-    const [file, setFile] = useState("");
+    const [file, setFile] = useState([]);
+    const fileName = Object.keys(file).map(item => {
+        return file[item].name
+    });
     const [receivers, setReceivers] = useState([]);
     const [receiver, setReceiver] = useState(0);
     const [seeAdmin, setSeeAdmin] = useState(0);
@@ -33,8 +36,8 @@ export default function ConversationsModal({
             catch (error) {
                 console.log(error.message);
             }
-            };
-            getReceivers();
+        };
+        getReceivers();
     }, [employee_id]);
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -45,7 +48,7 @@ export default function ConversationsModal({
         const selected_coaching = coaching;
         const convo_agenda = agenda;
         const convo_message = message;
-        const convo_file = file.name;
+        const convo_file = fileName;
         const see_admin = seeAdmin;
         const url = "http://localhost/unmg_pms/api/userSubmitNewConversation.php";
         let fData = new FormData();
@@ -60,9 +63,9 @@ export default function ConversationsModal({
         fData.append("convo_file", convo_file);
         fData.append("see_admin", see_admin);
         axios
-        .post(url, fData)
-        .then((response) => alert(response.data))
-        .catch((error) => alert(error));
+            .post(url, fData)
+            .then((response) => alert(response.data))
+            .catch((error) => alert(error));
         closeModal(false);
     }
 
@@ -137,26 +140,33 @@ export default function ConversationsModal({
                                                     Recipient
                                                 </span>
                                                 <select className="text-black rounded-md p-1 px-2 outline-none border border-mid-gray"
-                                                onChange={(e) => setReceiver(parseInt(e.target.value))}>
+                                                    onChange={(e) => setReceiver(parseInt(e.target.value))}>
                                                     <option value="" disabled selected>Select A Recipient</option>
                                                     {receivers &&
-                                                    receivers.map((receiver) => receiver.receiver_id && (
-                                                        <option key={receiver.receiver_id} value={receiver.receiver_id}>
-                                                        {receiver.receivers}
-                                                        </option>
-                                                    ))}
+                                                        receivers.map((receiver) => receiver.receiver_id && (
+                                                            <option key={receiver.receiver_id} value={receiver.receiver_id}>
+                                                                {receiver.receivers}
+                                                            </option>
+                                                        ))}
                                                 </select>
                                             </div>
                                             <input type="text" className="text-black rounded-t-md p-1 px-2 outline-none w-full bg-default mt-2 border-b-[.1rem]" placeholder="Agenda"
-                                            onChange={(e) => setAgenda(e.target.value)} />
+                                                onChange={(e) => setAgenda(e.target.value)} />
                                             <div className="w-full bg-default rounded-b-md">
-                                            <textarea name="" id="" cols="30" rows="10" className="w-full bg-default rounded-b-md resize-none outline-none px-2 pt-2 pb-5" placeholder="Message"
-                                            onChange={(e) => setMessage(e.target.value)}></textarea>
+                                                <textarea name="" id="" cols="30" rows="10" className="w-full bg-default rounded-b-md resize-none outline-none px-2 pt-2 pb-5" placeholder="Message"
+                                                    onChange={(e) => setMessage(e.target.value)}></textarea>
                                                 <div className="w-fit pb-2 px-2 flex items-center">
                                                     <label htmlFor="fileUpload" className="w-fit cursor-pointer text-[1.5rem] text-dark-gray hover:text-gray"><IoAttach /></label>
-                                                    <input type="file" className="hidden" id="fileUpload" 
-                                                    onChange={(e) => setFile(e.target.files[0])}/>
-                                                    <p className="text-[0.8rem]">{file && file.name}</p>
+                                                    <input type="file" className="hidden" id="fileUpload" multiple
+                                                        onChange={(e) => setFile(e.target.files)} />
+                                                    <p className="text-[0.8rem]">
+                                                        {fileName && fileName.map((name, index) => (
+                                                            <React.Fragment key={index}>
+                                                                {name}
+                                                                {index !== fileName.length - 1 && ', '}
+                                                            </React.Fragment>
+                                                        ))}
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center my-4">
@@ -197,79 +207,61 @@ export default function ConversationsModal({
     )
 }
 export function ConversationsModalDelete({
+    convo_id,
     employee_id,
     closeModal,
     employee_name,
 }) {
-        const [type, setType] = useState(0);
-        const [quarter, setQuarter] = useState(0);
-        const [coaching, setCoaching] = useState(0);
-        const [agenda, setAgenda] = useState("");
-        const [message, setMessage] = useState("");
-        const [file, setFile] = useState("");
-        const [receivers, setReceivers] = useState([]);
-        const [receiver, setReceiver] = useState(0);
-        const [seeAdmin, setSeeAdmin] = useState(0);
-        console.log(employee_id);
-        useEffect(() => {
-            const getReceivers = async () => {
-                const parameters = {
-                    params: {
-                        empID: employee_id
-                    },
-                };
-                try {
-                    const response = await axios.get(url.retrieveReceivers, parameters);
-                    setReceivers(response.data);
-                }
-                catch (error) {
-                    console.log(error.message);
-                }
-                };
-                getReceivers();
-        }, [employee_id]);
-        const handleSubmit = (e) => {
-            e.preventDefault();
-            alert ("Deleted");
-        }
-    
-        return (
-            <>
-                <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
-                    <form>
-                        <div className="flex flex-row items-center justify-between border-b border-gray py-1">
-                            <span className="font-semibold text-[1.1rem]">Delete Confirmation</span>
-                            <button className="text-[.7rem] px-1"
-                                onClick={() => closeModal(false)}
-                            ><GrClose />
-                            </button>
-                        </div>
-                        {/* MESSAGE */}
-                        <div className="flex flex-col items-center">
-                            <div className="py-2">
-                                <div className="flex items-center gap-2 justify-between mb-2">
-                                    <span>
-                                        Are you sure you want to delete this conversation with {employee_name}?
-                                    </span>
-                                </div>
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const url = "http://localhost/unmg_pms/api/userDeleteConversation.php";
+        let fData = new FormData();
+        fData.append("submit", true);
+        fData.append("convo_id", convo_id);
+        fData.append("employee_name", employee_name);
+        axios.post(url, fData)
+            .then((response) => alert(response.data))
+            .catch((error) => alert(error));
+        closeModal(false);
+    }
+
+    return (
+        <>
+            <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[26] bg-white rounded-md p-2 transition-all md:min-w-[70%] lg:min-w-[20%]">
+                <form>
+                    <div className="flex flex-row items-center justify-between border-b border-gray py-1">
+                        <span className="font-semibold text-[1.1rem]">Delete Confirmation</span>
+                        <button className="text-[.7rem] px-1"
+                            onClick={() => closeModal(false)}
+                        ><GrClose />
+                        </button>
+                    </div>
+                    {/* MESSAGE */}
+                    <div className="flex flex-col items-center">
+                        <div className="py-2">
+                            <div className="flex items-center gap-2 justify-between mb-2">
+                                <span>
+                                    Are you sure you want to delete this conversation with {employee_name}?
+                                </span>
                             </div>
                         </div>
-                        {/* FOOTER */}
-                        <div className="flex flex-row items-center justify-end gap-4 p-2">
-                            <button
-                                className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-gray hover:border-gray"
-                                onClick={() => closeModal(false)}
-                            >
-                                Cancel
-                            </button>
-                            <input
-                                type="submit"
-                                className="text-white bg-un-red border border-un-red p-1 px-2 rounded-md text-[.9rem] hover:bg-un-red-light disabled:bg-dark-gray"
-                                onClick={handleSubmit}
-                            />
-                        </div>
-                    </form>
-                </div>
-            </>
-        )
-    }
+                    </div>
+                    {/* FOOTER */}
+                    <div className="flex flex-row items-center justify-end gap-4 p-2">
+                        <button
+                            className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-gray hover:border-gray"
+                            onClick={() => closeModal(false)}
+                        >
+                            Cancel
+                        </button>
+                        <input
+                            type="submit"
+                            className="text-white bg-un-red border border-un-red p-1 px-2 rounded-md text-[.9rem] hover:bg-un-red-light disabled:bg-dark-gray"
+                            onClick={handleSubmit}
+                        />
+                    </div>
+                </form>
+            </div>
+        </>
+    )
+}

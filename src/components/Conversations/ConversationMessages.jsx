@@ -5,7 +5,8 @@ import { IoIosSend } from "react-icons/io";
 import { IoAttach } from "react-icons/io5";
 import { developmentAPIs as url } from "../../context/apiList";
 import { PiWarningCircleDuotone } from "react-icons/pi";
-
+import classNames from "classnames";
+import { format } from "date-fns";
 
 export default function ConversationMessages({ employee_id }) {
   const [loading, toggleLoading] = useState(true);
@@ -14,6 +15,10 @@ export default function ConversationMessages({ employee_id }) {
   const [containerHeight, setContainerHeight] = useState(50);
   const [convoSettings, setConvoSettings] = useState([]);
   const [convo, setConvo] = useState([]);
+  const [file, setFile] = useState([]);
+  const fileName = Object.keys(file).map(item => {
+    return file[item].name
+  });
   const handleChange = (event) => {
     setMessage(event.target.value);
     const textArea = event.target;
@@ -72,7 +77,33 @@ export default function ConversationMessages({ employee_id }) {
     getConvoSettings();
     getConvo()
     toggleLoading(false);
+    const interval = setInterval(getConvo, 1000);
+    return () => clearInterval(interval);
   }, [convo_id, employee_id])
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+      setMessage('');
+    }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const userid = parseInt(employee_id);
+    const convoid = convo_id;
+    const newMessage = message;
+    const url = "http://localhost/unmg_pms/api/userSubmitNewMessage.php";
+    let fData = new FormData();
+    fData.append("submit", true);
+    fData.append("employee_id", userid);
+    fData.append("convo_id", convoid);
+    fData.append("newMessage", newMessage);
+    axios
+      .post(url, fData)
+      .catch((error) => alert(error));
+    setMessage("");
+  }
   return loading ? (
     "Loading..."
   ) : (
@@ -137,25 +168,49 @@ export default function ConversationMessages({ employee_id }) {
                 </span>
               </div>
             </div>
-            <span>Summary: </span>
-            <p className="w-full indent-4 text-justify whitespace-break-spaces">{convo && convo.map(convo => convo.message)}</p>
+            <div className="p-2">
+              <span>Summary: </span>
+
+              <div>{convo && convo.map(convo => (<div key={convo.id} className={classNames("p-4 rounded-md my-2 max-w-[50rem]", convo.employee_id == employee_id ? "bg-un-blue-light-1 bg-opacity-60 ml-auto" : "bg-default")}>
+                <div className="flex justify-between">
+                  <span className="font-semibold">{convo.employee_name}</span>
+                  <span className="text-[0.8rem] flex gap-2">
+                    <span>
+                      {format(new Date(convo.creation_date), "MMM d, yyyy")}
+                    </span>
+                    <span>
+                      {format(new Date(convo.creation_date), "hh:mm a")}</span>
+                  </span>
+                </div>
+                <p className="indent-4 text-justify whitespace-break-spaces">{convo.message}</p>
+              </div>))}</div>
+            </div>
           </div>
         </div>
-
         <div
           className="border-x border-b border-default-dark rounded-b-md flex justify-between items-center px-4 pb-2"
           style={{ height: `${containerHeight}px` }}
         >
-          <div className="w-full flex justify-between">
-            <button className="text-[1.5rem] ml-2"><IoAttach /></button>
-            <textarea
-              className="w-[90%] h-[100%] bg-default rounded-md resize-none border border-dark-gray focus:outline-none px-2 py-1 text-[1rem] overflow-y-scroll"
-              rows="1"
-              placeholder="Type your message..."
-              value={message}
-              onChange={handleChange}
-            ></textarea>
-            <button className="text-un-blue-light text-[1.5rem] mr-4 hover:text-un-blue-light-1"><IoIosSend /></button>
+          <div className="w-full">
+            <div className=""></div>
+            <form className="w-full flex justify-between">
+              <div className="text-[1.5rem] ml-2">
+                <label htmlFor="fileUpload" className="w-fit cursor-pointer text-[1.5rem] text-dark-gray hover:text-gray"><IoAttach /></label>
+                <input type="file" className="hidden" id="fileUpload" multiple
+                  onChange={(e) => setFile(e.target.files)} />
+              </div>
+              <textarea
+                className="w-[90%] h-[100%] bg-default rounded-md resize-none border border-dark-gray focus:outline-none px-2 py-1 text-[1rem] overflow-y-auto"
+                cols="30"
+                rows="1"
+                placeholder="Type your message..."
+                value={message}
+                onChange={handleChange}
+                onKeyDown={handleKeyPress}
+              ></textarea>
+              <button className="text-un-blue-light text-[1.5rem] mr-4 hover:text-un-blue-light-1"
+                onClick={handleSubmit}><IoIosSend /></button>
+            </form>
           </div>
         </div>
       </div>

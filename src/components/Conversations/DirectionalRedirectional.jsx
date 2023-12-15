@@ -26,7 +26,7 @@ export default function DirectionalRedirectional({ employee_id, convo_type }) {
     };
     getDirectional();
     toggleLoading(false);
-    const interval = setInterval(getDirectional, 5000);
+    const interval = setInterval(getDirectional, 2000);
     return () => clearInterval(interval);
   }, [employee_id, convo_type]);
 

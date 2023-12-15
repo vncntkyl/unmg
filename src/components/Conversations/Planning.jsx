@@ -27,7 +27,7 @@ export default function Planning({ employee_id, convo_type }) {
     };
     getPlanning();
     toggleLoading(false);
-    const interval = setInterval(getPlanning, 5000);
+    const interval = setInterval(getPlanning, 2000);
     return () => clearInterval(interval);
   }, [employee_id, convo_type]);
   const handleClick = (convoID) => {
@@ -102,6 +102,7 @@ export default function Planning({ employee_id, convo_type }) {
                       </div>
                       <div className="absolute w-0 overflow-hidden top-5 right-0 group-hover/item:right-4 flex justify-end group-hover/item:w-[2rem] transition-all">
                         <ConversationsActions
+                        convo_id = {item.ID}
                           employee_id={item.converse_id}
                           employee_name={item.converse_name}
                         />

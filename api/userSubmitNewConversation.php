@@ -12,6 +12,7 @@ if (isset($_POST['submit'])) {
     $convo_agenda = $_POST['convo_agenda'];
     $convo_message = $_POST['convo_message'];
     $convo_file = $_POST['convo_file'];
+    $convoFile = explode(',', $convo_file);
     $see_admin = $_POST['see_admin'];
     $inbox = $submitInbox->insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin);
     if($inbox){
@@ -22,7 +23,13 @@ if (isset($_POST['submit'])) {
             $message = $submitInbox->insertMessage($inbox, $user_id, $convo_message);
             if($message)
             {
-                echo "You have submitted your conversation successfully!";
+                foreach ($convoFile as $file) {
+                    $res = $submitInbox->insertMessage($inbox, $user_id, $file);
+                }
+                if ($res)
+                {
+                    echo "Success";
+                }
             }
             else
             {

@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { ConversationsModalDelete } from "../../misc/ConversationsModal";
 
 export default function ConversationsActions({
+  convo_id,
     employee_id,
     employee_name,
 }) {
@@ -22,6 +23,7 @@ export default function ConversationsActions({
       {deleteConvoModal && (
         <ConversationsModalDelete
           closeModal={setDeleteConvoModal}
+          convo_id={convo_id}
           employee_id={employee_id}
           employee_name={employee_name}
         />
