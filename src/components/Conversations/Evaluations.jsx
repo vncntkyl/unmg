@@ -76,8 +76,8 @@ export default function Evaluations({ employee_id, convo_type }) {
             </div>
           ) : (
             <>
-              {evaluations && evaluations.filter(item => parseInt(quart) === item.evaluation_quarter).length > 0 ? (
-                evaluations.map((item, index) => parseInt(quart) === item.evaluation_quarter ? (
+              {evaluations && evaluations.filter(item => parseInt(quart) == item.evaluation_quarter).length > 0 ? (
+                evaluations.map((item, index) => parseInt(quart) == item.evaluation_quarter ? (
                   <div key={index}>
                     <div className="relative group/item w-full">
                       <div

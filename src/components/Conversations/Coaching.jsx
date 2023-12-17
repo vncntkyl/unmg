@@ -77,8 +77,8 @@ export default function Coaching({ employee_id, convo_type }) {
             </div>
           ) : (
             <>
-              {coaching && coaching.filter(item => parseInt(coach) === item.coaching_type).length > 0 ? (
-                coaching.map((item, index) => parseInt(coach) === item.coaching_type ? (
+              {coaching && coaching.filter(item => parseInt(coach) == item.coaching_type).length > 0 ? (
+                coaching.map((item, index) => parseInt(coach) == item.coaching_type ? (
                   <div key={index}>
                     <div className="relative group/item w-full">
                       <div

@@ -1906,10 +1906,10 @@ class Form extends Controller
         $this->setStatement("INSERT INTO hr_convo_participants (inbox_id, employee_id) VALUES (:inbox_id, :employee_id)");
         return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $ID]);
     }
-    function insertMessage($inbox, $user_id, $convo_message)
+    function insertMessage($inbox, $user_id, $message_type, $convo_message)
     {
-        $this->setStatement("INSERT INTO hr_convo_messages (inbox_id, employee_id, message, creation_date) VALUES (:inbox_id, :employee_id, :message, :creation_date)");
-        return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $user_id, ':message' => $convo_message, ':creation_date' => date('Y-m-d H:i:s')]);
+        $this->setStatement("INSERT INTO hr_convo_messages (inbox_id, employee_id, message_type, message, creation_date) VALUES (:inbox_id, :employee_id, :message_type, :message, :creation_date)");
+        return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $user_id, 'message_type' => $message_type, ':message' => $convo_message, ':creation_date' => date('Y-m-d H:i:s')]);
     }
     //For Conversations
     function selectConversations($user_id, $convo_type)

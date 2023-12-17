@@ -7,6 +7,9 @@ import { developmentAPIs as url } from "../../context/apiList";
 import { PiWarningCircleDuotone } from "react-icons/pi";
 import classNames from "classnames";
 import { format } from "date-fns";
+import { MdAudioFile, MdVideoFile, MdInsertDriveFile } from "react-icons/md";
+import { FaFileImage} from "react-icons/fa6";
+
 
 export default function ConversationMessages({ employee_id }) {
   const [loading, toggleLoading] = useState(true);
@@ -16,27 +19,32 @@ export default function ConversationMessages({ employee_id }) {
   const [convoSettings, setConvoSettings] = useState([]);
   const [convo, setConvo] = useState([]);
   const [file, setFile] = useState([]);
-  const fileName = Object.keys(file).map(item => {
-    return file[item].name
+  const fileName = Object.keys(file).map((item) => {
+    const str = file[item].name;
+    const type = file[item].type;
+    return ({
+      name: str.replace(/,/g, ""),
+      type: type.split("/")[0]
+    })
   });
+  const fileContainerHeight = file.length === 0 ? 0 : 100;
   const handleChange = (event) => {
     setMessage(event.target.value);
     const textArea = event.target;
     textArea.style.height = "auto";
     const newHeight = textArea.scrollHeight;
     textArea.style.height = `${newHeight}px`;
-    const maxHeight = 160;
-    const padding = 20;
+    const maxHeight = 200;
 
     if (newHeight > maxHeight) {
       textArea.style.height = `${maxHeight}px`;
-      textArea.style.overflowY = 'auto';
+      textArea.style.overflowY = "auto";
     } else {
       textArea.style.height = `${newHeight}px`;
-      textArea.style.overflowY = 'hidden';
+      textArea.style.overflowY = "hidden";
     }
     // Adjust container height
-    setContainerHeight(newHeight > maxHeight ? maxHeight : newHeight + padding);
+    setContainerHeight(newHeight > maxHeight ? maxHeight : newHeight + 20);
   };
 
   const handleBack = () => {
@@ -50,7 +58,7 @@ export default function ConversationMessages({ employee_id }) {
           settings: "true",
           convo_id: convo_id,
           employee_id: employee_id,
-        }
+        },
       };
       try {
         const response = await axios.get(url.retrieveConvo, parameters);
@@ -65,7 +73,7 @@ export default function ConversationMessages({ employee_id }) {
         params: {
           convo: "true",
           convo_id: convo_id,
-        }
+        },
       };
       try {
         const response = await axios.get(url.retrieveConvo, parameters);
@@ -73,19 +81,19 @@ export default function ConversationMessages({ employee_id }) {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     getConvoSettings();
-    getConvo()
+    getConvo();
     toggleLoading(false);
-    const interval = setInterval(getConvo, 1000);
+    const interval = setInterval(getConvo, 3000);
     return () => clearInterval(interval);
-  }, [convo_id, employee_id])
+  }, [convo_id, employee_id]);
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
-      setMessage('');
+      setMessage("");
     }
   };
   const handleSubmit = async (e) => {
@@ -93,17 +101,20 @@ export default function ConversationMessages({ employee_id }) {
     const userid = parseInt(employee_id);
     const convoid = convo_id;
     const newMessage = message;
+    const file_name = fileName.map(name => name.name);
+    const file_type = fileName.map(name => name.type);
+    if (!newMessage && file.length === 0) {
+      return;
+    }
     const url = "http://localhost/unmg_pms/api/userSubmitNewMessage.php";
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("employee_id", userid);
     fData.append("convo_id", convoid);
     fData.append("newMessage", newMessage);
-    axios
-      .post(url, fData)
-      .catch((error) => alert(error));
+    axios.post(url, fData).catch((error) => alert(error));
     setMessage("");
-  }
+  };
   return loading ? (
     "Loading..."
   ) : (
@@ -117,28 +128,78 @@ export default function ConversationMessages({ employee_id }) {
             >
               <FaArrowLeft />
             </button>
-            <span>
-              {convoSettings && convoSettings.converse_name}
-            </span>
+            <span>{convoSettings && convoSettings.converse_name}</span>
           </div>
-          {convoSettings && (convoSettings.admin_access == "2" ? (
-            <div className="relative">
-              <span className="text-[1.5rem] text-un-red cursor-pointer peer"><PiWarningCircleDuotone /></span>
-              <span className="hidden absolute right-0 bg-white p-2 rounded-md shadow peer-hover:block animate-fade"><span className="text-[0.8rem] whitespace-nowrap">Please note that the contents of this conversation may be accessed by the administrator for monitoring purposes.</span></span>
-            </div>
-          ) : "")}
+          {convoSettings &&
+            (convoSettings.admin_access == "2" ? (
+              <div className="relative">
+                <span className="text-[1.5rem] text-un-red cursor-pointer peer">
+                  <PiWarningCircleDuotone />
+                </span>
+                <span className="hidden absolute right-0 bg-white p-2 rounded-md shadow peer-hover:block animate-fade">
+                  <span className="text-[0.8rem] whitespace-nowrap">
+                    Please note that the contents of this conversation may be
+                    accessed by the administrator for monitoring purposes.
+                  </span>
+                </span>
+              </div>
+            ) : (
+              ""
+            ))}
         </div>
         <div
           className="w-full border-x border-default-dark p-2 overflow-y-scroll"
-          style={{ height: `calc(94% - ${containerHeight}px)` }}
+          style={{ height: `calc(92% - ${containerHeight}px - ${fileContainerHeight}px)` }}
         >
           <div>
             <div className="flex justify-between text-[1rem] border-b mb-2 pb-2">
               <div className="flex flex-col">
-                <span>Type: {convoSettings && (convoSettings.convo_type == "1" ? "Planning" : convoSettings.convo_type == "2" ? "Evaluations" : convoSettings.convo_type == "3" ? "Directional/Redirectional" : convoSettings.convo_type == "4" ? "Coaching" : convoSettings.convo_type == "5" ? "Performance Improvement Plan" : "Loading...")}</span>
-                {convoSettings && (convoSettings.convo_type == "2" ? (<span>Quarter: {convoSettings.evaluation_quarter == "1" ? "First Quarter" : convoSettings.evaluation_quarter == "2" ? "Mid Year" : convoSettings.evaluation_quarter == "3" ? "Third Quarter" : "Year End"}</span>) : "")}
-                {convoSettings && (convoSettings.convo_type == "4" ? (<span>Coaching Type: {convoSettings.coaching_type == "1" ? "Corrective" : convoSettings.coaching_type == "2" ? "Developmental" : "Loading..."}</span>) : "")}
-                <span className="mt-4">Agenda: {convoSettings && convoSettings.agenda}</span>
+                <span>
+                  Type:{" "}
+                  {convoSettings &&
+                    (convoSettings.convo_type == "1"
+                      ? "Planning"
+                      : convoSettings.convo_type == "2"
+                      ? "Evaluations"
+                      : convoSettings.convo_type == "3"
+                      ? "Directional/Redirectional"
+                      : convoSettings.convo_type == "4"
+                      ? "Coaching"
+                      : convoSettings.convo_type == "5"
+                      ? "Performance Improvement Plan"
+                      : "Loading...")}
+                </span>
+                {convoSettings &&
+                  (convoSettings.convo_type == "2" ? (
+                    <span>
+                      Quarter:{" "}
+                      {convoSettings.evaluation_quarter == "1"
+                        ? "First Quarter"
+                        : convoSettings.evaluation_quarter == "2"
+                        ? "Mid Year"
+                        : convoSettings.evaluation_quarter == "3"
+                        ? "Third Quarter"
+                        : "Year End"}
+                    </span>
+                  ) : (
+                    ""
+                  ))}
+                {convoSettings &&
+                  (convoSettings.convo_type == "4" ? (
+                    <span>
+                      Coaching Type:{" "}
+                      {convoSettings.coaching_type == "1"
+                        ? "Corrective"
+                        : convoSettings.coaching_type == "2"
+                        ? "Developmental"
+                        : "Loading..."}
+                    </span>
+                  ) : (
+                    ""
+                  ))}
+                <span className="mt-4">
+                  Agenda: {convoSettings && convoSettings.agenda}
+                </span>
               </div>
               <div className="flex gap-2">
                 <span>
@@ -161,8 +222,8 @@ export default function ConversationMessages({ employee_id }) {
                     const formattedTime = `${(hours % 12 || 12)
                       .toString()
                       .padStart(2, "0")}:${minutes
-                        .toString()
-                        .padStart(2, "0")} ${amOrPm}`;
+                      .toString()
+                      .padStart(2, "0")} ${amOrPm}`;
                     return formattedTime;
                   })()}
                 </span>
@@ -171,33 +232,88 @@ export default function ConversationMessages({ employee_id }) {
             <div className="p-2">
               <span>Summary: </span>
 
-              <div>{convo && convo.map(convo => (<div key={convo.id} className={classNames("p-4 rounded-md my-2 max-w-[50rem]", convo.employee_id == employee_id ? "bg-un-blue-light-1 bg-opacity-60 ml-auto" : "bg-default")}>
-                <div className="flex justify-between">
-                  <span className="font-semibold">{convo.employee_name}</span>
-                  <span className="text-[0.8rem] flex gap-2">
-                    <span>
-                      {format(new Date(convo.creation_date), "MMM d, yyyy")}
-                    </span>
-                    <span>
-                      {format(new Date(convo.creation_date), "hh:mm a")}</span>
-                  </span>
-                </div>
-                <p className="indent-4 text-justify whitespace-break-spaces">{convo.message}</p>
-              </div>))}</div>
+              <div>
+                {convo &&
+                  convo.map((convo) => (
+                    <div
+                      key={convo.id}
+                      className={classNames(
+                        "p-4 rounded-md my-2 max-w-[50rem]",
+                        convo.employee_id == employee_id
+                          ? "bg-un-blue-light-1 bg-opacity-60 ml-auto"
+                          : "bg-default"
+                      )}
+                    >
+                      <div className="flex justify-between">
+                        <span className="font-semibold">
+                          {convo.employee_name}
+                        </span>
+                        <span className="text-[0.8rem] flex gap-2">
+                          <span>
+                            {format(
+                              new Date(convo.creation_date),
+                              "MMM d, yyyy"
+                            )}
+                          </span>
+                          <span>
+                            {format(new Date(convo.creation_date), "hh:mm a")}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="indent-4 text-justify whitespace-break-spaces">
+                        {convo.message}
+                      </p>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         </div>
+        {fileName && fileName.length > 0 ? (
+          <div className="h-[6rem] w-full bg-white grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-8 gap-2 overflow-y-scroll border-x border-default-dark px-4 py-2">
+            {fileName &&
+              fileName.map((item, index) => (
+                <div
+                  key={index}
+                  className="w-[8rem] h-[5rem] bg-default p-2 flex flex-col items-center rounded-md mb-4 mx-auto"
+                >
+                  <span className="h-[3rem] w-[5rem] text-[3rem] flex justify-center">
+                    {item.type && 
+                    item.type === "audio" ? (<MdAudioFile/>) :
+                    item.type === "image" ? (<FaFileImage className="text-[2.6rem]"/>) :
+                    item.type === "video" ? (<MdVideoFile/>) :
+                    (<MdInsertDriveFile />)
+                    }
+                  </span>
+                  <span className="w-[8rem] text-[.8rem] overflow-hidden text-center">
+                    {item.name}
+                  </span>
+                </div>
+              ))}
+          </div>
+        ) : (
+          ""
+        )}
         <div
-          className="border-x border-b border-default-dark rounded-b-md flex justify-between items-center px-4 pb-2"
+          className="border-x border-b border-default-dark rounded-b-md flex justify-between items-center px-4 py-2"
           style={{ height: `${containerHeight}px` }}
         >
           <div className="w-full">
-            <div className=""></div>
-            <form className="w-full flex justify-between">
+            <form className="w-full flex justify-between items-center">
               <div className="text-[1.5rem] ml-2">
-                <label htmlFor="fileUpload" className="w-fit cursor-pointer text-[1.5rem] text-dark-gray hover:text-gray"><IoAttach /></label>
-                <input type="file" className="hidden" id="fileUpload" multiple
-                  onChange={(e) => setFile(e.target.files)} />
+                <label
+                  htmlFor="fileUpload"
+                  className="w-fit cursor-pointer text-[1.5rem] text-dark-gray hover:text-gray"
+                >
+                  <IoAttach />
+                </label>
+                <input
+                  type="file"
+                  className="hidden"
+                  id="fileUpload"
+                  multiple
+                  onChange={(e) => setFile(e.target.files)}
+                />
               </div>
               <textarea
                 className="w-[90%] h-[100%] bg-default rounded-md resize-none border border-dark-gray focus:outline-none px-2 py-1 text-[1rem] overflow-y-auto"
@@ -208,8 +324,12 @@ export default function ConversationMessages({ employee_id }) {
                 onChange={handleChange}
                 onKeyDown={handleKeyPress}
               ></textarea>
-              <button className="text-un-blue-light text-[1.5rem] mr-4 hover:text-un-blue-light-1"
-                onClick={handleSubmit}><IoIosSend /></button>
+              <button
+                className="text-un-blue-light text-[1.5rem] mr-4 hover:text-un-blue-light-1"
+                onClick={handleSubmit}
+              >
+                <IoIosSend />
+              </button>
             </form>
           </div>
         </div>

@@ -4,7 +4,6 @@ import EmployeeAssessmentTable from "../components/TrackingAssessment/EmployeeAs
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
 import CreateAchievements from "../components/TrackingAssessment/CreateAchievements";
-import ShowConversations from "../components/Conversations/ShowConversations";
 import { developmentAPIs as url } from "../context/apiList";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate, Route, Router, Routes } from "react-router-dom";
@@ -34,9 +33,6 @@ export default function TrackingAssessment() {
       case "/tracking_and_assessment/create":
       case "/tracking_and_assessment/create/":
         return "Create Assessment";
-      case "/tracking_and_assessment/conversations":
-      case "/tracking_and_assessment/conversations/":
-        return "Conversations";
     }
   };
   const verifyEvaluator = async () => {
@@ -112,24 +108,6 @@ export default function TrackingAssessment() {
                 </>
               )}
             </div>
-            <div>
-              {["/tracking_and_assessment/conversations", "/tracking_and_assessment/conversations/"].includes(getPath()) ? (
-                <a
-                  href="/tracking_and_assessment"
-                  className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
-                >
-                  <MdOutlineKeyboardArrowLeft />
-                  <span>Back</span>
-                </a>
-              ) : (
-                <button
-                  className="bg-mid-gray p-1 rounded-md text-white hover:bg-dark-gray"
-                  onClick={() => viewConversations()}>
-                  View Conversations
-                </button>
-              )
-              }
-            </div>
             <div className="flex flex-col">
               <Routes>
                 {panel === "My Assessment" ? <Route
@@ -149,7 +127,6 @@ export default function TrackingAssessment() {
                     <CreateAchievements emp_id={employeeID} />
                   }
                 />
-                <Route path="/conversations" element={<ShowConversations user_id={employeeID} />} />
                 <Route path="/employee_assessment/:id" element={<EmployeeAssessment />} />
                 <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessmentGradeEdit />} />
                 <Route path="/employee_assessment/:id/approve" element={<EmployeeAssessment />} />
