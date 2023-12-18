@@ -3,6 +3,7 @@ import axios from "axios";
 import { GrClose } from "react-icons/gr";
 import { IoAttach } from "react-icons/io5";
 import { developmentAPIs as url } from "../context/apiList";
+import classNames from "classnames";
 
 export default function ConversationsModal({ employee_id, closeModal }) {
   const [type, setType] = useState(0);
@@ -66,7 +67,7 @@ export default function ConversationsModal({ employee_id, closeModal }) {
       .post(url, fData)
       .then((response) => alert(response.data))
       .catch((error) => alert(error));
-    //closeModal(false);
+    closeModal(false);
   };
 
   return (
@@ -220,8 +221,30 @@ export default function ConversationsModal({ employee_id, closeModal }) {
                         />
                         <div className="border-[1px] peer-checked:bg-un-blue w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                         <label className="text-[.8rem]">
-                          Would you like to include the administrator (Cc) in
-                          this communication?
+                        Would you like the administrator (Cc) to be able to view
+                          this conversation?
+                        </label>
+                      </label>
+                    </div>
+                    <div className="flex items-center my-4">
+                      <label className="relative inline-flex items-center cursor-pointer gap-2">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                        //   onChange={(e) => {
+                        //     if (type !== 5) {
+                        //       setSeeAdmin(e.target.checked ? 2 : 1);
+                        //     } else {
+                        //       setSeeAdmin(2);
+                        //     }
+                        //   }}
+                          checked={type === 5 ? true : seeAdmin === 2}
+                          disabled={type === 5}
+                        />
+                        <div className="border-[1px] peer-checked:bg-un-blue w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <label className="text-[.8rem]">
+                          Would you like the other raters (Cc) to be able to view
+                          this conversation?
                         </label>
                       </label>
                     </div>
@@ -242,6 +265,7 @@ export default function ConversationsModal({ employee_id, closeModal }) {
               type="submit"
               className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
               onClick={handleSubmit}
+              disabled={receiver === 0 || agenda === "" || message === "" || type === 0}
             />
           </div>
         </form>

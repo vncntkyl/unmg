@@ -9,6 +9,8 @@ import classNames from "classnames";
 import { format } from "date-fns";
 import { MdAudioFile, MdVideoFile, MdInsertDriveFile } from "react-icons/md";
 import { FaFileImage} from "react-icons/fa6";
+import { CiShare1 } from "react-icons/ci";
+
 
 
 export default function ConversationMessages({ employee_id }) {
@@ -93,7 +95,6 @@ export default function ConversationMessages({ employee_id }) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
-      setMessage("");
     }
   };
   const handleSubmit = async (e) => {
@@ -112,8 +113,12 @@ export default function ConversationMessages({ employee_id }) {
     fData.append("employee_id", userid);
     fData.append("convo_id", convoid);
     fData.append("newMessage", newMessage);
+    fData.append("file_name", file_name);
+    fData.append("file_type", file_type);
     axios.post(url, fData).catch((error) => alert(error));
     setMessage("");
+    setFile([]);
+
   };
   return loading ? (
     "Loading..."
@@ -329,6 +334,9 @@ export default function ConversationMessages({ employee_id }) {
                 onClick={handleSubmit}
               >
                 <IoIosSend />
+              </button>
+              <button className="text-[1.5rem]"> 
+              <CiShare1/>
               </button>
             </form>
           </div>

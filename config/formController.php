@@ -1894,6 +1894,8 @@ class Form extends Controller
         $this->statement->execute([':employee_id' => $employee_id]);
         return $this->statement->fetchAll();
     }
+
+
     //New conversations
     function insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin)
     {
@@ -1911,6 +1913,8 @@ class Form extends Controller
         $this->setStatement("INSERT INTO hr_convo_messages (inbox_id, employee_id, message_type, message, creation_date) VALUES (:inbox_id, :employee_id, :message_type, :message, :creation_date)");
         return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $user_id, 'message_type' => $message_type, ':message' => $convo_message, ':creation_date' => date('Y-m-d H:i:s')]);
     }
+
+
     //For Conversations
     function selectConversations($user_id, $convo_type)
     {
@@ -1922,6 +1926,7 @@ class Form extends Controller
                  ELSE
                      CONCAT(hr_users.first_name, ' ', hr_users.last_name)
                  END AS converse_name,
+             communicating_participant.viewer AS converse_viewer,
              hr_convo_participants.*, 
              hr_convo_inbox.*
          FROM 
@@ -1988,12 +1993,12 @@ class Form extends Controller
         $this->statement->execute([$convo_id]);
         return $this->statement->fetchAll();
     }
-    function insertNewMessage($employee_id, $convo_id, $new_message)
+    function insertNewMessage($employee_id, $convo_id, $message_type, $new_message)
     {
         $this->setStatement("
         START TRANSACTION;
-        INSERT INTO hr_convo_messages (inbox_id, employee_id, message, creation_date)
-        VALUES (:inbox_id, :employee_id, :message, :creation_date);
+        INSERT INTO hr_convo_messages (inbox_id, employee_id, message_type, message, creation_date)
+        VALUES (:inbox_id, :employee_id, :message_type, :message, :creation_date);
         
         UPDATE hr_convo_inbox
         SET last_sent_message = :message,
@@ -2002,7 +2007,7 @@ class Form extends Controller
         
         COMMIT;
         ");
-        $this->statement->execute([":inbox_id" => $convo_id, ":employee_id" => $employee_id, ":message" => $new_message, ":creation_date" => date('Y-m-d H:i:s')]);
+        $this->statement->execute([":inbox_id" => $convo_id, ":employee_id" => $employee_id, ":message_type" => $message_type, ":message" => $new_message, ":creation_date" => date('Y-m-d H:i:s')]);
         return $this->statement->fetchAll();
     }
     function deleteConversation ($convo_id) {

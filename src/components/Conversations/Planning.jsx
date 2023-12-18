@@ -20,6 +20,30 @@ export default function Planning({ employee_id, convo_type }) {
       };
       try {
         const response = await axios.get(url.retrieveConversations, parameters);
+        const data = response.data;
+        // const groupedData = data.reduce((result, obj) => {
+        //   if (!result[obj.ID]) {
+        //     result[obj.ID] = { ID: obj.ID, converse_ids: [obj.converse_id], converse_names: [obj.converse_name] };
+        //   } else {
+        //     result[obj.ID].converse_ids.push(obj.converse_id);
+        //     result[obj.ID].converse_names.push(obj.converse_name);
+        //   }
+        //   return result;
+        // }, {});
+
+        // // Convert the groupedData object back to an array
+        // const mergedDataArray = Object.values(groupedData).map(({ ID, converse_ids, converse_names }) => ({
+        //   ID,
+        //   unique_converse_ids: [...new Set(converse_ids)],
+        //   merged_converse_names: converse_names.join(', '),
+        // }));
+
+        // console.log(mergedDataArray);
+        // const filteredData = data.filter((item) => item.converse_viewer !== 1);
+
+        // filteredData.map((item) => {
+        //   console.log(item);
+        // });
         setPlanning(response.data);
       } catch (error) {
         console.log(error);
@@ -52,8 +76,8 @@ export default function Planning({ employee_id, convo_type }) {
                   <div key={index}>
                     <div className="relative group/item w-full">
                       <div
-                      className="flex border-b border-default-dark hover:bg-default py-2 cursor-pointer select-none"
-                      onClick={() => handleClick(item.ID)}>
+                        className="flex border-b border-default-dark hover:bg-default py-2 cursor-pointer select-none"
+                        onClick={() => handleClick(item.ID)}>
                         <span className="lg:mx-2 hidden md:block text-[0.9rem]">
                           {cnt++}
                         </span>
@@ -94,15 +118,15 @@ export default function Planning({ employee_id, convo_type }) {
                             const formattedTime = `${(hours % 12 || 12)
                               .toString()
                               .padStart(2, "0")}:${minutes
-                              .toString()
-                              .padStart(2, "0")} ${amOrPm}`;
+                                .toString()
+                                .padStart(2, "0")} ${amOrPm}`;
                             return formattedTime;
                           })()}
                         </span>
                       </div>
                       <div className="absolute w-0 overflow-hidden top-5 right-0 group-hover/item:right-4 flex justify-end group-hover/item:w-[2rem] transition-all">
                         <ConversationsActions
-                        convo_id = {item.ID}
+                          convo_id={item.ID}
                           employee_id={item.converse_id}
                           employee_name={item.converse_name}
                         />

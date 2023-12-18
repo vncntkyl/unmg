@@ -1,132 +1,142 @@
-import React from "react";
-import { FaPencilAlt, FaInbox, FaRegTrashAlt } from "react-icons/fa";
-import { IoMdSend } from "react-icons/io";
-export default function PIP() {
-  const messages = [
-    {
-      name: 'John',
-      subject: 'Regarding Math Assignment',
-      message: 'Dear John, I hope this email finds you well. I wanted to discuss the recent math assignment on Algebraic equations and their applications. Please find attached detailed feedback on your work. Let me know if you have any questions or need further clarification. Best regards, [Your Name]'
-    },
-    {
-      name: 'Emily',
-      subject: 'French Revolution Research Paper',
-      message: 'Hi Emily, I trust you are doing great. I\'ve reviewed your research paper on The French Revolution and its impact on Europe. It\'s an impressive piece of work! I\'ll be sending you some additional feedback shortly. Keep up the excellent work. Regards, [Your Name]'
-    },
-    {
-      name: 'Michael',
-      subject: 'Biology Project Analysis',
-      message: 'Hello Michael, I hope you\'re having a productive day. Your biology project analysis on cellular structure and its functions in living organisms was quite insightful. I have some additional resources that might interest you. Let me know if you\'d like me to share them with you. Warm regards, [Your Name]'
-    },
-    {
-      name: 'Sarah',
-      subject: 'Literature Discussion',
-      message: 'Hi Sarah, I trust this message finds you in high spirits. Your recent analysis of Shakespearean plays and their themes was thought-provoking. I have some ideas for further exploration on this topic. Let\'s discuss it further at our next meeting. Best regards, [Your Name]'
-    },
-    {
-      name: 'David',
-      subject: 'Physics Study Group',
-      message: 'Dear David, I hope you\'re doing well. Let\'s organize a study group session soon to delve deeper into Newtonian mechanics and laws of motion. I believe collaborative learning will enhance our understanding of this subject. Looking forward to your response. Regards, [Your Name]'
-    },
-    {
-      name: 'Sophia',
-      subject: 'Computer Science Project Collaboration',
-      message: 'Hi Sophia, I trust you\'re doing great. Your understanding of algorithms and data structures is impressive. I propose collaborating on a project to implement some of these concepts practically. Let me know your thoughts. Best regards, [Your Name]'
-    },
-    {
-      name: 'Daniel',
-      subject: 'Chemistry Experiment Discussion',
-      message: 'Hello Daniel, I hope this message finds you well. Your recent experiment on chemical reactions and their kinetics was fascinating. Let\'s schedule a meeting to discuss the outcomes and plan the next steps. Looking forward to our discussion. Warm regards, [Your Name]'
-    },
-    {
-      name: 'Olivia',
-      subject: 'Geography Research Proposal',
-      message: 'Dear Olivia, I trust you\'re doing well. Your study of landforms and their geographical significance has immense potential. Let\'s refine your research proposal and discuss potential avenues for exploration. Excited to hear your thoughts. Regards, [Your Name]'
-    },
-    {
-      name: 'William',
-      subject: 'Art Appreciation Seminar',
-      message: 'Hi William, I hope this message finds you inspired. Your exploration of different art movements throughout history is commendable. Let\'s plan an art appreciation seminar together to share our insights with others. Looking forward to your response. Warm regards, [Your Name]'
-    },
-    {
-      name: 'Ava',
-      subject: 'Economics Discussion Forum',
-      message: 'Hello Ava, I trust you\'re having a productive day. Your understanding of macro and microeconomic principles in global markets is impressive. Let\'s initiate a discussion forum to exchange ideas and viewpoints on this subject. Regards, [Your Name]'
-    },
-    {
-      name: 'Michael',
-      subject: 'Seeking Professional Advice',
-      message: 'Hi Michael, I\'ve been following your career in financial analysis with great interest. I\'d appreciate your advice on navigating the complexities of investment strategies. Your expertise would be immensely valuable. Thank you, [Your Name]'
-    },
-    {
-      name: 'Charlotte',
-      subject: 'Collaborative Writing Proposal',
-      message: 'Hello Charlotte, your eloquence in writing is impressive. I\'m proposing a joint writing project exploring themes of social change. Your unique perspective would greatly enrich our collaboration. Excited to discuss this further. Warm regards, [Your Name]'
-    },
-    {
-      name: 'James',
-      subject: 'Feedback on Creative Work',
-      message: 'Hi James, I admire your artistic talent and creativity. I\'d appreciate your feedback on my recent portfolio showcasing graphic design projects. Your insights would be invaluable. Thank you in advance. Best regards, [Your Name]'
-    },
-    {
-      name: 'Isabella',
-      subject: 'Networking Request',
-      message: 'Hello Isabella, I\'ve heard about your expertise in digital marketing. I\'d love to connect and exchange insights about the latest trends in online advertising. Let\'s arrange a time to discuss further. Regards, [Your Name]'
-    },
-    {
-      name: 'William',
-      subject: 'Mentorship Opportunity',
-      message: 'Hi William, your enthusiasm for learning new technologies is remarkable. I\'d like to offer mentorship to help guide you through the intricacies of software development. Looking forward to sharing knowledge with you. Warm regards, [Your Name]'
-    },
-    {
-      name: 'Emma',
-      subject: 'Recognition for Professional Skills',
-      message: 'Hello Emma, your leadership skills in project management are truly impressive. Your contributions have been invaluable to the team. Thank you for your dedication and hard work. Sincerely, [Your Name]'
-    },
-    {
-      name: 'Noah',
-      subject: 'Congrats on Academic Excellence',
-      message: 'Hi Noah, congratulations on your outstanding performance in your recent academic endeavors. Your dedication to academic excellence is commendable. Keep up the fantastic work! Best wishes, [Your Name]'
-    },
-    {
-      name: 'Olivia',
-      subject: 'Seminar Invitation',
-      message: 'Hello Olivia, your passion for environmental sustainability is inspiring. We\'re organizing a seminar on "Green Initiatives in Urban Planning" and your expertise would greatly contribute to the discussion. Hoping to see you there. Regards, [Your Name]'
-    },
-    {
-      name: 'Liam',
-      subject: 'Partnership Opportunity',
-      message: 'Hi Liam, I\'ve been following your work in software development and find it highly innovative. Let\'s explore the possibility of partnering on a project to develop cutting-edge applications. Excited to discuss this prospect with you. Warm regards, [Your Name]'
-    },
-    {
-      name: 'Sophia',
-      subject: 'Research Collaboration Proposal',
-      message: 'Hi Sophia, I admire your expertise in data analysis. I\'m proposing a collaborative research effort to explore emerging trends in machine learning algorithms. Your insights would be invaluable. Looking forward to discussing this further. Best regards, [Your Name]'
-    }
-  ]
-  return (
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { developmentAPIs as url } from "../../context/apiList";
+import ConversationsActions from "./ConversationsActions";
+import { useNavigate } from "react-router-dom";
+export default function PIP({ employee_id, convo_type }) {
+
+  const navigate = useNavigate();
+  const [loading, toggleLoading] = useState(true);
+  const [pip, setPip] = useState([]);
+
+  let cnt = 1;
+  useEffect(() => {
+    const getPip = async () => {
+      const parameters = {
+        params: {
+          user_id: employee_id,
+          convo_type: convo_type,
+        },
+      };
+      try {
+        const response = await axios.get(url.retrieveConversations, parameters);
+        const data = response.data;
+        // const groupedData = data.reduce((result, obj) => {
+        //   if (!result[obj.ID]) {
+        //     result[obj.ID] = { ID: obj.ID, converse_ids: [obj.converse_id], converse_names: [obj.converse_name] };
+        //   } else {
+        //     result[obj.ID].converse_ids.push(obj.converse_id);
+        //     result[obj.ID].converse_names.push(obj.converse_name);
+        //   }
+        //   return result;
+        // }, {});
+
+        // // Convert the groupedData object back to an array
+        // const mergedDataArray = Object.values(groupedData).map(({ ID, converse_ids, converse_names }) => ({
+        //   ID,
+        //   unique_converse_ids: [...new Set(converse_ids)],
+        //   merged_converse_names: converse_names.join(', '),
+        // }));
+
+        // console.log(mergedDataArray);
+        // const filteredData = data.filter((item) => item.converse_viewer !== 1);
+
+        // filteredData.map((item) => {
+        //   console.log(item);
+        // });
+        setPip(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getPip();
+    toggleLoading(false);
+    const interval = setInterval(getPip, 2000);
+    return () => clearInterval(interval);
+  }, [employee_id, convo_type]);
+  const handleClick = (convoID) => {
+    localStorage.setItem("convoID", convoID);
+    navigate("/conversations/performance_improvement_plan/messages");
+  }
+
+  return loading ? (
+    "Loading..."
+  ) : (
     <>
       <div className="w-full mt-4">
-        <div className="flex">
-          <span className="ml-2 flex items-center justify-center gap-2 bg-default px-2 rounded-t-md"><FaInbox />Inbox</span>
-          <span className="flex items-center justify-center gap-2 px-2"><IoMdSend />Sent</span>
-        </div>
-        <div className="w-full h-[90%] border border-default-dark rounded-md p-2 overflow-scroll">
-          {messages.map((msg, idx) => {
-            return (
-              <>
-                <div className="relative group/item w-full flex border-b border-default-dark hover:bg-default py-2">
-                  <span className="lg:mx-2 hidden md:block text-[0.9rem]">{idx + 1}</span>
-                  <span className="hidden md:block mx-2 font-semibold lg:whitespace-nowrap px-10 min-w-[150px] text-[.8rem]">{msg.name}</span>
-                  <div className="flex flex-col">
-                    <span className="lg:mx-2 font-semibold lg:whitespace-nowrap overflow-x-hidden text-left text-[.8rem]">{msg.subject}</span>
-                    <span className="lg:mx-2 w-[8rem] sm:w-[15rem] lg:w-[10rem] whitespace-nowrap overflow-x-hidden text-[0.6rem] text-mid-gray lg:text-[0.8rem]">{msg.message}...</span>
+        <div className="h-[2.5rem] border-t border-x bg-default border-default-dark rounded-t-md p-2"></div>
+        <div className="w-full h-[95%] border-x border-b border-default-dark rounded-b-md overflow-scroll">
+          {pip.length == 0 ? (
+            <div className="w-full flex items-center justify-center text-[1.5rem] font-bold">
+              No Conversations Found
+            </div>
+          ) : (
+            <>
+              {pip &&
+                pip.map((item, index) => (
+                  <div key={index}>
+                    <div className="relative group/item w-full">
+                      <div
+                        className="flex border-b border-default-dark hover:bg-default py-2 cursor-pointer select-none"
+                        onClick={() => handleClick(item.ID)}>
+                        <span className="lg:mx-2 hidden md:block text-[0.9rem]">
+                          {cnt++}
+                        </span>
+                        <span className="hidden md:block mx-2 font-semibold lg:whitespace-nowrap min-w-[150px] text-[.8rem]">
+                          {item.converse_name}
+                        </span>
+                        <div className="max-w-[70vw] md:max-w-[60vw] lg:max-w-[20vw] xl:max-w-[35vw] 2xl:max-w-[50vw] flex flex-col overflow-hidden">
+                          <span className="lg:mx-2 font-semibold lg:whitespace-nowrap text-left text-[.8rem]">
+                            {item.agenda}
+                          </span>
+                          <span className="lg:mx-2 whitespace-nowrap text-[0.6rem] text-mid-gray lg:text-[0.8rem]">
+                            {employee_id == item.last_sent_user_id
+                              ? "You: "
+                              : ""}
+                            {item.last_sent_message}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="absolute w-[6rem] md:w-[10rem] h-[3.1rem] lg:h-[3.4rem] group-hover/item:w-[3.2rem] hover:w-[3.2rem] top-0 right-0 bg-white group-hover/item:bg-default" />
+                      <div className="absolute flex flex-col md:flex-row md:gap-2 text-[0.8rem] whitespace-nowrap px-2 top-2 md:top-4 lg:top-5 right-0 group-hover/item:hidden">
+                        <span>
+                          {(() => {
+                            const date = new Date(item.last_modified);
+                            const formattedDate = `${(date.getMonth() + 1)
+                              .toString()
+                              .padStart(2, "0")}/
+                              ${date.getDate().toString().padStart(2, "0")}/
+                              ${date.getFullYear().toString()}`;
+                            return formattedDate;
+                          })()}
+                        </span>
+                        <span className="text-[0.6rem] md:text-[0.8rem] text-right">
+                          {(() => {
+                            const date = new Date(item.last_modified);
+                            const hours = date.getHours();
+                            const minutes = date.getMinutes();
+                            const amOrPm = hours >= 12 ? "PM" : "AM";
+                            const formattedTime = `${(hours % 12 || 12)
+                              .toString()
+                              .padStart(2, "0")}:${minutes
+                                .toString()
+                                .padStart(2, "0")} ${amOrPm}`;
+                            return formattedTime;
+                          })()}
+                        </span>
+                      </div>
+                      <div className="absolute w-0 overflow-hidden top-5 right-0 group-hover/item:right-4 flex justify-end group-hover/item:w-[2rem] transition-all">
+                        <ConversationsActions
+                          convo_id={item.ID}
+                          employee_id={item.converse_id}
+                          employee_name={item.converse_name}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="w-full flex justify-end items-center"><span className="hidden group-hover/item:block px-2"><FaRegTrashAlt /></span><span className="flex flex-col lg:flex-row lg:gap-2 group-hover/item:hidden px-2 text-[0.8rem] whitespace-nowrap"><span>11/24/23</span><span className="text-[0.6rem] lg:text-[0.8rem] text-right">09:00 PM</span></span></div>
-                </div>
-              </>
-            )
-          })}
+                ))}
+            </>
+          )}
         </div>
       </div>
     </>
