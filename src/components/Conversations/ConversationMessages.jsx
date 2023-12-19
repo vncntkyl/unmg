@@ -21,6 +21,7 @@ export default function ConversationMessages({ employee_id }) {
   const [convoSettings, setConvoSettings] = useState([]);
   const [convo, setConvo] = useState([]);
   const [file, setFile] = useState([]);
+  console.log(file);
   const fileName = Object.keys(file).map((item) => {
     const str = file[item].name;
     const type = file[item].type;
@@ -99,6 +100,9 @@ export default function ConversationMessages({ employee_id }) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const allFile = Object.keys(file).map((item) => {
+      return file[item];
+    });
     const userid = parseInt(employee_id);
     const convoid = convo_id;
     const newMessage = message;
@@ -115,7 +119,10 @@ export default function ConversationMessages({ employee_id }) {
     fData.append("newMessage", newMessage);
     fData.append("file_name", file_name);
     fData.append("file_type", file_type);
-    axios.post(url, fData).catch((error) => alert(error));
+    allFile.forEach((file, index) => {
+      fData.append(`file[${index}]`, file);
+    });
+    axios.post(url, fData).then((response) => alert(response.data)).catch((error) => alert(error));
     setMessage("");
     setFile([]);
 
@@ -266,7 +273,7 @@ export default function ConversationMessages({ employee_id }) {
                         </span>
                       </div>
                       <p className="indent-4 text-justify whitespace-break-spaces">
-                        {convo.message}
+                        {convo.message_type && convo.message_type === 1 ? convo.message : ""}
                       </p>
                     </div>
                   ))}
@@ -304,7 +311,7 @@ export default function ConversationMessages({ employee_id }) {
           style={{ height: `${containerHeight}px` }}
         >
           <div className="w-full">
-            <form className="w-full flex justify-between items-center">
+            <form className="w-full flex justify-between items-center" encType="multipart/form-data">
               <div className="text-[1.5rem] ml-2">
                 <label
                   htmlFor="fileUpload"
