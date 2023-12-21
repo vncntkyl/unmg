@@ -8,10 +8,9 @@ import { PiWarningCircleDuotone } from "react-icons/pi";
 import classNames from "classnames";
 import { format } from "date-fns";
 import { MdAudioFile, MdVideoFile, MdInsertDriveFile } from "react-icons/md";
-import { FaFileImage} from "react-icons/fa6";
+import { FaFileImage } from "react-icons/fa6";
 import { CiShare1 } from "react-icons/ci";
-
-
+import { IoMdDownload } from "react-icons/io";
 
 export default function ConversationMessages({ employee_id }) {
   const [loading, toggleLoading] = useState(true);
@@ -21,14 +20,13 @@ export default function ConversationMessages({ employee_id }) {
   const [convoSettings, setConvoSettings] = useState([]);
   const [convo, setConvo] = useState([]);
   const [file, setFile] = useState([]);
-  console.log(file);
   const fileName = Object.keys(file).map((item) => {
     const str = file[item].name;
     const type = file[item].type;
-    return ({
+    return {
       name: str.replace(/,/g, ""),
-      type: type.split("/")[0]
-    })
+      type: type.split("/")[0],
+    };
   });
   const fileContainerHeight = file.length === 0 ? 0 : 100;
   const handleChange = (event) => {
@@ -50,6 +48,7 @@ export default function ConversationMessages({ employee_id }) {
     setContainerHeight(newHeight > maxHeight ? maxHeight : newHeight + 20);
   };
 
+// goes back to messages
   const handleBack = () => {
     localStorage.removeItem("convoID");
     window.history.back();
@@ -88,16 +87,18 @@ export default function ConversationMessages({ employee_id }) {
     getConvoSettings();
     getConvo();
     toggleLoading(false);
+    //interval for fetching data from database
     const interval = setInterval(getConvo, 3000);
     return () => clearInterval(interval);
   }, [convo_id, employee_id]);
-
+  //press enter to submit
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
   };
+  //submit button
   const handleSubmit = async (e) => {
     e.preventDefault();
     const allFile = Object.keys(file).map((item) => {
@@ -106,8 +107,8 @@ export default function ConversationMessages({ employee_id }) {
     const userid = parseInt(employee_id);
     const convoid = convo_id;
     const newMessage = message;
-    const file_name = fileName.map(name => name.name);
-    const file_type = fileName.map(name => name.type);
+    const file_name = fileName.map((name) => name.name);
+    const file_type = fileName.map((name) => name.type);
     if (!newMessage && file.length === 0) {
       return;
     }
@@ -122,10 +123,9 @@ export default function ConversationMessages({ employee_id }) {
     allFile.forEach((file, index) => {
       fData.append(`file[${index}]`, file);
     });
-    axios.post(url, fData).then((response) => alert(response.data)).catch((error) => alert(error));
+    axios.post(url, fData).catch((error) => alert(error));
     setMessage("");
     setFile([]);
-
   };
   return loading ? (
     "Loading..."
@@ -161,7 +161,9 @@ export default function ConversationMessages({ employee_id }) {
         </div>
         <div
           className="w-full border-x border-default-dark p-2 overflow-y-scroll"
-          style={{ height: `calc(92% - ${containerHeight}px - ${fileContainerHeight}px)` }}
+          style={{
+            height: `calc(92% - ${containerHeight}px - ${fileContainerHeight}px)`,
+          }}
         >
           <div>
             <div className="flex justify-between text-[1rem] border-b mb-2 pb-2">
@@ -272,9 +274,46 @@ export default function ConversationMessages({ employee_id }) {
                           </span>
                         </span>
                       </div>
-                      <p className="indent-4 text-justify whitespace-break-spaces">
-                        {convo.message_type && convo.message_type === 1 ? convo.message : ""}
-                      </p>
+                      <div className="indent-4 text-justify whitespace-break-spaces">
+                        {convo.message_type &&
+                        parseInt(convo.message_type) === 1 ? (
+                          convo.message
+                        ) : parseInt(convo.message_type) === 2 ? (
+                          <img
+                            src={`../../assets/messages/image/` + convo.message}
+                            alt="image"
+                            className="rounded-md"
+                          />
+                        ) : parseInt(convo.message_type) === 3 ? (
+                          <video
+                            src={`../../assets/messages/video/` + convo.message}
+                            alt="video"
+                            className="rounded-md"
+                            controls
+                          />
+                        ) : parseInt(convo.message_type) === 4 ? (
+                          <audio
+                            src={`../../assets/messages/audio/` + convo.message}
+                            alt="audio"
+                            controls
+                          />
+                        ) : (
+                          <div className="w-full flex items-center">
+                            <MdInsertDriveFile className="text-[2.6rem] text-dark-gray" />
+                            <span className="w-full flex flex-col">
+                              <span>{convo.message}</span>
+                              <span className="flex items-center justify-end">
+                                <a className="text-[1.4rem] hover:text-un-red text-dark-gray"
+                                  href={`../../assets/messages/file/${convo.message}`}
+                                  download
+                                >
+                                  <IoMdDownload />
+                                </a>
+                              </span>
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
               </div>
@@ -290,12 +329,15 @@ export default function ConversationMessages({ employee_id }) {
                   className="w-[8rem] h-[5rem] bg-default p-2 flex flex-col items-center rounded-md mb-4 mx-auto"
                 >
                   <span className="h-[3rem] w-[5rem] text-[3rem] flex justify-center">
-                    {item.type && 
-                    item.type === "audio" ? (<MdAudioFile/>) :
-                    item.type === "image" ? (<FaFileImage className="text-[2.6rem]"/>) :
-                    item.type === "video" ? (<MdVideoFile/>) :
-                    (<MdInsertDriveFile />)
-                    }
+                    {item.type && item.type === "audio" ? (
+                      <MdAudioFile />
+                    ) : item.type === "image" ? (
+                      <FaFileImage className="text-[2.6rem]" />
+                    ) : item.type === "video" ? (
+                      <MdVideoFile />
+                    ) : (
+                      <MdInsertDriveFile />
+                    )}
                   </span>
                   <span className="w-[8rem] text-[.8rem] overflow-hidden text-center">
                     {item.name}
@@ -311,7 +353,10 @@ export default function ConversationMessages({ employee_id }) {
           style={{ height: `${containerHeight}px` }}
         >
           <div className="w-full">
-            <form className="w-full flex justify-between items-center" encType="multipart/form-data">
+            <form
+              className="w-full flex justify-between items-center"
+              encType="multipart/form-data"
+            >
               <div className="text-[1.5rem] ml-2">
                 <label
                   htmlFor="fileUpload"
@@ -342,8 +387,8 @@ export default function ConversationMessages({ employee_id }) {
               >
                 <IoIosSend />
               </button>
-              <button className="text-[1.5rem]"> 
-              <CiShare1/>
+              <button className="text-[1.5rem]">
+                <CiShare1 />
               </button>
             </form>
           </div>

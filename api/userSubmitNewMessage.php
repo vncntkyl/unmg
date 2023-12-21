@@ -4,24 +4,40 @@ require_once '../config/formController.php';
 $submitDiscussion = new Form();
 if (isset($_POST['submit'])) {
     if (isset($_POST['employee_id'])) {
+        $employee_id = $_POST['employee_id'];
+        $convo_id = $_POST['convo_id'];
+        $new_message = $_POST['newMessage'];
+
+        if ($new_message != null) {
+            $result = $submitDiscussion->insertNewMessage($employee_id, $convo_id, $message_type = 1, $new_message);
+        }
         if (isset($_FILES['file'])) {
             $fileCount = count($_FILES['file']['name']);
             for ($i = 0; $i < $fileCount; $i++) {
                 $filename = $_FILES['file']['name'][$i];
                 $filetempname = $_FILES['file']['tmp_name'][$i];
+                $message_type = 0;
                 $filetype = explode('/', $_FILES['file']['type'][$i]);
                 switch ($filetype[0]) {
                     case "image":
                         $target_dirserve = "./../assets/messages/image/";
+                        $message_type = 2;
                         break;
                     case "video":
                         $target_dirserve = "./../assets/messages/video/";
+                        $message_type = 3;
                         break;
                     case "audio":
                         $target_dirserve = "./../assets/messages/audio/";
+                        $message_type = 4;
+                        break;
+                    case "application":
+                        $target_dirserve = "./../assets/messages/file/";
+                        $message_type = 5;
                         break;
                     default:
-                        $target_dirserve = "./../assets/messages/file/";
+                        $target_dirserve = "";
+                        $message_type = 1;
                         break;
                 }
 
@@ -35,9 +51,10 @@ if (isset($_POST['submit'])) {
                     $info = pathinfo($fullpath);
                     $fullpath = $info['dirname'] . '/' . $file . ' (' . $count++ . ')' . '.' . $info['extension'];
                 }
-                // if (move_uploaded_file($filetempname, $fullpath)){
-
-                // }
+                $final_name = pathinfo($fullpath, PATHINFO_FILENAME) . "." . pathinfo($fullpath, PATHINFO_EXTENSION);
+                if (move_uploaded_file($filetempname, $fullpath)){
+                    $res = $submitDiscussion->insertMessage($convo_id, $employee_id, $message_type, $final_name);
+                }
             }
         }
         // $employee_id = $_POST['employee_id'];

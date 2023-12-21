@@ -40,6 +40,9 @@ export default function ConversationsModal({ employee_id, closeModal }) {
   }, [employee_id]);
   const handleSubmit = (e) => {
     e.preventDefault();
+    const allFile = Object.keys(file).map((item) => {
+      return file[item];
+    });
     const user_id = parseInt(employee_id);
     const rec = receiver;
     const convo_type = type;
@@ -63,6 +66,9 @@ export default function ConversationsModal({ employee_id, closeModal }) {
     fData.append("convo_file_type", convo_file_type);
     fData.append("convo_file", convo_file);
     fData.append("see_admin", see_admin);
+    allFile.forEach((file, index) => {
+      fData.append(`file[${index}]`, file);
+    });
     axios
       .post(url, fData)
       .then((response) => alert(response.data))
