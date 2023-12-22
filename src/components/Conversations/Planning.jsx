@@ -63,7 +63,16 @@ export default function Planning({ employee_id, convo_type }) {
   ) : (
     <>
       <div className="w-full mt-4">
-        <div className="h-[2.5rem] border-t border-x bg-default border-default-dark rounded-t-md p-2"></div>
+        <div className="h-[2.5rem] border-t border-x bg-default border-default-dark rounded-t-md p-2 flex items-center justify-end">
+          <div className="toggle flex flex-row gap-2 bg-default w-full p-1 rounded-full relative overflow-hidden z-[4] md:w-[400px]">
+            <button type="button" className="toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] text-center w-1/2 md:text-[.8rem] text-white">
+              My Conversation
+            </button>
+            <button type="button" className="toggle_text py-1 px-2 rounded-full text-[.8rem] z-[6] w-1/2 text-center whitespace-nowrap md:text-[.8rem] text-black">
+              Employee Conversation
+            </button>
+          </div>
+        </div>
         <div className="w-full h-[95%] border-x border-b border-default-dark rounded-b-md overflow-scroll">
           {planning.length == 0 ? (
             <div className="w-full flex items-center justify-center text-[1.5rem] font-bold">

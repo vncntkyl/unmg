@@ -51,7 +51,7 @@ export default function CreateGoals({
       ],
     };
 
-    const currentGoals = [...goals];
+    const currentGoals = [  ...goals];
     const pillar = { ...goals[i] };
     pillar.objectives.push(objectiveTemplate);
     currentGoals[i] = { ...pillar };
