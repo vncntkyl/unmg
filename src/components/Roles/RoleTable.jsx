@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaUser } from "react-icons/fa";
 import { GrFormSearch } from "react-icons/gr";
 import RoleRow from "./RoleRow";
+import { releaseAPIs as url } from "../context/apiList";
 
 export default function RoleTable({ toggleModal, setEmployee }) {
   const { usertypeList, companyList, departmentList } = useAuth();
@@ -34,10 +35,10 @@ export default function RoleTable({ toggleModal, setEmployee }) {
   };
   useEffect(() => {
     const fetchUsers = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
+      //let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
       //let url = "../api/retrieveUsers.php";
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(url.retrieveUsers, {
           params: {
             users: "regular",
           },

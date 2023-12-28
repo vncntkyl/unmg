@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { GrClose } from "react-icons/gr";
 import { IoAttach } from "react-icons/io5";
-import { developmentAPIs as url } from "../context/apiList";
+import { releaseAPIs as url } from "../context/apiList";
 import classNames from "classnames";
 
 export default function ConversationsModal({ employee_id, closeModal }) {
@@ -53,7 +53,7 @@ export default function ConversationsModal({ employee_id, closeModal }) {
     const convo_file = fileName;
     const convo_file_type = fileType.map(type => type.split("/")[0]);
     const see_admin = seeAdmin;
-    const url = "http://localhost/unmg_pms/api/userSubmitNewConversation.php";
+    //const url = "http://localhost/unmg_pms/api/userSubmitNewConversation.php";
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("user_id", user_id);
@@ -70,7 +70,7 @@ export default function ConversationsModal({ employee_id, closeModal }) {
       fData.append(`file[${index}]`, file);
     });
     axios
-      .post(url, fData)
+      .post( url.userSubmitNewConversation, fData)
       .then((response) => alert(response.data))
       .catch((error) => alert(error));
     closeModal(false);

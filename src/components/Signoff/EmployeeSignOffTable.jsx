@@ -4,7 +4,7 @@ import axios from "axios";
 import SignOffAction from "./SignOffAction";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 import { AiFillCheckCircle } from "react-icons/ai";
 import classNames from "classnames";
 

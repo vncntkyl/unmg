@@ -5,7 +5,7 @@ import AssessmentInstructions from "./AssessmentInstructions";
 import Badge from "../../misc/Badge";
 import NoAssessmentTrackingDetails from "./NoAssessmentTrackingDetails";
 import { format } from "date-fns";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 
 export default function AssessmentTracking({
   emp_id,

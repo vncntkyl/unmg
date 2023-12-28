@@ -83,8 +83,8 @@ export default function Roles() {
 
   useEffect(() => {
     const getSuperAdmin = async () => {
-      let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
+      //let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
+      let url = "../api/retrieveUsers.php";
 
       const formData = new FormData();
       formData.append("super", true);

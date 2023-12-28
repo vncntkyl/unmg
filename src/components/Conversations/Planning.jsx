@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 import ConversationsActions from "./ConversationsActions";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { developmentAPIs as url } from "../../context/apiList";
+import { releaseAPIs as url } from "../../context/apiList";
 import axios from "axios";
 import Badge from "../../misc/Badge";
 import SignOffModal from "../../misc/SignOffModal";

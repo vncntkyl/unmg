@@ -4,7 +4,7 @@ import EmployeeAssessmentTable from "../components/TrackingAssessment/EmployeeAs
 import AssessmentTracking from "../components/TrackingAssessment/AssessmentTracking";
 import EmployeeAssessment from "../components/TrackingAssessment/EmployeeAssessment";
 import CreateAchievements from "../components/TrackingAssessment/CreateAchievements";
-import { developmentAPIs as url } from "../context/apiList";
+import { releaseAPIs as url } from "../context/apiList";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate, Route, Router, Routes } from "react-router-dom";
 import { useFunction } from "../context/FunctionContext";

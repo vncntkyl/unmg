@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { developmentAPIs as url } from "./apiList";
+import { releaseAPIs as url } from "./apiList";
 import axios from "axios";
 import { format } from "date-fns";
 const AuthContext = React.createContext();
@@ -150,8 +150,8 @@ export function AuthProvider({ children }) {
     }
   };
   const manageUser = async (action, id) => {
-    const url = "http://localhost/unmg_pms/api/userActions.php";
-    //const url = "../api/userActions.php";
+    //const url = "http://localhost/unmg_pms/api/userActions.php";
+    const url = "../api/userActions.php";
     const formData = new FormData();
     formData.append("action", action);
     formData.append("user_id", id);

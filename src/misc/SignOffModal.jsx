@@ -3,7 +3,7 @@ import { GrClose } from "react-icons/gr";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SubmissionModal from "./SubmissionModal";
-
+import { releaseAPIs as url } from "../context/apiList";
 
 export default function SignOffModal({
   modalType,
@@ -26,7 +26,7 @@ export default function SignOffModal({
       alert("Please fill all the fields!");
     }
     else{
-      const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
+      //const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("rater", true);
@@ -36,7 +36,7 @@ export default function SignOffModal({
       fData.append("full_name", full_name);
       fData.append("recommendation", recommendation);
       axios
-        .post(url, fData)
+        .post(url.userSubmitSignOff, fData)
         .then((response) => alert(response.data))
         .catch((error) => alert(error));
       closeModal(false);
@@ -49,7 +49,7 @@ export default function SignOffModal({
     if (comments.length === 0) {
       alert("Please fill all the fields!");
     } else {
-      const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
+      //const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("ratee", true);
@@ -57,7 +57,7 @@ export default function SignOffModal({
       fData.append("employee_id", employee_id);
       fData.append("comments", comments);
       axios
-        .post(url, fData)
+        .post(url.userSubmitSignOff, fData)
         .then((response) => alert(response.data))
         .catch((error) => alert(error));
       closeModal(false);

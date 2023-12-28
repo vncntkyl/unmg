@@ -3,6 +3,7 @@ import { IoIosUnlock, IoIosLock } from "react-icons/io";
 import { useAuth } from "../context/authContext";
 import classNames from "classnames";
 import axios from "axios";
+import { releaseAPIs as url } from "../context/apiList";
 
 export default function Settings() {
   const { globalSettings } = useAuth();
@@ -42,7 +43,7 @@ export default function Settings() {
     const required_max = settings.required_max;
     const overall_percentage = settings.overall_percentage;
     const goal_status = settings.goal_status;
-    const url = "http://localhost/unmg_pms/api/updateSettings.php";
+    //const url = "http://localhost/unmg_pms/api/updateSettings.php";
     const fData = new FormData();
     fData.append("submit", true);
     fData.append("pillar_min", pillar_min);
@@ -52,7 +53,7 @@ export default function Settings() {
     fData.append("overall_percentage", overall_percentage);
     fData.append("goal_status", goal_status);
     axios
-      .post(url, fData)
+      .post(url.updateSettings, fData)
       .then((response) => alert(response.data))
       .catch((error) => alert(error));
       window.location.reload();

@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
 import { IoAttach } from "react-icons/io5";
-import { developmentAPIs as url } from "../../context/apiList";
 import { PiWarningCircleDuotone } from "react-icons/pi";
 import classNames from "classnames";
 import { format } from "date-fns";
@@ -11,6 +10,7 @@ import { MdAudioFile, MdVideoFile, MdInsertDriveFile } from "react-icons/md";
 import { FaFileImage } from "react-icons/fa6";
 import { CiShare1 } from "react-icons/ci";
 import { IoMdDownload } from "react-icons/io";
+import { releaseAPIs as url} from "../../context/apiList";
 
 export default function ConversationMessages({ employee_id }) {
   const [loading, toggleLoading] = useState(true);
@@ -112,7 +112,7 @@ export default function ConversationMessages({ employee_id }) {
     if (!newMessage && file.length === 0) {
       return;
     }
-    const url = "http://localhost/unmg_pms/api/userSubmitNewMessage.php";
+    //const url = "http://localhost/unmg_pms/api/userSubmitNewMessage.php";
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("employee_id", userid);
@@ -123,7 +123,7 @@ export default function ConversationMessages({ employee_id }) {
     allFile.forEach((file, index) => {
       fData.append(`file[${index}]`, file);
     });
-    axios.post(url, fData).catch((error) => alert(error));
+    axios.post(url.userSubmitNewMessage, fData).catch((error) => alert(error));
     setMessage("");
     setFile([]);
   };

@@ -32,6 +32,10 @@ export const developmentAPIs = {
   retrieveReceivers: "http://localhost/unmg_pms/api/retrieveReceivers.php",
   retrieveConversations: "http://localhost/unmg_pms/api/retrieveConversations.php",
   retrieveConvo:"http://localhost/unmg_pms/api/retrieveConvo.php",
+  userSubmitSignOff:"http://localhost/unmg_pms/api/userSubmitSignOff.php",
+  updateSettings:"http://localhost/unmg_pms/api/updateSettings.php",
+  userSubmitNewMessage:"http://localhost/unmg_pms/api/userSubmitNewMessage.php",
+  userSubmitNewConversation:"http://localhost/unmg_pms/api/userSubmitNewConversation.php",
 
   };
 
@@ -69,4 +73,8 @@ export const releaseAPIs = {
   retrieveReceivers: "../api/retrieveReceivers.php",
   retrieveConversations: "../api/retrieveConversations.php",
   retrieveConvo:"../api/retrieveConvo.php",
+  userSubmitSignOff:"../api/userSubmitSignOff.php",
+  updateSettings:"../api/updateSettings.php",
+  userSubmitNewMessage:"../api/userSubmitNewMessage.php",
+  userSubmitNewConversation:"../api/userSubmitNewConversation.php",
 };
