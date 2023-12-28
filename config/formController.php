@@ -1897,10 +1897,10 @@ class Form extends Controller
 
 
     //New conversations
-    function insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin)
+    function insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin, $rater_access)
     {
-        $this->setStatement("INSERT INTO hr_convo_inbox (convo_type, evaluation_quarter, coaching_type, admin_access, agenda, last_sent_message, last_sent_user_id, deleted, last_modified, creation_date) VALUES (:convo_type, :evaluation_quarter, :coaching_type, :admin_access, :agenda, :last_sent_message, :last_sent_user_id, :deleted, :last_modified, :creation_date)");
-        $this->statement->execute([':convo_type' => $convo_type, ':evaluation_quarter' => $selected_quarter, ':coaching_type' => $selected_coach, 'agenda' => $convo_agenda, ':admin_access' => $see_admin, ':last_sent_message' => $convo_message, ':last_sent_user_id' => $user_id, ':deleted' => 0, ':last_modified' => date('Y-m-d H:i:s'), ':creation_date' => date('Y-m-d H:i:s')]);
+        $this->setStatement("INSERT INTO hr_convo_inbox (convo_type, evaluation_quarter, coaching_type, admin_access, rater_access, agenda, last_sent_message, last_sent_user_id, deleted, last_modified, creation_date) VALUES (:convo_type, :evaluation_quarter, :coaching_type, :admin_access, :rater_access, :agenda, :last_sent_message, :last_sent_user_id, :deleted, :last_modified, :creation_date)");
+        $this->statement->execute([':convo_type' => $convo_type, ':evaluation_quarter' => $selected_quarter, ':coaching_type' => $selected_coach, 'agenda' => $convo_agenda, ':admin_access' => $see_admin, ':rater_access' => $rater_access, ':last_sent_message' => $convo_message, ':last_sent_user_id' => $user_id, ':deleted' => 0, ':last_modified' => date('Y-m-d H:i:s'), ':creation_date' => date('Y-m-d H:i:s')]);
         return $this->connection->lastInsertId();
     }
     function insertParticipantConversation($inbox, $ID)
@@ -1941,11 +1941,85 @@ class Form extends Controller
          WHERE 
              hr_convo_participants.employee_id = ?
              AND hr_convo_inbox.convo_type = ?
-         ORDER BY 
+         ORDER BY
              hr_convo_inbox.last_modified ASC");
         $this->statement->execute([$user_id, $convo_type]);
         return $this->statement->fetchAll();
     }
+    function selectEmployeeConversations($user_id, $convo_type){
+        // SELECT 
+        // hr_users.employee_id AS converse_id,
+        //     CASE 
+        //         WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
+        //             CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
+        //         ELSE
+        //             CONCAT(hr_users.first_name, ' ', hr_users.last_name)
+        //         END AS converse_name,
+        //     communicating_participant.viewer AS converse_viewer,
+        //     hr_convo_participants.*, 
+        //     hr_convo_inbox.*
+        // FROM 
+        //     hr_convo_participants
+        // LEFT JOIN 
+        //     hr_convo_inbox ON hr_convo_inbox.ID = hr_convo_participants.inbox_id
+        // LEFT JOIN 
+        //     hr_convo_participants AS communicating_participant
+        //     ON hr_convo_inbox.ID = communicating_participant.inbox_id
+        //     AND hr_convo_participants.employee_id <> communicating_participant.employee_id
+        //     AND communicating_participant.viewer = 0
+        // LEFT JOIN hr_users ON hr_users.employee_id = communicating_participant.employee_id
+        // WHERE 
+        //     hr_convo_participants.employee_id IN 
+        //     (
+        // SELECT 
+        // employee_id
+        // FROM hr_users
+        // WHERE
+        // (hr_users.primary_evaluator = :employee_id OR hr_users.secondary_evaluator = :employee_id OR hr_users.tertiary_evaluator = :employee_id))
+        //     AND hr_convo_inbox.convo_type = :convo_type
+        //     AND hr_users.employee_id != :employee_id
+        // ORDER BY 
+        //     hr_convo_inbox.last_modified ASC
+        $this->setStatement("
+        SELECT 
+    hr_users.employee_id AS converse_id,
+    CASE 
+        WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
+            CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
+        ELSE
+            CONCAT(hr_users.first_name, ' ', hr_users.last_name)
+    END AS converse_name,
+    hr_convo_participants.*, 
+    hr_convo_inbox.*
+FROM 
+    hr_convo_participants
+LEFT JOIN hr_convo_inbox ON hr_convo_inbox.ID = hr_convo_participants.inbox_id
+LEFT JOIN hr_users ON hr_users.employee_id = hr_convo_participants.employee_id
+WHERE 
+    hr_users.employee_id IN (
+        SELECT 
+            employee_id
+        FROM 
+            hr_users
+        WHERE 
+            (hr_users.secondary_evaluator = :employee_id OR hr_users.tertiary_evaluator = :employee_id)
+    )
+    AND hr_convo_inbox.convo_type = :convo_type
+    AND NOT EXISTS (
+        SELECT 1
+        FROM 
+            hr_convo_participants as cp
+        WHERE 
+            cp.inbox_id = hr_convo_participants.inbox_id
+            AND cp.employee_id = :employee_id
+    )
+ORDER BY 
+    hr_convo_inbox.last_modified ASC;
+        ");
+            $this->statement->execute([":employee_id" => $user_id, ":convo_type" => $convo_type]);
+        return $this->statement->fetchAll();
+    }
+
     function selectConvoSettings($employee_id, $convo_id)
     {
         $this->setStatement("SELECT 

@@ -14,10 +14,11 @@ if (isset($_POST['submit'])) {
         $convo_message = $_POST['convo_message'];
         $convo_file_type = $_POST['convo_file_type'];
         $convo_file = $_POST['convo_file'];
-        $see_admin = $_POST['see_admin'];
+        $see_admin = 2;
+        $rater_access = 2;
 
         if ($convo_message != null) {
-            $inbox = $submitInbox->insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin);
+            $inbox = $submitInbox->insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin, $rater_access);
             if ($inbox) {
                 $participants1 = $submitInbox->insertParticipantConversation($inbox, $user_id);
                 $participants2 = $submitInbox->insertParticipantConversation($inbox, $receiver_id);
