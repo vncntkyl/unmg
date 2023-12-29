@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios, { all } from "axios";
 import { AiOutlinePlus } from "react-icons/ai";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function AssessmentTrackingDetails({
   quarter,

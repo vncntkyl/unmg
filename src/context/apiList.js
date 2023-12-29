@@ -36,6 +36,8 @@ export const developmentAPIs = {
   updateSettings:"http://localhost/unmg_pms/api/updateSettings.php",
   userSubmitNewMessage:"http://localhost/unmg_pms/api/userSubmitNewMessage.php",
   userSubmitNewConversation:"http://localhost/unmg_pms/api/userSubmitNewConversation.php",
+  userSubmitDiscussion:"http://localhost/unmg_pms/api/userSubmitDiscussion.php",
+  userSubmitApproval:"http://localhost/unmg_pms/api/userSubmitApproval.php",
 
   };
 
@@ -77,4 +79,6 @@ export const releaseAPIs = {
   updateSettings:"../api/updateSettings.php",
   userSubmitNewMessage:"../api/userSubmitNewMessage.php",
   userSubmitNewConversation:"../api/userSubmitNewConversation.php",
+  userSubmitDiscussion:"../api/userSubmitDiscussion.php",
+  userSubmitApproval:"../api/userSubmitApproval.php",
 };

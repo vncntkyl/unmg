@@ -3,7 +3,7 @@ import { GrClose } from "react-icons/gr";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SubmissionModal from "./SubmissionModal";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function SignOffModal({
   modalType,

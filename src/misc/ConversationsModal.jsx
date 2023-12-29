@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { GrClose } from "react-icons/gr";
 import { IoAttach } from "react-icons/io5";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "../context/apiList";
 import classNames from "classnames";
 
 export default function ConversationsModal({ employee_id, closeModal }) {

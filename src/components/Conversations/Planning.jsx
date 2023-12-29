@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 import ConversationsActions from "./ConversationsActions";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
@@ -36,7 +36,8 @@ export default function Planning({ employee_id, convo_type }) {
       try {
         const response = await axios.get(url.retrieveConversations, parameters);
 
-const dataArray = response.data;
+        const dataArray = response.data;
+        console.log(dataArray);
 
 
         const mergeEntries = (data) => {

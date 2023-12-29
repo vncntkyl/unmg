@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function adminAndSuperAdminContent({
   selectedQuarter,

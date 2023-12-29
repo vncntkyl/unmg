@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "../context/apiList";
 import axios from "axios";
 import Counter from "../misc/Counter";
 import { format, startOfToday } from "date-fns";

@@ -4,7 +4,7 @@ import axios from "axios";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGradeEdit() {
   const employee_id = localStorage.getItem("assessment_id");

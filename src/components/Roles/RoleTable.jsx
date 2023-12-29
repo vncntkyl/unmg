@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaUser } from "react-icons/fa";
 import { GrFormSearch } from "react-icons/gr";
 import RoleRow from "./RoleRow";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "./../../context/apiList";
 
 export default function RoleTable({ toggleModal, setEmployee }) {
   const { usertypeList, companyList, departmentList } = useAuth();

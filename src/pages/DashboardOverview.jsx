@@ -16,7 +16,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { format } from "date-fns";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function DashboardOverview() {
   const [workYear, setKpiDuration] = useState(1);

@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { error } from "jquery";
 import Badge from "../../misc/Badge";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessmentGrade({
   employee_id,

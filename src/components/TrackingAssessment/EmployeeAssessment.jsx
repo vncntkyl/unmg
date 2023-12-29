@@ -5,7 +5,7 @@ import Toggle from "../Toggle";
 import EmployeeAssessmentGrade from "./EmployeeAssessmentGrade";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EmployeeAssessment() {
   const [loading, toggleLoading] = useState(true);

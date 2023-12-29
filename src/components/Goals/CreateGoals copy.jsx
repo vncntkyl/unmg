@@ -5,7 +5,7 @@ import GoalsInstructions from "./GoalsInstructions";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
 import { useFunction } from "../../context/FunctionContext";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 import classNames from "classnames";
 
 export default function CreateGoals({

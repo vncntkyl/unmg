@@ -10,7 +10,7 @@ import { MdAudioFile, MdVideoFile, MdInsertDriveFile } from "react-icons/md";
 import { FaFileImage } from "react-icons/fa6";
 import { CiShare1 } from "react-icons/ci";
 import { IoMdDownload } from "react-icons/io";
-import { releaseAPIs as url} from "../../context/apiList";
+import { developmentAPIs as url} from "../../context/apiList";
 
 export default function ConversationMessages({ employee_id }) {
   const [loading, toggleLoading] = useState(true);

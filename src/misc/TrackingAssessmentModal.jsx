@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { GrClose } from "react-icons/gr";
-import axios from "axios";
+import axios from "axios"; 
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function TrackingAssessmentModal({
   closeModal,
@@ -23,14 +24,14 @@ export default function TrackingAssessmentModal({
       alert("Please fill all the fields!");
     }
     else{
-      const url = "http://localhost/unmg_pms/api/userSubmitDiscussion.php";
+      //const url = "http://localhost/unmg_pms/api/userSubmitDiscussion.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("employee_id", employee_id);
       fData.append("first_name", first_name);
       fData.append("subject", subject);
       fData.append("description", description);
-      axios.post(url, fData)
+      axios.post(url.userSubmitDiscussion, fData)
         .then(response => alert(response.data))
         .catch(error => alert(error));
       closeModal(false);
@@ -38,7 +39,7 @@ export default function TrackingAssessmentModal({
   };
   const handleApprovalSubmit = (e) => {
     e.preventDefault();
-      const url = "http://localhost/unmg_pms/api/userSubmitApproval.php";
+      //const url = "http://localhost/unmg_pms/api/userSubmitApproval.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("approval_type", approval);
@@ -46,7 +47,7 @@ export default function TrackingAssessmentModal({
       fData.append("employee_id", employee_id);
       fData.append("first_name", first_name);
       fData.append("sp_id", sp_id);
-      axios.post(url, fData)
+      axios.post(url.userSubmitApproval, fData)
         .then(response => alert(response.data))
         .catch(error => alert(error));
       closeModal(false);

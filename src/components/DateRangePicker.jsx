@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import Modal from "react-modal";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "../context/apiList";
 
 Modal.setAppElement("#root"); // Set the app root element for accessibility
 

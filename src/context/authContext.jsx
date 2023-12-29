@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { releaseAPIs as url } from "./apiList";
+import { developmentAPIs as url } from "./apiList";
 import axios from "axios";
 import { format } from "date-fns";
 const AuthContext = React.createContext();

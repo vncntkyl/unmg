@@ -3,7 +3,7 @@ import { IoIosUnlock, IoIosLock } from "react-icons/io";
 import { useAuth } from "../context/authContext";
 import classNames from "classnames";
 import axios from "axios";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function Settings() {
   const { globalSettings } = useAuth();

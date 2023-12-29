@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 import { useNavigate } from "react-router-dom";
 import ConversationsActions from "./ConversationsActions";
 export default function DirectionalRedirectional({ employee_id, convo_type }) {

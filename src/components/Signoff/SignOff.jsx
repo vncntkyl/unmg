@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "date-fns";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 import Badge from "../../misc/Badge";
 import SignOffModal from "../../misc/SignOffModal";
 import classNames from "classnames";

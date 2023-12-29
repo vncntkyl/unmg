@@ -7,7 +7,7 @@ import { useFunction } from "../context/FunctionContext";
 import { useAuth } from "../context/authContext";
 import Toggle from "../components/Toggle";
 import axios from "axios";
-import { releaseAPIs as url } from "../context/apiList";
+import { developmentAPIs as url } from "../context/apiList";
 import classNames from "classnames";
 
 export default function AgreementSignOff() {

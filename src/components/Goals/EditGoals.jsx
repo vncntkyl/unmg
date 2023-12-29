@@ -5,7 +5,7 @@ import { useFunction } from "../../context/FunctionContext";
 import classNames from "classnames";
 import GoalTable from "./GoalTableHeader";
 import { useAuth } from "../../context/authContext";
-import { releaseAPIs as url } from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function EditGoals({ pillars = [], workYear }) {
   const [goalData, setGoalData] = useState([]);
