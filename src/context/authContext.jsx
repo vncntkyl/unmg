@@ -151,13 +151,13 @@ export function AuthProvider({ children }) {
   };
   const manageUser = async (action, id) => {
     //const url = "http://localhost/unmg_pms/api/userActions.php";
-    const url = "../api/userActions.php";
+    //const url = "../api/userActions.php";
     const formData = new FormData();
     formData.append("action", action);
     formData.append("user_id", id);
 
     try {
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url.userActions, formData);
       if (response.data === "success") {
         return true;
       }

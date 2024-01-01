@@ -53,7 +53,6 @@ export default function ConversationsModal({ employee_id, closeModal }) {
     const convo_file = fileName;
     const convo_file_type = fileType.map(type => type.split("/")[0]);
     const see_admin = seeAdmin;
-    //const url = "http://localhost/unmg_pms/api/userSubmitNewConversation.php";
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("user_id", user_id);
@@ -289,13 +288,12 @@ export function ConversationsModalDelete({
 }) {
   const handleSubmit = (e) => {
     e.preventDefault();
-    const url = "http://localhost/unmg_pms/api/userDeleteConversation.php";
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("convo_id", convo_id);
     fData.append("employee_name", employee_name);
     axios
-      .post(url, fData)
+      .post(url.userDeleteConversation, fData)
       .then((response) => alert(response.data))
       .catch((error) => alert(error));
     closeModal(false);

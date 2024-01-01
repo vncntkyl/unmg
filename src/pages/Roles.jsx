@@ -13,6 +13,7 @@ import RoleModal from "../misc/RoleModal";
 import { RoleActions } from "../components/Action";
 import { RoleAdd, RoleTable } from "../components/Roles";
 import { GrCircleInformation } from "react-icons/gr";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function Roles() {
   const [modal, toggleModal] = useState("standby");
@@ -83,13 +84,11 @@ export default function Roles() {
 
   useEffect(() => {
     const getSuperAdmin = async () => {
-      //let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      let url = "../api/retrieveUsers.php";
 
       const formData = new FormData();
       formData.append("super", true);
       try {
-        const response = await axios.post(url, formData);
+        const response = await axios.post(url.retrieveUsers, formData);
         setSuperAdmin(response.data);
         toggleLoader(false);
       } catch (e) {

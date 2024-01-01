@@ -26,7 +26,6 @@ export default function SignOffModal({
       alert("Please fill all the fields!");
     }
     else{
-      //const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("rater", true);
@@ -49,7 +48,6 @@ export default function SignOffModal({
     if (comments.length === 0) {
       alert("Please fill all the fields!");
     } else {
-      //const url = "http://localhost/unmg_pms/api/userSubmitSignOff.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("ratee", true);

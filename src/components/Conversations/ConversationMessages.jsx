@@ -112,7 +112,6 @@ export default function ConversationMessages({ employee_id }) {
     if (!newMessage && file.length === 0) {
       return;
     }
-    //const url = "http://localhost/unmg_pms/api/userSubmitNewMessage.php";
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("employee_id", userid);

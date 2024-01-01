@@ -24,7 +24,6 @@ export default function TrackingAssessmentModal({
       alert("Please fill all the fields!");
     }
     else{
-      //const url = "http://localhost/unmg_pms/api/userSubmitDiscussion.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("employee_id", employee_id);
@@ -39,7 +38,6 @@ export default function TrackingAssessmentModal({
   };
   const handleApprovalSubmit = (e) => {
     e.preventDefault();
-      //const url = "http://localhost/unmg_pms/api/userSubmitApproval.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("approval_type", approval);

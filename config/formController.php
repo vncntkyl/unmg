@@ -443,11 +443,7 @@ class Form extends Controller
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
-    function insertKpiDuration($fromDate, $toDate)
-    {
-        $this->setStatement("INSERT into `hr_kpi_year_duration` (from_date,to_date) VALUES (:fromDate,:toDate)");
-        return $this->statement->execute([':fromDate' => $fromDate, ':toDate' => $toDate]);
-    }
+
     function selectKpiDuration()
     {
         $this->setStatement("SELECT * FROM `hr_kpi_year_duration`");
@@ -1832,6 +1828,16 @@ class Form extends Controller
     {
         $this->setStatement("UPDATE hr_global_settings SET pillar_min = :pillar_min, pillar_max = :pillar_max, required_min = :required_min, required_max = :required_max, overall_percentage = :overall_percentage, goal_status = :goal_status");
         return $this->statement->execute([':pillar_min' => $pillar_min, ':pillar_max' => $pillar_max, ':required_min' => $required_min, ':required_max' => $required_max, ':overall_percentage' => $overall_percentage, ':goal_status' => $goal_status]);
+    }
+
+    function insertKpiDuration($fromDate, $toDate)
+    {
+        $this->setStatement("INSERT into `hr_kpi_year_duration` (from_date, to_date) VALUES (:fromDate, :toDate)");
+        return $this->statement->execute([':fromDate' => $fromDate, ':toDate' => $toDate]);
+    }
+    function updateKpiDuration($ID, $fromDate, $toDate) {
+        $this->setStatement("UPDATE `hr_kpi_year_duration` SET from_date = :from_date, to_date = :to_date WHERE kpi_year_duration_id = :kpi_year_duration_id");
+        return $this->statement->execute([':from_date' => $fromDate, ':to_date' => $toDate, ':kpi_year_duration_id' => $ID]);
     }
 
     function selectReceivers($employee_id)

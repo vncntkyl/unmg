@@ -35,8 +35,6 @@ export default function RoleTable({ toggleModal, setEmployee }) {
   };
   useEffect(() => {
     const fetchUsers = async () => {
-      //let url = "http://localhost/unmg_pms/api/retrieveUsers.php";
-      //let url = "../api/retrieveUsers.php";
       try {
         const response = await axios.get(url.retrieveUsers, {
           params: {

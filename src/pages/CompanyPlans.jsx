@@ -68,14 +68,14 @@ export default function CompanyPlans({}) {
                 Company Plans
               </span>
 
-              {
+              {/* {
                 <button type="button" onClick={togglePicker}>
                   <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
                     Add Work Year
                   </span>
                 </button>
-              }
-              {showPicker && <DateRangePicker />}
+              } */}
+              {/* {showPicker && <DateRangePicker />} */}
 
               {/* TOGGLE */}
               {

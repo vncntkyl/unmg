@@ -13,13 +13,12 @@ export default function CreateGoals({
   user_id,
   kpi_work_year = null,
 }) {
-  const { globalSettings } = useAuth();
   const [goals, setGoals] = useState([]);
   const [user, setUser] = useState("");
   const [duration, setDuration] = useState();
   const [users, setUsers] = useState([]);
   const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
-  const { kpiDurations, fetchUsers } = useAuth();
+  const { kpiDurations, fetchUsers, globalSettings } = useAuth();
   const { capitalizeSentence } = useFunction();
 
   const addObjective = (i) => {

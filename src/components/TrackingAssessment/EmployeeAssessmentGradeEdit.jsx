@@ -286,7 +286,6 @@ export default function EmployeeAssessmentGradeEdit() {
     const kpiWeight = grades.map(item => item.kpi_weight);
     const formspID = grades.find((item) => item.sp_id).sp_id;
     const evalID = grades.find((item) => item.hr_eval_form_id).hr_eval_form_id;
-      const url = "http://localhost/unmg_pms/api/userSubmitTrackingEmployee.php";
       let fData = new FormData();
       fData.append("submit", true);
       fData.append("quarter", quarter);
@@ -300,7 +299,7 @@ export default function EmployeeAssessmentGradeEdit() {
       fData.append("agreed_rating", JSON.stringify(agree));
       fData.append("total_remarks", JSON.stringify(remark));
       axios
-        .post(url, fData)
+        .post(url.userSubmitTrackingEmployee, fData)
         .then((response) => alert(response.data))
         .catch((error) => alert(error));
         navigate(-1);

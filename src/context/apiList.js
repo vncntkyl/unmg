@@ -34,11 +34,13 @@ export const developmentAPIs = {
   retrieveConvo:"http://localhost/unmg_pms/api/retrieveConvo.php",
   userSubmitSignOff:"http://localhost/unmg_pms/api/userSubmitSignOff.php",
   updateSettings:"http://localhost/unmg_pms/api/updateSettings.php",
-  userSubmitNewMessage:"http://localhost/unmg_pms/api/userSubmitNewMessage.php",
-  userSubmitNewConversation:"http://localhost/unmg_pms/api/userSubmitNewConversation.php",
   userSubmitDiscussion:"http://localhost/unmg_pms/api/userSubmitDiscussion.php",
   userSubmitApproval:"http://localhost/unmg_pms/api/userSubmitApproval.php",
-
+  userSubmitNewConversation:"http://localhost/unmg_pms/api/userSubmitNewConversation.php",
+  userSubmitNewMessage:"http://localhost/unmg_pms/api/userSubmitNewMessage.php",
+  userDeleteConversation:"http://localhost/unmg_pms/api/userDeleteConversation.php",
+  userSubmitKPIDuration: "http://localhost/unmg_pms/api/userSubmitKPIDuration.php",
+  updateKPIDuration: "http://localhost/unmg_pms/api/updateKPIDuration.php",
   };
 
 export const releaseAPIs = {
@@ -77,8 +79,11 @@ export const releaseAPIs = {
   retrieveConvo:"../api/retrieveConvo.php",
   userSubmitSignOff:"../api/userSubmitSignOff.php",
   updateSettings:"../api/updateSettings.php",
-  userSubmitNewMessage:"../api/userSubmitNewMessage.php",
-  userSubmitNewConversation:"../api/userSubmitNewConversation.php",
   userSubmitDiscussion:"../api/userSubmitDiscussion.php",
   userSubmitApproval:"../api/userSubmitApproval.php",
+  userSubmitNewConversation:"../api/userSubmitNewConversation.php",
+  userSubmitNewMessage:"../api/userSubmitNewMessage.php",
+  userDeleteConversation:"../api/userDeleteConversation.php",
+  userSubmitKPIDuration: "../api/userSubmitKPIDuration.php",
+  updateKPIDuration: "../api/updateKPIDuration.php",
 };
