@@ -16,8 +16,8 @@ export function AuthProvider({ children }) {
   const [departmentList, setDepartmentList] = useState([]);
   const [kpiDurations, setKpiDurations] = useState([]);
   const [globalSettings, setGlobalSettings] = useState([]);
+  const [verifyIfEvaluator, setVerifyIfEvaluator] = useState(false);
   const nav = useNavigate();
-
   const signInUser = async (username, password) => {
     let formData = new FormData();
     formData.append("user_login", username);
@@ -332,6 +332,29 @@ export function AuthProvider({ children }) {
       }
     };
     //nobrin dagdag
+    const getVerifyIfEvaluator = async () => {
+      try {
+        if (JSON.parse(currentUser).employee_id) {
+          const response = await axios.get(url.retriveVerifyIfEvaluator, {
+            params: {
+              verifyIfEvaluator: true,
+              employee_id: JSON.parse(currentUser).employee_id,
+            },
+          });
+    
+          // Check if response data exists and meets your criteria for having evaluators
+          const hasEvaluators = !!response.data && response.data.length > 0;
+    
+          // Update state or perform actions based on the presence of evaluators
+          setVerifyIfEvaluator(hasEvaluators);
+        } else {
+          // Handle the case when currentUser or its properties are undefined
+          console.error('currentUser or employee_id is undefined.');
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
     const getGlobalSettings = async () => {
       try {
         const response = await axios.get(url.retrieveGlobalSettings, {
@@ -351,10 +374,11 @@ export function AuthProvider({ children }) {
           };
         }, {});
         setGlobalSettings(settings);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        console.log(e.message);
       }
     };
+    getVerifyIfEvaluator();
     retrieveKPIYear();
     fetchHeads();
     retrieveUserTypes();
@@ -387,6 +411,7 @@ export function AuthProvider({ children }) {
     setCurrentUser,
     getBusinessUnits,
     deleteDepartment,
+    verifyIfEvaluator,
     uploadProfilePicture,
   };
 

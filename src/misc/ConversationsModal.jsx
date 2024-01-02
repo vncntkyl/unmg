@@ -53,6 +53,7 @@ export default function ConversationsModal({ employee_id, closeModal }) {
     const convo_file = fileName;
     const convo_file_type = fileType.map(type => type.split("/")[0]);
     const see_admin = seeAdmin;
+    console.log(rec);
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("user_id", user_id);
@@ -70,9 +71,11 @@ export default function ConversationsModal({ employee_id, closeModal }) {
     });
     axios
       .post( url.userSubmitNewConversation, fData)
-      .then((response) => alert(response.data))
+      .then((response) => {
+        alert(response.data);
+        closeModal(false);
+      })
       .catch((error) => alert(error));
-    closeModal(false);
   };
 
   return (

@@ -11,7 +11,7 @@ export default function Planning({ employee_id, convo_type }) {
   const [planning, setPlanning] = useState([]);
   const [viewtype, setViewType] = useState("1");
   const [employeeID, setEmployeeID] = useState();
-  const { currentUser } = useAuth();
+  const { currentUser, verifyIfEvaluator } = useAuth();
   const viewType = ["My Conversations", "Employee Conversations"];
   let cnt = 1;
   //getting current user data
@@ -35,34 +35,29 @@ export default function Planning({ employee_id, convo_type }) {
       };
       try {
         const response = await axios.get(url.retrieveConversations, parameters);
+        // const dataArray = response.data;
 
-        const dataArray = response.data;
-        console.log(dataArray);
-
-
-        const mergeEntries = (data) => {
-          const mergedData = data.reduce((acc, curr) => {
-            const existingItem = acc.find(item => item.inbox_id === curr.inbox_id);
-            if (existingItem) {
-              existingItem.converse_name += `, ${curr.converse_name}`;
-            } else {
-              acc.push({ ...curr });
-            }
-            return acc;
-          }, []);
+        // const mergeEntries = (data) => {
+        //   const mergedData = data.reduce((acc, curr) => {
+        //     const existingItem = acc.find(item => item.inbox_id === curr.inbox_id);
+        //     if (existingItem) {
+        //       existingItem.converse_name += `, ${curr.converse_name}`;
+        //     } else {
+        //       acc.push({ ...curr });
+        //     }
+        //     return acc;
+        //   }, []);
         
-          return mergedData;
-        };
+        //   return mergedData;
+        // };
         
-        // Call the function passing your dataArray
-        const mergedDataArray = mergeEntries(dataArray);
+        // // Call the function passing your dataArray
+        // const mergedDataArray = mergeEntries(dataArray);
         
         // Output the merged array
-        setPlanning(mergedDataArray);
+        //setPlanning(mergedDataArray);
 
-
-
-        //setPlanning(response.data);
+        setPlanning(response.data);
       } catch (error) {
         console.log(error);
       }

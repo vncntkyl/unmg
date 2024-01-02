@@ -53,6 +53,7 @@ export default function ConversationMessages({ employee_id }) {
     localStorage.removeItem("convoID");
     window.history.back();
   };
+
   useEffect(() => {
     const getConvoSettings = async () => {
       const parameters = {
@@ -64,7 +65,6 @@ export default function ConversationMessages({ employee_id }) {
       };
       try {
         const response = await axios.get(url.retrieveConvo, parameters);
-
         setConvoSettings(response.data);
       } catch (error) {
         console.log(error);
@@ -251,7 +251,7 @@ export default function ConversationMessages({ employee_id }) {
                     <div
                       key={convo.id}
                       className={classNames(
-                        "p-4 rounded-md my-2 max-w-[50rem]",
+                        "p-4 rounded-md my-2 w-full max-w-lg",
                         convo.employee_id == employee_id
                           ? "bg-un-blue-light-1 bg-opacity-60 ml-auto"
                           : "bg-default"

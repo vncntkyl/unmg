@@ -18,11 +18,11 @@ if (isset($_POST['submit'])) {
         $rater_access = 2;
 
         if ($convo_message != null) {
-            $inbox = $submitInbox->insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin, $rater_access);
+            $inbox = $submitInbox->insertNewConversation($user_id, $receiver_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin, $rater_access);
             if ($inbox) {
-                $participants1 = $submitInbox->insertParticipantConversation($inbox, $user_id);
-                $participants2 = $submitInbox->insertParticipantConversation($inbox, $receiver_id);
-                if ($participants1 && $participants2) {
+                // $participants1 = $submitInbox->insertParticipantConversation($inbox, $user_id);
+                // $participants2 = $submitInbox->insertParticipantConversation($inbox, $receiver_id);
+                // if ($participants1 && $participants2) {
                     $message = $submitInbox->insertMessage($inbox, $user_id, $message_type = 1, $convo_message);
                     if ($message) {
                         if (isset($_FILES['file'])) {
@@ -82,9 +82,9 @@ if (isset($_POST['submit'])) {
                     } else {
                         echo "error";
                     }
-                } else {
-                    echo "error";
-                }
+                // } else {
+                //     echo "error";
+                // }
             } else {
                 echo "error";
             }
