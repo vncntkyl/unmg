@@ -1928,55 +1928,30 @@ class Form extends Controller
 
 
     //For Conversations
-    function selectConversations($user_id, $convo_type)
+    function selectAllEmployeeConversations($convo_type)
     {
-        // SELECT 
-        // hr_users.employee_id AS converse_id,
-        //      CASE 
-        //          WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
-        //              CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
-        //          ELSE
-        //              CONCAT(hr_users.first_name, ' ', hr_users.last_name)
-        //          END AS converse_name,
-        //      communicating_participant.viewer AS converse_viewer,
-        //      hr_convo_participants.*, 
-        //      hr_convo_inbox.*
-        //  FROM 
-        //      hr_convo_participants
-        //  LEFT JOIN 
-        //      hr_convo_inbox ON hr_convo_inbox.ID = hr_convo_participants.inbox_id
-        //  LEFT JOIN 
-        //      hr_convo_participants AS communicating_participant
-        //      ON hr_convo_inbox.ID = communicating_participant.inbox_id
-        //      AND hr_convo_participants.employee_id <> communicating_participant.employee_id
-        //  LEFT JOIN hr_users ON hr_users.employee_id = communicating_participant.employee_id
-        //  WHERE 
-        //      hr_convo_participants.employee_id = ?
-        //      AND hr_convo_inbox.convo_type = ?
-        //  ORDER BY
-        //      hr_convo_inbox.last_modified ASC
         $this->setStatement("SELECT
-        CASE
-            WHEN :user_id = hr_convo_inbox.user_1 THEN hr_convo_inbox.user_2
-            ELSE hr_convo_inbox.user_1
-        END AS converse_id,
-        
         CASE 
-        WHEN converse_user.middle_name IS NOT NULL AND converse_user.middle_name <> '' THEN
-            CONCAT(converse_user.first_name, ' ', SUBSTRING(converse_user.middle_name, 1, 1), '. ', converse_user.last_name)
+        WHEN converse_user_1.middle_name IS NOT NULL AND converse_user_1.middle_name <> '' THEN
+            CONCAT(converse_user_1.first_name, ' ', SUBSTRING(converse_user_1.middle_name, 1, 1), '. ', converse_user_1.last_name)
         ELSE
-            CONCAT(converse_user.first_name, ' ', converse_user.last_name)
-        END AS converse_name,
-        
-        hr_convo_inbox.*
+            CONCAT(converse_user_1.first_name, ' ', converse_user_1.last_name)
+        END AS converse_name_1,
+        CASE 
+        WHEN converse_user_2.middle_name IS NOT NULL AND converse_user_2.middle_name <> '' THEN
+            CONCAT(converse_user_2.first_name, ' ', SUBSTRING(converse_user_2.middle_name, 1, 1), '. ', converse_user_2.last_name)
+        ELSE
+            CONCAT(converse_user_2.first_name, ' ', converse_user_2.last_name)
+        END AS converse_name_2,
+        hr_convo_inbox.* 
         FROM hr_convo_inbox
-        INNER JOIN hr_users AS converse_user ON 
-            (CASE WHEN :user_id = hr_convo_inbox.user_1 THEN hr_convo_inbox.user_2 ELSE hr_convo_inbox.user_1 END) = converse_user.employee_id
-        WHERE hr_convo_inbox.user_1 = :user_id OR hr_convo_inbox.user_2 = :user_id
-        AND hr_convo_inbox.convo_type = :convo_type");
-        $this->statement->execute(['user_id' => $user_id, ':convo_type' => $convo_type]);
+        INNER JOIN hr_users AS converse_user_1 ON converse_user_1.employee_id = hr_convo_inbox.user_1
+        INNER JOIN hr_users AS converse_user_2 ON converse_user_2.employee_id = hr_convo_inbox.user_2
+        WHERE convo_type = ?");
+        $this->statement->execute([$convo_type]);
         return $this->statement->fetchAll();
     }
+
     function selectEmployeeConversations($user_id, $convo_type){
         // SELECT 
         // hr_users.employee_id AS converse_id,
@@ -2047,45 +2022,69 @@ class Form extends Controller
         // ORDER BY 
         // hr_convo_inbox.last_modified ASC;
 
-        $this->setStatement("
-SELECT 
-    hr_users.employee_id AS converse_id,
-    CASE 
-        WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
-            CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
-        ELSE
-            CONCAT(hr_users.first_name, ' ', hr_users.last_name)
-    END AS converse_name,
-    communicating_participant.viewer AS converse_viewer,
-    hr_convo_participants.*, 
-    hr_convo_inbox.*
-FROM 
-    hr_convo_participants
-LEFT JOIN 
-    hr_convo_inbox ON hr_convo_inbox.ID = hr_convo_participants.inbox_id
-LEFT JOIN 
-    hr_convo_participants AS communicating_participant ON hr_convo_inbox.ID = communicating_participant.inbox_id
-LEFT JOIN 
-    hr_users ON hr_users.employee_id = communicating_participant.employee_id
-WHERE 
-    hr_convo_participants.employee_id IN (
-        SELECT hr_users.employee_id FROM hr_users
+        $this->setStatement("SELECT 
+            hr_users.employee_id AS converse_id,
+            CASE 
+                WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
+                    CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
+                ELSE
+                    CONCAT(hr_users.first_name, ' ', hr_users.last_name)
+            END AS converse_name,
+            communicating_participant.viewer AS converse_viewer,
+            hr_convo_participants.*, 
+            hr_convo_inbox.*
+        FROM 
+            hr_convo_participants
+        LEFT JOIN 
+            hr_convo_inbox ON hr_convo_inbox.ID = hr_convo_participants.inbox_id
+        LEFT JOIN 
+            hr_convo_participants AS communicating_participant ON hr_convo_inbox.ID = communicating_participant.inbox_id
+        LEFT JOIN 
+            hr_users ON hr_users.employee_id = communicating_participant.employee_id
         WHERE 
-            (hr_users.secondary_evaluator = :employee_id OR hr_users.tertiary_evaluator = :employee_id)
-    )
-    AND hr_convo_inbox.convo_type = :convo_type
-    AND NOT EXISTS (
-        SELECT 1
-        FROM hr_convo_participants AS cp
-        WHERE 
-            cp.inbox_id = hr_convo_participants.inbox_id
-            AND cp.employee_id = :employee_id
-            AND cp.ID <> hr_convo_participants.ID
-    )
-ORDER BY
-    hr_convo_inbox.last_modified ASC
+            hr_convo_participants.employee_id IN (
+                SELECT hr_users.employee_id FROM hr_users
+                WHERE 
+                    (hr_users.secondary_evaluator = :employee_id OR hr_users.tertiary_evaluator = :employee_id)
+            )
+            AND hr_convo_inbox.convo_type = :convo_type
+            AND NOT EXISTS (
+                SELECT 1
+                FROM hr_convo_participants AS cp
+                WHERE 
+                    cp.inbox_id = hr_convo_participants.inbox_id
+                    AND cp.employee_id = :employee_id
+                    AND cp.ID <> hr_convo_participants.ID
+            )
+        ORDER BY
+            hr_convo_inbox.last_modified ASC
         ");
             $this->statement->execute([":employee_id" => $user_id, ":convo_type" => $convo_type]);
+        return $this->statement->fetchAll();
+    }
+
+    function selectConversations($user_id, $convo_type)
+    {
+        $this->setStatement("SELECT
+        CASE
+            WHEN :user_id = hr_convo_inbox.user_1 THEN hr_convo_inbox.user_2
+            ELSE hr_convo_inbox.user_1
+        END AS converse_id,
+        
+        CASE 
+        WHEN converse_user.middle_name IS NOT NULL AND converse_user.middle_name <> '' THEN
+            CONCAT(converse_user.first_name, ' ', SUBSTRING(converse_user.middle_name, 1, 1), '. ', converse_user.last_name)
+        ELSE
+            CONCAT(converse_user.first_name, ' ', converse_user.last_name)
+        END AS converse_name,
+        
+        hr_convo_inbox.*
+        FROM hr_convo_inbox
+        INNER JOIN hr_users AS converse_user ON 
+            (CASE WHEN :user_id = hr_convo_inbox.user_1 THEN hr_convo_inbox.user_2 ELSE hr_convo_inbox.user_1 END) = converse_user.employee_id
+        WHERE hr_convo_inbox.user_1 = :user_id OR hr_convo_inbox.user_2 = :user_id
+        AND hr_convo_inbox.convo_type = :convo_type");
+        $this->statement->execute(['user_id' => $user_id, ':convo_type' => $convo_type]);
         return $this->statement->fetchAll();
     }
 
@@ -2138,6 +2137,7 @@ ORDER BY
         $this->statement->execute(['user_id' => $employee_id, 'convo_id' => $convo_id]);
         return $this->statement->fetch();
     }
+
     function selectConvo($convo_id)
     {
         $this->setStatement("

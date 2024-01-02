@@ -392,6 +392,7 @@ export function AuthProvider({ children }) {
     currentUser,
     companyList,
     headList,
+    verifyIfEvaluator,
     globalSettings,
     nav,
     navigate,
@@ -411,7 +412,6 @@ export function AuthProvider({ children }) {
     setCurrentUser,
     getBusinessUnits,
     deleteDepartment,
-    verifyIfEvaluator,
     uploadProfilePicture,
   };
 
