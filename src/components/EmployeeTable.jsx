@@ -136,6 +136,7 @@ export default function EmployeeTable({ filters = [] }) {
   };
 
   const handleDismissal = () => {
+    console.log(employeeID);
     toggleModal("standby");
     setActionsVisibility([]);
   };
@@ -369,6 +370,7 @@ export default function EmployeeTable({ filters = [] }) {
               message={`Account has been successfully ${modal}`}
               action={"Dismiss"}
               closeModal={toggleModal}
+              setEmployeeID={setEmployeeID}
               handleContinue={handleDismissal}
             />
           )}

@@ -15,6 +15,7 @@ export default function Planning({ employee_id, convo_type }) {
   const { currentUser, verifyIfEvaluator } = useAuth();
   const viewType = ["My Conversations", "Employee Conversations"];
   let cnt = 1;
+  
   //getting current user data
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -35,12 +36,12 @@ export default function Planning({ employee_id, convo_type }) {
       };
       try {
         const response = await axios.get(url.retrieveConversations, parameters);
-        console.log(response.data);
         setPlanning(response.data);
       } catch (error) {
         console.log(error);
       }
     };
+    getPlanning();
     toggleLoading(false);
     const interval = setInterval(getPlanning, 2000);
     return () => clearInterval(interval);
@@ -49,7 +50,7 @@ export default function Planning({ employee_id, convo_type }) {
     localStorage.setItem("convoID", convoID);
     navigate("/conversations/planning/messages");
   };
-
+  //View Employees Conversations
   const handleViewEmployeeClick = (convoID) => {
     localStorage.setItem("convoID", convoID);
     navigate("/conversations/planning/view_employee_messages");
@@ -149,8 +150,8 @@ export default function Planning({ employee_id, convo_type }) {
                                 const formattedTime = `${(hours % 12 || 12)
                                   .toString()
                                   .padStart(2, "0")}:${minutes
-                                  .toString()
-                                  .padStart(2, "0")} ${amOrPm}`;
+                                    .toString()
+                                    .padStart(2, "0")} ${amOrPm}`;
                                 return formattedTime;
                               })()}
                             </span>
@@ -199,8 +200,8 @@ export default function Planning({ employee_id, convo_type }) {
                               {item.user_1 === item.last_sent_user_id
                                 ? `${item.converse_name_1}: `
                                 : item.user_2 === item.last_sent_user_id
-                                ? `${item.converse_name_2}: `
-                                : ""}
+                                  ? `${item.converse_name_2}: `
+                                  : ""}
                               {item.last_sent_message}
                             </span>
                           </div>

@@ -59,6 +59,7 @@ export default function ConversationMessages({ employee_id }) {
       const parameters = {
         params: {
           settings: "true",
+          convo_type: "user",
           convo_id: convo_id,
           employee_id: employee_id,
         },

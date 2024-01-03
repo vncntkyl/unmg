@@ -46,7 +46,7 @@ export default function EmployeeAdd() {
     tertiary_evaluator: null,
     hire_date: "",
   });
-  const salutationList = ["Mr.", "Miss", "Mrs."];
+  const salutationList = ["Mr.", "Miss"];
   const contractList = ["regular", "probation", "project based", "consultant"];
 
   const handleSubmit = (e) => {
@@ -95,10 +95,17 @@ export default function EmployeeAdd() {
                   <Input
                     key={index}
                     withLabel={true}
-                    label={splitKey(object_key)}
+                    label={<p>{splitKey(object_key)} {![
+                      "middle_name",
+                      "suffix",
+                    ].includes(object_key) && <span className="text-un-red">*</span>}</p>}
                     id={object_key}
                     val={userInformation[object_key]}
                     set={setUserInformation}
+                    required={![
+                      "middle_name",
+                      "suffix",
+                    ].includes(object_key)}
                     clear={modal === "success"}
                     editable={true}
                     type={
@@ -124,8 +131,17 @@ export default function EmployeeAdd() {
                   <Input
                     key={index}
                     withLabel={true}
-                    label={splitKey(object_key)}
+                    label={<p>{splitKey(object_key)} {![
+                      "primary_evaluator",
+                      "secondary_evaluator",
+                      "tertiary_evaluator",
+                    ].includes(object_key) && <span className="text-un-red">*</span>}</p>}
                     id={object_key}
+                    required={![
+                      "primary_evaluator",
+                      "secondary_evaluator",
+                      "tertiary_evaluator",
+                    ].includes(object_key)}
                     clear={modal === "success"}
                     set={setJobInformation}
                     editable={true}

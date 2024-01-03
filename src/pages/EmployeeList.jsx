@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { AiOutlineUserAdd, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
-import { Route, Routes, useSearchParams } from "react-router-dom";
+import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 import { EmployeeTable, EmployeeAdd } from "../components";
 import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
@@ -13,7 +13,7 @@ export default function EmployeeList() {
   const { getPath } = useFunction();
   const { currentUser } = useAuth();
   const searchParams = useSearchParams();
-
+  const navigate = useNavigate();
   const setHeader = (pathname) => {
     switch (pathname) {
       case "/employees":
@@ -52,6 +52,7 @@ export default function EmployeeList() {
                 <button
                   type="button"
                   className=" w-1/2 flex justify-center items-center gap-2 bg-default hover:bg-default-dark rounded-md p-1 md:w-full"
+                  onClick={() => navigate(0)}
                 >
                   <MdRefresh />
                   <span className="text-[.8rem] md:text-[.9rem]">Refresh</span>

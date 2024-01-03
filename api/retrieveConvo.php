@@ -8,7 +8,13 @@ if (isset($_GET['settings']) && isset($_GET['convo_id'])) {
     if (isset($_GET['employee_id']) && isset($_GET['convo_id'])) {
         $employee_id = $_GET['employee_id'];
         $convo_id = $_GET['convo_id'];
-        echo json_encode($form->selectConvoSettings($employee_id, $convo_id));
+        $convo_type = $_GET['convo_type'];
+        if ($convo_type == "user"){
+            echo json_encode($form->selectConvoSettings($employee_id, $convo_id));
+        }
+        else if ($convo_type == "manager") {
+            echo json_encode($form->selectEmployeeConvoSettings($convo_id));
+        }
     } else {
         echo "error";
     }
