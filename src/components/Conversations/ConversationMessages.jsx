@@ -14,12 +14,13 @@ import { developmentAPIs as url} from "../../context/apiList";
 
 export default function ConversationMessages({ employee_id }) {
   const [loading, toggleLoading] = useState(true);
-  const convo_id = parseInt(localStorage.getItem("convoID"));
   const [message, setMessage] = useState("");
   const [containerHeight, setContainerHeight] = useState(50);
   const [convoSettings, setConvoSettings] = useState([]);
   const [convo, setConvo] = useState([]);
   const [file, setFile] = useState([]);
+  const [convoID, setConvoID] = useState(0);
+  console.log(convoID);
   const fileName = Object.keys(file).map((item) => {
     const str = file[item].name;
     const type = file[item].type;
@@ -53,14 +54,24 @@ export default function ConversationMessages({ employee_id }) {
     localStorage.removeItem("convoID");
     window.history.back();
   };
-
+  //fetch stored conversation id
+  useEffect(() => {
+    const convo_id = parseInt(localStorage.getItem("convoID"));
+    if (convo_id){
+      setConvoID(convo_id);
+    }
+    else{
+      toggleLoading(false);
+    }
+  })
+//fetch convo settings
   useEffect(() => {
     const getConvoSettings = async () => {
       const parameters = {
         params: {
           settings: "true",
           convo_type: "user",
-          convo_id: convo_id,
+          convo_id: convoID,
           employee_id: employee_id,
         },
       };
@@ -75,7 +86,7 @@ export default function ConversationMessages({ employee_id }) {
       const parameters = {
         params: {
           convo: "true",
-          convo_id: convo_id,
+          convo_id: convoID,
         },
       };
       try {
@@ -85,13 +96,13 @@ export default function ConversationMessages({ employee_id }) {
         console.log(error);
       }
     };
-    getConvoSettings();
     getConvo();
+    getConvoSettings();
     toggleLoading(false);
     //interval for fetching data from database
     const interval = setInterval(getConvo, 3000);
     return () => clearInterval(interval);
-  }, [convo_id, employee_id]);
+  }, [convoID, employee_id]);
   //press enter to submit
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -106,7 +117,7 @@ export default function ConversationMessages({ employee_id }) {
       return file[item];
     });
     const userid = parseInt(employee_id);
-    const convoid = convo_id;
+    const convoid = convoID;
     const newMessage = message;
     const file_name = fileName.map((name) => name.name);
     const file_type = fileName.map((name) => name.type);
@@ -250,7 +261,7 @@ export default function ConversationMessages({ employee_id }) {
                 {convo &&
                   convo.map((convo) => (
                     <div
-                      key={convo.id}
+                      key={convo.ID}
                       className={classNames(
                         "p-4 rounded-md my-2 w-full max-w-lg",
                         convo.employee_id == employee_id

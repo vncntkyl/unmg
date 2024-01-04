@@ -28,6 +28,7 @@ function App() {
             <Route path="/*" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
           </Routes>
+          <span className="fixed bottom-0 left-2 z-[20] bg-default-dark px-2 py-1 text-[0.7rem]">PMS Version 1.0.0</span>
         </AuthProvider>
       </FunctionProvider>
     </Router>

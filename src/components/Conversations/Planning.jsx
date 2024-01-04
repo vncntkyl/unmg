@@ -97,7 +97,7 @@ export default function Planning({ employee_id, convo_type }) {
           {viewtype && viewtype == "1" ? (
             <>
               {planning.length == 0 ? (
-                <div className="w-full flex items-center justify-center text-[1.5rem] font-bold">
+                <div className="w-full flex items-center justify-center text-[1.5rem] font-bold text-dark-gray">
                   No Conversations Found
                 </div>
               ) : (

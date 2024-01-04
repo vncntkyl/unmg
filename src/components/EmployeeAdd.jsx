@@ -97,14 +97,22 @@ export default function EmployeeAdd() {
                     withLabel={true}
                     label={<p>{splitKey(object_key)} {![
                       "middle_name",
+                      "nickname",
+                      "contact_no",
                       "suffix",
+                      "address",
+                      "nationality",
                     ].includes(object_key) && <span className="text-un-red">*</span>}</p>}
                     id={object_key}
                     val={userInformation[object_key]}
                     set={setUserInformation}
                     required={![
                       "middle_name",
+                      "nickname",
+                      "contact_no",
                       "suffix",
+                      "address",
+                      "nationality",
                     ].includes(object_key)}
                     clear={modal === "success"}
                     editable={true}

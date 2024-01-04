@@ -7,12 +7,14 @@ import { format } from "date-fns";
 import { useFunction } from "../../context/FunctionContext";
 import { developmentAPIs as url } from "../../context/apiList";
 import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateGoals({
   pillars = [],
   user_id,
   kpi_work_year = null,
 }) {
+  const navigate = useNavigate();
   const [goals, setGoals] = useState([]);
   const [user, setUser] = useState("");
   const [duration, setDuration] = useState();
@@ -20,6 +22,7 @@ export default function CreateGoals({
   const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
   const { kpiDurations, fetchUsers, globalSettings } = useAuth();
   const { capitalizeSentence } = useFunction();
+  
 
   const addObjective = (i) => {
     const objectiveTemplate = {
@@ -203,8 +206,11 @@ export default function CreateGoals({
       formData.append("goals", JSON.stringify(goals));
       formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
       const response = await axios.post(url.formCreation, formData);
-
       alert(response.data);
+      localStorage.setItem("finished_new_goals", duration);
+      localStorage.removeItem("progress_goals");
+      navigate("/main_goals");
+
     } catch (e) {
       console.log(e.message);
     }
@@ -602,10 +608,11 @@ export default function CreateGoals({
                                           <span>Target Metrics</span>
                                           {kpi.target_metrics.map(
                                             (metrics, metricIndex) => {
+                                              const reversedPoint = 4 - metrics.point + 1;
                                               return (
                                                 <>
                                                   <div className="flex flex-row items-center gap-1">
-                                                    <span>{metrics.point}</span>
+                                                    <span>{reversedPoint}</span>
                                                     <textarea
                                                       required
                                                       className="p-1 rounded-md w-[300px]"

@@ -53,7 +53,11 @@ export function FunctionProvider({ children }) {
   function areValuesFilled(obj) {
     const keysToSkip = [
       "middle_name",
+      "nickname",
+      "contact_no",
       "suffix",
+      "address",
+      "nationality",
       "primary_evaluator",
       "secondary_evaluator",
       "tertiary_evaluator",

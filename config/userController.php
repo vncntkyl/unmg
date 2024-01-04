@@ -69,7 +69,7 @@ class User extends Controller
     }
     function insertAcc($u)
     {
-        $salutations = ['Mr.', 'Miss', 'Mrs.'];
+        $salutations = ['Mr.', 'Miss'];
         $employee_ID = intval($u->employee_id);
         $company_ID = intval($u->company);
         $salutation = isset($u->salutation) ? (strlen($u->salutation) > 1 ? $u->salutation : $salutations[intval($u->salutation)]) : null;
@@ -100,23 +100,23 @@ class User extends Controller
             if ($this->statement->execute([
                 ':employee_ID' => $employee_ID,
                 ':salutation' => $salutation,
-                ':last_name' => $u->last_name,
-                ':first_name' => $u->first_name,
-                ':middle_name' => $u->middle_name,
+                ':last_name' =>  ucwords($u->last_name),
+                ':first_name' =>  ucwords($u->first_name),
+                ':middle_name' => ucwords($u->middle_name),
                 ':suffix' => $u->suffix,
-                ':nickname' =>  $u->nickname,
+                ':nickname' =>  ucwords($u->nickname),
                 ':company_ID' => $company_ID,
                 ':department_ID' => $department_ID,
-                ':team' => $u->team,
-                ':job_description' => $u->job_description,
+                ':team' => ucwords($u->team),
+                ':job_description' => ucwords($u->job_description),
                 ':contract_type' => $u->contract_type,
                 ':contact_no' => $u->contact_no,
-                ':address' => $u->address,
+                ':address' => ucwords($u->address),
                 ':primary_evaluator' => $primary_evaluator,
                 ':secondary_evaluator' => $secondary_evaluator,
                 ':tertiary_evaluator' => $tertiary_evaluator,
                 ':employment_type' => $employment_type,
-                ':nationality' => $u->nationality,
+                ':nationality' => ucwords($u->nationality),
                 ':hire_date' =>  $u->hire_date,
                 ':username' => $u->username,
                 ':password' => $password,

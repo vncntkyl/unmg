@@ -5,7 +5,7 @@ header('Access-Control-Allow-Headers: Origin, Content-Type');
 session_start();
 require "../config/userController.php";
 $user = new User();
-$salutations = ["Mr.", "Miss", "Mrs."];
+$salutations = ["Mr.", "Miss"];
 
 if (isset($_POST['userdata'])) {
     $u = $_POST['userdata'];

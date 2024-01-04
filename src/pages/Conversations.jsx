@@ -101,7 +101,7 @@ export default function Conversations() {
                   <Route path="/:id/messages" element={<ConversationMessages employee_id={employeeID}/>}/>
                   <Route path="/:id/view_employee_messages" element={<ConversationViewMessages employee_id={employeeID}/>}/>
                 </Routes>
-                {linkActive === undefined ? (<div className="w-full flex items-center justify-center text-[1.5rem] font-bold">No Conversation Selected</div>) : ""}
+                {linkActive === undefined ? (<div className="bg-default rounded-md w-full flex items-center justify-center text-[1.5rem] font-bold text-dark-gray">No Conversation Selected</div>) : ""}
               </div>
             </div>
           </div>

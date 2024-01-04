@@ -126,7 +126,7 @@ export default function Coaching({ employee_id, convo_type }) {
           {viewtype && viewtype == "1" ? (
             <>
             {coaching.length == 0 ? (
-              <div className="w-full flex items-center justify-center text-[1.5rem] font-bold">
+              <div className="w-full flex items-center justify-center text-[1.5rem] text-dark-gray font-bold">
                 No Conversations Found
               </div>
             ) : (
@@ -196,7 +196,7 @@ export default function Coaching({ employee_id, convo_type }) {
 
                   ) : null)
                 ) : (
-                  <div className="w-full flex items-center justify-center text-[1.5rem] font-bold">
+                  <div className="w-full flex items-center justify-center text-[1.5rem] text-dark-gray font-bold">
                     No Conversations Found
                   </div>
                 )}
@@ -206,7 +206,7 @@ export default function Coaching({ employee_id, convo_type }) {
           ) : (
             <>
               {coaching.length == 0 ? (
-                <div className="w-full flex items-center justify-center text-[1.5rem] font-bold">
+                <div className="w-full flex items-center justify-center text-[1.5rem] text-dark-gray font-bold">
                   No Conversations Found
                 </div>
               ) : (
@@ -252,7 +252,7 @@ export default function Coaching({ employee_id, convo_type }) {
                       </div>
                     ) : null)
                   ) : (
-                    <div className="w-full flex items-center justify-center text-[1.5rem] font-bold">
+                    <div className="w-full flex items-center justify-center text-[1.5rem] text-dark-gray font-bold">
                       No Conversations Found
                     </div>
                   )}

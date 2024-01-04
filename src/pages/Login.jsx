@@ -44,7 +44,7 @@ export default function Login() {
   }, []);
   return (
     <>
-      <div className="w-screen h-screen flex flex-col justify-center items-center drop-shadow-lg p-4">
+      <div className="relative w-screen h-screen flex flex-col justify-center items-center drop-shadow-lg p-4">
         <div className="overflow-hidden rounded-lg transition-all w-[90%] md:w-[50%] lg:w-[80%] xl:w-[50%] flex flex-col lg:flex-row">
           <div className="bg-white flex flex-row gap-2 justify-center items-center p-4 lg:w-1/2 lg:h-[500px]">
             <img

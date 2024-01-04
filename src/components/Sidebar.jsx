@@ -107,13 +107,13 @@ export default function Sidebar({ sidebarToggler, className }) {
                 textLabel={"Conversations"}
                 slug={"conversations"}
               />
-              {JSON.parse(currentUser).user_type > 3 && JSON.parse(currentUser).user_type <= 6 && (
+              {/* {JSON.parse(currentUser).user_type > 3 && JSON.parse(currentUser).user_type <= 6 && (
                 <NavButton
                   icon={<RiLineChartLine />}
                   textLabel={"View Evaluations"}
                   slug={"view_evaluations"}
                 />
-              )}
+              )} */}
             </div>
           </div>
           {JSON.parse(currentUser).user_type <= 3 && (
