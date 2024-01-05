@@ -2114,10 +2114,10 @@ class Form extends Controller
         END AS employee_name,
         hr_convo_messages.* FROM hr_convo_messages 
         LEFT JOIN hr_users ON hr_users.employee_id = hr_convo_messages.employee_id
-        WHERE inbox_id = ?
+        WHERE hr_convo_messages.inbox_id = :inbox_id
         ORDER BY ID ASC
         ");
-        $this->statement->execute([$convo_id]);
+        $this->statement->execute([':inbox_id' => $convo_id]);
         return $this->statement->fetchAll();
     }
     function insertNewMessage($employee_id, $convo_id, $message_type, $new_message)

@@ -20,19 +20,19 @@ if (isset($_POST['submit'])) {
                 $filetype = explode('/', $_FILES['file']['type'][$i]);
                 switch ($filetype[0]) {
                     case "image":
-                        $target_dirserve = "./../assets/messages/image/";
+                        $target_dirserve = "./../media/image/";
                         $message_type = 2;
                         break;
                     case "video":
-                        $target_dirserve = "./../assets/messages/video/";
+                        $target_dirserve = "./../media/video/";
                         $message_type = 3;
                         break;
                     case "audio":
-                        $target_dirserve = "./../assets/messages/audio/";
+                        $target_dirserve = "./../media/audio/";
                         $message_type = 4;
                         break;
                     case "application":
-                        $target_dirserve = "./../assets/messages/file/";
+                        $target_dirserve = "./../media/file/";
                         $message_type = 5;
                         break;
                     default:

@@ -10,7 +10,7 @@ import { MdAudioFile, MdVideoFile, MdInsertDriveFile } from "react-icons/md";
 import { FaFileImage } from "react-icons/fa6";
 import { CiShare1 } from "react-icons/ci";
 import { IoMdDownload } from "react-icons/io";
-import { developmentAPIs as url} from "../../context/apiList";
+import { developmentAPIs as url } from "../../context/apiList";
 
 export default function ConversationMessages({ employee_id }) {
   const [loading, toggleLoading] = useState(true);
@@ -19,8 +19,9 @@ export default function ConversationMessages({ employee_id }) {
   const [convoSettings, setConvoSettings] = useState([]);
   const [convo, setConvo] = useState([]);
   const [file, setFile] = useState([]);
-  const [convoID, setConvoID] = useState(0);
-  console.log(convoID);
+  // const [convoID, setConvoID] = useState(0);
+
+  // adjustments to container when media upload
   const fileName = Object.keys(file).map((item) => {
     const str = file[item].name;
     const type = file[item].type;
@@ -29,6 +30,7 @@ export default function ConversationMessages({ employee_id }) {
       type: type.split("/")[0],
     };
   });
+
   const fileContainerHeight = file.length === 0 ? 0 : 100;
   const handleChange = (event) => {
     setMessage(event.target.value);
@@ -49,23 +51,16 @@ export default function ConversationMessages({ employee_id }) {
     setContainerHeight(newHeight > maxHeight ? maxHeight : newHeight + 20);
   };
 
-// goes back to messages
+  // goes back to messages
   const handleBack = () => {
     localStorage.removeItem("convoID");
     window.history.back();
   };
-  //fetch stored conversation id
+
+  //fetch convo settings
   useEffect(() => {
-    const convo_id = parseInt(localStorage.getItem("convoID"));
-    if (convo_id){
-      setConvoID(convo_id);
-    }
-    else{
-      toggleLoading(false);
-    }
-  })
-//fetch convo settings
-  useEffect(() => {
+    //fetch stored conversation id
+    const convoID = parseInt(localStorage.getItem("convoID"));
     const getConvoSettings = async () => {
       const parameters = {
         params: {
@@ -96,13 +91,19 @@ export default function ConversationMessages({ employee_id }) {
         console.log(error);
       }
     };
-    getConvo();
-    getConvoSettings();
-    toggleLoading(false);
+    if (!convoID) return
+    const fetchData = async () => {
+      if (!convoID) return;
+  
+      await Promise.all([getConvo(), getConvoSettings()]);
+      toggleLoading(false);
+    };
+  
+    fetchData();
     //interval for fetching data from database
     const interval = setInterval(getConvo, 3000);
     return () => clearInterval(interval);
-  }, [convoID, employee_id]);
+  }, [employee_id]);
   //press enter to submit
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -117,7 +118,7 @@ export default function ConversationMessages({ employee_id }) {
       return file[item];
     });
     const userid = parseInt(employee_id);
-    const convoid = convoID;
+    const convoID = parseInt(localStorage.getItem("convoID"));
     const newMessage = message;
     const file_name = fileName.map((name) => name.name);
     const file_type = fileName.map((name) => name.type);
@@ -127,7 +128,7 @@ export default function ConversationMessages({ employee_id }) {
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("employee_id", userid);
-    fData.append("convo_id", convoid);
+    fData.append("convo_id", convoID);
     fData.append("newMessage", newMessage);
     fData.append("file_name", file_name);
     fData.append("file_type", file_type);
@@ -185,14 +186,14 @@ export default function ConversationMessages({ employee_id }) {
                     (convoSettings.convo_type == "1"
                       ? "Planning"
                       : convoSettings.convo_type == "2"
-                      ? "Evaluations"
-                      : convoSettings.convo_type == "3"
-                      ? "Directional/Redirectional"
-                      : convoSettings.convo_type == "4"
-                      ? "Coaching"
-                      : convoSettings.convo_type == "5"
-                      ? "Performance Improvement Plan"
-                      : "Loading...")}
+                        ? "Evaluations"
+                        : convoSettings.convo_type == "3"
+                          ? "Directional/Redirectional"
+                          : convoSettings.convo_type == "4"
+                            ? "Coaching"
+                            : convoSettings.convo_type == "5"
+                              ? "Performance Improvement Plan"
+                              : "Loading...")}
                 </span>
                 {convoSettings &&
                   (convoSettings.convo_type == "2" ? (
@@ -201,10 +202,10 @@ export default function ConversationMessages({ employee_id }) {
                       {convoSettings.evaluation_quarter == "1"
                         ? "First Quarter"
                         : convoSettings.evaluation_quarter == "2"
-                        ? "Mid Year"
-                        : convoSettings.evaluation_quarter == "3"
-                        ? "Third Quarter"
-                        : "Year End"}
+                          ? "Mid Year"
+                          : convoSettings.evaluation_quarter == "3"
+                            ? "Third Quarter"
+                            : "Year End"}
                     </span>
                   ) : (
                     ""
@@ -216,8 +217,8 @@ export default function ConversationMessages({ employee_id }) {
                       {convoSettings.coaching_type == "1"
                         ? "Corrective"
                         : convoSettings.coaching_type == "2"
-                        ? "Developmental"
-                        : "Loading..."}
+                          ? "Developmental"
+                          : "Loading..."}
                     </span>
                   ) : (
                     ""
@@ -247,8 +248,8 @@ export default function ConversationMessages({ employee_id }) {
                     const formattedTime = `${(hours % 12 || 12)
                       .toString()
                       .padStart(2, "0")}:${minutes
-                      .toString()
-                      .padStart(2, "0")} ${amOrPm}`;
+                        .toString()
+                        .padStart(2, "0")} ${amOrPm}`;
                     return formattedTime;
                   })()}
                 </span>
@@ -259,6 +260,7 @@ export default function ConversationMessages({ employee_id }) {
 
               <div>
                 {convo &&
+                  convo.length > 0 &&
                   convo.map((convo) => (
                     <div
                       key={convo.ID}
@@ -287,24 +289,24 @@ export default function ConversationMessages({ employee_id }) {
                       </div>
                       <div className="indent-4 text-justify whitespace-break-spaces">
                         {convo.message_type &&
-                        parseInt(convo.message_type) === 1 ? (
+                          parseInt(convo.message_type) === 1 ? (
                           convo.message
                         ) : parseInt(convo.message_type) === 2 ? (
                           <img
-                            src={`../../assets/messages/image/` + convo.message}
+                            src={`../../media/image/` + convo.message}
                             alt="image"
                             className="rounded-md"
                           />
                         ) : parseInt(convo.message_type) === 3 ? (
                           <video
-                            src={`../../assets/messages/video/` + convo.message}
+                            src={`../../media/video/` + convo.message}
                             alt="video"
                             className="rounded-md"
                             controls
                           />
                         ) : parseInt(convo.message_type) === 4 ? (
                           <audio
-                            src={`../../assets/messages/audio/` + convo.message}
+                            src={`../../media/audio/` + convo.message}
                             alt="audio"
                             controls
                           />
@@ -315,7 +317,7 @@ export default function ConversationMessages({ employee_id }) {
                               <span>{convo.message}</span>
                               <span className="flex items-center justify-end">
                                 <a className="text-[1.4rem] hover:text-un-red text-dark-gray"
-                                  href={`../../assets/messages/file/${convo.message}`}
+                                  href={`../../media/file/${convo.message}`}
                                   download
                                 >
                                   <IoMdDownload />

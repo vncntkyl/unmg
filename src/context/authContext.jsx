@@ -228,11 +228,9 @@ export function AuthProvider({ children }) {
   // };
 
   const uploadProfilePicture = async (file) => {
-    const imageURL = `../src/assets/images/profile_${
-      JSON.parse(localStorage.getItem("user")).employee_id
-    }_${format(new Date(), "T")}.${
-      file.name.split(".")[file.name.split(".").length - 1]
-    }`;
+    const imageURL = `../src/assets/images/profile_${JSON.parse(localStorage.getItem("user")).employee_id
+      }_${format(new Date(), "T")}.${file.name.split(".")[file.name.split(".").length - 1]
+      }`;
 
     const formdata = new FormData();
     formdata.append("imageFile", file);
@@ -334,17 +332,19 @@ export function AuthProvider({ children }) {
     //nobrin dagdag
     const getVerifyIfEvaluator = async () => {
       try {
-        if (JSON.parse(currentUser).employee_id) {
+        const current_user = localStorage.getItem("currentUser");
+        if (!current_user) return;
+        if (JSON.parse(current_user).employee_id) {
           const response = await axios.get(url.retriveVerifyIfEvaluator, {
             params: {
               verifyIfEvaluator: true,
-              employee_id: JSON.parse(currentUser).employee_id,
+              employee_id: JSON.parse(current_user).employee_id,
             },
           });
-    
+
           // Check if response data exists and meets your criteria for having evaluators
           const hasEvaluators = !!response.data && response.data.length > 0;
-    
+
           // Update state or perform actions based on the presence of evaluators
           setVerifyIfEvaluator(hasEvaluators);
         } else {
