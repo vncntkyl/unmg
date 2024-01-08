@@ -15,6 +15,7 @@ import TrackingAssessment from "./TrackingAssessment";
 import AgreementSignOff from "./AgreementSignOff";
 import GlobalSettings from "./GlobalSettings";
 import Conversations from "./Conversations";
+import UserLogs from "./UserLogs";
 
 export default function Dashboard() {
   if (!localStorage.getItem("currentUser")) {
@@ -108,6 +109,7 @@ export default function Dashboard() {
           <Route path="/sign_off/*" element={<AgreementSignOff />} />
           <Route path="/view_evaluations/*" element={<ViewEvaluation />} />
           <Route path="/company_plans/*" element={<CompanyPlans />} />
+          <Route path="/Logs/*" element={<UserLogs />} />
         </Routes>
       </div>
     </>

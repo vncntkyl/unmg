@@ -2101,7 +2101,7 @@ class Form extends Controller
         $this->statement->execute([$convo_id]);
         return $this->statement->fetch();
     }
-
+    //Select Conversation
     function selectConvo($convo_id)
     {
         $this->setStatement("
@@ -2120,6 +2120,7 @@ class Form extends Controller
         $this->statement->execute([':inbox_id' => $convo_id]);
         return $this->statement->fetchAll();
     }
+    //Insert New Message
     function insertNewMessage($employee_id, $convo_id, $message_type, $new_message)
     {
         $this->setStatement("
@@ -2137,6 +2138,7 @@ class Form extends Controller
         $this->statement->execute([":inbox_id" => $convo_id, ":employee_id" => $employee_id, ":message_type" => $message_type, ":message" => $new_message, ":creation_date" => date('Y-m-d H:i:s')]);
         return $this->statement->fetchAll();
     }
+    //delete Conversation
     function deleteConversation ($convo_id) {
         $this->setStatement("DELETE FROM hr_convo_inbox WHERE ID = ?");
         return $this->statement->execute([$convo_id]);
