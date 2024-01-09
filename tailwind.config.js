@@ -2,9 +2,10 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
   ],
+  darkMode: "class",
   theme: {
     screens: {
       xs: "425px",
@@ -59,6 +60,9 @@ export default {
       white: colors.white,
       black: colors.black,
       gray: "#c1c1c1",
+      blue: colors.blue,
+      slate: colors.slate,
+      gray: colors.gray,
       "mid-gray": "#818181",
       "dark-gray": "#515151",
       transparent: colors.transparent,
