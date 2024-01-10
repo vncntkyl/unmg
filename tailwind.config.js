@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
     "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
+    'node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   darkMode: "class",
   theme: {
@@ -90,5 +91,7 @@ export default {
       tooltip: "11px",
     },
   },
-  plugins: [],
+  plugins: [
+    require('flowbite/plugin'),
+  ],
 };
