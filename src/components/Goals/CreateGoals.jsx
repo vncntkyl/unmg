@@ -8,6 +8,7 @@ import { useFunction } from "../../context/FunctionContext";
 import { developmentAPIs as url } from "../../context/apiList";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
+import { FaPencilAlt } from "react-icons/fa";
 
 export default function CreateGoals({
   pillars = [],
@@ -22,7 +23,7 @@ export default function CreateGoals({
   const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
   const { kpiDurations, fetchUsers, globalSettings } = useAuth();
   const { capitalizeSentence } = useFunction();
-  
+  const [newConvoModal, setNewConvoModal] = useState(false);
 
   const addObjective = (i) => {
     const objectiveTemplate = {
@@ -53,13 +54,12 @@ export default function CreateGoals({
       ],
     };
 
-    const currentGoals = [  ...goals];
+    const currentGoals = [...goals];
     const pillar = { ...goals[i] };
     pillar.objectives.push(objectiveTemplate);
     currentGoals[i] = { ...pillar };
     setGoals(currentGoals);
   };
-
   const addKPI = (goalIndex, objIndex) => {
     const KPITemplate = {
       kpi_description: "",
@@ -90,7 +90,6 @@ export default function CreateGoals({
     currentGoals[goalIndex] = { ...pillar };
     setGoals(currentGoals);
   };
-
   const removeObjective = (goalIndex, objIndex) => {
     const currentGoals = [...goals];
     const pillar = currentGoals[goalIndex];
@@ -139,7 +138,6 @@ export default function CreateGoals({
     );
     return totalPercentage;
   };
-
   const validateGoals = (goals) => {
     for (const pillar of goals) {
       let kpiWeightSum = 0;
@@ -154,7 +152,6 @@ export default function CreateGoals({
     }
     return 1;
   };
-
   const showGoalsOwner = () => {
     if (users.length > 0) {
       const owner = users.find(
@@ -234,6 +231,7 @@ export default function CreateGoals({
     localStorage.setItem("progress_goals", progress);
     alert("Current progress is saved.");
   };
+
   function areObjectsEqual(obj1, obj2) {
     if (Object.keys(obj1).length !== Object.keys(obj2).length) {
       return false;
@@ -258,106 +256,35 @@ export default function CreateGoals({
 
     return true;
   }
-    useEffect(() => {
-      if (localStorage.getItem("progress_goals")) {
-        setGoals(JSON.parse(localStorage.getItem("progress_goals")));
-      } else {
-        const initialGoals = pillars.map((pillar) => {
-          const initialObjectives = Array.from({ length: globalSettings.required_min }, () => ({
-            objective_description: "",
-            kpi: [
-              {
-                kpi_description: "",
-                kpi_weight: 0,
-                target_metrics: Array.from({ length: 4 }, (_, index) => ({
-                  point: index + 1,
-                  metric_description: "",
-                })),
-              },
-            ],
-          }));
- 
-          return {
-            pillar_name: pillar.pillar_name,
-            pillar_percentage: 0,
-            objectives: initialObjectives,
-          };
-        });
- 
-        setGoals(initialGoals);
-      }
-    }, [pillars]);
+  useEffect(() => {
+    if (localStorage.getItem("progress_goals")) {
+      setGoals(JSON.parse(localStorage.getItem("progress_goals")));
+    } else {
+      const initialGoals = pillars.map((pillar) => {
+        const initialObjectives = Array.from({ length: globalSettings.required_min }, () => ({
+          objective_description: "",
+          kpi: [
+            {
+              kpi_description: "",
+              kpi_weight: 0,
+              target_metrics: Array.from({ length: 4 }, (_, index) => ({
+                point: index + 1,
+                metric_description: "",
+              })),
+            },
+          ],
+        }));
 
-//  useEffect(() => {
-//    if (localStorage.getItem("progress_goals")) {
-//      setGoals(JSON.parse(localStorage.getItem("progress_goals")));
-//    } else {
-//      setGoals(
-//        pillars.map((pillar) => {
-//          return {
-//            pillar_name: pillar.pillar_name,
-//            pillar_percentage: 0,
-//            objectives: [
-//              {
-//                objective_description: "",
-//                kpi: [
-//                  {
-//                    kpi_description: "",
-//                    kpi_weight: 0,
-//                    target_metrics: [
-//                      {
-//                        point: 1,
-//                        metric_description: "",
-//                      },
-//                      {
-//                        point: 2,
-//                        metric_description: "",
-//                      },
-//                      {
-//                        point: 3,
-//                        metric_description: "",
-//                      },
-//                      {
-//                        point: 4,
-//                        metric_description: "",
-//                      },
-//                    ],
-//                  },
-//                ],
-//              },
-//              {
-//                objective_description: "",
-//                kpi: [
-//                  {
-//                    kpi_description: "",
-//                    kpi_weight: 0,
-//                    target_metrics: [
-//                      {
-//                        point: 1,
-//                        metric_description: "",
-//                      },
-//                      {
-//                        point: 2,
-//                        metric_description: "",
-//                      },
-//                      {
-//                        point: 3,
-//                        metric_description: "",
-//                      },
-//                      {
-//                        point: 4,
-//                        metric_description: "",
-//                      },
-//                    ],
-//                  },
-//                ],
-//              },
-//            ],
-//          };
-//        })
-//      );
-//    }
-//  }, [pillars]);
+        return {
+          pillar_name: pillar.pillar_name,
+          pillar_percentage: 0,
+          objectives: initialObjectives,
+        };
+      });
+
+      setGoals(initialGoals);
+    }
+  }, [pillars]);
 
   useEffect(() => {
     const setup = async () => {
@@ -365,7 +292,7 @@ export default function CreateGoals({
     };
     if (localStorage.getItem("create_goal")) {
       setUser(localStorage.getItem("create_goal"));
-      localStorage.removeItem("create_goal");
+      //localStorage.removeItem("create_goal");
     }
     if (localStorage.getItem("work_year")) {
       setDuration(localStorage.getItem("work_year"));
@@ -415,6 +342,7 @@ export default function CreateGoals({
       }
     }
   }, [saveStatus]);
+  console.log(user);
   return (
     <>
       <div className="flex flex-col gap-2">
@@ -425,30 +353,37 @@ export default function CreateGoals({
         </div>
         {globalSettings.goal_status === 1 && "The creation of the performance plan has been disabled by the admin."}
         {user !== "" && (
-          <div className="flex flex-row gap-2 items-center">
-            <label htmlFor="workyear"> Select Work Year:</label>
-            <select
-              id="workyear"
-              className="bg-default rounded-md p-1 px-2"
-              onChange={(e) => setDuration(e.target.value)}
-            >
-              <option value="" disabled>
-                --Select Year--
-              </option>
-              {kpiDurations.length > 0 &&
-                kpiDurations.map((year) => {
-                  return (
-                    <option
-                      value={year.kpi_year_duration_id}
-                      selected={year.kpi_year_duration_id == duration}
-                    >
-                      {format(new Date(year.from_date), "MMM d, yyyy") +
-                        " - " +
-                        format(new Date(year.to_date), "MMM d, yyyy")}
-                    </option>
-                  );
-                })}
-            </select>
+          <div className="flex flex-row justify-between">
+            <div className="flex flex-row gap-2 items-center">
+              <label htmlFor="workyear"> Select Work Year:</label>
+              <select
+                id="workyear"
+                className="bg-default rounded-md p-1 px-2"
+                onChange={(e) => setDuration(e.target.value)}
+              >
+                <option value="" disabled>
+                  --Select Year--
+                </option>
+                {kpiDurations.length > 0 &&
+                  kpiDurations.map((year) => {
+                    return (
+                      <option
+                        value={year.kpi_year_duration_id}
+                        selected={year.kpi_year_duration_id == duration}
+                      >
+                        {format(new Date(year.from_date), "MMM d, yyyy") +
+                          " - " +
+                          format(new Date(year.to_date), "MMM d, yyyy")}
+                      </option>
+                    );
+                  })}
+              </select>
+            </div>
+            <button
+              className="w-fit outline-none bg-un-red rounded-md text-white hover:bg-un-red-light flex items-center justify-center text-[0.8rem] lg:text-[1rem] transition-all overflow-hidden px-2 py-1"
+              onClick={() => { setNewConvoModal(true); }}>
+              <FaPencilAlt className="text-[0.8rem] lg:text-[1rem]" /><span>Compose</span>
+            </button>
           </div>
         )}
         <form className="flex flex-col gap-2" onSubmit={handleSubmit}>

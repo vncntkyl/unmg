@@ -11,6 +11,7 @@ import {
 import Datepicker from "react-tailwindcss-datepicker";
 import { Accordion, Timeline, Badge } from "flowbite-react";
 import { IoIosTime } from "react-icons/io";
+import { GrFormSearch } from "react-icons/gr";
 export default function Logs() {
     const rawData = [
         {
@@ -264,40 +265,37 @@ export default function Logs() {
 
     return (
         <div>
-            <div className="max-w-[20rem] flex">
-                <Datepicker
-                    inputClassName="relative transition-all duration-300 py-2.5 pl-4 pr-14 w-full border-gray-300 bg-default rounded-lg tracking-wide font-light text-sm placeholder-gray-400 focus:ring disabled:opacity-40 disabled:cursor-not-allowed focus:border-blue-500 focus:ring-blue-500/20"
-                    value={date}
-                    onChange={handleDateChange}
-                    primaryColor={"blue"}
-                    showShortcuts={true}
-                />
+            <div className="flex justify-between items-center mx-2">
+                <div className="w-full max-w-[20rem] flex mb-4">
+                    <Datepicker
+                        inputClassName="relative transition-all duration-300 py-2.5 pl-4 pr-14 w-full border-gray-300 rounded-lg tracking-wide font-light text-sm focus:ring disabled:opacity-40 disabled:cursor-not-allowed focus:border-blue-500 focus:ring-blue-500/20"
+                        value={date}
+                        onChange={handleDateChange}
+                        primaryColor={"blue"}
+                        showShortcuts={true}
+                    />
+                </div>
+                <div className="w-full max-w-[20rem] flex flex-row items-center gap-2 p-1 bg-white rounded-md border ">
+                    <GrFormSearch className="text-[1.3rem]" />
+                    <input
+                        type="text"
+                        placeholder="Search employee..."
+                        className="w-full outline-none bg-transparent placeholder:text-[.9rem] placeholder:md:text-[1rem] border-none"
+                    />
+                </div>
             </div>
-            <span className="text-[1.3rem]">
+            <span className="text-[1.1rem] ml-4">
                 {date.startDate && date.endDate ? (
                     <>
-                        {isToday(new Date(date.startDate)) &&
-                            isToday(new Date(date.endDate)) ? (
-                            `Today - ${format(new Date(date.startDate), "MM/dd/yyyy")}`
-                        ) : isYesterday(new Date(date.startDate)) &&
-                            isYesterday(new Date(date.endDate)) ? (
-                            `Yesterday - ${format(new Date(date.startDate), "MM/dd/yyyy")}`
-                        ) : isToday(new Date(date.endDate)) &&
-                            subDays(new Date(date.endDate), 30) >=
-                            new Date(date.startDate) ? (
-                            "Last 30 Days"
-                        ) : isToday(new Date(date.endDate)) &&
-                            subDays(new Date(date.endDate), 7) >= new Date(date.startDate) ? (
-                            "Last Week"
-                        ) : isSameDay(new Date(date.startDate), startOfMonth(new Date())) &&
-                            isSameDay(new Date(date.endDate), endOfMonth(new Date())) ? (
-                            `This Month (${format(new Date(date.startDate), "MMMM")})`
-                        ) : (
-                            <span>{`${format(
-                                new Date(date.startDate),
-                                "MM/dd/yyyy"
-                            )} to ${format(new Date(date.endDate), "MM/dd/yyyy")}`}</span>
-                        )}
+                        {
+                        isToday(new Date(date.startDate)) && isToday(new Date(date.endDate)) ? (`Today - ${format(new Date(date.startDate), "MM/dd/yyyy")}`) : 
+                        isYesterday(new Date(date.startDate)) && isYesterday(new Date(date.endDate)) ? (`Yesterday - ${format(new Date(date.startDate), "MM/dd/yyyy")}`) : 
+                        isToday(new Date(date.endDate)) && subDays(new Date(date.endDate), 30) >= new Date(date.startDate) ? ("Last 30 Days") : 
+                        isToday(new Date(date.endDate)) && subDays(new Date(date.endDate), 7) >= new Date(date.startDate) ? ("Last Week") : 
+                        isSameDay(new Date(date.startDate), startOfMonth(new Date())) && isSameDay(new Date(date.endDate), endOfMonth(new Date())) ? (`This Month (${format(new Date(date.startDate), "MMMM")})`) : 
+                        isSameDay(new Date(date.startDate), new Date(date.endDate)) ? (`Selected Date - ${format(new Date(date.startDate), "MM/dd/yyyy")}`) :
+                        (<span>{`${format(new Date(date.startDate), "MM/dd/yyyy")} to ${format(new Date(date.endDate), "MM/dd/yyyy")}`}</span>)
+                        }
                     </>
                 ) : (
                     "All"
@@ -320,26 +318,26 @@ export default function Logs() {
                                                 <Timeline.Item key={log.ID}>
                                                     <Timeline.Point icon={IoIosTime} theme={{ marker: { icon: { base: "h-5 w-5 text-mid-gray", wrapper: "absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full ring-8 ring-white" } } }} />
                                                     <Timeline.Content>
-                                                        <Timeline.Time>
+                                                        <Timeline.Time theme={{ base: "mb-1 text-sm font-normal leading-none text-un-blue-light" }}>
                                                             {format(new Date(log.creation_date), "hh:mm a")}
                                                         </Timeline.Time>
                                                         <Timeline.Title>
                                                             {log.name}
-                                                                <Badge className="w-fit" color={
-                                                                    parseInt(log.user_type) <= 2 ? "success" :
-                                                                        parseInt(log.user_type) === 3 ? "warning" :
-                                                                            parseInt(log.user_type) === 4 ? "indigo" :
-                                                                                parseInt(log.user_type) === 5 ? "info" :
-                                                                                    parseInt(log.user_type) === 6 ? "gray" : "failure"}
-                                                                >
-                                                                    {parseInt(log.user_type) <= 2 ? "Admin" :
-                                                                        parseInt(log.user_type) === 3 ? "Executive" :
-                                                                            parseInt(log.user_type) === 4 ? "Manager" :
-                                                                                parseInt(log.user_type) === 5 ? "Supervisor" :
-                                                                                    parseInt(log.user_type) === 6 ? "Rank and File" : "Loading..."}
-                                                                </Badge>
+                                                            <Badge className="w-fit" color={
+                                                                parseInt(log.user_type) <= 2 ? "success" :
+                                                                    parseInt(log.user_type) === 3 ? "warning" :
+                                                                        parseInt(log.user_type) === 4 ? "indigo" :
+                                                                            parseInt(log.user_type) === 5 ? "info" :
+                                                                                parseInt(log.user_type) === 6 ? "gray" : "failure"}
+                                                            >
+                                                                {parseInt(log.user_type) <= 2 ? "Admin" :
+                                                                    parseInt(log.user_type) === 3 ? "Executive" :
+                                                                        parseInt(log.user_type) === 4 ? "Manager" :
+                                                                            parseInt(log.user_type) === 5 ? "Supervisor" :
+                                                                                parseInt(log.user_type) === 6 ? "Rank and File" : "Loading..."}
+                                                            </Badge>
                                                         </Timeline.Title>
-                                                        <Timeline.Body>
+                                                        <Timeline.Body className="ml-4">
                                                             {log.logs_description}
                                                         </Timeline.Body>
                                                     </Timeline.Content>
