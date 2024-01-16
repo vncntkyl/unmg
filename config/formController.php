@@ -1920,10 +1920,10 @@ class Form extends Controller
     //     $this->setStatement("INSERT INTO hr_convo_participants (inbox_id, employee_id) VALUES (:inbox_id, :employee_id)");
     //     return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $ID]);
     // }
-    function insertMessage($inbox, $user_id, $message_type, $convo_message)
+    function insertMessage($inbox, $user_id, $message_type, $convo_message, $reply_id)
     {
-        $this->setStatement("INSERT INTO hr_convo_messages (inbox_id, employee_id, message_type, message, creation_date) VALUES (:inbox_id, :employee_id, :message_type, :message, :creation_date)");
-        return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $user_id, 'message_type' => $message_type, ':message' => $convo_message, ':creation_date' => date('Y-m-d H:i:s')]);
+        $this->setStatement("INSERT INTO hr_convo_messages (inbox_id, employee_id, message_type, message, reply_id, creation_date) VALUES (:inbox_id, :employee_id, :message_type, :message, :reply, :creation_date)");
+        return $this->statement->execute([':inbox_id' => $inbox, ':employee_id' => $user_id, 'message_type' => $message_type, ':message' => $convo_message, ':reply' => $reply_id, ':creation_date' => date('Y-m-d H:i:s')]);
     }
 
 
@@ -2121,21 +2121,21 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
     //Insert New Message
-    function insertNewMessage($employee_id, $convo_id, $message_type, $new_message)
+    function insertNewMessage($employee_id, $convo_id, $message_type, $new_message, $reply_id)
     {
         $this->setStatement("
         START TRANSACTION;
-        INSERT INTO hr_convo_messages (inbox_id, employee_id, message_type, message, creation_date)
-        VALUES (:inbox_id, :employee_id, :message_type, :message, :creation_date);
+        INSERT INTO hr_convo_messages (inbox_id, employee_id, message_type, message, reply_id, creation_date)
+        VALUES (:inbox_id, :employee_id, :message_type, :message, :reply_id, :creation_date);
         
         UPDATE hr_convo_inbox
         SET last_sent_message = :message,
             last_sent_user_id = :employee_id
-        WHERE ID = :inbox_id; -- Add the condition to match the appropriate record for update
+        WHERE ID = :inbox_id;
         
         COMMIT;
         ");
-        $this->statement->execute([":inbox_id" => $convo_id, ":employee_id" => $employee_id, ":message_type" => $message_type, ":message" => $new_message, ":creation_date" => date('Y-m-d H:i:s')]);
+        $this->statement->execute([":inbox_id" => $convo_id, ":employee_id" => $employee_id, ":message_type" => $message_type, ":message" => $new_message, ":reply_id" => $reply_id, ":creation_date" => date('Y-m-d H:i:s')]);
         return $this->statement->fetchAll();
     }
     //delete Conversation

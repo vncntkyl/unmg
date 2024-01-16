@@ -61,9 +61,11 @@ export default function Settings() {
     fData.append("goal_status", goal_status);
     axios
       .post(url.updateSettings, fData)
-      .then((response) => alert(response.data))
+      .then((response) => {
+        alert(response.data);
+        window.location.reload();
+      })
       .catch((error) => alert(error));
-    window.location.reload();
   };
   return loading ? (
     "Loading..."
