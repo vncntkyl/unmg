@@ -1,9 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
-import classNames from "classnames";
 import { format } from "date-fns";
 import { developmentAPIs as url } from "../../context/apiList";
-import { Tooltip } from "flowbite-react";
 import Messages from "./Messages";
 // Icons
 import { FaArrowLeft } from "react-icons/fa";
@@ -11,27 +9,27 @@ import { IoIosSend } from "react-icons/io";
 import { IoAttach, IoCloseOutline } from "react-icons/io5";
 import { PiWarningCircleDuotone } from "react-icons/pi";
 import { FaFileImage } from "react-icons/fa6";
-import { IoMdDownload } from "react-icons/io";
 import { MdOutlineSubdirectoryArrowRight } from "react-icons/md";
-import { MdAudioFile, MdVideoFile, MdInsertDriveFile, MdOutlineReply } from "react-icons/md";
-
+import {
+  MdAudioFile,
+  MdVideoFile,
+  MdInsertDriveFile,
+  MdOutlineReply,
+} from "react-icons/md";
 
 export default function ConversationMessages({ employee_id }) {
   const messageRef = useRef();
-  const conversationRef = useRef();
   const [loading, toggleLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [containerHeight, setContainerHeight] = useState(50);
   const [convoSettings, setConvoSettings] = useState([]);
-  const [convo, setConvo] = useState([]);
   const [file, setFile] = useState([]);
   const [reply, setReply] = useState([]);
   const [convoID, setConvoID] = useState();
-  
   useEffect(() => {
     const convoID = parseInt(localStorage.getItem("convoID"));
     setConvoID(convoID);
-  }, [])
+  }, []);
   //fetch convo settings
   useEffect(() => {
     //fetch stored conversation id
@@ -51,40 +49,17 @@ export default function ConversationMessages({ employee_id }) {
         console.log(error);
       }
     };
-    //for removal
-    const getConvo = async () => {
-      const parameters = {
-        params: {
-          convo: "true",
-          convo_id: convoID,
-        },
-      };
-      try {
-        const response = await axios.get(url.retrieveConvo, parameters);
-        setConvo(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if (!convoID) return
+    if (!convoID) return;
     const fetchData = async () => {
       if (!convoID) return;
 
-      await Promise.all([getConvo(), getConvoSettings()]);
+      await Promise.all([getConvoSettings()]);
       toggleLoading(false);
     };
-
     fetchData();
-    //interval for fetching data from database
-    const interval = setInterval(getConvo, 3000);
-    return () => clearInterval(interval);
   }, [employee_id, convoID]);
 
-  useEffect(() => {
-    if (conversationRef.current) {
-      conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
-    }
-  }, [convo])
+  
   // adjustments to container when media upload
   const fileName = Object.keys(file).map((item) => {
     const str = file[item].name;
@@ -103,7 +78,7 @@ export default function ConversationMessages({ employee_id }) {
     textArea.style.height = "auto";
     const newHeight = textArea.scrollHeight;
     textArea.style.height = `${newHeight}px`;
-    const maxHeight = 200;
+    const maxHeight = 100;
 
     if (newHeight > maxHeight) {
       textArea.style.height = `${maxHeight}px`;
@@ -115,58 +90,13 @@ export default function ConversationMessages({ employee_id }) {
     // Adjust container height
     setContainerHeight(newHeight > maxHeight ? maxHeight : newHeight + 20);
   };
+
   // goes back to messages
   const handleBack = () => {
     localStorage.removeItem("convoID");
     window.history.back();
   };
-  //fetch convo settings
-  useEffect(() => {
-    //fetch stored conversation id
-    const convoID = parseInt(localStorage.getItem("convoID"));
-    const getConvoSettings = async () => {
-      const parameters = {
-        params: {
-          settings: "true",
-          convo_type: "user",
-          convo_id: convoID,
-          employee_id: employee_id,
-        },
-      };
-      try {
-        const response = await axios.get(url.retrieveConvo, parameters);
-        setConvoSettings(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    const getConvo = async () => {
-      const parameters = {
-        params: {
-          convo: "true",
-          convo_id: convoID,
-        },
-      };
-      try {
-        const response = await axios.get(url.retrieveConvo, parameters);
-        setConvo(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if (!convoID) return
-    const fetchData = async () => {
-      if (!convoID) return;
 
-      await Promise.all([getConvo(), getConvoSettings()]);
-      toggleLoading(false);
-    };
-
-    fetchData();
-    //interval for fetching data from database
-    const interval = setInterval(getConvo, 3000);
-    return () => clearInterval(interval);
-  }, [employee_id]);
   //press enter to submit
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -174,15 +104,7 @@ export default function ConversationMessages({ employee_id }) {
       handleSubmit(e);
     }
   };
-  //reply action
-  // const handleReply = (reply_message_id, reply_convo_message, reply_message_type) => {
-  //   messageRef.current.focus();
-  //   setReply({
-  //     reply_message_id: reply_message_id,
-  //     reply_convo_message: reply_convo_message,
-  //     reply_message_type: reply_message_type,
-  //   });
-  // }
+
   //submit button
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -209,31 +131,38 @@ export default function ConversationMessages({ employee_id }) {
     allFile.forEach((file, index) => {
       fData.append(`file[${index}]`, file);
     });
-    axios.post(url.userSubmitNewMessage, fData)
+    axios
+      .post(url.userSubmitNewMessage, fData)
       .then(() => {
         setMessage("");
         setFile([]);
         setReply([]);
-      }).catch((error) => alert(error));
+      })
+      .catch((error) => alert(error));
   };
+
   //file change
   const handleFileChange = (e) => {
     // Convert FileList to an array
     const newFiles = Array.from(e.target.files);
     // Check for existing files with the same name
-    const existingFileNames = file.map(file => file.name);
-    const uniqueNewFiles = newFiles.filter(newFile => !existingFileNames.includes(newFile.name));
+    const existingFileNames = file.map((file) => file.name);
+    const uniqueNewFiles = newFiles.filter(
+      (newFile) => !existingFileNames.includes(newFile.name)
+    );
     // Ensure that file state is always an array of File objects
-    setFile(currentFiles => [...currentFiles, ...uniqueNewFiles]);
+    setFile((currentFiles) => [...currentFiles, ...uniqueNewFiles]);
   };
+
   //remove file
   const handleRemoveFile = (remFile) => {
     //const updatedFiles = file.filter(item => item.name !== remFile);
     //setFile(updatedFiles);
     const fileArray = Array.from(file);
-    const updatedFiles = fileArray.filter(item => item.name !== remFile);
+    const updatedFiles = fileArray.filter((item) => item.name !== remFile);
     setFile(updatedFiles);
   };
+
   return loading ? (
     "Loading..."
   ) : (
@@ -266,67 +195,60 @@ export default function ConversationMessages({ employee_id }) {
               ""
             ))}
         </div>
-        <div
-          className="w-full border-x border-default-dark overflow-y-scroll"
-          style={{
-            height: fileContainerHeight > 0 ? `calc(90% - ${containerHeight}px - ${fileContainerHeight}px` : replyContainerHeight > 0 ? `calc(90% - ${containerHeight}px - ${replyContainerHeight}px` : `calc(90% - ${containerHeight}px)`,
-          }}
-        >
-          <div>
-            <div className="flex justify-between z-[5] text-[1rem] border-b mb-2 p-2 sticky top-0 bg-white">
-              <div className="flex flex-col">
-                <span>
-                  Type:{" "}
-                  {convoSettings &&
-                    (convoSettings.convo_type == "1"
-                      ? "Planning"
-                      : convoSettings.convo_type == "2"
-                        ? "Evaluations"
-                        : convoSettings.convo_type == "3"
-                          ? "Directional/Redirectional"
-                          : convoSettings.convo_type == "4"
-                            ? "Coaching"
-                            : convoSettings.convo_type == "5"
-                              ? "Performance Improvement Plan"
-                              : "Loading...")}
-                </span>
+        <div className="border-x border-default-dark flex justify-between text-[1rem] border-b p-2 bg-white">
+            <div className="flex flex-col">
+              <span>
+                Type:{" "}
                 {convoSettings &&
-                  (convoSettings.convo_type == "2" ? (
-                    <span>
-                      Quarter:{" "}
-                      {convoSettings.evaluation_quarter == "1"
-                        ? "First Quarter"
-                        : convoSettings.evaluation_quarter == "2"
-                          ? "Mid Year"
-                          : convoSettings.evaluation_quarter == "3"
-                            ? "Third Quarter"
-                            : "Year End"}
-                    </span>
-                  ) : (
-                    ""
-                  ))}
-                {convoSettings &&
-                  (convoSettings.convo_type == "4" ? (
-                    <span>
-                      Coaching Type:{" "}
-                      {convoSettings.coaching_type == "1"
-                        ? "Corrective"
-                        : convoSettings.coaching_type == "2"
-                          ? "Developmental"
-                          : "Loading..."}
-                    </span>
-                  ) : (
-                    ""
-                  ))}
-                <span className="mt-4">
-                  Agenda: {convoSettings && convoSettings.agenda}
-                </span>
-                <span>Summary: </span>
-              </div>
-              <div className="flex gap-2">
-                <span>
-                  {format(new Date(convoSettings.creation_date), "PP")}
-                  {/* {(() => {
+                  (convoSettings.convo_type == "1"
+                    ? "Planning"
+                    : convoSettings.convo_type == "2"
+                    ? "Evaluations"
+                    : convoSettings.convo_type == "3"
+                    ? "Directional/Redirectional"
+                    : convoSettings.convo_type == "4"
+                    ? "Coaching"
+                    : convoSettings.convo_type == "5"
+                    ? "Performance Improvement Plan"
+                    : "Loading...")}
+              </span>
+              {convoSettings &&
+                (convoSettings.convo_type == "2" ? (
+                  <span>
+                    Quarter:{" "}
+                    {convoSettings.evaluation_quarter == "1"
+                      ? "First Quarter"
+                      : convoSettings.evaluation_quarter == "2"
+                      ? "Mid Year"
+                      : convoSettings.evaluation_quarter == "3"
+                      ? "Third Quarter"
+                      : "Year End"}
+                  </span>
+                ) : (
+                  ""
+                ))}
+              {convoSettings &&
+                (convoSettings.convo_type == "4" ? (
+                  <span>
+                    Coaching Type:{" "}
+                    {convoSettings.coaching_type == "1"
+                      ? "Corrective"
+                      : convoSettings.coaching_type == "2"
+                      ? "Developmental"
+                      : "Loading..."}
+                  </span>
+                ) : (
+                  ""
+                ))}
+              <span className="mt-4">
+                Agenda: {convoSettings && convoSettings.agenda}
+              </span>
+              <span>Summary: </span>
+            </div>
+            <div className="flex gap-2">
+              <span>
+                {format(new Date(convoSettings.creation_date), "PP")}
+                {/* {(() => {
                     const date = new Date(convoSettings.creation_date);
                     const formattedDate = `${(date.getMonth() + 1)
                       .toString()
@@ -335,10 +257,10 @@ export default function ConversationMessages({ employee_id }) {
                               ${date.getFullYear().toString()}`;
                     return formattedDate;
                   })()} */}
-                </span>
-                <span>
-                  {format(new Date(convoSettings.creation_date), "p")}
-                  {/* {(() => {
+              </span>
+              <span>
+                {format(new Date(convoSettings.creation_date), "p")}
+                {/* {(() => {
                     const date = new Date(convoSettings.creation_date);
                     const hours = date.getHours();
                     const minutes = date.getMinutes();
@@ -350,25 +272,37 @@ export default function ConversationMessages({ employee_id }) {
                         .padStart(2, "0")} ${amOrPm}`;
                     return formattedTime;
                   })()} */}
-                </span>
-              </div>
-            </div>
-            <div className="p-2">
-              <div>
-                <Messages convoID={convoID} employee_id={employee_id} containerHeight={containerHeight} replyDetails={setReply}/>
-              </div>
+              </span>
             </div>
           </div>
-          <div ref={conversationRef}></div>
+        <div
+          className="w-full border-x border-default-dark overflow-y-scroll p-2"
+          style={{
+            height:
+              fileContainerHeight > 0
+                ? `calc(80% - ${containerHeight}px - ${fileContainerHeight}px`
+                : replyContainerHeight > 0
+                ? `calc(80% - ${containerHeight}px - ${replyContainerHeight}px`
+                : `calc(80% - ${containerHeight}px)`,
+          }}
+        >
+              <Messages
+                convoID={convoID}
+                employee_id={employee_id}
+                containerHeight={containerHeight}
+                replyDetails={setReply}
+              />
         </div>
         {reply.reply_message_id > 0 ? (
           <div className="h-[2rem] w-full bg-default border-x border-default-dark px-4 py-2 flex items-center justify-between">
             <div className="flex gap-2 items-center justify-start">
               <MdOutlineSubdirectoryArrowRight />
-              <div className="h-[1.8rem] overflow-y-hidden">
+              <div className="h-[1.8rem] flex items-center overflow-y-hidden">
                 {reply.reply_message_type === 1 ? (
                   <span>
-                    {`${reply.reply_convo_message.substring(0, 70)}${reply.reply_convo_message.length > 70 ? "..." : ""}`}
+                    {`${reply.reply_convo_message.substring(0, 70)}${
+                      reply.reply_convo_message.length > 70 ? "..." : ""
+                    }`}
                   </span>
                 ) : reply.reply_message_type === 2 ? (
                   <span className="flex items-center gap-2">
@@ -390,18 +324,19 @@ export default function ConversationMessages({ employee_id }) {
                     <MdInsertDriveFile />
                     <p>File</p>
                   </span>
-                ) : (<span>
-                  {reply.reply_convo_message}
-                </span>)}
+                ) : (
+                  <span>{reply.reply_convo_message}</span>
+                )}
               </div>
             </div>
             <button
               className="text-[1.6rem] hover:text-un-red"
-              onClick={() => setReply([])}>
+              onClick={() => setReply([])}
+            >
               <IoCloseOutline />
             </button>
           </div>
-        ) : ""}
+        ) : ("")}
         {fileName && fileName.length > 0 ? (
           <div className="h-[7rem] w-full bg-white grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-8 gap-2 overflow-y-scroll border-x border-default-dark px-4 py-2">
             {fileName &&
@@ -412,7 +347,8 @@ export default function ConversationMessages({ employee_id }) {
                 >
                   <button
                     className="text-[1.3rem] hover:text-un-red ml-auto"
-                    onClick={() => handleRemoveFile(item.name)} >
+                    onClick={() => handleRemoveFile(item.name)}
+                  >
                     <IoCloseOutline />
                   </button>
                   <span className="h-[3rem] w-[5rem] text-[3rem] flex justify-center">
@@ -427,12 +363,14 @@ export default function ConversationMessages({ employee_id }) {
                     )}
                   </span>
                   <span className="w-[8rem] text-[.8rem] overflow-hidden text-center">
-                    {item.name.length > 15 ? `${item.name.substring(0, 12)}...` : item.name}
+                    {item.name.length > 15
+                      ? `${item.name.substring(0, 12)}...`
+                      : item.name}
                   </span>
                 </div>
               ))}
           </div>
-        ) : ""}
+        ) : ("")}
         <div
           className="border-x border-b border-default-dark rounded-b-md flex justify-between items-center px-4 py-2"
           style={{ height: `${containerHeight}px` }}
@@ -471,7 +409,6 @@ export default function ConversationMessages({ employee_id }) {
               <button
                 className="text-un-blue-light text-[1.5rem] mr-4 hover:text-un-blue-light-1"
                 onClick={handleSubmit}
-
               >
                 <IoIosSend />
               </button>
