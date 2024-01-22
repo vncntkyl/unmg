@@ -1,12 +1,11 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import classNames from "classnames";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { developmentAPIs as url } from "../../context/apiList";
 import { Tooltip } from "flowbite-react";
 import { IoMdDownload } from "react-icons/io";
 import { MdInsertDriveFile, MdOutlineReply } from "react-icons/md";
-import { useInfiniteQuery } from "@tanstack/react-query";
 
 export default function Messages({ convoID, employee_id, replyDetails }) {
   const messageRef = useRef(null);
@@ -14,45 +13,38 @@ export default function Messages({ convoID, employee_id, replyDetails }) {
   const [loading, toggleLoading] = useState(true);
   const [convo, setConvo] = useState([]);
   const [isPulsing, setIsPulsing] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
   //Data Fetching
   useEffect(() => {
-    const getConvo = async (pageParam) => {
+    const getConvo = async () => {
       const parameters = {
         params: {
           convo: "true",
           convo_id: convoID,
-          page: currentPage,
-          itemsPerPage: 5,
         },
       };
       try {
         const response = await axios.get(url.retrieveConvo, parameters);
         setConvo(response.data);
-        //setConvo((prevData) => [...prevData, ...response.data]);
-        setCurrentPage((prevPage) => prevPage + 1);
       } catch (error) {
         console.log(error);
       }
     };
     if (!convoID) return;
-    getConvo();
-    toggleLoading(false);
-    // const fetchData = async () => {
-    //   if (!convoID) return;
+    const fetchData = async () => {
+      if (!convoID) return;
 
-    //   await Promise.all([getConvo()]);
-    //   toggleLoading(false);
-    // };
-    // fetchData();
+      await Promise.all([getConvo()]);
+      toggleLoading(false);
+    };
+    fetchData();
 
-    // //interval for fetching data from database
-    // const interval = setInterval(getConvo, 2000);
-    // return () => clearInterval(interval);
+    //interval for fetching data from database
+    const interval = setInterval(getConvo, 2000);
+    return () => clearInterval(interval);
   }, [employee_id, convoID]);
+
   //Scroll when new message appear
-  useEffect(() => {
+ useEffect(() => {
     if (convo.length !== prevConvoLength.current) {
       // Conversation length has changed, scroll to the bottom
       messageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -85,7 +77,7 @@ export default function Messages({ convoID, employee_id, replyDetails }) {
       targetElement.scrollIntoView({ behavior: "smooth" });
     }
   };
-
+  
   return loading ? (
     "Loading"
   ) : (
@@ -189,7 +181,7 @@ export default function Messages({ convoID, employee_id, replyDetails }) {
                 </span>
                 <div className="indent-4 text-justify whitespace-break-spaces">
                   {item_convo.message_type &&
-                    parseInt(item_convo.message_type) === 1 ? (
+                  parseInt(item_convo.message_type) === 1 ? (
                     item_convo.message
                   ) : parseInt(item_convo.message_type) === 2 ? (
                     <img

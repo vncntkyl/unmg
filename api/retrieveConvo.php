@@ -9,10 +9,9 @@ if (isset($_GET['settings'])) {
         $employee_id = $_GET['employee_id'];
         $convo_id = $_GET['convo_id'];
         $convo_type = $_GET['convo_type'];
-        if ($convo_type == "user"){
+        if ($convo_type == "user") {
             echo json_encode($form->selectConvoSettings($employee_id, $convo_id));
-        }
-        else if ($convo_type == "manager") {
+        } else if ($convo_type == "manager") {
             echo json_encode($form->selectEmployeeConvoSettings($convo_id));
         }
     } else {
@@ -22,10 +21,12 @@ if (isset($_GET['settings'])) {
 
 if (isset($_GET['convo'])) {
     if (isset($_GET['convo_id'])) {
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $itemsPerPage = isset($_GET['itemsPerPage']) ? $_GET['itemsPerPage'] : 5;
         $convo_id = $_GET['convo_id'];
-        echo json_encode($form->selectConvo($convo_id));
-    }
-    else {
+        $offset = ($page - 1) * $itemsPerPage;
+        echo json_encode($form->selectConvo($convo_id, $itemsPerPage));
+    } else {
         echo "error";
     }
 }

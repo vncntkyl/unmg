@@ -2102,7 +2102,7 @@ class Form extends Controller
         return $this->statement->fetch();
     }
     //Select Conversation
-    function selectConvo($convo_id)
+    function selectConvo($convo_id, $itemsPerPage)
     {
         $this->setStatement("
         SELECT 
@@ -2116,6 +2116,7 @@ class Form extends Controller
         LEFT JOIN hr_users ON hr_users.employee_id = hr_convo_messages.employee_id
         WHERE hr_convo_messages.inbox_id = :inbox_id
         ORDER BY ID ASC
+        LIMIT {$itemsPerPage}
         ");
         $this->statement->execute([':inbox_id' => $convo_id]);
         return $this->statement->fetchAll();
