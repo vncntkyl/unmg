@@ -2102,7 +2102,7 @@ class Form extends Controller
         return $this->statement->fetch();
     }
     //Select Conversation
-    function selectConvo($convo_id, $itemsPerPage)
+    function selectConvo($convo_id, $itemsPerPage, $offset)
     {
         $this->setStatement("
         SELECT 
@@ -2112,11 +2112,13 @@ class Form extends Controller
         ELSE
             CONCAT(hr_users.first_name, ' ', hr_users.last_name)
         END AS employee_name,
+        hr_convo_messages.ID AS ID,
         hr_convo_messages.* FROM hr_convo_messages 
         LEFT JOIN hr_users ON hr_users.employee_id = hr_convo_messages.employee_id
         WHERE hr_convo_messages.inbox_id = :inbox_id
-        ORDER BY ID ASC
+        ORDER BY hr_convo_messages.ID ASC
         LIMIT {$itemsPerPage}
+        OFFSET {$offset}
         ");
         $this->statement->execute([':inbox_id' => $convo_id]);
         return $this->statement->fetchAll();

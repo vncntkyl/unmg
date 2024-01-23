@@ -6,7 +6,7 @@ import { developmentAPIs as url } from "../../context/apiList";
 import { Tooltip } from "flowbite-react";
 import { IoMdDownload } from "react-icons/io";
 import { MdInsertDriveFile, MdOutlineReply } from "react-icons/md";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Messages({ convoID, employee_id, replyDetails }) {
   const messageRef = useRef(null);
@@ -18,20 +18,19 @@ export default function Messages({ convoID, employee_id, replyDetails }) {
 
   //Data Fetching
   useEffect(() => {
-    const getConvo = async (pageParam) => {
+    const getConvo = async () => {
       const parameters = {
         params: {
           convo: "true",
           convo_id: convoID,
           page: currentPage,
-          itemsPerPage: 5,
+          itemsPerPage: 10,
         },
       };
       try {
         const response = await axios.get(url.retrieveConvo, parameters);
         setConvo(response.data);
-        //setConvo((prevData) => [...prevData, ...response.data]);
-        setCurrentPage((prevPage) => prevPage + 1);
+        // setCurrentPage((prevPage) => prevPage + 1);
       } catch (error) {
         console.log(error);
       }
@@ -39,17 +38,6 @@ export default function Messages({ convoID, employee_id, replyDetails }) {
     if (!convoID) return;
     getConvo();
     toggleLoading(false);
-    // const fetchData = async () => {
-    //   if (!convoID) return;
-
-    //   await Promise.all([getConvo()]);
-    //   toggleLoading(false);
-    // };
-    // fetchData();
-
-    // //interval for fetching data from database
-    // const interval = setInterval(getConvo, 2000);
-    // return () => clearInterval(interval);
   }, [employee_id, convoID]);
   //Scroll when new message appear
   useEffect(() => {
