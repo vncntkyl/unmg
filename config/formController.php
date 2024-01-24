@@ -2116,7 +2116,7 @@ class Form extends Controller
         hr_convo_messages.* FROM hr_convo_messages 
         LEFT JOIN hr_users ON hr_users.employee_id = hr_convo_messages.employee_id
         WHERE hr_convo_messages.inbox_id = :inbox_id
-        ORDER BY hr_convo_messages.ID ASC
+        ORDER BY hr_convo_messages.ID DESC
         LIMIT {$itemsPerPage}
         OFFSET {$offset}
         ");

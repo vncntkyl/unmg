@@ -275,24 +275,15 @@ export default function ConversationMessages({ employee_id }) {
               </span>
             </div>
           </div>
-        <div
-          className="w-full border-x border-default-dark overflow-y-scroll p-2"
-          style={{
-            height:
-              fileContainerHeight > 0
-                ? `calc(80% - ${containerHeight}px - ${fileContainerHeight}px`
-                : replyContainerHeight > 0
-                ? `calc(80% - ${containerHeight}px - ${replyContainerHeight}px`
-                : `calc(80% - ${containerHeight}px)`,
-          }}
-        >
               <Messages
+              className="h-full p-2"
                 convoID={convoID}
                 employee_id={employee_id}
-                containerHeight={containerHeight}
                 replyDetails={setReply}
+                containerHeight={containerHeight}
+                replyContainerHeight={replyContainerHeight}
+                fileContainerHeight={fileContainerHeight} 
               />
-        </div>
         {reply.reply_message_id > 0 ? (
           <div className="h-[2rem] w-full bg-default border-x border-default-dark px-4 py-2 flex items-center justify-between">
             <div className="flex gap-2 items-center justify-start">
