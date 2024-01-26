@@ -2113,7 +2113,13 @@ class Form extends Controller
             CONCAT(hr_users.first_name, ' ', hr_users.last_name)
         END AS employee_name,
         hr_convo_messages.ID AS ID,
-        hr_convo_messages.* FROM hr_convo_messages 
+        hr_convo_messages.inbox_id AS inbox_id,
+        hr_convo_messages.employee_id AS employee_id,
+        hr_convo_messages.message_type AS message_type,
+        hr_convo_messages.message AS message,
+        hr_convo_messages.reply_id AS reply_id,
+        hr_convo_messages.creation_date AS creation_date
+        FROM hr_convo_messages 
         LEFT JOIN hr_users ON hr_users.employee_id = hr_convo_messages.employee_id
         WHERE hr_convo_messages.inbox_id = :inbox_id
         ORDER BY hr_convo_messages.ID DESC
