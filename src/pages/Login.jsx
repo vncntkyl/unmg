@@ -69,13 +69,13 @@ export default function Login() {
           >
             <span className="text-white text-[1.5rem] pb-3">Sign In</span>
             <input
-              className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
+              className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-0 border-b-2 border-b-white w-[100%]"
               type="text"
               placeholder="Username or Email Address"
               ref={username}
             />
             <input
-              className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-b-2 border-b-white w-[100%]"
+              className="bg-transparent placeholder:text-[#d6d6d6]  text-white outline-0 p-2 border-0 border-b-2 border-b-white w-[100%]"
               type="password"
               placeholder="Password"
               ref={password}

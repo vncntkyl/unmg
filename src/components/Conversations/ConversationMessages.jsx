@@ -167,7 +167,7 @@ export default function ConversationMessages({ employee_id }) {
     "Loading..."
   ) : (
     <>
-      <div className="w-full mt-4">
+      <div className=" h-[80vh] w-full mt-4">
         <div className="border-t border-x bg-default border-default-dark rounded-t-md p-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
