@@ -22,9 +22,9 @@ if (isset($_GET['settings'])) {
 if (isset($_GET['convo'])) {
     if (isset($_GET['convo_id'])) {
         $convo_id = $_GET['convo_id'];
-        $page = isset($_GET['page']) ? $_GET['page'] : 1;
-        $itemsPerPage = isset($_GET['itemsPerPage']) ? $_GET['itemsPerPage'] : 10;
-        $offset = ($page - 1) * $itemsPerPage;
+        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 1;
+        $itemsPerPage = isset($_GET['itemsPerPage']) ? (int)$_GET['itemsPerPage'] : 10;
+        // $offset = ($page - 1) * $itemsPerPage;
         echo json_encode($form->selectConvo($convo_id, $itemsPerPage, $offset));
         //echo json_encode($form->selectConvo($convo_id));
     } else {

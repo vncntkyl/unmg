@@ -10,8 +10,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Messages({ convoID, employee_id, replyDetails, containerHeight, replyContainerHeight, fileContainerHeight }) {
   const messageRef = useRef(null);
-  // const prevConvoLength = useRef(0);
-  // console.log(prevConvoLength);
+  //const prevConvoLengthRef = useRef(0);
   // const loadMessageRef = useRef(null);
   // const initialRender = useRef(true);
   // const prevScrollY = useRef(0);
@@ -20,7 +19,8 @@ export default function Messages({ convoID, employee_id, replyDetails, container
   const [isPulsing, setIsPulsing] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [previousConvoLength, setPreviousConvoLength] = useState(0);
+  const [load, setLoad] = useState(true);
   //Scroll when loading the page
   // useEffect(() => {
   //   const handleScroll = () => {
@@ -58,13 +58,13 @@ export default function Messages({ convoID, employee_id, replyDetails, container
   //   };
   // }, [convo]);
   //Data Fetching
-  const getConvo = async () => {
+  const getConvo = async (offset) => {
     const parameters = {
       params: {
         convo: "true",
         convo_id: convoID,
-        page: currentPage,
         itemsPerPage: 10,
+        offset: offset,
       },
     };
     try {
@@ -72,43 +72,64 @@ export default function Messages({ convoID, employee_id, replyDetails, container
       if (response.data.length === 0) {
         setHasMore(false);
       } else {
-        // Append new data to existing convo
         setConvo(prevConvo => [...prevConvo, ...response.data]);
         setCurrentPage(prevPage => prevPage + 1);
       }
-      // setCurrentPage((prevPage) => prevPage + 1);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    if (convoID) {
-      getConvo();
-    }
-    toggleLoading(false);
-  }, [employee_id, convoID, currentPage]);
+  // useEffect(() => {
+  //   if (convoID) {
+  //     getConvo();
+  //   }
+  //   toggleLoading(false);
+  // }, [employee_id, convoID]);
 
   // useEffect(() => {
-  //   const interval = setInterval(getConvo, 2000);
-  //   return () => clearInterval(interval);
+  //     const interval = setInterval(getConvo, 2000);
+  //     return () => clearInterval(interval);
   // }, []);
 
-  const fetchMoreData = () => {
-    setTimeout(() => {
-      setConvo();
-    }, 500);
-  }
+  // const fetchMoreData = () => {
+  //   setTimeout(() => {
+  //     getConvo(currentPage * 10);
+  //   }, 500);
+  // }
 
   // //Scroll when new message appear
   // useEffect(() => {
-  //     if (convo.length !== prevConvoLength.current) {
+  //     if (convo.length !== prevConvoLengthRef.current) {
   //       // Conversation length has changed, scroll to the bottom
   //       messageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   //       // Update the previous length
-  //       prevConvoLength.current = convo.length;
+  //       prevConvoLengthRef.current = convo.length;
   //     }
   // }, [convo]);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (convoID) {
+        await getConvo(currentPage * 10);
+        setLoad(false);
+      }
+    }
+    fetchData();
+
+    const intervalId = setInterval(fetchData, 2000);
+    return () => {
+      clearInterval(intervalId)
+    };
+  }, [employee_id, convoID, currentPage]);
+
+  const fetchMoreData = () => {
+    if (!load) {
+      getConvo(currentPage * 10);
+      setLoad(true);
+    }
+  }
 
   //Reply
   const handleReply = (
@@ -135,18 +156,18 @@ export default function Messages({ convoID, employee_id, replyDetails, container
     }
   };
 
-  return loading ? (
+  return !loading ? (
     "Loading"
   ) : (
     <div id="scrollableDiv" className="w-full border-x border-default-dark overflow-y-scroll p-2 flex flex-col-reverse"
-    style={{
-      height:
-        fileContainerHeight > 0
-          ? `calc(80% - ${containerHeight}px - ${fileContainerHeight}px`
-          : replyContainerHeight > 0
-          ? `calc(80% - ${containerHeight}px - ${replyContainerHeight}px`
-          : `calc(80% - ${containerHeight}px)`,
-    }}>
+      style={{
+        height:
+          fileContainerHeight > 0
+            ? `calc(80% - ${containerHeight}px - ${fileContainerHeight}px`
+            : replyContainerHeight > 0
+              ? `calc(80% - ${containerHeight}px - ${replyContainerHeight}px`
+              : `calc(80% - ${containerHeight}px)`,
+      }}>
       <InfiniteScroll
         dataLength={convo.length}
         next={fetchMoreData}
@@ -155,14 +176,14 @@ export default function Messages({ convoID, employee_id, replyDetails, container
         className="flex flex-col-reverse"
         loader={<h4>Loading...</h4>}
         endMessage={
-          <p className="text-center">
-            <b>Yay! You have seen it all</b>
+          <p className="text-center font-normal">
+            <b>All Loaded</b>
           </p>
         }
         scrollableTarget="scrollableDiv">
         {convo && convo.length > 0 && convo.map((item_convo, index) => {
           return (
-            <div className="my-4" key={item_convo.ID}>
+            <div className="my-20" key={item_convo.ID}>
               this is a div {item_convo.message}
             </div>
           )
