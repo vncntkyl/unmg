@@ -451,6 +451,20 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
+    function selectDepartments()
+    {
+        $this->setStatement("SELECT * FROM `hr_departments`");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
+
+    function selectCompany()
+    {
+        $this->setStatement("SELECT * FROM `hr_company`");
+        $this->statement->execute();
+        return $this->statement->fetchAll();
+    }
+
 
 
 

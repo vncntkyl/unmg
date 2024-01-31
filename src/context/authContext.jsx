@@ -15,6 +15,8 @@ export function AuthProvider({ children }) {
   const [usertypeList, setUsertypeList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [kpiDurations, setKpiDurations] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [globalSettings, setGlobalSettings] = useState([]);
   const [verifyIfEvaluator, setVerifyIfEvaluator] = useState(false);
   const nav = useNavigate();
@@ -378,8 +380,39 @@ export function AuthProvider({ children }) {
         console.log(e.message);
       }
     };
+
+    const retrieveCompanies = async () => {
+      const parameters = {
+        params: {
+          companies: true,
+        },
+      };
+      try {
+        const response = await axios.get(url.retrieveCompanies, parameters);
+        setCompanies(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const retrieveDepartments = async () => {
+      const parameters = {
+        params: {
+          departments: true,
+        },
+      };
+      try {
+        const response = await axios.get(url.retrieveDepartments, parameters);
+        setDepartments(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     getVerifyIfEvaluator();
     retrieveKPIYear();
+    retrieveCompanies();
+    retrieveDepartments();
     fetchHeads();
     retrieveUserTypes();
     getGlobalSettings();
@@ -394,6 +427,8 @@ export function AuthProvider({ children }) {
     headList,
     verifyIfEvaluator,
     globalSettings,
+    companies,
+    departments,
     nav,
     navigate,
     manageUser,

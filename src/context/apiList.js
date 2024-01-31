@@ -19,6 +19,8 @@ export const developmentAPIs = {
   //Retrieval of Data
   fetchKPIDuration: "http://localhost/unmg_pms/api/fetchKpiDuration.php",
   fetchAllGoals: "http://localhost/unmg_pms/api/fetchAllGoals.php",
+  retrieveDepartments: "http://localhost/unmg_pms/api/retrieveDepartments.php",
+  retrieveCompanies: "http://localhost/unmg_pms/api/retrieveCompanies.php",
   retrievePillars: "http://localhost/unmg_pms/api/retrievePillars.php",
   retrieveTracking:"http://localhost/unmg_pms/api/retrieveTracking.php",
   retrieveTrackingScores:"http://localhost/unmg_pms/api/retrieveTrackingScores.php",
@@ -72,6 +74,8 @@ export const releaseAPIs = {
   //Retrieval of Data
   fetchKPIDuration: "../api/fetchKpiDuration.php",
   fetchAllGoals: "../api/fetchAllGoals.php",
+  retrieveDepartments: "../api/retrieveDepartments.php",
+  retrieveCompanies: "../api/retrieveCompanies.php",
   retrievePillars: "../api/retrievePillars.php",
   retrieveTracking:"../api/retrieveTracking.php",
   retrieveTrackingScores:"../api/retrieveTrackingScores.php",
