@@ -18,6 +18,11 @@ export default function EmployeeAdd() {
   const [businessUnits, setBusinessUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [modal, setModal] = useState("standby");
+  const [evaluators, setEvaluators] = useState({
+    primary_evaluator: null,
+    secondary_evaluator: null,
+    tertiary_evaluator: null,
+  });
   const [userInformation, setUserInformation] = useState({
     first_name: "",
     middle_name: "",
@@ -41,17 +46,14 @@ export default function EmployeeAdd() {
     job_level: "",
     employment_type: "",
     contract_type: "",
-    primary_evaluator: null,
-    secondary_evaluator: null,
-    tertiary_evaluator: null,
     hire_date: "",
   });
   const salutationList = ["Mr.", "Miss"];
   const contractList = ["regular", "probation", "project based", "consultant"];
-
+  console.log(evaluators)
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userdata = { ...userInformation, ...jobInformation };
+    const userdata = { ...userInformation, ...jobInformation, ...evaluators };
 
     if (registerUser(userdata)) {
       setModal("success");
@@ -95,25 +97,34 @@ export default function EmployeeAdd() {
                   <Input
                     key={index}
                     withLabel={true}
-                    label={<p>{splitKey(object_key)} {![
-                      "middle_name",
-                      "nickname",
-                      "contact_no",
-                      "suffix",
-                      "address",
-                      "nationality",
-                    ].includes(object_key) && <span className="text-un-red">*</span>}</p>}
+                    label={
+                      <p>
+                        {splitKey(object_key)}{" "}
+                        {![
+                          "middle_name",
+                          "nickname",
+                          "contact_no",
+                          "suffix",
+                          "address",
+                          "nationality",
+                        ].includes(object_key) && (
+                          <span className="text-un-red">*</span>
+                        )}
+                      </p>
+                    }
                     id={object_key}
                     val={userInformation[object_key]}
                     set={setUserInformation}
-                    required={![
-                      "middle_name",
-                      "nickname",
-                      "contact_no",
-                      "suffix",
-                      "address",
-                      "nationality",
-                    ].includes(object_key)}
+                    required={
+                      ![
+                        "middle_name",
+                        "nickname",
+                        "contact_no",
+                        "suffix",
+                        "address",
+                        "nationality",
+                      ].includes(object_key)
+                    }
                     clear={modal === "success"}
                     editable={true}
                     type={
@@ -139,17 +150,20 @@ export default function EmployeeAdd() {
                   <Input
                     key={index}
                     withLabel={true}
-                    label={<p>{splitKey(object_key)} {![
-                      "primary_evaluator",
-                      "secondary_evaluator",
-                      "tertiary_evaluator",
-                    ].includes(object_key) && <span className="text-un-red">*</span>}</p>}
+                    label={
+                      <p>
+                        {splitKey(object_key)}{" "}
+                        {![
+                          "primary_evaluator",
+                          "secondary_evaluator",
+                          "tertiary_evaluator",
+                        ].includes(object_key) && (
+                          <span className="text-un-red">*</span>
+                        )}
+                      </p>
+                    }
                     id={object_key}
-                    required={![
-                      "primary_evaluator",
-                      "secondary_evaluator",
-                      "tertiary_evaluator",
-                    ].includes(object_key)}
+                    required={!object_key}
                     clear={modal === "success"}
                     set={setJobInformation}
                     editable={true}
@@ -157,9 +171,6 @@ export default function EmployeeAdd() {
                       [
                         "company",
                         "department",
-                        "primary_evaluator",
-                        "secondary_evaluator",
-                        "tertiary_evaluator",
                         "contract_type",
                         "employment_type",
                         "job_level",
@@ -178,8 +189,6 @@ export default function EmployeeAdd() {
                             (dept) =>
                               dept.company_id == jobInformation["company"]
                           )
-                        : object_key.includes("evaluator")
-                        ? headList
                         : object_key === "job_level"
                         ? usertypeList.map((type) => {
                             return {
@@ -199,6 +208,101 @@ export default function EmployeeAdd() {
                     }
                   />
                 ))}
+              </div>
+              <div className="flex flex-col gap-2 pt-2">
+                <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
+                  <label className="md:w-1/2">Primary Evaluator</label>
+                  <select
+                    className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+                    onChange={(e) => {
+                      setEvaluators({ ...evaluators, primary_evaluator: e.target.value });
+                    }}
+                  >
+                    <option value="" selected={-1} disabled>--Select Primary Evaluator--</option>
+                    <option value="">None</option>
+                    {headList.map((head, index) => {
+                      return (
+                        <option key={index} value={head.employee_id}>
+                          {head.full_name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                {evaluators.primary_evaluator && (
+                  <>
+                    <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
+                      <label className="md:w-1/2">Secondary Evaluator</label>
+                      <select
+                        className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+                        onChange={(e) => {
+                          setEvaluators({
+                            ...evaluators,
+                            secondary_evaluator: e.target.value,
+                          });
+                        }}
+                      >
+                        <option value="" selected={-1} disabled>
+                          --Select Secondary Evaluator--
+                        </option>
+                        <option value="" selected={0}>
+                          None
+                        </option>
+                        {headList
+                          .filter(
+                            (item) =>
+                              parseInt(item.employee_id) !==
+                              parseInt(evaluators.primary)
+                          )
+                          .map((head, index) => {
+                            return (
+                              <option key={index} value={head.employee_id}>
+                                {head.full_name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </div>
+                    {evaluators.secondary_evaluator && (
+                      <>
+                        <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
+                          <label className="md:w-1/2">Tertiary Evaluator</label>
+                          <select
+                            className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+                            onChange={(e) => {
+                              setEvaluators({
+                                ...evaluators,
+                                tertiary_evaluator: e.target.value,
+                              });
+                            }}
+                          >
+                            <option value="" defaultValue={-1} disabled>
+                              --Select Tertiary Evaluator--
+                            </option>
+                            <option value="">
+                              None
+                            </option>
+                            {headList
+                              .filter(
+                                (item) =>
+                                  parseInt(item.employee_id) !==
+                                    parseInt(evaluators.primary) &&
+                                  parseInt(item.employee_id) !==
+                                    parseInt(evaluators.secondary)
+                              )
+                              .map((head, index) => {
+                                return (
+                                  <option key={index} value={head.employee_id}>
+                                    {head.full_name}
+                                  </option>
+                                );
+                              })}
+                          </select>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             </section>
           </div>

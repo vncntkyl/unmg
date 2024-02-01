@@ -46,7 +46,7 @@ export default function EmployeeList() {
                 className={
                   getPath() !== ("/employees" || "/employees/")
                     ? "hidden"
-                    : "flex flex-row gap-2 items-center justify-evenly md:w-1/2 xl:w-1/3"
+                    : "flex flex-row gap-2 items-center justify-evenly md:w-1/2 xl:w-1/2"
                 }
               >
                 <button
@@ -62,7 +62,7 @@ export default function EmployeeList() {
                   className="w-1/2 flex items-center justify-center gap-2 border bg-un-blue-light hover:bg-un-blue rounded-md p-1 text-white md:w-full"
                 >
                   <AiOutlineUserAdd />
-                  <span className="text-[.8rem] md:text-[.9rem]">
+                  <span className="text-[.8rem] md:text-[.9rem] whitespace-nowrap">
                     Add Employee
                   </span>
                 </a>

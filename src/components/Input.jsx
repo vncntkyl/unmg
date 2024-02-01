@@ -13,11 +13,26 @@ export default function Input({
   val = null,
   editable,
 }) {
-  const { companyList, departmentList, headList, usertypeList } = useAuth();
+  const { companyList, departmentList, usertypeList } = useAuth();
   const { splitKey, capitalizeSentence } = useFunction();
 
   const jobStatusList = ["Regular", "Probation", "Resigned"];
-
+  const placeholders = {
+    first_name: 'Enter First Name',
+    middle_name: 'Enter Middle Name',
+    last_name: 'Enter Last Name',
+    suffix: 'Enter Suffix',
+    nickname: 'Enter Nickname',
+    salutation: 'Enter Salutation',
+    email: 'Enter Email',
+    contact_no: 'Enter Contact Number',
+    address: 'Enter Address',
+    nationality: 'Enter Nationality',
+    username: 'Enter Username',
+    employee_id: 'Enter Employee ID',
+    team: 'Enter Team',
+    job_description: 'Enter Job Description',
+  };
   return (
     <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
       {withLabel && (
@@ -46,12 +61,7 @@ export default function Input({
                 ? departmentList.length > 0 &&
                   departmentList.find((dept) => dept.department_id === val)
                     .department_name
-                : id.includes("evaluator")
-                ? headList.length > 0 &&
-                  headList.find((head) => head.employee_id === val)
-                  ? headList.find((head) => head.employee_id === val).full_name
-                  : "N/A"
-                : id === "status"
+                : id === "status" 
                 ? jobStatusList[val]
                 : usertypeList.length > 0 &&
                   usertypeList.find((u) => u.job_level == val)
@@ -68,6 +78,7 @@ export default function Input({
               };
             });
           }}
+          placeholder={placeholders[id] || ''}
         />
       ) : type === "dropdown" ? (
         <select
@@ -84,6 +95,7 @@ export default function Input({
               };
             });
           }}
+          
         >
           <option value="" selected={!val} disabled>
             --Select {splitKey(id)}--
