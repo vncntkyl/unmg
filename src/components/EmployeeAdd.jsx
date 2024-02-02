@@ -53,11 +53,15 @@ export default function EmployeeAdd() {
   console.log(evaluators)
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(userInformation);
+    const capsentence = userInformation.map(word => {
+      
+    })
     const userdata = { ...userInformation, ...jobInformation, ...evaluators };
 
-    if (registerUser(userdata)) {
-      setModal("success");
-    }
+    // if (registerUser(userdata)) {
+    //   setModal("success");
+    // }
   };
   const handleSuccess = () => {
     navigate("/employees");
@@ -252,7 +256,7 @@ export default function EmployeeAdd() {
                           .filter(
                             (item) =>
                               parseInt(item.employee_id) !==
-                              parseInt(evaluators.primary)
+                              parseInt(evaluators.primary_evaluator)
                           )
                           .map((head, index) => {
                             return (
@@ -286,9 +290,9 @@ export default function EmployeeAdd() {
                               .filter(
                                 (item) =>
                                   parseInt(item.employee_id) !==
-                                    parseInt(evaluators.primary) &&
+                                    parseInt(evaluators.primary_evaluator) &&
                                   parseInt(item.employee_id) !==
-                                    parseInt(evaluators.secondary)
+                                    parseInt(evaluators.secondary_evaluator)
                               )
                               .map((head, index) => {
                                 return (
