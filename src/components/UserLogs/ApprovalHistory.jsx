@@ -230,7 +230,7 @@ export default function ApprovalHistory() {
                         --Select Department--
                       </option>
                       {departments.length > 0 &&
-                        departments.filter((dep) => dep.company_id === company)
+                        departments.filter((dep) => parseInt(dep.company_id) === parseInt(company))
                         .map((dept) => {
                           return (
                             <option key={dept.department_id} value={dept.department_id}>

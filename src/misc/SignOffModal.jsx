@@ -91,7 +91,7 @@ export default function SignOffModal({
                     id="recommendation"
                     type="text"
                     rows={4}
-                    className="bg-default block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-md resize-none"
+                    className="bg-default block p-2 w-full text-sm text-gray-900 rounded-md resize-none"
                     placeholder="Enter your recommendations..."
                     value={recommendation}
                     onChange={(e) => setRecommendation(e.target.value)}

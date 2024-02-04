@@ -25,7 +25,7 @@ export default function Input({
     nickname: 'Enter Nickname',
     salutation: 'Enter Salutation',
     email: 'Enter Email',
-    contact_no: 'Enter Contact Number',
+    contact_no: 'Enter Contact Number: (09XXXXXXXXX)',
     address: 'Enter Address',
     nationality: 'Enter Nationality',
     username: 'Enter Username',

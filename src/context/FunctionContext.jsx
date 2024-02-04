@@ -6,6 +6,94 @@ export function useFunction() {
 }
 export function FunctionProvider({ children }) {
   const [loading, setLoading] = useState(false);
+  function caps(string) {
+    const fieldsToCapitalize = [
+      "first_name",
+      "middle_name",
+      "last_name",
+      "suffix",
+      "nickname",
+      "address",
+      "nationality",
+    ];
+
+    const capitalizeFirstLetter = (str) => {
+      return str
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
+
+    const deepClone = (obj) => {
+      if (obj === null || typeof obj !== "object") {
+        return obj;
+      }
+
+      if (Array.isArray(obj)) {
+        return obj.map(deepClone);
+      }
+
+      const clonedObj = {};
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          clonedObj[key] = deepClone(obj[key]);
+        }
+      }
+
+      return clonedObj;
+    };
+
+    const lowercaseAllFields = (obj) => {
+      const lowercaseObj = deepClone(obj);
+
+      for (const key in lowercaseObj) {
+        if (
+          Object.prototype.hasOwnProperty.call(lowercaseObj, key) &&
+          typeof lowercaseObj[key] === "string"
+        ) {
+          lowercaseObj[key] = lowercaseObj[key].toLowerCase();
+        }
+      }
+
+      return lowercaseObj;
+    };
+
+    const capitalizedSpecificFields = (string, fieldsToCapitalize) => {
+      const lowercaseObj = lowercaseAllFields(string);
+      const capitalizedObj = deepClone(lowercaseObj);
+
+      fieldsToCapitalize.forEach((field) => {
+        if (
+          capitalizedObj[field] &&
+          typeof capitalizedObj[field] === "string"
+        ) {
+          capitalizedObj[field] = capitalizeFirstLetter(capitalizedObj[field]);
+        }
+      });
+
+      return capitalizedObj;
+    };
+
+    // Call the capitalizedSpecificFields function with the provided arguments
+    return capitalizedSpecificFields(string, fieldsToCapitalize);
+  }
+  function userInformationChecker(userInformation) {
+    // convert to switch case
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (userInformation.email === "") {
+      return "";
+    } else {
+      const email = userInformation.email;
+      if (!emailRegex.test(email)) {
+        return "Please provide a proper email address!";
+      } else {
+        if (userInformation.contact_no === ""){
+          return "";
+        }
+        return "";
+      }
+    }
+  }
   function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -125,6 +213,8 @@ export function FunctionProvider({ children }) {
   }
   const value = {
     loading,
+    caps,
+    userInformationChecker,
     getPath,
     splitKey,
     splitPath,

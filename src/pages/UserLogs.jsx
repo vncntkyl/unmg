@@ -3,8 +3,8 @@ import classNames from "classnames";
 import { useFunction } from "../context/FunctionContext";
 import { useAuth } from "../context/authContext";
 import { Tabs } from "flowbite-react";
-import Logs from "../components/Logs/Logs";
-import ApprovalHistory from "../components/Logs/ApprovalHistory";
+import Logs from "../components/UserLogs/Logs";
+import ApprovalHistory from "../components/UserLogs/ApprovalHistory";
 export default function UserLogs() {
   const [loading, toggleLoading] = useState(true);
   const [employeeID, setEmployeeID] = useState();

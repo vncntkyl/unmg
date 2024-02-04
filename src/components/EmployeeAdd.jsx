@@ -3,8 +3,9 @@ import { IoChevronBack } from "react-icons/io5";
 import { Input } from "./";
 import { useAuth } from "../context/authContext";
 import { useFunction } from "../context/FunctionContext";
-import Modal from "../misc/Modal";
+//import Modal from "../misc/Modal";
 import classNames from "classnames";
+import AlertModal from "../misc/AlertModal";
 export default function EmployeeAdd() {
   const {
     registerUser,
@@ -14,15 +15,24 @@ export default function EmployeeAdd() {
     getBusinessUnits,
     getDepartments,
   } = useAuth();
-  const { splitKey, areValuesFilled, capitalizeSentence } = useFunction();
+  const {
+    splitKey,
+    areValuesFilled,
+    capitalizeSentence,
+    caps,
+    userInformationChecker,
+  } = useFunction();
   const [businessUnits, setBusinessUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
-  const [modal, setModal] = useState("standby");
+  //const [modal, setModal] = useState("standby");
+  const [logModal, setLogModal] = useState("standby");
+  const [modalMessage, setModalMessage] = useState("");
   const [evaluators, setEvaluators] = useState({
     primary_evaluator: null,
     secondary_evaluator: null,
     tertiary_evaluator: null,
   });
+  const [infoChecker, setInfoChecker] = useState("");
   const [userInformation, setUserInformation] = useState({
     first_name: "",
     middle_name: "",
@@ -50,18 +60,27 @@ export default function EmployeeAdd() {
   });
   const salutationList = ["Mr.", "Miss"];
   const contractList = ["regular", "probation", "project based", "consultant"];
-  console.log(evaluators)
+  useEffect(() => {
+    setInfoChecker(userInformationChecker(userInformation));
+  }, [userInformation]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(userInformation);
-    const capsentence = userInformation.map(word => {
-      
-    })
-    const userdata = { ...userInformation, ...jobInformation, ...evaluators };
+    if (
+      !isNaN(userInformation.contact_no) &&
+      Number.isInteger(Number(userInformation.contact_no))
+    ) {
+      // if (registerUser(userdata)) {
+      //   setLogModal("success");
+      //   setModalMessage("Employee added successfully!");
+      //  }
+    } else {
+      setLogModal("error");
+      setModalMessage("Please enter a valid contact number.");
+    }
+    const data = caps(userInformation);
 
-    // if (registerUser(userdata)) {
-    //   setModal("success");
-    // }
+    const userdata = { ...data, ...jobInformation, ...evaluators };
   };
   const handleSuccess = () => {
     navigate("/employees");
@@ -129,7 +148,7 @@ export default function EmployeeAdd() {
                         "nationality",
                       ].includes(object_key)
                     }
-                    clear={modal === "success"}
+                    clear={logModal === "success"}
                     editable={true}
                     type={
                       object_key === "salutation"
@@ -168,7 +187,7 @@ export default function EmployeeAdd() {
                     }
                     id={object_key}
                     required={!object_key}
-                    clear={modal === "success"}
+                    clear={logModal === "success"}
                     set={setJobInformation}
                     editable={true}
                     type={
@@ -219,10 +238,15 @@ export default function EmployeeAdd() {
                   <select
                     className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
                     onChange={(e) => {
-                      setEvaluators({ ...evaluators, primary_evaluator: e.target.value });
+                      setEvaluators({
+                        ...evaluators,
+                        primary_evaluator: e.target.value,
+                      });
                     }}
                   >
-                    <option value="" selected={-1} disabled>--Select Primary Evaluator--</option>
+                    <option value="" selected={-1} disabled>
+                      --Select Primary Evaluator--
+                    </option>
                     <option value="">None</option>
                     {headList.map((head, index) => {
                       return (
@@ -283,9 +307,7 @@ export default function EmployeeAdd() {
                             <option value="" defaultValue={-1} disabled>
                               --Select Tertiary Evaluator--
                             </option>
-                            <option value="">
-                              None
-                            </option>
+                            <option value="">None</option>
                             {headList
                               .filter(
                                 (item) =>
@@ -310,6 +332,17 @@ export default function EmployeeAdd() {
               </div>
             </section>
           </div>
+          {areValuesFilled(userInformation) &&
+          areValuesFilled(jobInformation) ? (
+            ""
+          ) : (
+            <span className="text-un-red text-[0.8rem]">
+              Please fill out the required fields that have a *
+            </span>
+          )}
+          <span className="text-[0.8rem] text-un-red">
+            {infoChecker && (`Other fields to be checked: ${infoChecker}`)}
+          </span>
           <input
             type="submit"
             disabled={
@@ -322,24 +355,33 @@ export default function EmployeeAdd() {
           />
         </form>
       </div>
-      {modal === "success" && (
-        <>
-          <Modal
-            title={"Account Registration"}
-            message={`Registration Successful!`}
-            closeModal={setModal}
-            action={"Dismiss"}
-            handleContinue={handleSuccess}
-          />
-        </>
+      {logModal === "success" && (
+        <AlertModal
+          closeModal={setLogModal}
+          modalType={logModal}
+          title={"Add New Employee"}
+          message={modalMessage}
+          continuebutton={"Confirm"}
+          handleContinue={handleSuccess}
+        />
+      )}
+      {logModal === "error" && (
+        <AlertModal
+          closeModal={setLogModal}
+          modalType={logModal}
+          title={"Add New Employee"}
+          message={modalMessage}
+          continuebutton={"Confirm"}
+          handleContinue={handleSuccess}
+        />
       )}
       <div
         className={classNames(
           "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
-          modal === "standby" && "z-[-1] hidden pointer-events-none"
+          logModal === "standby" && "z-[-1] hidden pointer-events-none"
         )}
         onClick={() => {
-          setModal("standby");
+          setLogModal("standby");
         }}
       />
     </>
