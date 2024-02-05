@@ -1,3 +1,4 @@
+import { el } from "date-fns/locale";
 import React, { useContext, useEffect, useState } from "react";
 const FunctionContext = React.createContext();
 
@@ -77,23 +78,90 @@ export function FunctionProvider({ children }) {
     // Call the capitalizedSpecificFields function with the provided arguments
     return capitalizedSpecificFields(string, fieldsToCapitalize);
   }
-  function userInformationChecker(userInformation) {
-    // convert to switch case
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (userInformation.email === "") {
-      return "";
-    } else {
+  function userInformationChecker(userInformation, jobInformation) {
+    let data = {
+      email: "",
+      contact_no: "",
+      employee_id: "",
+    };
+    //Proper Email
+    if (userInformation.email !== "") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const email = userInformation.email;
-      if (!emailRegex.test(email)) {
-        return "Please provide a proper email address!";
+      if (emailRegex.test(email)) {
+        data = {
+          ...data,
+          email: "",
+        };
       } else {
-        if (userInformation.contact_no === ""){
-          return "";
-        }
-        return "";
+        data = {
+          ...data,
+          email: "Please enter a valid email address!",
+        };
       }
     }
+    //Proper Contact Number
+    if (userInformation.contact_no !== "") {
+      if (
+        !isNaN(userInformation.contact_no) &&
+        Number.isInteger(Number(userInformation.contact_no))
+      ) {
+        const phone_no = userInformation.contact_no;
+        if (phone_no.length === 11) {
+          const phoneRegex = /^[09]{2}/;
+          if (phoneRegex.test(phone_no)) {
+            data = {
+              ...data,
+              contact_no: "",
+            };
+          } else {
+            data = {
+              ...data,
+              contact_no: "Please start with 09!",
+            };
+          }
+        } else {
+          data = {
+            ...data,
+            contact_no: "Please enter a valid contact number!",
+          };
+        }
+      } else {
+        data = {
+          ...data,
+          contact_no: "Please enter a valid contact number!",
+        };
+      }
+    }
+    //Proper Employee ID from HR web
+    if (jobInformation.employee_id !== "") {
+      if (
+        !isNaN(jobInformation.employee_id) &&
+        Number.isInteger(Number(jobInformation.employee_id))
+      ) {
+        if (jobInformation.employee_id.length === 10)
+        {
+          data = {
+            ...data,
+            employee_id: "",
+          };
+        }
+        else {
+          data = {
+            ...data,
+            employee_id: "Employee ID should have 10 digits(Refer to employee ID from the HR web)!",
+          };
+        }
+      } else {
+        data = {
+          ...data,
+          employee_id: "Please enter a valid employee ID!",
+        };
+      }
+    }
+    return data;
   }
+
   function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }

@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { GrClose } from "react-icons/gr";
 import { BsExclamationOctagonFill } from "react-icons/bs";
+import { FaCheckCircle } from "react-icons/fa";
 
 export default function AlertModal({
   closeModal,
@@ -36,7 +37,13 @@ export default function AlertModal({
                   : "text-un-yellow-dark"
               )}
             >
-              <BsExclamationOctagonFill />
+              {modalType === "error" ? (
+                <BsExclamationOctagonFill />
+              ) : modalType === "success" ? (
+                <FaCheckCircle />
+              ) : (
+                ""
+              )}
               {title}
             </span>
             <button
@@ -54,7 +61,11 @@ export default function AlertModal({
           <div className="flex flex-row items-center justify-end gap-4 p-2">
             <button
               type="button"
-              onClick={() => {modalType === "error" ? closeModal("standby") : handleContinue()}}
+              onClick={() => {
+                modalType === "error"
+                  ? closeModal("standby")
+                  : handleContinue();
+              }}
               className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
             >
               {continuebutton}

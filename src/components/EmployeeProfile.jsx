@@ -311,8 +311,6 @@ export default function EmployeeProfile({ admin }) {
                             (usertype) =>
                               usertype.job_level_id === jobInfo.job_level
                           ).job_level_name
-                        : object_key === "hire_date"
-                        ? format(new Date(jobInfo.hire_date), "MMM d, yyyy")
                         : jobInfo[object_key]
                     }
                     set={setJobInfo}

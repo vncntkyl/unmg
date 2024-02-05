@@ -32,7 +32,7 @@ export default function EmployeeAdd() {
     secondary_evaluator: null,
     tertiary_evaluator: null,
   });
-  const [infoChecker, setInfoChecker] = useState("");
+  const [infoChecker, setInfoChecker] = useState([]);
   const [userInformation, setUserInformation] = useState({
     first_name: "",
     middle_name: "",
@@ -61,26 +61,18 @@ export default function EmployeeAdd() {
   const salutationList = ["Mr.", "Miss"];
   const contractList = ["regular", "probation", "project based", "consultant"];
   useEffect(() => {
-    setInfoChecker(userInformationChecker(userInformation));
-  }, [userInformation]);
+    setInfoChecker(userInformationChecker(userInformation, jobInformation));
+  }, [userInformation, jobInformation]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      !isNaN(userInformation.contact_no) &&
-      Number.isInteger(Number(userInformation.contact_no))
-    ) {
-      // if (registerUser(userdata)) {
-      //   setLogModal("success");
-      //   setModalMessage("Employee added successfully!");
-      //  }
-    } else {
-      setLogModal("error");
-      setModalMessage("Please enter a valid contact number.");
-    }
     const data = caps(userInformation);
 
     const userdata = { ...data, ...jobInformation, ...evaluators };
+    if (registerUser(userdata)) {
+      setLogModal("success");
+      setModalMessage("Employee added successfully!");
+    }
   };
   const handleSuccess = () => {
     navigate("/employees");
@@ -340,15 +332,37 @@ export default function EmployeeAdd() {
               Please fill out the required fields that have a *
             </span>
           )}
-          <span className="text-[0.8rem] text-un-red">
-            {infoChecker && (`Other fields to be checked: ${infoChecker}`)}
-          </span>
+          {infoChecker && (
+            <>
+              {infoChecker.email ||
+              infoChecker.contact_no ||
+              infoChecker.employee_id ? (
+                <div className="text-un-red text-[0.8rem]">
+                  <span>Other fields to be checked:</span>
+                  <ul>
+                    <li>{infoChecker.email && infoChecker.email}</li>
+                    <li>{infoChecker.contact_no && infoChecker.contact_no}</li>
+                    <li>
+                      {infoChecker.employee_id && infoChecker.employee_id}
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                ""
+              )}
+            </>
+          )}
+
           <input
             type="submit"
             disabled={
               areValuesFilled(userInformation) &&
               areValuesFilled(jobInformation)
-                ? false
+                ? infoChecker.email === "" &&
+                  infoChecker.contact_no === "" &&
+                  infoChecker.employee_id === ""
+                  ? false
+                  : true
                 : true
             }
             className="w-full lg:w-1/4 cursor-pointer transition-all bg-un-blue text-white rounded p-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
@@ -356,16 +370,6 @@ export default function EmployeeAdd() {
         </form>
       </div>
       {logModal === "success" && (
-        <AlertModal
-          closeModal={setLogModal}
-          modalType={logModal}
-          title={"Add New Employee"}
-          message={modalMessage}
-          continuebutton={"Confirm"}
-          handleContinue={handleSuccess}
-        />
-      )}
-      {logModal === "error" && (
         <AlertModal
           closeModal={setLogModal}
           modalType={logModal}
