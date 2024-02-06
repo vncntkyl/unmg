@@ -29,17 +29,18 @@ export default function EmployeeProfile({ admin }) {
 
   const [personalInfo, setPersonalInfo] = useState([]);
   const [jobInfo, setJobInfo] = useState([]);
+  const [evaluators, setEvaluators] = useState([]);
   const [businessUnits, setBusinessUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [img, setImg] = useState(null);
   const [file, setFile] = useState(null);
   const [editable, setEditable] = useState(false);
   const [modal, setModal] = useState("standby");
-
   const employment_type = ["LOCAL", "EXPAT"];
   const salutationList = ["Mr.", "Miss", "Mrs."];
   const contractList = ["regular", "probation", "project based", "consultant"];
-
+  // const userdata = { ...personalInfo, ...jobInfo, ...evaluators };
+  // console.log(userdata);
   const handleSubmit = (e) => {
     e.preventDefault();
     let user = [];
@@ -48,7 +49,7 @@ export default function EmployeeProfile({ admin }) {
     } else {
       user = JSON.parse(currentUser);
     }
-    const userdata = { ...personalInfo, ...jobInfo };
+    const userdata = { ...personalInfo, ...jobInfo, ...evaluators };
     setTimeout(() => {
       if (updateUser(userdata, user.users_id)) {
         setEditable(false);
@@ -169,10 +170,12 @@ export default function EmployeeProfile({ admin }) {
       job_level: user.user_type,
       employment_type: user.employment_category,
       contract_type: user.contract_type,
-      primary_evaluator: user.primary_evaluator,
+      hire_date: user.hire_date,
+    });
+    setEvaluators({
+      primary_evaluator: user.primary_evaluator || "N/A",
       secondary_evaluator: user.secondary_evaluator || "N/A",
       tertiary_evaluator: user.tertiary_evaluator || "N/A",
-      hire_date: user.hire_date,
     });
   }, []);
   return personalInfo ? (
@@ -268,10 +271,34 @@ export default function EmployeeProfile({ admin }) {
                   <Input
                     key={index}
                     withLabel={true}
-                    label={splitKey(object_key)}
+                    label={
+                      <p>
+                        {splitKey(object_key)}{" "}
+                        {![
+                          "middle_name",
+                          "nickname",
+                          "contact_no",
+                          "suffix",
+                          "address",
+                          "nationality",
+                        ].includes(object_key) && (
+                          <span className="text-un-red">*</span>
+                        )}
+                      </p>
+                    }
                     id={object_key}
-                    set={setPersonalInfo}
                     val={personalInfo[object_key]}
+                    set={setPersonalInfo}
+                    required={
+                      ![
+                        "middle_name",
+                        "nickname",
+                        "contact_no",
+                        "suffix",
+                        "address",
+                        "nationality",
+                      ].includes(object_key)
+                    }
                     editable={editable}
                     type={
                       object_key === "salutation"
@@ -303,13 +330,25 @@ export default function EmployeeProfile({ admin }) {
                   <Input
                     key={index}
                     withLabel={true}
-                    label={splitKey(object_key)}
+                    label={
+                      <p>
+                        {splitKey(object_key)}{" "}
+                        {![
+                          "primary_evaluator",
+                          "secondary_evaluator",
+                          "tertiary_evaluator",
+                        ].includes(object_key) && (
+                          <span className="text-un-red">*</span>
+                        )}
+                      </p>
+                    }
                     id={object_key}
+                    required={!object_key}
                     val={
                       object_key === "job_level"
                         ? usertypeList.find(
                             (usertype) =>
-                              usertype.job_level_id === jobInfo.job_level
+                              usertype.job_level_id === jobInfo.job_level || {}
                           ).job_level_name
                         : jobInfo[object_key]
                     }
@@ -319,9 +358,6 @@ export default function EmployeeProfile({ admin }) {
                       [
                         "company",
                         "department",
-                        "primary_evaluator",
-                        "secondary_evaluator",
-                        "tertiary_evaluator",
                         "contract_type",
                         "employment_type",
                         "job_level",
@@ -342,8 +378,6 @@ export default function EmployeeProfile({ admin }) {
                         ? departments.filter(
                             (dept) => dept.company_id == jobInfo.company
                           )
-                        : object_key.includes("evaluator")
-                        ? headList
                         : object_key === "job_level"
                         ? usertypeList &&
                           usertypeList.map((type) => {
@@ -354,16 +388,56 @@ export default function EmployeeProfile({ admin }) {
                               ),
                             };
                           })
+                        : object_key === "employment_type"
+                        ? employment_type
                         : object_key === "contract_type"
                         ? contractList.map((contract) => {
                             return capitalizeSentence(contract);
                           })
-                        : object_key === "employment_type"
-                        ? employment_type
                         : undefined
                     }
                   />
                 ))}
+              </div>
+              {/* evaluators */}
+              <div className="flex flex-col gap-2 pt-2">
+                <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
+                  <label className="md:w-1/2">Primary Evaluator</label>
+                  <select
+                    className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+                    onChange={(e) => {
+                      setEvaluators({
+                        ...evaluators,
+                        primary_evaluator: e.target.value,
+                      });
+                    }}
+                  >
+                    <option value="" disabled>
+                      --Select Primary Evaluator--
+                    </option>
+                    <option
+                      value=""
+                      selected={evaluators.primary_evaluator === "N/A"}
+                    >
+                      None
+                    </option>
+                    {headList.map((head, index) => {
+                      return (
+                        <option
+                          key={index}
+                          value={head.employee_id}
+                          selected={
+                            evaluators.primary_evaluator === head.employee_id
+                              ? true
+                              : false
+                          }
+                        >
+                          {head.full_name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
               </div>
             </section>
           </div>

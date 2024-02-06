@@ -27,11 +27,6 @@ export default function EmployeeAdd() {
   //const [modal, setModal] = useState("standby");
   const [logModal, setLogModal] = useState("standby");
   const [modalMessage, setModalMessage] = useState("");
-  const [evaluators, setEvaluators] = useState({
-    primary_evaluator: null,
-    secondary_evaluator: null,
-    tertiary_evaluator: null,
-  });
   const [infoChecker, setInfoChecker] = useState([]);
   const [userInformation, setUserInformation] = useState({
     first_name: "",
@@ -58,6 +53,12 @@ export default function EmployeeAdd() {
     contract_type: "",
     hire_date: "",
   });
+  const [evaluators, setEvaluators] = useState({
+    primary_evaluator: null,
+    secondary_evaluator: null,
+    tertiary_evaluator: null,
+  });
+  const employment_type = ["LOCAL", "EXPAT"];
   const salutationList = ["Mr.", "Miss"];
   const contractList = ["regular", "probation", "project based", "consultant"];
   useEffect(() => {
@@ -214,7 +215,7 @@ export default function EmployeeAdd() {
                             };
                           })
                         : object_key === "employment_type"
-                        ? ["LOCAL", "EXPAT"]
+                        ? employment_type
                         : object_key === "contract_type"
                         ? contractList.map((contract) => {
                             return capitalizeSentence(contract);
