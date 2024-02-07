@@ -60,7 +60,7 @@ export default function EmployeeAdd() {
   });
   const employment_type = ["LOCAL", "EXPAT"];
   const salutationList = ["Mr.", "Miss"];
-  const contractList = ["regular", "probation", "project based", "consultant"];
+  const contractList = ["regular", "probationary"];
   useEffect(() => {
     setInfoChecker(userInformationChecker(userInformation, jobInformation));
   }, [userInformation, jobInformation]);

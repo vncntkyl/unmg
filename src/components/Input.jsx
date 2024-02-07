@@ -14,9 +14,8 @@ export default function Input({
   editable,
 }) {
   const { companyList, departmentList, usertypeList } = useAuth();
-  const { splitKey, capitalizeSentence } = useFunction();
+  const { splitKey, caps } = useFunction();
 
-  const jobStatusList = ["Regular", "Probation", "Resigned"];
   const placeholders = {
     first_name: 'Enter First Name',
     middle_name: 'Enter Middle Name',
@@ -53,21 +52,11 @@ export default function Input({
           )}
           defaultValue={
             val
-              ? id === "company"
-                ? companyList.length > 0 &&
-                  companyList.find((comp) => comp.company_id === val)
-                    .company_name
-                : id === "department"
-                ? departmentList.length > 0 &&
-                  departmentList.find((dept) => dept.department_id === val)
-                    .department_name
-                : id === "status" 
-                ? jobStatusList[val]
-                : usertypeList.length > 0 &&
-                  usertypeList.find((u) => u.job_level == val)
-                ? usertypeList.find((u) => u.job_level == val).job_level_name
-                : val
-              : ""
+              ? id === "company" ? companyList.length > 0 && companyList.find((comp) => comp.company_id === val).company_name
+              : id === "department" ? departmentList.length > 0 && departmentList.find((dept) => dept.department_id === val).department_name
+              : id === "job_level" ? usertypeList.length > 0 && usertypeList.find((u) => u.job_level == val).job_level_id
+              : val
+            : ""
           }
           disabled={!editable}
           onChange={(e) => {
@@ -100,18 +89,15 @@ export default function Input({
           <option value="" selected={!val} disabled>
             --Select {splitKey(id)}--
           </option>
-
           {dropdownOptions.map((opt, idx) => {
             if (val) {
               return (id === "company" && opt.company_id === val) ||
                 (id === "department" && opt.department_id === val) ||
-                opt.employee_id === val ||
-                opt.job_level_id === val ||
+                (id === "job_level" && opt.job_level_id === val) ||
                 opt === val ? (
                 <option key={idx} value={val} selected>
                   {opt.company_name ||
                     opt.department_name ||
-                    opt.full_name ||
                     opt.job_level_name ||
                     opt}
                 </option>
@@ -121,8 +107,7 @@ export default function Input({
                   value={
                     (id === "company" && opt.company_id) ||
                     (id === "department" && opt.department_id) ||
-                    opt.employee_id ||
-                    opt.job_level_id ||
+                    (id === "job_level" && opt.job_level_id) ||
                     dropdownOptions.indexOf(opt)
                   }
                 >
@@ -140,8 +125,8 @@ export default function Input({
                   value={
                     (id === "company" && opt.company_id) ||
                     (id === "department" && opt.department_id) ||
+                    (id === "job_level" && opt.job_level_id) ||
                     opt.employee_id ||
-                    opt.job_level_id ||
                     dropdownOptions.indexOf(opt)
                   }
                 >

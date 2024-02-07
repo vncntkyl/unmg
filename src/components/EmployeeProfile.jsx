@@ -35,10 +35,11 @@ export default function EmployeeProfile({ admin }) {
   const [img, setImg] = useState(null);
   const [file, setFile] = useState(null);
   const [editable, setEditable] = useState(false);
+  const [infoChecker, setInfoChecker] = useState([]);
   const [modal, setModal] = useState("standby");
   const employment_type = ["LOCAL", "EXPAT"];
-  const salutationList = ["Mr.", "Miss", "Mrs."];
-  const contractList = ["regular", "probation", "project based", "consultant"];
+  const salutationList = ["Mr.", "Miss."];
+  const contractList = ["Regular", "Probationary"];
   // const userdata = { ...personalInfo, ...jobInfo, ...evaluators };
   // console.log(userdata);
   const handleSubmit = (e) => {
@@ -348,8 +349,8 @@ export default function EmployeeProfile({ admin }) {
                       object_key === "job_level"
                         ? usertypeList.find(
                             (usertype) =>
-                              usertype.job_level_id === jobInfo.job_level || {}
-                          ).job_level_name
+                              usertype.job_level_id === jobInfo.job_level
+                          )?.job_level_id
                         : jobInfo[object_key]
                     }
                     set={setJobInfo}
@@ -391,54 +392,150 @@ export default function EmployeeProfile({ admin }) {
                         : object_key === "employment_type"
                         ? employment_type
                         : object_key === "contract_type"
-                        ? contractList.map((contract) => {
-                            return capitalizeSentence(contract);
-                          })
+                        ? contractList
                         : undefined
                     }
                   />
                 ))}
               </div>
               {/* evaluators */}
-              <div className="flex flex-col gap-2 pt-2">
-                <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
-                  <label className="md:w-1/2">Primary Evaluator</label>
-                  <select
-                    className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
-                    onChange={(e) => {
-                      setEvaluators({
-                        ...evaluators,
-                        primary_evaluator: e.target.value,
-                      });
-                    }}
-                  >
-                    <option value="" disabled>
-                      --Select Primary Evaluator--
-                    </option>
-                    <option
-                      value=""
-                      selected={evaluators.primary_evaluator === "N/A"}
-                    >
-                      None
-                    </option>
-                    {headList.map((head, index) => {
-                      return (
-                        <option
-                          key={index}
-                          value={head.employee_id}
-                          selected={
-                            evaluators.primary_evaluator === head.employee_id
-                              ? true
-                              : false
-                          }
-                        >
-                          {head.full_name}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
-              </div>
+              {console.log(evaluators.primary_evaluator)}
+              {editable ? (
+                <>
+                  {evaluators.primary_evaluator && (
+                    <>
+                      <div className="flex flex-col gap-2 pt-2">
+                        <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
+                          <label className="md:w-1/2">Primary Evaluator</label>
+                          <select
+                            className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+                            onChange={(e) => {
+                              setEvaluators({
+                                ...evaluators,
+                                primary_evaluator: e.target.value,
+                              });
+                            }}
+                          >
+                            <option value="" selected={-1} disabled>
+                              --Select Primary Evaluator--
+                            </option>
+                            <option
+                              value="N/A"
+                              selected={evaluators.primary_evaluator === "N/A"}
+                            >
+                              None
+                            </option>
+                            {headList.map((head, index) => {
+                              return (
+                                <option
+                                  key={index}
+                                  value={head.employee_id}
+                                  selected={
+                                    evaluators.primary_evaluator ===
+                                    head.employee_id
+                                      ? true
+                                      : false
+                                  }
+                                >
+                                  {head.full_name}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                        {evaluators.primary_evaluator !== "N/A" && evaluators.primary_evaluator ? (
+                          <>
+                            <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
+                              <label className="md:w-1/2">
+                                Secondary Evaluator
+                              </label>
+                              <select
+                                className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+                                onChange={(e) => {
+                                  setEvaluators({
+                                    ...evaluators,
+                                    secondary_evaluator: e.target.value,
+                                  });
+                                }}
+                              >
+                                <option value="" selected={-1} disabled>
+                                  --Select Secondary Evaluator--
+                                </option>
+                                <option value="">
+                                  None
+                                </option>
+                                {headList
+                                  .filter(
+                                    (item) =>
+                                      parseInt(item.employee_id) !==
+                                      parseInt(evaluators.primary_evaluator)
+                                  )
+                                  .map((head, index) => {
+                                    return (
+                                      <option
+                                        key={index}
+                                        value={head.employee_id}
+                                      >
+                                        {head.full_name}
+                                      </option>
+                                    );
+                                  })}
+                              </select>
+                            </div>
+                            {evaluators.secondary_evaluator !== "N/A" && evaluators.secondary_evaluator ? (
+                              <>
+                                <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
+                                  <label className="md:w-1/2">
+                                    Tertiary Evaluator
+                                  </label>
+                                  <select
+                                    className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"
+                                    onChange={(e) => {
+                                      setEvaluators({
+                                        ...evaluators,
+                                        tertiary_evaluator: e.target.value,
+                                      });
+                                    }}
+                                  >
+                                    <option value="" selected={-1} disabledZ>
+                                      --Select Tertiary Evaluator--
+                                    </option>
+                                    <option value="">None</option>
+                                    {headList
+                                      .filter(
+                                        (item) =>
+                                          parseInt(item.employee_id) !==
+                                            parseInt(
+                                              evaluators.primary_evaluator
+                                            ) &&
+                                          parseInt(item.employee_id) !==
+                                            parseInt(
+                                              evaluators.secondary_evaluator
+                                            )
+                                      )
+                                      .map((head, index) => {
+                                        return (
+                                          <option
+                                            key={index}
+                                            value={head.employee_id}
+                                          >
+                                            {head.full_name}
+                                          </option>
+                                        );
+                                      })}
+                                  </select>
+                                </div>
+                              </>
+                            ): ""}
+                          </>
+                        ): ""}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                ""
+              )}
             </section>
           </div>
           <div className="flex flex-row py-1 items-center gap-2">
