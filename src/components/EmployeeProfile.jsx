@@ -8,7 +8,7 @@ import Input from "./Input";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
-import Modal from "../misc/Modal";
+import AlertModal from "../misc/AlertModal";
 import { format } from "date-fns";
 export default function EmployeeProfile({ admin }) {
   const { id } = useParams();
@@ -22,8 +22,15 @@ export default function EmployeeProfile({ admin }) {
     uploadProfilePicture,
     currentUser,
   } = useAuth();
-  const { splitKey, reformatName, compareObjectArrays, capitalizeSentence } =
-    useFunction();
+  const {
+    splitKey,
+    reformatName,
+    compareObjectArrays,
+    capitalizeSentence,
+    userInformationChecker,
+    areValuesFilled,
+    caps,
+  } = useFunction();
 
   const redirect_back_link = localStorage.getItem("redirect_back_to");
 
@@ -37,11 +44,13 @@ export default function EmployeeProfile({ admin }) {
   const [editable, setEditable] = useState(false);
   const [infoChecker, setInfoChecker] = useState([]);
   const [modal, setModal] = useState("standby");
+  const [modalMessage, setModalMessage] = useState("");
   const employment_type = ["LOCAL", "EXPAT"];
   const salutationList = ["Mr.", "Miss."];
   const contractList = ["Regular", "Probationary"];
-  // const userdata = { ...personalInfo, ...jobInfo, ...evaluators };
-  // console.log(userdata);
+  useEffect(() => {
+    setInfoChecker(userInformationChecker(personalInfo, jobInfo, evaluators));
+  }, [personalInfo, jobInfo]);
   const handleSubmit = (e) => {
     e.preventDefault();
     let user = [];
@@ -50,7 +59,8 @@ export default function EmployeeProfile({ admin }) {
     } else {
       user = JSON.parse(currentUser);
     }
-    const userdata = { ...personalInfo, ...jobInfo, ...evaluators };
+    const data = caps(personalInfo);
+    const userdata = { ...data, ...jobInfo, ...evaluators };
     setTimeout(() => {
       if (updateUser(userdata, user.users_id)) {
         setEditable(false);
@@ -92,14 +102,16 @@ export default function EmployeeProfile({ admin }) {
             localStorage.setItem("currentUser", JSON.stringify(user));
           }
         }
-        navigate(`/employees/profile/${id}`);
         setModal("success");
+        setModalMessage("Employee profile has been updated successfully!");
+        // navigate(`/employees/profile/${id}`);
       }
     }, 1000);
   };
 
-  const handleDismissal = () => {
+  const handleSuccess = () => {
     setModal("standby");
+    navigate(`/employees/profile/${id}`);
   };
   const handleChange = (evt) => {
     const reader = new FileReader();
@@ -245,7 +257,8 @@ export default function EmployeeProfile({ admin }) {
                 <button
                   onClick={() => {
                     if (uploadProfilePicture(file)) {
-                      setModal("success upload");
+                      setModal("success");
+                      setModalMessage("Employee profile has been updated successfully!");
                       setFile(null);
                     }
                   }}
@@ -345,14 +358,7 @@ export default function EmployeeProfile({ admin }) {
                     }
                     id={object_key}
                     required={!object_key}
-                    val={
-                      object_key === "job_level"
-                        ? usertypeList.find(
-                            (usertype) =>
-                              usertype.job_level_id === jobInfo.job_level
-                          )?.job_level_id
-                        : jobInfo[object_key]
-                    }
+                    val={jobInfo[object_key]}
                     set={setJobInfo}
                     editable={editable}
                     type={
@@ -399,7 +405,6 @@ export default function EmployeeProfile({ admin }) {
                 ))}
               </div>
               {/* evaluators */}
-              {console.log(evaluators.primary_evaluator)}
               {editable ? (
                 <>
                   {evaluators.primary_evaluator && (
@@ -443,7 +448,8 @@ export default function EmployeeProfile({ admin }) {
                             })}
                           </select>
                         </div>
-                        {evaluators.primary_evaluator !== "N/A" && evaluators.primary_evaluator ? (
+                        {evaluators.primary_evaluator !== "N/A" &&
+                        evaluators.primary_evaluator ? (
                           <>
                             <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
                               <label className="md:w-1/2">
@@ -461,9 +467,7 @@ export default function EmployeeProfile({ admin }) {
                                 <option value="" selected={-1} disabled>
                                   --Select Secondary Evaluator--
                                 </option>
-                                <option value="">
-                                  None
-                                </option>
+                                <option value="">None</option>
                                 {headList
                                   .filter(
                                     (item) =>
@@ -482,7 +486,8 @@ export default function EmployeeProfile({ admin }) {
                                   })}
                               </select>
                             </div>
-                            {evaluators.secondary_evaluator !== "N/A" && evaluators.secondary_evaluator ? (
+                            {evaluators.secondary_evaluator !== "N/A" &&
+                            evaluators.secondary_evaluator ? (
                               <>
                                 <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
                                   <label className="md:w-1/2">
@@ -526,9 +531,13 @@ export default function EmployeeProfile({ admin }) {
                                   </select>
                                 </div>
                               </>
-                            ): ""}
+                            ) : (
+                              ""
+                            )}
                           </>
-                        ): ""}
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </>
                   )}
@@ -538,6 +547,36 @@ export default function EmployeeProfile({ admin }) {
               )}
             </section>
           </div>
+          {editable ? (<>
+            {areValuesFilled(personalInfo) &&
+          areValuesFilled(jobInfo) ? (
+            ""
+          ) : (
+            <span className="text-un-red text-[0.8rem]">
+              Please fill out the required fields that have a *
+            </span>
+          )}
+          {infoChecker && (
+            <>
+              {infoChecker.email ||
+              infoChecker.contact_no ||
+              infoChecker.employee_id ? (
+                <div className="text-un-red text-[0.8rem]">
+                  <span>Other fields to be checked:</span>
+                  <ul>
+                    <li>{infoChecker.email && infoChecker.email}</li>
+                    <li>{infoChecker.contact_no && infoChecker.contact_no}</li>
+                    <li>
+                      {infoChecker.employee_id && infoChecker.employee_id}
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                ""
+              )}
+            </>
+          )}
+          </>): ""}
           <div className="flex flex-row py-1 items-center gap-2">
             {editable ? (
               <>
@@ -551,6 +590,16 @@ export default function EmployeeProfile({ admin }) {
                   type="submit"
                   value="Save Changes"
                   className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
+                  disabled={
+                    areValuesFilled(personalInfo) && 
+                    areValuesFilled(jobInfo)
+                      ? infoChecker.email === "" &&
+                        infoChecker.contact_no === "" &&
+                        infoChecker.employee_id === ""
+                        ? false
+                        : true
+                      : true
+                  }
                 />
               </>
             ) : (
@@ -565,26 +614,14 @@ export default function EmployeeProfile({ admin }) {
         </form>
       </div>
       {modal === "success" && (
-        <>
-          <Modal
-            title={"Update Account"}
-            message={`Account has been updated!`}
-            closeModal={setModal}
-            action={"Dismiss"}
-            handleContinue={handleDismissal}
-          />
-        </>
-      )}
-      {modal === "success upload" && (
-        <>
-          <Modal
-            title={"Update Profile Picture"}
-            message={`Profile picture has been updated!`}
-            closeModal={setModal}
-            action={"Dismiss"}
-            handleContinue={handleDismissal}
-          />
-        </>
+        <AlertModal
+          closeModal={setModal}
+          modalType={modal}
+          title={"Edit Employee"}
+          message={modalMessage}
+          continuebutton={"Confirm"}
+          handleContinue={handleSuccess}
+        />
       )}
       <div
         className={classNames(

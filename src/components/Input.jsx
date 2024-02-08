@@ -15,7 +15,6 @@ export default function Input({
 }) {
   const { companyList, departmentList, usertypeList } = useAuth();
   const { splitKey, caps } = useFunction();
-
   const placeholders = {
     first_name: 'Enter First Name',
     middle_name: 'Enter Middle Name',
@@ -54,7 +53,7 @@ export default function Input({
             val
               ? id === "company" ? companyList.length > 0 && companyList.find((comp) => comp.company_id === val).company_name
               : id === "department" ? departmentList.length > 0 && departmentList.find((dept) => dept.department_id === val).department_name
-              : id === "job_level" ? usertypeList.length > 0 && usertypeList.find((u) => u.job_level == val).job_level_id
+              
               : val
             : ""
           }

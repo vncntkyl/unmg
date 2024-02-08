@@ -138,8 +138,9 @@ export function FunctionProvider({ children }) {
       if (
         !isNaN(jobInformation.employee_id) &&
         Number.isInteger(Number(jobInformation.employee_id))
-      ) {
-        if (jobInformation.employee_id.length === 10)
+        ) {
+        // console.log(jobInformation.employee_id.toString().length);
+        if (jobInformation.employee_id.toString().length === 10)
         {
           data = {
             ...data,

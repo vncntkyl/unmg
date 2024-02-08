@@ -24,8 +24,7 @@ export default function EmployeeAdd() {
   } = useFunction();
   const [businessUnits, setBusinessUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
-  //const [modal, setModal] = useState("standby");
-  const [logModal, setLogModal] = useState("standby");
+  const [modal, setModal] = useState("standby");
   const [modalMessage, setModalMessage] = useState("");
   const [infoChecker, setInfoChecker] = useState([]);
   const [userInformation, setUserInformation] = useState({
@@ -71,7 +70,7 @@ export default function EmployeeAdd() {
 
     const userdata = { ...data, ...jobInformation, ...evaluators };
     if (registerUser(userdata)) {
-      setLogModal("success");
+      setModal("success");
       setModalMessage("Employee added successfully!");
     }
   };
@@ -141,7 +140,7 @@ export default function EmployeeAdd() {
                         "nationality",
                       ].includes(object_key)
                     }
-                    clear={logModal === "success"}
+                    clear={modal === "success"}
                     editable={true}
                     type={
                       object_key === "salutation"
@@ -180,7 +179,7 @@ export default function EmployeeAdd() {
                     }
                     id={object_key}
                     required={!object_key}
-                    clear={logModal === "success"}
+                    clear={modal === "success"}
                     set={setJobInformation}
                     editable={true}
                     type={
@@ -370,10 +369,10 @@ export default function EmployeeAdd() {
           />
         </form>
       </div>
-      {logModal === "success" && (
+      {modal === "success" && (
         <AlertModal
-          closeModal={setLogModal}
-          modalType={logModal}
+          closeModal={setModal}
+          modalType={modal}
           title={"Add New Employee"}
           message={modalMessage}
           continuebutton={"Confirm"}
@@ -383,10 +382,10 @@ export default function EmployeeAdd() {
       <div
         className={classNames(
           "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
-          logModal === "standby" && "z-[-1] hidden pointer-events-none"
+          modal === "standby" && "z-[-1] hidden pointer-events-none"
         )}
         onClick={() => {
-          setLogModal("standby");
+          setModal("standby");
         }}
       />
     </>
