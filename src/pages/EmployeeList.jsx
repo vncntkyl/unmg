@@ -8,6 +8,7 @@ import EmployeeProfile from "../components/EmployeeProfile";
 import BulkEmployeeAdd from "../components/BulkEmployeeAdd";
 import { useAuth } from "../context/authContext";
 import classNames from "classnames";
+import EmployeeEdit from "../components/EmployeeEdit";
 
 export default function EmployeeList() {
   const { getPath } = useFunction();
@@ -95,7 +96,7 @@ export default function EmployeeList() {
                   <Route path="/profile/:id" element={<EmployeeProfile />} />
                   <Route
                     path="/profile/:id/edit"
-                    element={<EmployeeProfile />}
+                    element={<EmployeeEdit />}
                   />
                   <Route path="/add" element={<EmployeeAdd />} />
                   <Route path="/batch_add" element={<BulkEmployeeAdd />} />
@@ -105,7 +106,7 @@ export default function EmployeeList() {
                   <Route path="/profile/:id" element={<EmployeeProfile />} />
                   <Route
                     path="/profile/:id/edit"
-                    element={<EmployeeProfile />}
+                    element={<EmployeeEdit />}
                   />
                 </>
               )}

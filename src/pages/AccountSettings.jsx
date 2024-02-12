@@ -7,6 +7,7 @@ import { useFunction } from "../context/FunctionContext";
 import EmployeeProfile from "../components/EmployeeProfile";
 import { useAuth } from "../context/authContext";
 import classNames from "classnames";
+import EmployeeEdit from "../components/EmployeeEdit";
 
 export default function AccountSettings() {
   const { currentUser } = useAuth();
@@ -43,7 +44,7 @@ export default function AccountSettings() {
               />
               <Route
                 path="/:id/edit"
-                element={<EmployeeProfile admin={true} />}
+                element={<EmployeeEdit admin={true} />}
               />
             </Routes>
           </div>
