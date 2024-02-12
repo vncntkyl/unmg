@@ -19,11 +19,7 @@ export default function EmployeeProfile({ admin }) {
     usertypeList,
     uploadProfilePicture,
   } = useAuth();
-  const {
-    splitKey,
-    reformatName,
-    capitalizeSentence,
-  } = useFunction();
+  const { splitKey, reformatName, capitalizeSentence } = useFunction();
   const navigate = useNavigate();
   const [loading, toggleLoading] = useState(true);
   const redirect_back_link = localStorage.getItem("redirect_back_to");
@@ -35,16 +31,14 @@ export default function EmployeeProfile({ admin }) {
   const [userType, setUserType] = useState([]);
   const [img, setImg] = useState(null);
   const [file, setFile] = useState(null);
-  const [editable, setEditable] = useState(false);
   const [modal, setModal] = useState("standby");
   const [modalMessage, setModalMessage] = useState("");
-  
 
   const handleSuccess = () => {
     setModal("standby");
-    navigate(`/account/${id}`);
+    navigate(`/employees/profile/${id}`);
   };
-  
+
   const handleChange = (evt) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -146,18 +140,18 @@ export default function EmployeeProfile({ admin }) {
   ) : (
     <>
       <div className="flex flex-col gap-2">
-        {!admin && (          
-        <a
-          href={redirect_back_link ? redirect_back_link : "/employees"}
-          onClick={() => {
-            if (!redirect_back_link) return;
-            localStorage.removeItem("redirect_back_to");
-          }}
-          className="flex flex-row items-center gap-2 bg-un-blue w-fit text-white text-[.8rem] p-1 pr-2 rounded-md hover:bg-un-blue-light"
-        >
-          <IoChevronBack />
-          <span>Back</span>
-        </a>
+        {!admin && (
+          <a
+            href={redirect_back_link ? redirect_back_link : "/employees"}
+            onClick={() => {
+              if (!redirect_back_link) return;
+              localStorage.removeItem("redirect_back_to");
+            }}
+            className="flex flex-row items-center gap-2 bg-un-blue w-fit text-white text-[.8rem] p-1 pr-2 rounded-md hover:bg-un-blue-light"
+          >
+            <IoChevronBack />
+            <span>Back</span>
+          </a>
         )}
         <span className="text-dark-gray text-[1.2rem] font-semibold">
           {reformatName(id)}
@@ -177,20 +171,12 @@ export default function EmployeeProfile({ admin }) {
                     alt="profile_picture"
                     className="rounded-full aspect-square w-[50%] max-w-[400px] object-cover"
                   />
-                  <RiPencilFill
-                    className={classNames(
-                      "absolute top-0 right-1/4 translate-x-[1/4] opacity-0 group-hover/label:opacity-100 text-[3rem] text-dark-gray bg-white p-1 rounded-full border-4 border-white transition-all"
-                    )}
-                  />
+                  <RiPencilFill className="absolute top-0 right-1/4 translate-x-[1/4] opacity-0 group-hover/label:opacity-100 text-[3rem] text-dark-gray bg-white p-1 rounded-full border-4 border-white transition-all" />
                 </>
               ) : (
                 <>
                   <FaUserCircle />
-                  <RiPencilFill
-                    className={classNames(
-                      "absolute top-0 right-0 opacity-0 group-hover/label:opacity-100 text-[3rem] text-dark-gray bg-white p-1 rounded-full border-4 border-white transition-all"
-                    )}
-                  />
+                  <RiPencilFill className="absolute top-0 right-0 opacity-0 group-hover/label:opacity-100 text-[3rem] text-dark-gray bg-white p-1 rounded-full border-4 border-white transition-all" />
                 </>
               )}
             </label>
@@ -207,7 +193,9 @@ export default function EmployeeProfile({ admin }) {
                   onClick={() => {
                     if (uploadProfilePicture(file)) {
                       setModal("success");
-                      setModalMessage("Employee profile has been updated successfully!");
+                      setModalMessage(
+                        "Employee profile has been updated successfully!"
+                      );
                       setFile(null);
                     }
                   }}
@@ -260,16 +248,24 @@ export default function EmployeeProfile({ admin }) {
                       {splitKey(object_key)}
                     </label>
                     <span className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2">
-                      {
-                      object_key === "company" 
-                      ? businessUnits.length > 0 && businessUnits.find((comp) => comp.company_id === jobInfo[object_key]).company_name
-                      : object_key === "department" 
-                      ? departments.length > 0 && departments.find((dep) => dep.department_id === jobInfo[object_key]).department_name
-                      : object_key === "job_level"
-                      ? userType.length > 0 && userType.find((user) => user.job_level_id === jobInfo[object_key]).job_level_name
-                      : object_key === "hire_date"
-                      ? format(new Date(jobInfo[object_key]), "MMMM d, yyyy")
-                      : jobInfo[object_key]}
+                      {object_key === "company"
+                        ? businessUnits.length > 0 &&
+                          businessUnits.find(
+                            (comp) => comp.company_id === jobInfo[object_key]
+                          ).company_name
+                        : object_key === "department"
+                        ? departments.length > 0 &&
+                          departments.find(
+                            (dep) => dep.department_id === jobInfo[object_key]
+                          ).department_name
+                        : object_key === "job_level"
+                        ? userType.length > 0 &&
+                          userType.find(
+                            (user) => user.job_level_id === jobInfo[object_key]
+                          ).job_level_name
+                        : object_key === "hire_date"
+                        ? format(new Date(jobInfo[object_key]), "MMMM d, yyyy")
+                        : jobInfo[object_key]}
                     </span>
                   </div>
                 ))}
