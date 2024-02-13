@@ -79,7 +79,7 @@ class User extends Controller
         $employment_type = intval($u->employment_type) == 0 ? "LOCAL" : "EXPAT";
         $primary_evaluator = isset($u->primary_evaluator) ? intval($u->primary_evaluator) : NULL;
         $secondary_evaluator = isset($u->secondary_evaluator)? intval($u->secondary_evaluator) : NULL;
-        $tertiary_evaluator = isset($u->secondary_evaluator) ? intval($u->tertiary_evaluator) : NULL;
+        $tertiary_evaluator = isset($u->tertiary_evaluator) ? intval($u->tertiary_evaluator) : NULL;
         $status = 1;
 
         try {

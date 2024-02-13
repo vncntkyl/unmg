@@ -35,12 +35,14 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const registerUser = async (userdata) => {
+  const registerUser = async (userdata, contributor) => {
+    console.log(contributor);
     try {
       let fd = new FormData();
       fd.append("userdata", JSON.stringify(userdata));
+      fd.append("contributor", contributor)
       const response = await axios.post(url.register, fd);
-      console.log(response.data);
+      //console.log(response.data);
       // if (response.data === "success") {
       //   return true;
       // }
