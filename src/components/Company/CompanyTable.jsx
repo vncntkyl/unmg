@@ -83,8 +83,8 @@ export default function CompanyTable({
             <span className="text-dark-gray">Back to Companies</span>
           </button>
           {/* HEADER */}
-          <div className="px-2 grid grid-cols-2 gap-2">
-            <div className="group/title w-max p-1 flex flex-row gap-1">
+          <div className="px-2 grid grid-cols-4 gap-2">
+            <div className="col-span-3 group/title w-max p-1 flex flex-row gap-1">
               {!onEdit ? (
                 <span className="font-semibold">
                   {currentCompany || "United Neon Media Group"}
@@ -119,11 +119,19 @@ export default function CompanyTable({
                 </>
               )}
             </div>
+            <div className="relative flex items-center justify-end">
+              <div className="group">
+                <MdDelete className="peer text-un-red-light text-[1.3rem] cursor-pointer" />
+                  <span className="absolute right-0 hidden group-hover:flex bg-white rounded-md p-1 text-dark-gray">
+                    Delete
+                  </span>
+              </div>
+            </div>
             {/* ADD DEPT */}
             {company > 0 && (
               <>
                 {/* SEARCH */}
-                <div className="col-[1/3] row-[2] flex flex-row items-center gap-2 p-1 bg-white rounded-md">
+                <div className="col-[1/4] row-[2] flex flex-row items-center gap-2 p-1 bg-white rounded-md">
                   <GrFormSearch className="text-[1.3rem]" />
                   <input
                     type="text"
@@ -141,7 +149,7 @@ export default function CompanyTable({
                 <button
                   type="button"
                   onClick={() => toggleModal("add department")}
-                  className="col-[3/4] row-[2] w-full border bg-un-blue-light hover:bg-un-blue rounded-md p-1 text-white text-[.8rem]"
+                  className="row-[2] w-full border bg-un-blue-light hover:bg-un-blue rounded-md p-1 text-white text-[.8rem]"
                 >
                   Add Department
                 </button>
