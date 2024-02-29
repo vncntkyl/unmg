@@ -272,12 +272,7 @@ export default function EmployeeEdit({ admin }) {
             )}
           </div>
           <div className="flex flex-col lg:flex-row gap-4 w-full">
-            <section
-              className={classNames(
-                "w-full lg:w-1/2",
-                editable && "bg-default p-2 rounded-md"
-              )}
-            >
+            <section className="w-full lg:w-1/2 bg-default p-2 rounded-md">
               <span className="font-semibold text-[1.05rem]">
                 Personal Information
               </span>
@@ -328,14 +323,14 @@ export default function EmployeeEdit({ admin }) {
                       object_key === "salutation" ? salutationList : undefined
                     }
                   />
-                ))}
+                ))} 
+
+
+                
               </div>
             </section>
             <section
-              className={classNames(
-                "w-full lg:w-1/2",
-                editable && "bg-default p-2 rounded-md"
-              )}
+              className="w-full lg:w-1/2 bg-default p-2 rounded-md"
             >
               <span className="font-semibold text-[1.05rem]">
                 Job Information

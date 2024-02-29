@@ -66,10 +66,11 @@ export default function EmployeeAdd() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const contributor = JSON.parse(localStorage.getItem("currentUser")).employee_id;
     const data = caps(userInformation);
 
     const userdata = { ...data, ...jobInformation, ...evaluators };
-    if (registerUser(userdata)) {
+    if (registerUser(userdata, contributor)) {
       setModal("success");
       setModalMessage("Employee added successfully!");
     }
@@ -103,7 +104,7 @@ export default function EmployeeAdd() {
           encType="multipart/form-data"
         >
           <div className="flex flex-col lg:flex-row gap-4 w-full">
-            <section className="w-full lg:w-1/2 bg-default p-2 rounded-md">
+            <section className="w-full lg:w-1/2 bg-default p-2 rounded-md shadow">
               <span className="font-semibold text-[1.05rem]">
                 Personal Information
               </span>
