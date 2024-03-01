@@ -10,6 +10,9 @@ export default function CompanyTable({
   setCompanyData,
   setDepartmentID,
   success,
+  setDeleteModal,
+  setCompanyDetails,
+  handleDelete,
 }) {
   const { getBusinessUnits, getDepartments, fetchUsers } = useAuth();
 
@@ -20,7 +23,6 @@ export default function CompanyTable({
   const [query, setQuery] = useState("");
   const [onEdit, toggleEdit] = useState(false);
   const [users, setUsers] = useState([]);
-
   useEffect(() => {
     const setup = async () => {
       const companyList = await getBusinessUnits();
@@ -119,14 +121,27 @@ export default function CompanyTable({
                 </>
               )}
             </div>
-            <div className="relative flex items-center justify-end">
-              <div className="group">
-                <MdDelete className="peer text-un-red-light text-[1.3rem] cursor-pointer" />
+            {company > 0 ? (
+              <div className="relative flex items-center justify-end">
+                <div className="group">
+                  <MdDelete
+                    className="peer text-un-red-light text-[1.3rem] cursor-pointer"
+                    onClick={() => {
+                      setDeleteModal("Delete");
+                      setCompanyDetails({
+                        ID: company,
+                        name: currentCompany,
+                      });
+                    }}
+                  />
                   <span className="absolute right-0 hidden group-hover:flex bg-white rounded-md p-1 text-dark-gray">
                     Delete
                   </span>
+                </div>
               </div>
-            </div>
+            ) : (
+              ""
+            )}
             {/* ADD DEPT */}
             {company > 0 && (
               <>
@@ -199,7 +214,6 @@ export default function CompanyTable({
                             {department.department_name}
                           </td>
                           <td>
-                            {console.log(users)}
                             {users.filter(
                               (user) =>
                                 user.department === department.department_id

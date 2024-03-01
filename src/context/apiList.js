@@ -51,6 +51,7 @@ export const developmentAPIs = {
   userSubmitDiscussion:"http://localhost/unmg_pms/api/userSubmitDiscussion.php",
   userSubmitNewMessage:"http://localhost/unmg_pms/api/userSubmitNewMessage.php",
   userDeleteConversation:"http://localhost/unmg_pms/api/userDeleteConversation.php",
+  userDeleteCompany:"http://localhost/unmg_pms/api/userDeleteCompany.php",
 };
 
 export const releaseAPIs = {
@@ -106,4 +107,5 @@ export const releaseAPIs = {
   userSubmitDiscussion:"../api/userSubmitDiscussion.php",
   userSubmitNewMessage:"../api/userSubmitNewMessage.php",
   userDeleteConversation:"../api/userDeleteConversation.php",
+  userDeleteCompany:"../api/userDeleteCompany.php",
 };

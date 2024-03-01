@@ -61,7 +61,7 @@ export default function EmployeeEdit({ admin }) {
     }
     const data = caps(personalInfo);
     const userdata = { ...data, ...jobInfo, ...evaluators };
-    console.log(userdata)
+    console.log(userdata);
     // setTimeout(() => {
     //   if (updateUser(userdata, user.users_id)) {
     //     setEditable(false);
@@ -259,7 +259,9 @@ export default function EmployeeEdit({ admin }) {
                   onClick={() => {
                     if (uploadProfilePicture(file)) {
                       setModal("success");
-                      setModalMessage("Employee profile has been updated successfully!");
+                      setModalMessage(
+                        "Employee profile has been updated successfully!"
+                      );
                       setFile(null);
                     }
                   }}
@@ -323,15 +325,10 @@ export default function EmployeeEdit({ admin }) {
                       object_key === "salutation" ? salutationList : undefined
                     }
                   />
-                ))} 
-
-
-                
+                ))}
               </div>
             </section>
-            <section
-              className="w-full lg:w-1/2 bg-default p-2 rounded-md"
-            >
+            <section className="w-full lg:w-1/2 bg-default p-2 rounded-md">
               <span className="font-semibold text-[1.05rem]">
                 Job Information
               </span>
@@ -463,7 +460,12 @@ export default function EmployeeEdit({ admin }) {
                                 <option value="" selected={-1} disabled>
                                   --Select Secondary Evaluator--
                                 </option>
-                                <option value="">None</option>
+                                <option
+                                  value="N/A"
+                                  selected={evaluators.secondary_evaluator === "N/A"}
+                                >
+                                  None
+                                </option>
                                 {headList
                                   .filter(
                                     (item) =>
@@ -543,36 +545,41 @@ export default function EmployeeEdit({ admin }) {
               )}
             </section>
           </div>
-          {editable ? (<>
-            {areValuesFilled(personalInfo) &&
-          areValuesFilled(jobInfo) ? (
-            ""
-          ) : (
-            <span className="text-un-red text-[0.8rem]">
-              Please fill out the required fields that have a *
-            </span>
-          )}
-          {infoChecker && (
+          {editable ? (
             <>
-              {infoChecker.email ||
-              infoChecker.contact_no ||
-              infoChecker.employee_id ? (
-                <div className="text-un-red text-[0.8rem]">
-                  <span>Other fields to be checked:</span>
-                  <ul>
-                    <li>{infoChecker.email && infoChecker.email}</li>
-                    <li>{infoChecker.contact_no && infoChecker.contact_no}</li>
-                    <li>
-                      {infoChecker.employee_id && infoChecker.employee_id}
-                    </li>
-                  </ul>
-                </div>
-              ) : (
+              {areValuesFilled(personalInfo) && areValuesFilled(jobInfo) ? (
                 ""
+              ) : (
+                <span className="text-un-red text-[0.8rem]">
+                  Please fill out the required fields that have a *
+                </span>
+              )}
+              {infoChecker && (
+                <>
+                  {infoChecker.email ||
+                  infoChecker.contact_no ||
+                  infoChecker.employee_id ? (
+                    <div className="text-un-red text-[0.8rem]">
+                      <span>Other fields to be checked:</span>
+                      <ul>
+                        <li>{infoChecker.email && infoChecker.email}</li>
+                        <li>
+                          {infoChecker.contact_no && infoChecker.contact_no}
+                        </li>
+                        <li>
+                          {infoChecker.employee_id && infoChecker.employee_id}
+                        </li>
+                      </ul>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </>
               )}
             </>
+          ) : (
+            ""
           )}
-          </>): ""}
           <div className="flex flex-row py-1 items-center gap-2">
             {editable ? (
               <>
@@ -587,8 +594,7 @@ export default function EmployeeEdit({ admin }) {
                   value="Save Changes"
                   className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
                   disabled={
-                    areValuesFilled(personalInfo) && 
-                    areValuesFilled(jobInfo)
+                    areValuesFilled(personalInfo) && areValuesFilled(jobInfo)
                       ? infoChecker.email === "" &&
                         infoChecker.contact_no === "" &&
                         infoChecker.employee_id === ""

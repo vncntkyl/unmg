@@ -4,21 +4,46 @@ import { MdRefresh } from "react-icons/md";
 import CompanyTable from "../components/Company/CompanyTable";
 import { BiImport } from "react-icons/bi";
 import { CompanyModal } from "../misc/CompanyModal";
+import AlertModal from "../misc/AlertModal";
+import ConfirmationModal from "../misc/ConfirmationModal";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import Alert from "../misc/Alert";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { developmentAPIs as url } from "../context/apiList";
 
 export default function CompanyList() {
   document.title =
     "Companies | United Neon Media Group Performance Management System";
   const { currentUser, departmentList } = useAuth();
   const [modal, toggleModal] = useState("standby");
+  const [deleteModal, setDeleteModal] = useState("standby");
+  const [companyDetails, setCompanyDetails] = useState({
+    ID: null,
+    name: "",
+  });
   const [companyData, setCompanyData] = useState(0);
   const [departmentID, setDepartmentID] = useState(null);
   const [successModal, showSuccessModal] = useState("");
   const navigate = useNavigate();
   const userType = JSON.parse(currentUser).user_type;
+
+  const handleContinue = () => {
+    console.log(companyDetails);
+    let fData = new FormData();
+    fData.append("submit", true);
+  fData.append("companyID", companyDetails.ID);
+  fData.append("companyName", companyDetails.name);
+  axios.post(url.userDeleteCompany, fData)
+  .then((response) => {
+    console.log(response.data);
+  })
+  .catch((error) => {
+    console.log(error);
+  })
+    setDeleteModal("standby");
+  }
   return (
     <>
       <section className="relative">
@@ -75,10 +100,27 @@ export default function CompanyList() {
                 setCompanyData={setCompanyData}
                 setDepartmentID={setDepartmentID}
                 success={successModal}
+                setDeleteModal={setDeleteModal}
+                setCompanyDetails={setCompanyDetails}
+                // handleDelete={handleDelete}
               />
             </div>
           </div>
         </div>
+        {deleteModal !== "standby" && (
+          <>
+            <AlertModal
+              closeModal={setDeleteModal}
+              modalType={"confirmation"}
+              title={`Delete ${companyDetails.name}`}
+              message={`Are you sure you want to delete ${companyDetails.name}?`}
+              handleContinue={() => {
+                handleContinue();
+                setDeleteModal("standby");
+              }}
+            />
+          </>
+        )}
         {modal !== "standby" && (
           <>
             <CompanyModal

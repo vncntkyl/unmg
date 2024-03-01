@@ -465,6 +465,14 @@ class Form extends Controller
         return $this->statement->fetchAll();
     }
 
+    function deleteCompany($company_id){
+        $this->setStatement("Update hr_company SET deleted = '1' WHERE company_id = :company_id");
+        $process = $this->statement->execute([':company_id' => $company_id]);
+        if ($process) {
+            return "success";
+        }
+    }
+
 
 
 
