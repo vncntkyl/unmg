@@ -3,7 +3,7 @@ import { BsBuildingAdd } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import CompanyTable from "../components/Company/CompanyTable";
 import { BiImport } from "react-icons/bi";
-import { CompanyModal } from "../misc/CompanyModal";
+import CompanyModal from "../misc/CompanyModal";
 import AlertModal from "../misc/AlertModal";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
@@ -20,6 +20,7 @@ export default function CompanyList() {
   const [deleteModal, setDeleteModal] = useState("standby");
   const [deleteModalSuccess, setDeleteModalSuccess] = useState("standby");
   const [deleteModalData, setDeleteModalData] = useState();
+  console.log(deleteModalData)
   const [companyDetails, setCompanyDetails] = useState({
     ID: null,
     name: "",
@@ -31,23 +32,22 @@ export default function CompanyList() {
   const userType = JSON.parse(currentUser).user_type;
 
   const handleContinue = () => {
-    console.log(companyDetails);
     let fData = new FormData();
     fData.append("submit", true);
-  fData.append("companyID", companyDetails.ID);
-  fData.append("companyName", companyDetails.name);
-  axios.post(url.userDeleteCompany, fData)
-  .then((response) => {
-    setDeleteModalSuccess("success");
-    setDeleteModalData(response.data);
-    console.log(response.data);
-  })
-  .catch((error) => {
-    setDeleteModalSuccess("error");
-    console.log(error);
-  })
+    fData.append("companyID", companyDetails.ID);
+    fData.append("companyName", companyDetails.name);
+    axios
+      .post(url.userDeleteCompany, fData)
+      .then((response) => {
+        setDeleteModalSuccess("success");
+        setDeleteModalData(response.data);
+      })
+      .catch((error) => {
+        setDeleteModalSuccess("error");
+        console.log(error);
+      });
     setDeleteModal("standby");
-  }
+  };
   return (
     <>
       <section className="relative">
@@ -122,9 +122,6 @@ export default function CompanyList() {
                 handleContinue();
                 setDeleteModal("standby");
               }}
-              onClose={() => {
-                navigate(0);
-              }}
             />
           </>
         )}
@@ -133,7 +130,7 @@ export default function CompanyList() {
             <AlertModal
               closeModal={setDeleteModalSuccess}
               modalType={"status"}
-              modalStatus={"success"}
+              modalStatus={deleteModalData.includes("has been deleted!") ? "success" : "error"}
               message={deleteModalData}
               handleContinue={() => {
                 handleContinue();

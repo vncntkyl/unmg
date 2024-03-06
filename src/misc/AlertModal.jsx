@@ -6,6 +6,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { CgDanger } from "react-icons/cg";
 import { RiErrorWarningFill } from "react-icons/ri";
 import { IoIosWarning } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 export default function AlertModal({
   closeModal,
   modalStatus,
@@ -14,8 +15,8 @@ export default function AlertModal({
   title,
   message,
   handleContinue,
-  onClose,
 }) {
+  const navigate = useNavigate();
   return (
     <>
       <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[25] md:min-w-[70%] lg:min-w-[0%]">
@@ -78,7 +79,17 @@ export default function AlertModal({
               )}
               <button
                 className="text-[.7rem] px-1"
-                onClick={() => closeModal("standby")}
+                onClick={() => {
+                  if (modalType === "status") {
+                    if (modalStatus === "error") {
+                      closeModal("standby");
+                    } else {
+                      navigate(0);
+                    }
+                  } else {
+                    closeModal("standby");
+                  }
+                }}
               >
                 <GrClose />
               </button>
@@ -114,7 +125,18 @@ export default function AlertModal({
       </div>
       <div
         className="bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto"
-        onClick={modalType === "status" ? onClose : closeModal("standby")}/>
+        onClick={() => {
+          if (modalType === "status") {
+            if (modalStatus === "error") {
+              closeModal("standby");
+            } else {
+              navigate(0);
+            }
+          } else {
+            closeModal("standby");
+          }
+        }}
+      />
     </>
   );
 }

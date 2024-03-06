@@ -11,12 +11,12 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [companyList, setCompanyList] = useState([]);
+  const [departmentList, setDepartmentList] = useState([]);
   const [headList, setHeadList] = useState([]);
   const [usertypeList, setUsertypeList] = useState([]);
-  const [departmentList, setDepartmentList] = useState([]);
   const [kpiDurations, setKpiDurations] = useState([]);
-  const [companies, setCompanies] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  // const [companies, setCompanies] = useState([]);
+  //const [departments, setDepartments] = useState([]);
   const [globalSettings, setGlobalSettings] = useState([]);
   const [verifyIfEvaluator, setVerifyIfEvaluator] = useState(false);
   const nav = useNavigate();
@@ -383,38 +383,38 @@ export function AuthProvider({ children }) {
       }
     };
 
-    const retrieveCompanies = async () => {
-      const parameters = {
-        params: {
-          companies: true,
-        },
-      };
-      try {
-        const response = await axios.get(url.retrieveCompanies, parameters);
-        setCompanies(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    // const retrieveCompanies = async () => {
+    //   const parameters = {
+    //     params: {
+    //       companies: true,
+    //     },
+    //   };
+    //   try {
+    //     const response = await axios.get(url.retrieveCompanies, parameters);
+    //     setCompanies(response.data);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
 
-    const retrieveDepartments = async () => {
-      const parameters = {
-        params: {
-          departments: true,
-        },
-      };
-      try {
-        const response = await axios.get(url.retrieveDepartments, parameters);
-        setDepartments(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    // const retrieveDepartments = async () => {
+    //   const parameters = {
+    //     params: {
+    //       departments: true,
+    //     },
+    //   };
+    //   try {
+    //     const response = await axios.get(url.retrieveDepartments, parameters);
+    //     setDepartments(response.data);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
 
     getVerifyIfEvaluator();
     retrieveKPIYear();
-    retrieveCompanies();
-    retrieveDepartments();
+    // retrieveCompanies();
+    // retrieveDepartments();
     fetchHeads();
     retrieveUserTypes();
     getGlobalSettings();
@@ -429,8 +429,8 @@ export function AuthProvider({ children }) {
     headList,
     verifyIfEvaluator,
     globalSettings,
-    companies,
-    departments,
+    // companies,
+    // departments,
     nav,
     navigate,
     manageUser,
@@ -443,11 +443,11 @@ export function AuthProvider({ children }) {
     registerUser,
     //registerRole,
     //unassignUser,
-    addDepartment,
     //updateUserRole,
-    getDepartments,
+    addDepartment,
     setCurrentUser,
     getBusinessUnits,
+    getDepartments,
     deleteDepartment,
     uploadProfilePicture,
   };

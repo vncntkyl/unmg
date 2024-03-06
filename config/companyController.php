@@ -24,14 +24,23 @@ class Companies extends Controller
             echo $e->getMessage();
         }
     }
+
     function deleteCompany($company_id)
     {
-        $this->setStatement("Update hr_company SET deleted = '1' WHERE company_id = :company_id");
-        $process = $this->statement->execute([':company_id' => $company_id]);
-        if ($process) {
-            return "success";
+        $this->setStatement("SELECT COUNT(*) AS departments FROM `hr_departments` WHERE company_id = :company_id");
+        $this->statement->execute([':company_id' => $company_id]);
+        $result = $this->statement->fetch();
+        if ($result->departments > 0) {
+            return "Please delete all departments before deleting the company";
+        } else {
+            $this->setStatement("UPDATE hr_company SET deleted = '1' WHERE company_id = :company_id");
+            $process = $this->statement->execute([':company_id' => $company_id]);
+            if ($process) {
+                return "success";
+            }
         }
     }
+
     function retrieveDepartments()
     {
         $this->setStatement("SELECT * FROM `hr_departments`");

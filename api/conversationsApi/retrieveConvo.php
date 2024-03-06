@@ -2,17 +2,17 @@
 header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Origin, Content-Type');
-require_once '../config/formController.php';
-$form = new Form();
+require_once '../../config/conversationController.php';
+$conversation = new Conversation();
 if (isset($_GET['settings'])) {
     if (isset($_GET['employee_id']) && isset($_GET['convo_id'])) {
         $employee_id = $_GET['employee_id'];
         $convo_id = $_GET['convo_id'];
         $convo_type = $_GET['convo_type'];
         if ($convo_type == "user") {
-            echo json_encode($form->selectConvoSettings($employee_id, $convo_id));
+            echo json_encode($conversation->selectConvoSettings($employee_id, $convo_id));
         } else if ($convo_type == "manager") {
-            echo json_encode($form->selectEmployeeConvoSettings($convo_id));
+            echo json_encode($conversation->selectEmployeeConvoSettings($convo_id));
         }
     } else {
         echo "error";
@@ -25,8 +25,8 @@ if (isset($_GET['convo'])) {
         $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 1;
         $itemsPerPage = isset($_GET['itemsPerPage']) ? (int)$_GET['itemsPerPage'] : 10;
         // $offset = ($page - 1) * $itemsPerPage;
-        echo json_encode($form->selectConvo($convo_id, $itemsPerPage, $offset));
-        //echo json_encode($form->selectConvo($convo_id));
+        echo json_encode($conversation->selectConvo($convo_id, $itemsPerPage, $offset));
+        //echo json_encode($conversation->selectConvo($convo_id));
     } else {
         echo "error";
     }

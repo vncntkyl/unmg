@@ -27,8 +27,8 @@ export default function CompanyTable({
     const setup = async () => {
       const companyList = await getBusinessUnits();
       setBusinessUnits(companyList);
-      const departmentList = await getDepartments();
-      setDepartments(departmentList);
+      const department = await getDepartments();
+      setDepartments(department);
       const userList = await fetchUsers();
       setUsers(userList);
     };

@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-require_once '../config/formController.php';
-$submitInbox = new Form();
+require_once '../../config/conversationController.php';
+$conversation = new Conversation();
 
 if (isset($_POST['submit'])) {
     if (isset($_POST['user_id'])) {
@@ -18,12 +18,12 @@ if (isset($_POST['submit'])) {
         $rater_access = 2;
 
         if ($convo_message != null) {
-            $inbox = $submitInbox->insertNewConversation($user_id, $receiver_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin, $rater_access);
+            $inbox = $conversation->insertNewConversation($user_id, $receiver_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin, $rater_access);
             if ($inbox) {
-                // $participants1 = $submitInbox->insertParticipantConversation($inbox, $user_id);
-                // $participants2 = $submitInbox->insertParticipantConversation($inbox, $receiver_id);
+                // $participants1 = $conversation->insertParticipantConversation($inbox, $user_id);
+                // $participants2 = $conversation->insertParticipantConversation($inbox, $receiver_id);
                 // if ($participants1 && $participants2) {
-                    $message = $submitInbox->insertMessage($inbox, $user_id, $message_type = 1, $convo_message);
+                    $message = $conversation->insertMessage($inbox, $user_id, $message_type = 1, $convo_message, $reply_id = 0);
                     if ($message) {
                         if (isset($_FILES['file'])) {
                             $fileCount = count($_FILES['file']['name']);
@@ -66,7 +66,7 @@ if (isset($_POST['submit'])) {
                                 }
                                 $final_name = pathinfo($fullpath, PATHINFO_FILENAME) . "." . pathinfo($fullpath, PATHINFO_EXTENSION);
                                 if (move_uploaded_file($filetempname, $fullpath)) {
-                                    $res = $submitInbox->insertMessage($inbox, $user_id, $message_type, $final_name);
+                                    $res = $conversation->insertMessage($inbox, $user_id, $message_type, $final_name, $reply_id = 0);
                                 }
                             }
                             if ($res) {
@@ -111,12 +111,12 @@ if (isset($_POST['submit'])) {
     //     $convoFile = explode(',', $convo_file);
     // }
     // $see_admin = $_POST['see_admin'];
-    // $inbox = $submitInbox->insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin);
+    // $inbox = $conversation->insertNewConversation($user_id, $convo_type, $selected_quarter, $selected_coach, $convo_agenda, $convo_message, $see_admin);
     // if ($inbox) {
-    //     $participants1 = $submitInbox->insertParticipantConversation($inbox, $user_id);
-    //     $participants2 = $submitInbox->insertParticipantConversation($inbox, $receiver_id);
+    //     $participants1 = $conversation->insertParticipantConversation($inbox, $user_id);
+    //     $participants2 = $conversation->insertParticipantConversation($inbox, $receiver_id);
     //     if ($participants1 && $participants2) {
-    //         $message = $submitInbox->insertMessage($inbox, $user_id, $message_type = 1, $convo_message);
+    //         $message = $conversation->insertMessage($inbox, $user_id, $message_type = 1, $convo_message);
     //         if ($message) {
     //             if ($convo_file != null && $convo_file_type != null) {
     //                 foreach ($convoFile as $index => $file) {
@@ -140,7 +140,7 @@ if (isset($_POST['submit'])) {
     //                                 break;
     //                         }
     //                     }
-    //                     $res = $submitInbox->insertMessage($inbox, $user_id, $message_type, $file);
+    //                     $res = $conversation->insertMessage($inbox, $user_id, $message_type, $file);
     //                 }
     //                 if ($res) {
     //                     echo "Success";
