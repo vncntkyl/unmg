@@ -14,24 +14,31 @@ export default function AlertModal({
   title,
   message,
   handleContinue,
+  onClose,
 }) {
   return (
     <>
       <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[25] md:min-w-[70%] lg:min-w-[0%]">
-        <div className="bg-white rounded-md p-2 transition-all animate-slide-down">
+        <div
+          className={classNames(
+            "bg-white rounded-md transition-all animate-slide-down",
+            modalType === "confirmation" ? "p-2" : ""
+          )}
+        >
           <form>
             {/* TITLE */}
             <div
               className={classNames(
-                "flex flex-row items-center border-b border-gray p-2 rounded-t-md",
-                modalType === "status" ? "justify-end" : "justify-between",
-                modalType === "status"
+                "flex flex-row items-center border-b border-gray py-2 rounded-t-md justify-between",
+                modalType === "confirmation"
+                  ? "px-2"
+                  : modalType === "status"
                   ? modalStatus === "success"
-                    ? "bg-un-green-light"
+                    ? "bg-un-green-light text-un-green px-4"
                     : modalStatus === "error"
-                    ? "bg-un-red-light"
+                    ? "bg-un-red-light text-un-red-dark-1 px-4"
                     : modalStatus === "warning"
-                    ? "bg-un-yellow"
+                    ? "bg-un-yellow text-un-yellow-dark px-4"
                     : ""
                   : ""
               )}
@@ -45,6 +52,27 @@ export default function AlertModal({
                   <CgDanger />
                   {title}
                 </span>
+              ) : modalType === "status" ? (
+                <>
+                  {modalStatus === "error" ? (
+                    <span className="flex items-center gap-2">
+                      <RiErrorWarningFill />
+                      Error!
+                    </span>
+                  ) : modalStatus === "success" ? (
+                    <span className="flex items-center gap-2">
+                      <FaCheckCircle />
+                      Success!
+                    </span>
+                  ) : modalStatus === "warning" ? (
+                    <span className="flex items-center gap-2">
+                      <CgDanger />
+                      Warning!
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </>
               ) : (
                 ""
               )}
@@ -57,56 +85,36 @@ export default function AlertModal({
             </div>
             {/* MESSAGE */}
             <div className="flex flex-col items-center">
-              {/* modalStatus === "success"
-                      ? "text-un-green"
-                      : modalStatus === "error"
-                      ? "text-un-red-dark-1"
-                      : modalStatus === "warning"
-                      ? "text-un-yellow-dark"
-                      : "" 
-                      
-                  {modalStatus === "error" ? (
-                    <RiErrorWarningFill />
-                  ) : modalStatus === "success" ? (
-                    <FaCheckCircle />
-                  ) : modalStatus === "warning" ? (
-                    <CgDanger />
-                  ) : (
-                    ""
-                  )}
-                      
-                      
-                      */}
-
-              <div className="w-full my-2 px-2">{message}</div>
+              <div className="w-full my-2 p-2">{message}</div>
             </div>
             {/* FOOTER */}
-            {modalType === "confirmation" && (<div className="flex flex-row items-center justify-end gap-4 p-2">
-              <button
-                className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-gray hover:border-gray"
-                onClick={() => closeModal("standby")}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  modalStatus === "error"
-                    ? closeModal("standby")
-                    : handleContinue();
-                }}
-                className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
-              >
-                Confirm
-              </button>
-            </div>)}
+            {modalType === "confirmation" && (
+              <div className="flex flex-row items-center justify-end gap-4 p-2">
+                <button
+                  className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-gray hover:border-gray"
+                  onClick={() => closeModal("standby")}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    modalStatus === "error"
+                      ? closeModal("standby")
+                      : handleContinue();
+                  }}
+                  className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
+                >
+                  Confirm
+                </button>
+              </div>
+            )}
           </form>
         </div>
       </div>
       <div
         className="bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto"
-        onClick={() => closeModal("standby")}
-      />
+        onClick={modalType === "status" ? onClose : closeModal("standby")}/>
     </>
   );
 }

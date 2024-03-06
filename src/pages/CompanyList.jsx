@@ -5,7 +5,6 @@ import CompanyTable from "../components/Company/CompanyTable";
 import { BiImport } from "react-icons/bi";
 import { CompanyModal } from "../misc/CompanyModal";
 import AlertModal from "../misc/AlertModal";
-import ConfirmationModal from "../misc/ConfirmationModal";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import Alert from "../misc/Alert";
@@ -19,6 +18,8 @@ export default function CompanyList() {
   const { currentUser, departmentList } = useAuth();
   const [modal, toggleModal] = useState("standby");
   const [deleteModal, setDeleteModal] = useState("standby");
+  const [deleteModalSuccess, setDeleteModalSuccess] = useState("standby");
+  const [deleteModalData, setDeleteModalData] = useState();
   const [companyDetails, setCompanyDetails] = useState({
     ID: null,
     name: "",
@@ -37,9 +38,12 @@ export default function CompanyList() {
   fData.append("companyName", companyDetails.name);
   axios.post(url.userDeleteCompany, fData)
   .then((response) => {
+    setDeleteModalSuccess("success");
+    setDeleteModalData(response.data);
     console.log(response.data);
   })
   .catch((error) => {
+    setDeleteModalSuccess("error");
     console.log(error);
   })
     setDeleteModal("standby");
@@ -114,6 +118,23 @@ export default function CompanyList() {
               modalType={"confirmation"}
               title={`Delete ${companyDetails.name}`}
               message={`Are you sure you want to delete ${companyDetails.name}?`}
+              handleContinue={() => {
+                handleContinue();
+                setDeleteModal("standby");
+              }}
+              onClose={() => {
+                navigate(0);
+              }}
+            />
+          </>
+        )}
+        {deleteModalSuccess !== "standby" && (
+          <>
+            <AlertModal
+              closeModal={setDeleteModalSuccess}
+              modalType={"status"}
+              modalStatus={"success"}
+              message={deleteModalData}
               handleContinue={() => {
                 handleContinue();
                 setDeleteModal("standby");

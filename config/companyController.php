@@ -4,7 +4,7 @@ class Companies extends Controller
 {
     function retrieveCompany()
     {
-        $this->setStatement("SELECT * FROM `hr_company`");
+        $this->setStatement("SELECT * FROM `hr_company` WHERE deleted = 0");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -22,6 +22,14 @@ class Companies extends Controller
             return $this->statement->execute();
         } catch (PDOException $e) {
             echo $e->getMessage();
+        }
+    }
+    function deleteCompany($company_id)
+    {
+        $this->setStatement("Update hr_company SET deleted = '1' WHERE company_id = :company_id");
+        $process = $this->statement->execute([':company_id' => $company_id]);
+        if ($process) {
+            return "success";
         }
     }
     function retrieveDepartments()
