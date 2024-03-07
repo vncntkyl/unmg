@@ -10,12 +10,11 @@ export default function CompanyTable({
   setCompanyData,
   setDepartmentID,
   success,
-  setDeleteModal,
+  setDeleteCompanyModal,
   setCompanyDetails,
   handleDelete,
 }) {
   const { getBusinessUnits, getDepartments, fetchUsers } = useAuth();
-
   const [departments, setDepartments] = useState([]);
   const [businessUnits, setBusinessUnits] = useState([]);
   const [company, setCompany] = useState(0);
@@ -23,6 +22,12 @@ export default function CompanyTable({
   const [query, setQuery] = useState("");
   const [onEdit, toggleEdit] = useState(false);
   const [users, setUsers] = useState([]);
+  const [deleteDepartmentModal, setDeleteDepartmentModal] = useState("standby");
+  const [deleteDepartmentData, setDeleteDepartmentData] = useState({
+    ID: null,
+    department: "",
+  });
+  console.log(deleteDepartmentData);
   useEffect(() => {
     const setup = async () => {
       const companyList = await getBusinessUnits();
@@ -127,7 +132,7 @@ export default function CompanyTable({
                   <MdDelete
                     className="peer text-un-red-light text-[1.3rem] cursor-pointer"
                     onClick={() => {
-                      setDeleteModal("Delete");
+                      setDeleteCompanyModal("Delete");
                       setCompanyDetails({
                         ID: company,
                         name: currentCompany,
@@ -240,8 +245,11 @@ export default function CompanyTable({
                           <td>
                             <button
                               onClick={() => {
-                                setDepartmentID(department.department_id);
-                                toggleModal("delete");
+                                // setDepartmentID(department.department_id);
+                                setDeleteDepartmentData({
+                                  ID: department.department_id,
+                                  department: department.department_name,
+                                })
                               }}
                             >
                               <MdDelete className="text-un-red-light" />

@@ -17,10 +17,9 @@ export default function CompanyList() {
     "Companies | United Neon Media Group Performance Management System";
   const { currentUser, departmentList } = useAuth();
   const [modal, toggleModal] = useState("standby");
-  const [deleteModal, setDeleteModal] = useState("standby");
+  const [deleteCompanyModal, setDeleteCompanyModal] = useState("standby");
   const [deleteModalSuccess, setDeleteModalSuccess] = useState("standby");
   const [deleteModalData, setDeleteModalData] = useState();
-  console.log(deleteModalData)
   const [companyDetails, setCompanyDetails] = useState({
     ID: null,
     name: "",
@@ -46,7 +45,7 @@ export default function CompanyList() {
         setDeleteModalSuccess("error");
         console.log(error);
       });
-    setDeleteModal("standby");
+    setDeleteCompanyModal("standby");
   };
   return (
     <>
@@ -104,23 +103,23 @@ export default function CompanyList() {
                 setCompanyData={setCompanyData}
                 setDepartmentID={setDepartmentID}
                 success={successModal}
-                setDeleteModal={setDeleteModal}
+                setDeleteCompanyModal={setDeleteCompanyModal}
                 setCompanyDetails={setCompanyDetails}
                 // handleDelete={handleDelete}
               />
             </div>
           </div>
         </div>
-        {deleteModal !== "standby" && (
+        {deleteCompanyModal !== "standby" && (
           <>
             <AlertModal
-              closeModal={setDeleteModal}
+              closeModal={setDeleteCompanyModal}
               modalType={"confirmation"}
               title={`Delete ${companyDetails.name}`}
               message={`Are you sure you want to delete ${companyDetails.name}?`}
               handleContinue={() => {
                 handleContinue();
-                setDeleteModal("standby");
+                setDeleteCompanyModal("standby");
               }}
             />
           </>
@@ -134,7 +133,7 @@ export default function CompanyList() {
               message={deleteModalData}
               handleContinue={() => {
                 handleContinue();
-                setDeleteModal("standby");
+                setDeleteCompanyModal("standby");
               }}
             />
           </>
@@ -169,6 +168,7 @@ export default function CompanyList() {
         )}
         {successModal !== "" && (
           <>
+
             <Alert
               type="success"
               onClose={() => {
