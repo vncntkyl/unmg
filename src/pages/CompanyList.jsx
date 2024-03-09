@@ -17,20 +17,32 @@ export default function CompanyList() {
     "Companies | United Neon Media Group Performance Management System";
   const { currentUser, departmentList } = useAuth();
   const [modal, toggleModal] = useState("standby");
+
   const [deleteCompanyModal, setDeleteCompanyModal] = useState("standby");
-  const [deleteModalSuccess, setDeleteModalSuccess] = useState("standby");
-  const [deleteModalData, setDeleteModalData] = useState();
+  const [deleteCompanyModalSuccess, setDeleteCompanyModalSuccess] =
+    useState("standby");
+  const [deleteCompanyModalData, setDeleteCompanyModalData] = useState();
   const [companyDetails, setCompanyDetails] = useState({
     ID: null,
     name: "",
   });
+
+  const [deleteDepartmentModal, setDeleteDepartmentModal] = useState("standby");
+  const [deleteDepartmentSuccess, setDeleteDepartmentSuccess] =
+    useState("standby");
+  const [deleteDepartmentModalData, setDeleteDepartmentModalData] = useState();
+  const [departmentDetails, setDepartmentDetails] = useState({
+    ID: null,
+    department: "",
+  });
+
   const [companyData, setCompanyData] = useState(0);
   const [departmentID, setDepartmentID] = useState(null);
   const [successModal, showSuccessModal] = useState("");
   const navigate = useNavigate();
   const userType = JSON.parse(currentUser).user_type;
 
-  const handleContinue = () => {
+  const handleCompanyDeleteContinue = () => {
     let fData = new FormData();
     fData.append("submit", true);
     fData.append("companyID", companyDetails.ID);
@@ -38,14 +50,30 @@ export default function CompanyList() {
     axios
       .post(url.userDeleteCompany, fData)
       .then((response) => {
-        setDeleteModalSuccess("success");
-        setDeleteModalData(response.data);
+        setDeleteCompanyModalSuccess("success");
+        setDeleteCompanyModalData(response.data);
       })
       .catch((error) => {
-        setDeleteModalSuccess("error");
+        setDeleteCompanyModalSuccess("error");
         console.log(error);
       });
     setDeleteCompanyModal("standby");
+  };
+  const handleDepartmentDeleteContinue = () => {
+    let fdata = new FormData();
+    fdata.append("submit", true);
+    fdata.append("departmentID", departmentDetails.ID);
+    fdata.append("departmentName", departmentDetails.department);
+    axios
+      .post(url.userDeleteDepartment, fdata)
+      .then((response) => {
+        setDeleteDepartmentSuccess("success");
+        setDeleteDepartmentModalData(response.data);
+      })
+      .catch((error) => {
+        setDeleteDepartmentSuccess("error");
+        console.log(error);
+      });
   };
   return (
     <>
@@ -69,7 +97,7 @@ export default function CompanyList() {
               <div className="flex flex-row gap-2 items-center justify-evenly md:w-2/3 xl:w-1/2">
                 <button
                   type="button"
-                  className=" w-1/3 flex justify-center items-center gap-2 bg-default hover:bg-default-dark rounded-md p-1 md:w-full"
+                  className=" w-1/2 flex justify-center items-center gap-2 bg-default hover:bg-default-dark rounded-md p-1 md:w-full"
                 >
                   <MdRefresh />
                   <span className="text-[.8rem] md:text-[.9rem] lg:whitespace-nowrap">
@@ -79,20 +107,11 @@ export default function CompanyList() {
                 <button
                   type="button"
                   onClick={() => toggleModal("add company")}
-                  className="w-1/3 flex items-center justify-center gap-2 border bg-un-blue-light hover:bg-un-blue rounded-md p-1 text-white md:w-full"
+                  className="w-1/2 flex items-center justify-center gap-2 border bg-un-blue-light hover:bg-un-blue rounded-md p-1 text-white md:w-full"
                 >
                   <BsBuildingAdd className="hidden md:block" />
                   <span className="text-[.8rem] md:text-[.9rem] whitespace-nowrap">
                     Add Company
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="w-1/3 flex items-center justify-center gap-2 border bg-un-blue-light hover:bg-un-blue rounded-md p-1 px-2 text-white md:w-full"
-                >
-                  <BiImport className="hidden md:block" />
-                  <span className="text-[.8rem] md:text-[.9rem] whitespace-nowrap">
-                    Import Company
                   </span>
                 </button>
               </div>
@@ -105,6 +124,8 @@ export default function CompanyList() {
                 success={successModal}
                 setDeleteCompanyModal={setDeleteCompanyModal}
                 setCompanyDetails={setCompanyDetails}
+                setDeleteDepartmentModal={setDeleteDepartmentModal}
+                setDepartmentDetails={setDepartmentDetails}
                 // handleDelete={handleDelete}
               />
             </div>
@@ -118,22 +139,58 @@ export default function CompanyList() {
               title={`Delete ${companyDetails.name}`}
               message={`Are you sure you want to delete ${companyDetails.name}?`}
               handleContinue={() => {
-                handleContinue();
+                handleCompanyDeleteContinue();
                 setDeleteCompanyModal("standby");
               }}
             />
           </>
         )}
-        {deleteModalSuccess !== "standby" && (
+        {deleteCompanyModalSuccess !== "standby" && (
           <>
             <AlertModal
-              closeModal={setDeleteModalSuccess}
+              closeModal={setDeleteCompanyModalSuccess}
               modalType={"status"}
-              modalStatus={deleteModalData.includes("has been deleted!") ? "success" : "error"}
-              message={deleteModalData}
+              modalStatus={
+                deleteCompanyModalData.includes("has been deleted!")
+                  ? "success"
+                  : "error"
+              }
+              message={deleteCompanyModalData}
               handleContinue={() => {
-                handleContinue();
+                handleCompanyDeleteContinue();
                 setDeleteCompanyModal("standby");
+              }}
+            />
+          </>
+        )}
+        {deleteDepartmentModal !== "standby" && (
+          <>
+            <AlertModal
+              closeModal={setDeleteDepartmentModal}
+              modalType={"confirmation"}
+              title={`Delete ${departmentDetails.department} department?`}
+              message={`Are you sure you want to delete ${departmentDetails.department} department?`}
+              handleContinue={() => {
+                handleDepartmentDeleteContinue();
+                setDeleteDepartmentModal("standby");
+              }}
+            />
+          </>
+        )}
+        {deleteDepartmentSuccess !== "standby" && (
+          <>
+            <AlertModal
+              closeModal={deleteDepartmentModalData}
+              modalType={"status"}
+              modalStatus={
+                deleteDepartmentModalData.includes("has been deleted!")
+                  ? "success"
+                  : "error"
+              }
+              message={deleteDepartmentModalData}
+              handleContinue={() => {
+                handleDepartmentDeleteContinue();
+                setDeleteDepartmentModal("standby");
               }}
             />
           </>
@@ -168,7 +225,6 @@ export default function CompanyList() {
         )}
         {successModal !== "" && (
           <>
-
             <Alert
               type="success"
               onClose={() => {

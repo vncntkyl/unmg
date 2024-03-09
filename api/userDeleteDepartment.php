@@ -6,12 +6,12 @@ require_once '../config/companyController.php';
 $deleteConversation = new Companies();
 
 if (isset($_POST['submit'])) {
-    if (isset($_POST['companyID']) && isset($_POST['companyName'])) {
-        $company_id = $_POST['companyID'];
-        $company_name = $_POST['companyName'];
-        $result = $deleteConversation->deleteCompany($company_id);
+    if (isset($_POST['departmentID']) && isset($_POST['departmentName'])) {
+        $department_id = $_POST['departmentID'];
+        $department_name = $_POST['departmentName'];
+        $result = $deleteConversation->deleteDepartment($department_id);
         if ($result === "success") {
-            echo "The company " . $company_name . " has been deleted!";
+            echo "The department " . $department_name . " has been deleted! Please set a new department for the employees.";
         } else {
             echo $result;
         }

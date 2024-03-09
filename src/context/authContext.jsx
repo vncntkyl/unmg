@@ -12,7 +12,6 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [companyList, setCompanyList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
-  console.log(departmentList);
   const [headList, setHeadList] = useState([]);
   const [usertypeList, setUsertypeList] = useState([]);
   const [kpiDurations, setKpiDurations] = useState([]);
@@ -148,7 +147,6 @@ export function AuthProvider({ children }) {
         },
       });
       if (response.status === 200) {
-        console.log(response.data)
         return response.data;
       }
     } catch (error) {

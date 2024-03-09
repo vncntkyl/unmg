@@ -5,6 +5,7 @@ import { GrFormNext, GrFormPrevious, GrFormSearch } from "react-icons/gr";
 import { AiOutlineEdit } from "react-icons/ai";
 import OutsideTrigger from "../OutsideTrigger";
 import { MdDelete } from "react-icons/md";
+import AlertModal from "../../misc/AlertModal";
 export default function CompanyTable({
   toggleModal,
   setCompanyData,
@@ -12,6 +13,8 @@ export default function CompanyTable({
   success,
   setDeleteCompanyModal,
   setCompanyDetails,
+  setDeleteDepartmentModal,
+  setDepartmentDetails,
   handleDelete,
 }) {
   const { getBusinessUnits, getDepartments, fetchUsers } = useAuth();
@@ -22,12 +25,7 @@ export default function CompanyTable({
   const [query, setQuery] = useState("");
   const [onEdit, toggleEdit] = useState(false);
   const [users, setUsers] = useState([]);
-  const [deleteDepartmentModal, setDeleteDepartmentModal] = useState("standby");
-  const [deleteDepartmentData, setDeleteDepartmentData] = useState({
-    ID: null,
-    department: "",
-  });
-  console.log(deleteDepartmentData);
+  
   useEffect(() => {
     const setup = async () => {
       const companyList = await getBusinessUnits();
@@ -39,7 +37,6 @@ export default function CompanyTable({
     };
     setup();
   }, []);
-
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-2 py-2">
@@ -245,8 +242,8 @@ export default function CompanyTable({
                           <td>
                             <button
                               onClick={() => {
-                                // setDepartmentID(department.department_id);
-                                setDeleteDepartmentData({
+                                setDeleteDepartmentModal("Delete Department");
+                                setDepartmentDetails({
                                   ID: department.department_id,
                                   department: department.department_name,
                                 })

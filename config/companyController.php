@@ -43,7 +43,7 @@ class Companies extends Controller
 
     function retrieveDepartments()
     {
-        $this->setStatement("SELECT * FROM `hr_departments`");
+        $this->setStatement("SELECT * FROM `hr_departments` WHERE deleted = 0");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }
@@ -74,9 +74,17 @@ class Companies extends Controller
         $this->statement->execute([':deptID' => $departmentID]);
         return true;
     }
+
     function deleteDepartment($departmentID)
     {
-        $this->setStatement("UPDATE `hr_departments` SET deleted = 1 WHERE department_id = ?");
-        return $this->statement->execute([$departmentID]);
+        $this->setStatement("UPDATE hr_departments
+        JOIN hr_users ON hr_users.department = hr_departments.department_id
+        SET hr_departments.deleted = 1, hr_users.department = 0
+        WHERE hr_departments.department_id = :departmentID
+        AND hr_users.department = :departmentID");
+        $process = $this->statement->execute([':departmentID' => $departmentID]);
+        if ($process) {
+            return "success";
+        }
     }
 }

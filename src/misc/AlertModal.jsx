@@ -19,7 +19,7 @@ export default function AlertModal({
   const navigate = useNavigate();
   return (
     <>
-      <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[25] md:min-w-[70%] lg:min-w-[0%]">
+      <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[50] md:min-w-[70%] lg:min-w-[0%]">
         <div
           className={classNames(
             "bg-white rounded-md transition-all animate-slide-down",
@@ -78,6 +78,7 @@ export default function AlertModal({
                 ""
               )}
               <button
+              type="button"
                 className="text-[.7rem] px-1"
                 onClick={() => {
                   if (modalType === "status") {
@@ -102,6 +103,7 @@ export default function AlertModal({
             {modalType === "confirmation" && (
               <div className="flex flex-row items-center justify-end gap-4 p-2">
                 <button
+                type="button"
                   className="text-dark-gray border border-dark-gray p-1 px-2 rounded-md text-[.9rem] hover:text-gray hover:border-gray"
                   onClick={() => closeModal("standby")}
                 >
