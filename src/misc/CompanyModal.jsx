@@ -5,16 +5,14 @@ import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { useAuth } from "../context/authContext";
 
 export default function CompanyModal({
-  alert,
   title,
   action,
   closeModal,
   companyData,
-  departmentID,
   departmentList,
   toggleSuccessModal,
 }) {
-  const { addCompany, addDepartment, deleteDepartment } = useAuth();
+  const { addCompany, addDepartment, currentUser } = useAuth();
   const { capitalize, capitalizeSentence } = useFunction();
 
   const [companyName, setCompanyName] = useState(
@@ -27,13 +25,6 @@ export default function CompanyModal({
           .map((item) => ({ department_name: item.department_name }))
       : []
   );
-
-  const handleDelete = () => {
-    if (deleteDepartment(departmentID)) {
-      closeModal("standby");
-      toggleSuccessModal("Department has been deleted successfully.");
-    }
-  };
   const handleContinue = () => {
     if (title === "add company") {
       const company_data = {
@@ -44,7 +35,7 @@ export default function CompanyModal({
           }),
         ],
       };
-      if (addCompany(company_data)) {
+      if (addCompany(company_data, JSON.parse(currentUser).employee_id)) {
         closeModal("standby");
         toggleSuccessModal("Company has been added successfully.");
       }
@@ -73,8 +64,8 @@ export default function CompanyModal({
       });
 
       const company_id = companyData.company_id;
-
-      if (addDepartment(company_id, newDepartments)) {
+      const company_name = companyData.company_name;
+      if (addDepartment(company_id, company_name, newDepartments, JSON.parse(currentUser).employee_id)) {
         closeModal("standby");
         toggleSuccessModal("Department has been added successfully.");
       }
@@ -91,6 +82,7 @@ export default function CompanyModal({
       ];
     });
   };
+  
   const removeDepartmentList = (index) => {
     setDepartments((prevDepartmentList) => {
       const updatedDepartments = [...prevDepartmentList];
@@ -116,134 +108,116 @@ export default function CompanyModal({
         </div>
         {/* MESSAGE */}
         <div className="py-2">
-          {alert ? (
-            <>
-              <span>
-                Are you sure you want to delete{" "}
-                <span className="font-semibold">
-                  {
-                    departmentList.find(
-                      (dept) => dept.department_id === departmentID
-                    ).department_name
-                  }
-                </span>{" "}
-                department ?
-              </span>
-            </>
-          ) : (
-            <form className="flex flex-col gap-2">
-              <div className="bg-default p-2 rounded-md">
-                <label htmlFor="company_name" className="font-semibold">
-                  Company Name:{" "}
-                </label>
-                {companyData ? (
-                  <span>{companyData.company_name}</span>
-                ) : (
-                  <input
-                    className="bg-white p-1 rounded outline-none"
-                    type="text"
-                    id="company_name"
-                    onChange={(e) => {
-                      if (
-                        e.target.value.length !== 0 &&
-                        departments.length === 0
-                      ) {
-                        setDepartments([
-                          {
-                            department_name: "",
-                          },
-                        ]);
-                      }
-                      setCompanyName(e.target.value);
-                    }}
-                  />
+          <form className="flex flex-col gap-2">
+            <div className="bg-default p-2 rounded-md">
+              <label htmlFor="company_name" className="font-semibold">
+                Company Name:{" "}
+              </label>
+              {companyData ? (
+                <span>{companyData.company_name}</span>
+              ) : (
+                <input
+                  className="bg-white p-1 rounded outline-none"
+                  type="text"
+                  id="company_name"
+                  onChange={(e) => {
+                    if (
+                      e.target.value.length !== 0 &&
+                      departments.length === 0
+                    ) {
+                      setDepartments([
+                        {
+                          department_name: "",
+                        },
+                      ]);
+                    }
+                    setCompanyName(e.target.value);
+                  }}
+                />
+              )}
+            </div>
+            <div className="bg-default p-2 rounded-md">
+              {/* department multiple inputs */}
+              <div className="flex flex-row gap-2 items-center">
+                <span className="font-semibold">Add Department/s: </span>
+                {departments.length === 0 && (
+                  <button type="button" onClick={() => appendEmptyInput()}>
+                    <AiOutlinePlus />
+                  </button>
                 )}
               </div>
-              <div className="bg-default p-2 rounded-md">
-                {/* department multiple inputs */}
-                <div className="flex flex-row gap-2 items-center">
-                  <span className="font-semibold">Add Department/s: </span>
-                  {departments.length === 0 && (
-                    <button type="button" onClick={() => appendEmptyInput()}>
-                      <AiOutlinePlus />
-                    </button>
-                  )}
-                </div>
-                <div>
-                  <div className="flex flex-col gap-2 py-1">
-                    {departments.map((dept, index) => {
-                      return (
-                        <>
-                          <div className="flex flex-row items-center gap-1 pl-2">
-                            <div className="w-[20px] h-[20px] border-[2px] border-t-0 border-r-0 rounded-bl-lg border-gray top-[-50%] translate-y-[-50%]" />
-                            <input
-                              type="text"
-                              className="p-1 rounded outline-none"
-                              placeholder="Enter department name"
-                              value={dept.department_name}
-                              disabled={
-                                title === "add department" &&
-                                departmentList.find(
-                                  (d) =>
-                                    d.department_name ===
-                                      dept.department_name &&
-                                    d.company_id === companyData.company_id
-                                )
-                              }
-                              onChange={(e) => {
-                                const updatedDepartments = [...departments];
-                                updatedDepartments[index] = {
-                                  ...updatedDepartments[index],
-                                  department_name: e.target.value,
-                                };
-                                setDepartments(updatedDepartments);
-                              }}
-                            />
-                            <div className="flex flex-row gap-2 items-center px-1">
-                              {departments.length !== 1 && (
-                                <>
-                                  <button
-                                    type="button"
-                                    className={
-                                      title === "add department" &&
-                                      departmentList.find(
-                                        (d) =>
-                                          d.department_name ===
-                                            dept.department_name &&
-                                          d.company_id ===
-                                            companyData.company_id
-                                      ) &&
-                                      "hidden"
-                                    }
-                                    onClick={() => {
-                                      removeDepartmentList(index);
-                                    }}
-                                  >
-                                    <AiOutlineMinus />
-                                  </button>
-                                </>
-                              )}
-                              {index === departments.length - 1 &&
-                              dept.department_name.length > 0 ? (
+              <div>
+                <div className="flex flex-col gap-2 py-1">
+                  {departments.map((dept, index) => {
+                    return (
+                      <>
+                        <div className="flex flex-row items-center gap-1 pl-2">
+                          <div className="w-[20px] h-[20px] border-[2px] border-t-0 border-r-0 rounded-bl-lg border-gray top-[-50%] translate-y-[-50%]" />
+                          <input
+                            type="text"
+                            className="p-1 rounded outline-none"
+                            placeholder="Enter department name"
+                            value={dept.department_name}
+                            disabled={
+                              title === "add department" &&
+                              departmentList.find(
+                                (d) =>
+                                  d.department_name === dept.department_name &&
+                                  d.company_id === companyData.company_id
+                              )
+                            }
+                            onChange={(e) => {
+                              const updatedDepartments = [...departments];
+                              updatedDepartments[index] = {
+                                ...updatedDepartments[index],
+                                department_name: e.target.value,
+                              };
+                              setDepartments(updatedDepartments);
+                            }}
+                          />
+                          <div className="flex flex-row gap-2 items-center px-1">
+                            {departments.length !== 1 && (
+                              <>
                                 <button
                                   type="button"
-                                  onClick={() => appendEmptyInput()}
+                                  className={
+                                    title === "add department" &&
+                                    departmentList.find(
+                                      (d) =>
+                                        d.department_name ===
+                                          dept.department_name &&
+                                        d.company_id === companyData.company_id
+                                    ) &&
+                                    "hidden"
+                                  }
+                                  onClick={() => {
+                                    removeDepartmentList(index);
+                                  }}
                                 >
-                                  <AiOutlinePlus />
+                                  <AiOutlineMinus />
                                 </button>
-                              ) : (
-                                <></>
-                              )}
-                            </div>
+                              </>
+                            )}
+                            {index === departments.length - 1 &&
+                            dept.department_name.length > 0 ? (
+                              <button
+                                type="button"
+                                onClick={() => appendEmptyInput()}
+                              >
+                                <AiOutlinePlus />
+                              </button>
+                            ) : (
+                              <></>
+                            )}
                           </div>
-                        </>
-                      );
-                    })}
-                  </div>
+                        </div>
+                      </>
+                    );
+                  })}
                 </div>
               </div>
-            </form>
-          )}
+            </div>
+          </form>
         </div>
         {/* FOOTER */}
         <div className="flex flex-row items-center justify-end gap-2 p-2">
@@ -257,7 +231,7 @@ export default function CompanyModal({
           </button>
           <button
             onClick={() => {
-              alert ? handleDelete() : handleContinue();
+              handleContinue();
             }}
             className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue"
           >

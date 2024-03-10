@@ -15,8 +15,6 @@ export function AuthProvider({ children }) {
   const [headList, setHeadList] = useState([]);
   const [usertypeList, setUsertypeList] = useState([]);
   const [kpiDurations, setKpiDurations] = useState([]);
-  // const [companies, setCompanies] = useState([]);
-  //const [departments, setDepartments] = useState([]);
   const [globalSettings, setGlobalSettings] = useState([]);
   const [verifyIfEvaluator, setVerifyIfEvaluator] = useState(false);
   const nav = useNavigate();
@@ -40,7 +38,7 @@ export function AuthProvider({ children }) {
     try {
       let fd = new FormData();
       fd.append("userdata", JSON.stringify(userdata));
-      fd.append("contributor", contributor)
+      fd.append("contributor", contributor);
       const response = await axios.post(url.register, fd);
       //console.log(response.data);
       // if (response.data === "success") {
@@ -81,50 +79,7 @@ export function AuthProvider({ children }) {
       console.log(e.message);
     }
   };
-  const addCompany = async (companyData) => {
-    const formData = new FormData();
-    formData.append("add_company", true);
-    formData.append("company_data", JSON.stringify(companyData));
 
-    try {
-      const response = await axios.post(url.manageCompany, formData);
-      if (response.data === "success") {
-        return true;
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const addDepartment = async (companyID, department_list) => {
-    const formData = new FormData();
-    formData.append("add_department", true);
-    formData.append("company_id", companyID);
-    formData.append("department_list", JSON.stringify(department_list));
-
-    try {
-      const response = await axios.post(url.manageCompany, formData);
-      if (response.data === "success") {
-        return true;
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const deleteDepartment = async (departmentID) => {
-    const formData = new FormData();
-    formData.append("delete_department", true);
-    formData.append("departmentID", departmentID);
-
-    try {
-      const response = await axios.post(url.manageCompany, formData);
-      console.log(response.data);
-      // if (response.data === "success") {
-      //   return true;
-      // }
-    } catch (e) {
-      console.log(e);
-    }
-  };
   const getBusinessUnits = async () => {
     try {
       const response = await axios.get(url.conglomerate, {
@@ -153,9 +108,79 @@ export function AuthProvider({ children }) {
       console.log(error);
     }
   };
+
+  const addCompany = async (companyData, contributor) => {
+    const formData = new FormData();
+    formData.append("add_company", true);
+    formData.append("contributor", contributor);
+    formData.append("company_data", JSON.stringify(companyData));
+
+    try {
+      const response = await axios.post(url.manageCompany, formData);
+      if (response.data === "success") {
+        return true;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const addDepartment = async (
+    companyID,
+    company_name,
+    department_list,
+    contributor
+  ) => {
+    const formData = new FormData();
+    formData.append("add_department", true);
+    formData.append("company_id", companyID);
+    formData.append("company_name", company_name);
+    formData.append("department_list", JSON.stringify(department_list));
+    formData.append("contributor", contributor);
+
+    try {
+      const response = await axios.post(url.manageCompany, formData);
+      if (response.data === "success") {
+        return true;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deleteCompany = async (contributor, companyID, companyName) => {
+    try {
+      let fData = new FormData();
+      fData.append("delete_company", true);
+      fData.append("contributor", contributor);
+      fData.append("companyID", companyID);
+      fData.append("companyName", companyName);
+      const response = await axios.post(url.manageCompany, fData);
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  };
+  const deleteDepartment = async (
+    contributor,
+    departmentID,
+    departmentName,
+    companyName
+  ) => {
+    try {
+      let fdata = new FormData();
+      fdata.append("delete_department", true);
+      fdata.append("contributor", contributor);
+      fdata.append("departmentID", departmentID);
+      fdata.append("departmentName", departmentName);
+      fdata.append("companyName", companyName);
+      const response = await axios.post(url.manageCompany, fdata);
+      return response.data;
+    } catch (e) {
+      throw e;
+    }
+  };
+
   const manageUser = async (action, id) => {
-    //const url = "http://localhost/unmg_pms/api/userActions.php";
-    //const url = "../api/userActions.php";
     const formData = new FormData();
     formData.append("action", action);
     formData.append("user_id", id);
@@ -232,9 +257,11 @@ export function AuthProvider({ children }) {
   // };
 
   const uploadProfilePicture = async (file) => {
-    const imageURL = `../src/assets/images/profile_${JSON.parse(localStorage.getItem("user")).employee_id
-      }_${format(new Date(), "T")}.${file.name.split(".")[file.name.split(".").length - 1]
-      }`;
+    const imageURL = `../src/assets/images/profile_${
+      JSON.parse(localStorage.getItem("user")).employee_id
+    }_${format(new Date(), "T")}.${
+      file.name.split(".")[file.name.split(".").length - 1]
+    }`;
 
     const formdata = new FormData();
     formdata.append("imageFile", file);
@@ -271,31 +298,34 @@ export function AuthProvider({ children }) {
     if (localStorage.getItem("currentUser")) {
       setCurrentUser(localStorage.getItem("currentUser"));
     }
-    axios
-      .get(url.conglomerate, {
-        params: {
-          company: true,
-        },
-      })
-      .then((response) => {
-        setCompanyList(response.data);
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
-
-    axios
-      .get(url, {
-        params: {
-          department: true,
-        },
-      })
-      .then((response) => {
-        setDepartmentList(response.data);
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
+    const retrieveCompanies = async () => {
+      axios
+        .get(url.conglomerate, {
+          params: {
+            company: true,
+          },
+        })
+        .then((response) => {
+          setCompanyList(response.data);
+        })
+        .catch((e) => {
+          console.log(e.message);
+        });
+    };
+    const retrieveDepartments = async () => {
+      axios
+        .get(url.conglomerate, {
+          params: {
+            department: true,
+          },
+        })
+        .then((response) => {
+          setDepartmentList(response.data);
+        })
+        .catch((e) => {
+          console.log(e.message);
+        });
+    };
     const fetchHeads = async () => {
       try {
         const response = await axios.get(url.retrieveUsers, {
@@ -353,7 +383,7 @@ export function AuthProvider({ children }) {
           setVerifyIfEvaluator(hasEvaluators);
         } else {
           // Handle the case when currentUser or its properties are undefined
-          console.error('currentUser or employee_id is undefined.');
+          console.error("currentUser or employee_id is undefined.");
         }
       } catch (e) {
         console.log(e.message);
@@ -382,55 +412,24 @@ export function AuthProvider({ children }) {
         console.log(e.message);
       }
     };
-
-    // const retrieveCompanies = async () => {
-    //   const parameters = {
-    //     params: {
-    //       companies: true,
-    //     },
-    //   };
-    //   try {
-    //     const response = await axios.get(url.retrieveCompanies, parameters);
-    //     setCompanies(response.data);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-
-    // const retrieveDepartments = async () => {
-    //   const parameters = {
-    //     params: {
-    //       departments: true,
-    //     },
-    //   };
-    //   try {
-    //     const response = await axios.get(url.retrieveDepartments, parameters);
-    //     setDepartments(response.data);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-
     getVerifyIfEvaluator();
     retrieveKPIYear();
-    // retrieveCompanies();
-    // retrieveDepartments();
+    retrieveCompanies();
+    retrieveDepartments();
     fetchHeads();
     retrieveUserTypes();
     getGlobalSettings();
   }, [currentUser]);
 
   const value = {
-    departmentList,
-    usertypeList,
-    kpiDurations,
-    currentUser,
     companyList,
+    currentUser,
+    usertypeList,
+    departmentList,
+    kpiDurations,
     headList,
     verifyIfEvaluator,
     globalSettings,
-    // companies,
-    // departments,
     nav,
     navigate,
     manageUser,
@@ -448,6 +447,7 @@ export function AuthProvider({ children }) {
     setCurrentUser,
     getBusinessUnits,
     getDepartments,
+    deleteCompany,
     deleteDepartment,
     uploadProfilePicture,
   };

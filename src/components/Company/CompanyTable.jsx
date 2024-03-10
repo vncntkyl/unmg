@@ -9,13 +9,9 @@ import AlertModal from "../../misc/AlertModal";
 export default function CompanyTable({
   toggleModal,
   setCompanyData,
-  setDepartmentID,
   success,
-  setDeleteCompanyModal,
-  setCompanyDetails,
-  setDeleteDepartmentModal,
-  setDepartmentDetails,
-  handleDelete,
+  setDeleteModal,
+  setDeleteDetails,
 }) {
   const { getBusinessUnits, getDepartments, fetchUsers } = useAuth();
   const [departments, setDepartments] = useState([]);
@@ -25,7 +21,6 @@ export default function CompanyTable({
   const [query, setQuery] = useState("");
   const [onEdit, toggleEdit] = useState(false);
   const [users, setUsers] = useState([]);
-  
   useEffect(() => {
     const setup = async () => {
       const companyList = await getBusinessUnits();
@@ -129,8 +124,8 @@ export default function CompanyTable({
                   <MdDelete
                     className="peer text-un-red-light text-[1.3rem] cursor-pointer"
                     onClick={() => {
-                      setDeleteCompanyModal("Delete");
-                      setCompanyDetails({
+                      setDeleteModal("Company");
+                      setDeleteDetails({
                         ID: company,
                         name: currentCompany,
                       });
@@ -242,11 +237,17 @@ export default function CompanyTable({
                           <td>
                             <button
                               onClick={() => {
-                                setDeleteDepartmentModal("Delete Department");
-                                setDepartmentDetails({
+                                // setDeleteDepartmentModal("Delete Department");
+                                // setDepartmentDetails({
+                                //   ID: department.department_id,
+                                //   department: department.department_name,
+                                // })
+                                setDeleteModal("Department");
+                                setDeleteDetails({
                                   ID: department.department_id,
-                                  department: department.department_name,
-                                })
+                                  name: department.department_name,
+                                  company: currentCompany,
+                                });
                               }}
                             >
                               <MdDelete className="text-un-red-light" />

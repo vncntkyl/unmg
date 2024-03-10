@@ -26,8 +26,6 @@ export default function Messages({
   const [isPulsing, setIsPulsing] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  console.log(currentPage)
-  console.log(currentPage * 10)
   //Data Fetching
   const getConvo = async (offset = 0) => {
     const parameters = {

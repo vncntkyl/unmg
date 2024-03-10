@@ -15,8 +15,7 @@ export const developmentAPIs = {
   fetchOverview:"http://localhost/unmg_pms/api/fetchOverview.php",
   updateSettings:"http://localhost/unmg_pms/api/updateSettings.php",
   userSubmitKPIDuration: "http://localhost/unmg_pms/api/userSubmitKPIDuration.php",
-  userDeleteCompany:"http://localhost/unmg_pms/api/userDeleteCompany.php",
-  userDeleteDepartment:"http://localhost/unmg_pms/api/userDeleteDepartment.php",
+  retrieveLogs:"http://localhost/unmg_pms/api/retrieveLogs.php",
   
   //Retrieval of Data
   fetchKPIDuration: "http://localhost/unmg_pms/api/fetchKpiDuration.php",
@@ -74,8 +73,7 @@ export const releaseAPIs = {
   fetchOverview:"../api/fetchOverview.php",
   updateSettings:"../api/updateSettings.php",
   userSubmitKPIDuration: "../api/userSubmitKPIDuration.php",
-  userDeleteCompany:"../api/userDeleteCompany.php",
-  userDeleteDepartment:"../api/userDeleteDepartment.php",
+  retrieveLogs:"../api/retrieveLogs.php",
   
   //Retrieval of Data
   fetchKPIDuration: "../api/fetchKpiDuration.php",

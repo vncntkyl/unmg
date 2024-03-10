@@ -10,8 +10,8 @@ class Companies extends Controller
     }
     function insertCompany($companyName)
     {
-        $this->setStatement("INSERT INTO `hr_company` (`company_name`) VALUES (:companyName)");
-        $this->statement->execute([':companyName' => $companyName]);
+        $this->setStatement("INSERT INTO hr_company (company_name, creation_date) VALUES (:companyName, :creation_date)");
+        $this->statement->execute([':companyName' => $companyName, ':creation_date' => date('Y-m-d H:i:s')]);
         return $this->connection->lastInsertId();
     }
     function insertCompanies($companyData)
@@ -27,7 +27,7 @@ class Companies extends Controller
 
     function deleteCompany($company_id)
     {
-        $this->setStatement("SELECT COUNT(*) AS departments FROM `hr_departments` WHERE company_id = :company_id");
+        $this->setStatement("SELECT COUNT(*) AS departments FROM `hr_departments` WHERE company_id = :company_id AND deleted = 0");
         $this->statement->execute([':company_id' => $company_id]);
         $result = $this->statement->fetch();
         if ($result->departments > 0) {
@@ -49,13 +49,14 @@ class Companies extends Controller
     }
     function insertDepartment($companyID, $departmentName)
     {
-        $this->setStatement("INSERT into `hr_departments` (company_id,department_name) VALUES (:companyid,:departmentName)");
-        return $this->statement->execute([':companyid' => $companyID, ':departmentName' => $departmentName]);
+        $this->setStatement("INSERT INTO hr_departments (company_id, department_name, creation_date) VALUES (:companyid, :departmentName, :creation_date)");
+        return $this->statement->execute([':companyid' => $companyID, ':departmentName' => $departmentName, ':creation_date' => date('Y-m-d H:i:s')]);
     }
+
     function insertDepartments($departmentData)
     {
         try {
-            $sqlQuery = "INSERT INTO `hr_departments` (company_id, department_name) VALUES " . $departmentData;
+            $sqlQuery = "INSERT INTO `hr_departments` (company_id, department_name, creation_date) VALUES " . $departmentData;
             $this->setStatement($sqlQuery);
             return $this->statement->execute();
         } catch (PDOException $e) {
@@ -78,10 +79,9 @@ class Companies extends Controller
     function deleteDepartment($departmentID)
     {
         $this->setStatement("UPDATE hr_departments
-        JOIN hr_users ON hr_users.department = hr_departments.department_id
+        LEFT JOIN hr_users ON hr_users.department = hr_departments.department_id
         SET hr_departments.deleted = 1, hr_users.department = 0
-        WHERE hr_departments.department_id = :departmentID
-        AND hr_users.department = :departmentID");
+        WHERE hr_departments.department_id = :departmentID");
         $process = $this->statement->execute([':departmentID' => $departmentID]);
         if ($process) {
             return "success";

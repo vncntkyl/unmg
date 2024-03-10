@@ -83,7 +83,7 @@ if (isset($_POST['employees'])) {
 
     if (count($filtered_departments) > 0) {
         $filtered_departments = array_map(function ($dept) {
-            return '(' . $dept['company_id'] . ',"' . $dept['department_name'] . '")';
+            return '(' . $dept['company_id'] . ',"' . $dept['department_name'] . ',"' . date('Y-m-d H:i:s') . '")';
         }, $filtered_departments);
 
         $departments_for_registration = join(",", $filtered_departments);

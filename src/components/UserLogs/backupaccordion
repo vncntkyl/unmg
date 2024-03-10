@@ -1,0 +1,87 @@
+        {/* <Accordion flush className="rounded-none shadow" collapseAll>
+            {dates
+              .sort()
+              .reverse()
+              .map((headerDate, index) => (
+                <Accordion.Panel key={headerDate}>
+                  <Accordion.Title className="focus:ring-0 focus:rounded-none first:rounded-none bg-white hover:bg-default focus:bg-default">
+                    {format(new Date(headerDate), "MMMM dd, yyyy")}
+                  </Accordion.Title>
+                  <Accordion.Content>
+                    <Timeline>
+                      {rawData
+                        .sort(
+                          (a, b) =>
+                            new Date(b.creation_date) -
+                            new Date(a.creation_date)
+                        )
+                        .filter((contentDate) =>
+                          isSameDay(
+                            new Date(contentDate.creation_date),
+                            new Date(headerDate)
+                          )
+                        )
+                        .map((log) => (
+                          <Timeline.Item key={log.ID}>
+                            <Timeline.Point
+                              icon={IoIosTime}
+                              theme={{
+                                marker: {
+                                  icon: {
+                                    base: "h-5 w-5 text-mid-gray",
+                                    wrapper:
+                                      "absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full ring-8 ring-white",
+                                  },
+                                },
+                              }}
+                            />
+                            <Timeline.Content>
+                              <Timeline.Time
+                                theme={{
+                                  base: "mb-1 text-sm font-normal leading-none text-un-blue-light",
+                                }}
+                              >
+                                {format(new Date(log.creation_date), "hh:mm a")}
+                              </Timeline.Time>
+                              <Timeline.Title>
+                                {log.name}
+                                <Badge
+                                  className="w-fit"
+                                  color={
+                                    parseInt(log.user_type) <= 2
+                                      ? "success"
+                                      : parseInt(log.user_type) === 3
+                                      ? "warning"
+                                      : parseInt(log.user_type) === 4
+                                      ? "indigo"
+                                      : parseInt(log.user_type) === 5
+                                      ? "info"
+                                      : parseInt(log.user_type) === 6
+                                      ? "gray"
+                                      : "failure"
+                                  }
+                                >
+                                  {parseInt(log.user_type) <= 2
+                                    ? "Admin"
+                                    : parseInt(log.user_type) === 3
+                                    ? "Executive"
+                                    : parseInt(log.user_type) === 4
+                                    ? "Manager"
+                                    : parseInt(log.user_type) === 5
+                                    ? "Supervisor"
+                                    : parseInt(log.user_type) === 6
+                                    ? "Rank and File"
+                                    : "Loading..."}
+                                </Badge>
+                              </Timeline.Title>
+                              <Timeline.Body className="ml-4">
+                                {log.logs_description}
+                              </Timeline.Body>
+                            </Timeline.Content>
+                          </Timeline.Item>
+                        ))}
+                    </Timeline>
+                  </Accordion.Content>
+                </Accordion.Panel>
+              ))}
+          </Accordion> */}

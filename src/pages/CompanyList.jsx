@@ -2,78 +2,62 @@ import React, { useEffect, useState } from "react";
 import { BsBuildingAdd } from "react-icons/bs";
 import { MdRefresh } from "react-icons/md";
 import CompanyTable from "../components/Company/CompanyTable";
-import { BiImport } from "react-icons/bi";
 import CompanyModal from "../misc/CompanyModal";
 import AlertModal from "../misc/AlertModal";
 import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import Alert from "../misc/Alert";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { developmentAPIs as url } from "../context/apiList";
 
 export default function CompanyList() {
   document.title =
     "Companies | United Neon Media Group Performance Management System";
-  const { currentUser, departmentList } = useAuth();
+  const { currentUser, departmentList, deleteCompany, deleteDepartment } =
+    useAuth();
   const [modal, toggleModal] = useState("standby");
-
-  const [deleteCompanyModal, setDeleteCompanyModal] = useState("standby");
-  const [deleteCompanyModalSuccess, setDeleteCompanyModalSuccess] =
-    useState("standby");
-  const [deleteCompanyModalData, setDeleteCompanyModalData] = useState();
-  const [companyDetails, setCompanyDetails] = useState({
+  const [deleteModal, setDeleteModal] = useState("standby");
+  const [deleteDetails, setDeleteDetails] = useState({
     ID: null,
     name: "",
+    company: "",
   });
-
-  const [deleteDepartmentModal, setDeleteDepartmentModal] = useState("standby");
-  const [deleteDepartmentSuccess, setDeleteDepartmentSuccess] =
-    useState("standby");
-  const [deleteDepartmentModalData, setDeleteDepartmentModalData] = useState();
-  const [departmentDetails, setDepartmentDetails] = useState({
-    ID: null,
-    department: "",
-  });
+  const [deleteModalSuccess, setDeleteModalSuccess] = useState("standby");
+  const [deleteModalSuccessMessage, setDeleteModalSuccessMessage] = useState("");
 
   const [companyData, setCompanyData] = useState(0);
   const [departmentID, setDepartmentID] = useState(null);
   const [successModal, showSuccessModal] = useState("");
   const navigate = useNavigate();
   const userType = JSON.parse(currentUser).user_type;
-
-  const handleCompanyDeleteContinue = () => {
-    let fData = new FormData();
-    fData.append("submit", true);
-    fData.append("companyID", companyDetails.ID);
-    fData.append("companyName", companyDetails.name);
-    axios
-      .post(url.userDeleteCompany, fData)
-      .then((response) => {
-        setDeleteCompanyModalSuccess("success");
-        setDeleteCompanyModalData(response.data);
-      })
-      .catch((error) => {
-        setDeleteCompanyModalSuccess("error");
-        console.log(error);
-      });
-    setDeleteCompanyModal("standby");
-  };
-  const handleDepartmentDeleteContinue = () => {
-    let fdata = new FormData();
-    fdata.append("submit", true);
-    fdata.append("departmentID", departmentDetails.ID);
-    fdata.append("departmentName", departmentDetails.department);
-    axios
-      .post(url.userDeleteDepartment, fdata)
-      .then((response) => {
-        setDeleteDepartmentSuccess("success");
-        setDeleteDepartmentModalData(response.data);
-      })
-      .catch((error) => {
-        setDeleteDepartmentSuccess("error");
-        console.log(error);
-      });
+  const contributor = JSON.parse(currentUser).employee_id;
+  const handleDelete = () => {
+    if (deleteModal === "Company") {
+      deleteCompany(contributor, deleteDetails.ID, deleteDetails.name)
+        .then((response) => {
+          setDeleteModalSuccess("success");
+          setDeleteModalSuccessMessage(response);
+        })
+        .catch((error) => {
+          setDeleteModalSuccess("success");
+          setDeleteModalSuccessMessage(error);
+          console.log(error);
+        });
+      setDeleteModal("standby");
+    } else if (deleteModal === "Department") {
+      deleteDepartment(contributor, deleteDetails.ID, deleteDetails.name, deleteDetails.company)
+        .then((response) => {
+          setDeleteModalSuccess("success");
+          setDeleteModalSuccessMessage(response);
+        })
+        .catch((error) => {
+          setDeleteModalSuccess("error");
+          console.log(error);
+        });
+      setDeleteModal("standby");
+    }
+    else {
+      setDeleteModal("standby");
+    }
   };
   return (
     <>
@@ -98,6 +82,7 @@ export default function CompanyList() {
                 <button
                   type="button"
                   className=" w-1/2 flex justify-center items-center gap-2 bg-default hover:bg-default-dark rounded-md p-1 md:w-full"
+                  onClick={() => window.location.reload()}
                 >
                   <MdRefresh />
                   <span className="text-[.8rem] md:text-[.9rem] lg:whitespace-nowrap">
@@ -122,75 +107,52 @@ export default function CompanyList() {
                 setCompanyData={setCompanyData}
                 setDepartmentID={setDepartmentID}
                 success={successModal}
-                setDeleteCompanyModal={setDeleteCompanyModal}
-                setCompanyDetails={setCompanyDetails}
-                setDeleteDepartmentModal={setDeleteDepartmentModal}
-                setDepartmentDetails={setDepartmentDetails}
-                // handleDelete={handleDelete}
+                setDeleteModal={setDeleteModal}
+                setDeleteDetails={setDeleteDetails}
               />
             </div>
           </div>
         </div>
-        {deleteCompanyModal !== "standby" && (
+        {deleteModal !== "standby" && (
           <>
             <AlertModal
-              closeModal={setDeleteCompanyModal}
+              closeModal={setDeleteModal}
               modalType={"confirmation"}
-              title={`Delete ${companyDetails.name}`}
-              message={`Are you sure you want to delete ${companyDetails.name}?`}
+              title={
+                deleteModal === "Company"
+                  ? `Delete Company ${deleteDetails.name}`
+                  : deleteModal === "Department"
+                  ? `Delete Department ${deleteDetails.name}`
+                  : null
+              }
+              message={
+                deleteModal === "Company"
+                  ? `Are you sure you want to delete ${deleteDetails.name} company?`
+                  : deleteModal === "Department"
+                  ? `Are you sure you want to delete ${deleteDetails.name} department?`
+                  : ""
+              }
               handleContinue={() => {
-                handleCompanyDeleteContinue();
-                setDeleteCompanyModal("standby");
+                handleDelete();
+                setDeleteModal("standby");
               }}
             />
           </>
         )}
-        {deleteCompanyModalSuccess !== "standby" && (
+        {deleteModalSuccess !== "standby" && (
           <>
             <AlertModal
-              closeModal={setDeleteCompanyModalSuccess}
+              closeModal={setDeleteModalSuccess}
               modalType={"status"}
               modalStatus={
-                deleteCompanyModalData.includes("has been deleted!")
+                deleteModalSuccessMessage.includes("deleted")
                   ? "success"
                   : "error"
               }
-              message={deleteCompanyModalData}
+              message={deleteModalSuccessMessage}
               handleContinue={() => {
-                handleCompanyDeleteContinue();
-                setDeleteCompanyModal("standby");
-              }}
-            />
-          </>
-        )}
-        {deleteDepartmentModal !== "standby" && (
-          <>
-            <AlertModal
-              closeModal={setDeleteDepartmentModal}
-              modalType={"confirmation"}
-              title={`Delete ${departmentDetails.department} department?`}
-              message={`Are you sure you want to delete ${departmentDetails.department} department?`}
-              handleContinue={() => {
-                handleDepartmentDeleteContinue();
-                setDeleteDepartmentModal("standby");
-              }}
-            />
-          </>
-        )}
-        {deleteDepartmentSuccess !== "standby" && (
-          <>
-            <AlertModal
-              closeModal={deleteDepartmentModalData}
-              modalType={"status"}
-              modalStatus={
-                deleteDepartmentModalData.includes("has been deleted!")
-                  ? "success"
-                  : "error"
-              }
-              message={deleteDepartmentModalData}
-              handleContinue={() => {
-                handleDepartmentDeleteContinue();
-                setDeleteDepartmentModal("standby");
+                setDeleteModal("standby");
+                handleDelete();
               }}
             />
           </>
@@ -198,18 +160,17 @@ export default function CompanyList() {
         {modal !== "standby" && (
           <>
             <CompanyModal
-              title={modal === "delete" ? "Department Deletion" : modal}
-              action={modal === "delete" ? "Delete" : "Save"}
+              title={modal}
+              action={"Save"}
               closeModal={toggleModal}
               departmentID={departmentID}
-              alert={modal === "delete"}
               companyData={
-                modal === "add department" || modal === "delete"
+                modal === "add department"
                   ? companyData
                   : null
               }
               departmentList={
-                modal === "add department" || modal === "delete"
+                modal === "add department"
                   ? departmentList
                   : null
               }

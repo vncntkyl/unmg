@@ -150,10 +150,7 @@ export default function ApprovalHistory() {
   const [workYear, setWorkYear] = useState([]);
   const [department, setDepartment] = useState([]);
   const [company, setCompany] = useState(-1);
-  console.log(company);
-  const { kpiDurations, companies, departments } = useAuth();
-  console.log(departments)  
-
+  const { kpiDurations, companyList, departmentList } = useAuth();
   return (
     <>
       <div className="text-[0.8rem]">
@@ -167,14 +164,13 @@ export default function ApprovalHistory() {
             onChange={(e) => {
               setKpiDuration(parseInt(e.target.value));
             }}
+            defaultValue={-1}
           >
-            <option value="-1" selected={kpiDurations === -1}>
-              All
-            </option>
+            <option value="-1">All</option>
             {kpiDurations.length > 0 &&
-              kpiDurations.map((year) => {
+              kpiDurations.map((year, index) => {
                 return (
-                  <option value={year.kpi_year_duration_id}>
+                  <option value={year.kpi_year_duration_id} key={index}>
                     {format(new Date(year.from_date), "MMM d, yyyy") +
                       " - " +
                       format(new Date(year.to_date), "MMM d, yyyy")}
@@ -197,51 +193,54 @@ export default function ApprovalHistory() {
               }}
             >
               <option value="-1">All</option>
-              {companies.length > 0 &&
-                companies.map((comp) => {
+              {companyList.length > 0 &&
+                companyList.map((comp, index) => {
                   return (
-                    <option value={comp.company_id}>{comp.company_name}</option>
+                    <option value={comp.company_id} key={index}>
+                      {comp.company_name}
+                    </option>
                   );
                 })}
             </select>
           </div>
-          {console.log(company)}
-          {company &&
-            company >
-              -1 ? (
-                <>
-                  <div className="flex flex-row pb-2 px-2 gap-2 items-center">
-                    <label htmlFor="department" className="font-semibold">
-                      Department:
-                    </label>
-                    <select
-                      id="department"
-                      className="bg-default rounded-md p-1 px-2 text-[0.9rem]"
-                      defaultValue={department}
-                      // onChange={(e) => {
-                      //   setDepartment(parseInt(e.target.value));
-                      // }}
-                    >
-                      <option
-                        value="-1"
-                        className="text-center"
-                        disabled
-                      >
-                        --Select Department--
-                      </option>
-                      {departments.length > 0 &&
-                        departments.filter((dep) => parseInt(dep.company_id) === parseInt(company))
-                        .map((dept) => {
-                          return (
-                            <option key={dept.department_id} value={dept.department_id}>
-                              {dept.department_name}
-                            </option>
-                          );
-                        })}
-                    </select>
-                  </div>
-                </>
-              ) : ""}
+          {company && company > -1 ? (
+            <>
+              <div className="flex flex-row pb-2 px-2 gap-2 items-center">
+                <label htmlFor="department" className="font-semibold">
+                  Department:
+                </label>
+                <select
+                  id="department"
+                  className="bg-default rounded-md p-1 px-2 text-[0.9rem]"
+                  defaultValue={department}
+                  // onChange={(e) => {
+                  //   setDepartment(parseInt(e.target.value));
+                  // }}
+                >
+                  <option value="-1" className="text-center" disabled>
+                    --Select Department--
+                  </option>
+                  {departmentList.length > 0 &&
+                    departmentList
+                      .filter(
+                        (dep) => parseInt(dep.company_id) === parseInt(company)
+                      )
+                      .map((dept) => {
+                        return (
+                          <option
+                            key={dept.department_id}
+                            value={dept.department_id}
+                          >
+                            {dept.department_name}
+                          </option>
+                        );
+                      })}
+                </select>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <Table
