@@ -27,6 +27,10 @@ export default function Logs() {
     return search === "" || log.employee_name.toLowerCase().includes(search.toLowerCase());
   });
   const totalPages = Math.ceil(filteredLogs.length / 10);
+  const recordsPerPage = 10;
+  const lastIndex = currentPage * recordsPerPage;
+  const firstIndex = lastIndex - recordsPerPage;
+  const records = filteredLogs.slice(firstIndex, lastIndex);
   //Visibility of action button
   const toggleActionVisibility = () => {
     setActionVisibility((prev) => !prev);
@@ -128,7 +132,7 @@ export default function Logs() {
       <div>
         {logs && logs.length > 0 ? (
           <>
-          <div className="h-[37rem] overflow-y-auto m-4">
+          <div className="overflow-y-auto m-4">
             <Table
               theme={{
                 head: {
@@ -151,7 +155,7 @@ export default function Logs() {
                 <Table.HeadCell>Action</Table.HeadCell>
               </Table.Head>
               <Table.Body>
-                {logs.filter((log) => {
+                {records.filter((log) => {
                   if (search === "") {
                     return true;
                   } else {

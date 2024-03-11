@@ -14,6 +14,7 @@ export default function CompanyTable({
   setDeleteDetails,
 }) {
   const { getBusinessUnits, getDepartments, fetchUsers } = useAuth();
+  console.log(getBusinessUnits)
   const [departments, setDepartments] = useState([]);
   const [businessUnits, setBusinessUnits] = useState([]);
   const [company, setCompany] = useState(0);

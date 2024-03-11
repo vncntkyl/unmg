@@ -70,10 +70,10 @@ export default function EmployeeAdd() {
     const data = caps(userInformation);
 
     const userdata = { ...data, ...jobInformation, ...evaluators };
-    if (registerUser(userdata, contributor)) {
-      setModal("success");
-      setModalMessage("Employee added successfully!");
-    }
+    // if (registerUser(userdata, contributor)) {
+    //   setModal("success");
+    //   setModalMessage("Employee added successfully!");
+    // }
   };
   const handleSuccess = () => {
     navigate("/employees");

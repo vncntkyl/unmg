@@ -213,13 +213,11 @@ export default function ApprovalHistory() {
                   id="department"
                   className="bg-default rounded-md p-1 px-2 text-[0.9rem]"
                   defaultValue={department}
-                  // onChange={(e) => {
-                  //   setDepartment(parseInt(e.target.value));
-                  // }}
+                  onChange={(e) => {
+                    setDepartment(parseInt(e.target.value));
+                  }}
                 >
-                  <option value="-1" className="text-center" disabled>
-                    --Select Department--
-                  </option>
+                  <option value="-1">All</option>
                   {departmentList.length > 0 &&
                     departmentList
                       .filter(
