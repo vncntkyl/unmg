@@ -3,7 +3,6 @@ import { IoChevronBack } from "react-icons/io5";
 import { Input } from "./";
 import { useAuth } from "../context/authContext";
 import { useFunction } from "../context/FunctionContext";
-//import Modal from "../misc/Modal";
 import classNames from "classnames";
 import AlertModal from "../misc/AlertModal";
 export default function EmployeeAdd() {
@@ -58,23 +57,30 @@ export default function EmployeeAdd() {
     tertiary_evaluator: null,
   });
   const employment_type = ["LOCAL", "EXPAT"];
-  const salutationList = ["Mr.", "Miss"];
-  const contractList = ["regular", "probationary"];
+  const salutationList = ["Mr.", "Miss."];
+  const contractList = ["Regular", "Probationary"];
   useEffect(() => {
     setInfoChecker(userInformationChecker(userInformation, jobInformation));
   }, [userInformation, jobInformation]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const contributor = JSON.parse(localStorage.getItem("currentUser")).employee_id;
-    const data = caps(userInformation);
-
-    const userdata = { ...data, ...jobInformation, ...evaluators };
-    // if (registerUser(userdata, contributor)) {
-    //   setModal("success");
-    //   setModalMessage("Employee added successfully!");
-    // }
+  const handleConfirmation = () => {
+    setModal("confirmation");
   };
+  const handleSubmit = () => {
+    const contributor = JSON.parse(
+      localStorage.getItem("currentUser")
+    ).employee_id;
+    const data = caps(userInformation);
+    const userdata = { ...data, ...jobInformation, ...evaluators };
+    if (registerUser(userdata, contributor)) {
+      setModal("success");
+      setModalMessage("Employee added successfully!");
+    }else{
+      setModal("success");
+      setModalMessage("Failed to add employee");
+    }
+  };
+
   const handleSuccess = () => {
     navigate("/employees");
   };
@@ -97,12 +103,7 @@ export default function EmployeeAdd() {
           <IoChevronBack />
           <span>Back</span>
         </a>
-        <form
-          method="post"
-          onSubmit={handleSubmit}
-          className="flex flex-col py-2 gap-2 items-end"
-          encType="multipart/form-data"
-        >
+        <div className="flex flex-col py-2 gap-2 items-end">
           <div className="flex flex-col lg:flex-row gap-4 w-full">
             <section className="w-full lg:w-1/2 bg-default p-2 rounded-md shadow">
               <span className="font-semibold text-[1.05rem]">
@@ -141,7 +142,6 @@ export default function EmployeeAdd() {
                         "nationality",
                       ].includes(object_key)
                     }
-                    clear={modal === "success"}
                     editable={true}
                     type={
                       object_key === "salutation"
@@ -180,7 +180,6 @@ export default function EmployeeAdd() {
                     }
                     id={object_key}
                     required={!object_key}
-                    clear={modal === "success"}
                     set={setJobInformation}
                     editable={true}
                     type={
@@ -355,7 +354,8 @@ export default function EmployeeAdd() {
           )}
 
           <input
-            type="submit"
+            type="button"
+            value="Submit"
             disabled={
               areValuesFilled(userInformation) &&
               areValuesFilled(jobInformation)
@@ -366,29 +366,34 @@ export default function EmployeeAdd() {
                   : true
                 : true
             }
+            onClick={handleConfirmation}
             className="w-full lg:w-1/4 cursor-pointer transition-all bg-un-blue text-white rounded p-1 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
           />
-        </form>
+        </div>
       </div>
-      {modal === "success" && (
-        <AlertModal
-          closeModal={setModal}
-          modalType={modal}
-          title={"Add New Employee"}
-          message={modalMessage}
-          continuebutton={"Confirm"}
-          handleContinue={handleSuccess}
-        />
+      {modal === "confirmation" && (
+          <AlertModal
+            closeModal={setModal}
+            modalType={"confirmation"}
+            title={"Add New Employee"}
+            message={"Are you sure the employee details are correct?"}
+            handleContinue={() => {
+              handleSubmit();
+            }}
+          />
       )}
-      <div
-        className={classNames(
-          "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
-          modal === "standby" && "z-[-1] hidden pointer-events-none"
-        )}
-        onClick={() => {
-          setModal("standby");
-        }}
-      />
+      {modal === "success" && (
+          <AlertModal
+            closeModal={setModal}
+            modalType={"status"}
+            modalStatus={modalMessage === "Employee added successfully!" ? "success" : "error"}
+            message={modalMessage}
+            handleContinue={() => {
+              handleSuccess();
+              setModal("standby");
+            }}
+          />
+      )}
     </>
   );
 }

@@ -12,10 +12,10 @@ export function FunctionProvider({ children }) {
       "first_name",
       "middle_name",
       "last_name",
-      "suffix",
       "nickname",
       "address",
       "nationality",
+      "salutation",
     ];
 
     const capitalizeFirstLetter = (str) => {

@@ -21,7 +21,6 @@ export default function Input({
     last_name: 'Enter Last Name',
     suffix: 'Enter Suffix',
     nickname: 'Enter Nickname',
-    salutation: 'Enter Salutation',
     email: 'Enter Email',
     contact_no: 'Enter Contact Number: (09XXXXXXXXX)',
     address: 'Enter Address',
@@ -30,6 +29,7 @@ export default function Input({
     employee_id: 'Enter Employee ID',
     team: 'Enter Team',
     job_description: 'Enter Job Description',
+    username: 'Enter Username',
   };
   return (
     <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
@@ -157,6 +157,7 @@ export default function Input({
       ) : (
         <input
           type="password"
+          placeholder="Enter Password"
           id={id}
           value={val}
           className="outline-none bg-white overflow-hidden rounded-md p-1 w-full xl:w-1/2"

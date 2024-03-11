@@ -4,11 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { RiPencilFill } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
 import { useFunction } from "../context/FunctionContext";
-import Input from "./Input";
-import classNames from "classnames";
 import { useAuth } from "../context/authContext";
-import axios from "axios";
-import AlertModal from "../misc/AlertModal";
 import { format } from "date-fns";
 export default function EmployeeProfile({ admin }) {
   const { id } = useParams();
@@ -20,9 +16,7 @@ export default function EmployeeProfile({ admin }) {
     uploadProfilePicture,
   } = useAuth();
   const { splitKey, reformatName, capitalizeSentence } = useFunction();
-  const navigate = useNavigate();
   const [loading, toggleLoading] = useState(true);
-  const redirect_back_link = localStorage.getItem("redirect_back_to");
   const [personalInfo, setPersonalInfo] = useState([]);
   const [businessUnits, setBusinessUnits] = useState([]);
   const [jobInfo, setJobInfo] = useState([]);
@@ -33,23 +27,15 @@ export default function EmployeeProfile({ admin }) {
   const [file, setFile] = useState(null);
   const [modal, setModal] = useState("standby");
   const [modalMessage, setModalMessage] = useState("");
-
-  const handleSuccess = () => {
-    setModal("standby");
-    navigate(`/employees/profile/${id}`);
-  };
-
   const handleChange = (evt) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      // Access image contents from reader result
       const imageContents = e.target.result;
       setImg(imageContents);
       setFile(evt.target.files[0]);
     };
     reader.readAsDataURL(evt.target.files[0]);
   };
-
   useEffect(() => {
     let user = [];
     if (!admin) {
@@ -142,11 +128,7 @@ export default function EmployeeProfile({ admin }) {
       <div className="flex flex-col gap-2">
         {!admin && (
           <a
-            href={redirect_back_link ? redirect_back_link : "/employees"}
-            onClick={() => {
-              if (!redirect_back_link) return;
-              localStorage.removeItem("redirect_back_to");
-            }}
+            href={"/employees"}
             className="flex flex-row items-center gap-2 bg-un-blue w-fit text-white text-[.8rem] p-1 pr-2 rounded-md hover:bg-un-blue-light"
           >
             <IoChevronBack />
@@ -329,6 +311,7 @@ export default function EmployeeProfile({ admin }) {
           <div className="flex flex-row py-1 items-center gap-2">
             <a
               href={`./${id}/edit`}
+              
               className="w-full lg:w-fit cursor-pointer transition-all bg-un-blue text-white rounded p-1 px-2 hover:bg-un-blue-light disabled:bg-dark-gray disabled:cursor-not-allowed"
             >
               Edit User
@@ -336,25 +319,6 @@ export default function EmployeeProfile({ admin }) {
           </div>
         </div>
       </div>
-      {modal === "success" && (
-        <AlertModal
-          closeModal={setModal}
-          modalType={modal}
-          title={"Edit Employee"}
-          message={modalMessage}
-          continuebutton={"Confirm"}
-          handleContinue={handleSuccess}
-        />
-      )}
-      <div
-        className={classNames(
-          "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
-          modal === "standby" && "z-[-1] hidden pointer-events-none"
-        )}
-        onClick={() => {
-          setModal("standby");
-        }}
-      />
     </>
   );
 }

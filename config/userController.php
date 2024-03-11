@@ -62,97 +62,121 @@ class User extends Controller
         $this->setStatement("UPDATE `hr_users` SET deleted = 1 WHERE users_id=:uID");
         return $this->statement->execute([':uID' => $uID]);
     }
-    function checkUser($employeeID){
+    function checkUser($employeeID)
+    {
         $this->setStatement("SELECT * FROM hr_users WHERE employee_id = ?");
         $this->statement->execute([$employeeID]);
         return $this->statement->rowCount();
     }
-    function insertAcc($u)
+    function insertAcc($first_name, $middle_name, $last_name, $suffix, $nickname, $salutations, $contact_no, $address, $nationality, $employee_ID, $company_ID, $department_ID, $team, $job_description, $employment_type, $contract_type, $hire_date, $primary_evaluator, $secondary_evaluator, $tertiary_evaluator)
     {
-        $salutations = ['Mr.', 'Miss'];
-        $employee_ID = intval($u->employee_id);
-        $company_ID = intval($u->company);
-        $salutation = isset($u->salutation) ? (strlen($u->salutation) > 1 ? $u->salutation : $salutations[intval($u->salutation)]) : null;
-        $department_ID = intval($u->department);
-        $job_level = intval($u->job_level);
-        $password = md5($u->password);
-        $employment_type = intval($u->employment_type) == 0 ? "LOCAL" : "EXPAT";
-        $primary_evaluator = isset($u->primary_evaluator) ? intval($u->primary_evaluator) : NULL;
-        $secondary_evaluator = isset($u->secondary_evaluator)? intval($u->secondary_evaluator) : NULL;
-        $tertiary_evaluator = isset($u->tertiary_evaluator) ? intval($u->tertiary_evaluator) : NULL;
-        $status = 1;
-
-        try {
-
-            $this->setStatement("BEGIN;
-    
-            INSERT INTO hr_users (employee_id, salutation, last_name, first_name, middle_name, suffix, nickname, company, department, team, 
-            job_description, contract_type, contact_no, address, primary_evaluator, secondary_evaluator, tertiary_evaluator, 
-            employment_category, nationality, hire_date) 
-            VALUES (:employee_ID, :salutation, :last_name,:first_name, :middle_name, :suffix,
-            :nickname, :company_ID, :department_ID, :team, :job_description, :contract_type, :contact_no,
-            :address, :primary_evaluator, :secondary_evaluator, :tertiary_evaluator, :employment_type, :nationality,:hire_date);
-            SET @generated_id = LAST_INSERT_ID();
-            INSERT INTO hr_user_accounts (users_id, username, password, email_address, user_type, user_status, account_status) 
-            VALUES (@generated_id, :username, :password, :email, :user_type, :user_status, :account_status);
-            
-            COMMIT;");
-            if ($this->statement->execute([
-                ':employee_ID' => $employee_ID,
-                ':salutation' => $salutation,
-                ':last_name' =>  ucwords($u->last_name),
-                ':first_name' =>  ucwords($u->first_name),
-                ':middle_name' => ucwords($u->middle_name),
-                ':suffix' => $u->suffix,
-                ':nickname' =>  ucwords($u->nickname),
-                ':company_ID' => $company_ID,
-                ':department_ID' => $department_ID,
-                ':team' => ucwords($u->team),
-                ':job_description' => ucwords($u->job_description),
-                ':contract_type' => $u->contract_type,
-                ':contact_no' => $u->contact_no,
-                ':address' => ucwords($u->address),
-                ':primary_evaluator' => $primary_evaluator,
-                ':secondary_evaluator' => $secondary_evaluator,
-                ':tertiary_evaluator' => $tertiary_evaluator,
-                ':employment_type' => $employment_type,
-                ':nationality' => ucwords($u->nationality),
-                ':hire_date' =>  $u->hire_date,
-                ':username' => $u->username,
-                ':password' => $password,
-                ':email' => $u->email,
-                ':user_type' => $job_level,
-                ':user_status' => $status,
-                ':account_status' =>  $status,
-            ])) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } catch (PDOException $e) {
-            return $e->getMessage();
+        $this->setStatement("INSERT INTO hr_users  (employee_id, salutation, last_name, first_name, middle_name, suffix, nickname, company, department, team, job_description, contract_type, contact_no, address, primary_evaluator, secondary_evaluator, tertiary_evaluator, employment_category, nationality, hire_date)
+                                            VALUES (:employee_ID, :salutation, :last_name, :first_name, :middle_name, :suffix, :nickname, :company_ID, :department_ID, :team, :job_description, :contract_type, :contact_no, :address, :primary_evaluator, :secondary_evaluator, :tertiary_evaluator, :employment_type, :nationality, :hire_date)");
+        $this->statement->execute([
+            ':employee_ID' => $employee_ID,
+            ':salutation' => $salutations,
+            ':last_name' =>  $last_name,
+            ':first_name' =>  $first_name,
+            ':middle_name' => $middle_name,
+            ':suffix' => $suffix,
+            ':nickname' =>  $nickname,
+            ':company_ID' => $company_ID,
+            ':department_ID' => $department_ID,
+            ':team' => $team,
+            ':job_description' => $job_description,
+            ':contract_type' => $contract_type,
+            ':contact_no' => $contact_no,
+            ':address' => $address,
+            ':primary_evaluator' => $primary_evaluator,
+            ':secondary_evaluator' => $secondary_evaluator,
+            ':tertiary_evaluator' => $tertiary_evaluator,
+            ':employment_type' => $employment_type,
+            ':nationality' => $nationality,
+            ':hire_date' => $hire_date
+        ]);
+        return $this->connection->lastInsertId();
+    }
+    function insertAcc1($user_id, $username, $password, $email, $job_level)
+    {
+        $this->setStatement("INSERT INTO hr_user_accounts (users_id, username, password, email_address, user_type, user_status, account_status) 
+                                                VALUES (:users_id, :username, :password, :email, :user_type, :user_status, :account_status)");
+        $process = $this->statement->execute([
+            ':users_id' => $user_id,
+            ':username' => $username,
+            ':password' => $password,
+            ':email' => $email,
+            ':user_type' => $job_level,
+            ':user_status' => "active",
+            ':account_status' => "active"
+        ]);
+        if ($process) {
+            return "success";
         }
     }
-    function updateAcc($supervisor_id, $imm_supp_id, $lName, $fName, $mName, $compID, $deptID, $salutation, $contactNo, $address, $jobDesc, $uStatus, $user_id)
-    {
-        $this->setStatement("UPDATE `hr_users` SET `supervisor_id`= :supervisor,`immediate_supervisor_id`= :immsupervisor,`salutation`= :salutation,`last_name`= :lastname,`first_name`= :firstname,`middle_name`= :middlename,`company_id`= :companyid,`department_id`= :departmentid ,`user_status`= :userstatus,`job_description`= :jobdesc,`contact_no`= :contactno,`address`= :address WHERE `users_id` = :user_id");
 
-        // Update the number of values being passed in the execute function to match the number of placeholders in your SQL statement
-        return $this->statement->execute([
-            ':supervisor' => $supervisor_id,
-            ':immsupervisor' => $imm_supp_id,
-            ':lastname' => $lName,
-            ':firstname' => $fName,
-            ':middlename' => $mName,
-            ':companyid' => $compID,
-            ':departmentid' => $deptID,
-            ':salutation' => $salutation,
-            ':contactno' => $contactNo,
+    function updateAcc($user_id, $first_name, $middle_name, $last_name, $suffix, $nickname, $salutations, $contact_no, $address, $nationality, $employee_ID, $company_ID, $department_ID, $team, $job_description, $employment_type, $contract_type, $hire_date, $primary_evaluator, $secondary_evaluator, $tertiary_evaluator)
+    {
+        $this->setStatement("UPDATE hr_users SET 
+        employee_id = :employee_id, 
+        salutation = :salutation, 
+        last_name = :last_name, 
+        first_name = :first_name, 
+        middle_name = :middle_name, 
+        suffix = :suffix, 
+        nickname = :nickname, 
+        company = :company_id, 
+        department = :department_id, 
+        team = :team, 
+        job_description = :job_description, 
+        contract_type = :contract_type, 
+        contact_no = :contact_no, 
+        address = :address, 
+        primary_evaluator = :primary_evaluator,
+        secondary_evaluator = :secondary_evaluator, 
+        tertiary_evaluator = :tertiary_evaluator,
+        employment_category = :employment_category,
+        nationality = :nationality,
+        hire_date = :hire_date
+        WHERE users_id = :user_id");
+
+        $process = $this->statement->execute([
+            ':employee_id' => $employee_ID,
+            ':salutation' => $salutations,
+            ':last_name' =>  $last_name,
+            ':first_name' =>  $first_name,
+            ':middle_name' => $middle_name,
+            ':suffix' => $suffix,
+            ':nickname' =>  $nickname,
+            ':company_id' => $company_ID,
+            ':department_id' => $department_ID,
+            ':team' => $team,
+            ':job_description' => $job_description,
+            ':contract_type' => $contract_type,
+            ':contact_no' => $contact_no,
             ':address' => $address,
-            ':jobdesc' => $jobDesc,
-            ':userstatus' => $uStatus,
+            ':primary_evaluator' => $primary_evaluator,
+            ':secondary_evaluator' => $secondary_evaluator,
+            ':tertiary_evaluator' => $tertiary_evaluator,
+            ':employment_category' => $employment_type,
+            ':nationality' => $nationality,
+            ':hire_date' => $hire_date,
             ':user_id' => $user_id
         ]);
+        if($process){
+            return "success";
+        }
+    }
+    function updateAcc1($user_id, $username, $email, $job_level){
+        $this->setStatement("UPDATE hr_user_accounts SET username = :username, email_address = :email, user_type = :user_type WHERE users_id = :user_id");
+        $process = $this->statement->execute([
+            ':username' => $username,
+            ':email' => $email,
+            ':user_type' => $job_level,
+            ':user_id' => $user_id
+        ]);
+        if($process){
+            return "success";
+        }
     }
     function insertPicture($user_id, $imageURL)
     {

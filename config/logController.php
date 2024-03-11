@@ -47,4 +47,19 @@ class Log extends Controller
       ':creation_date' => date('Y-m-d H:i:s')
     ]);
   }
+
+  function userLog($employee_id, $modification_type, $event, $new_value){
+    $this->setStatement("INSERT INTO hr_logs (employee_id, modification_type, event, new_value, deleted, creation_date)
+                                      VALUES (:employee_id, :modification_type, :event, :new_value, 0, :creation_date)");
+    $process = $this->statement->execute([
+      'employee_id' => $employee_id,
+      'modification_type' => $modification_type,
+      'event' => $event,
+      'new_value' => $new_value,
+      ':creation_date' => date('Y-m-d H:i:s')
+    ]);
+    if ($process) {
+      return "success";
+    }
+  }
 }

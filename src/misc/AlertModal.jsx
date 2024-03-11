@@ -15,6 +15,7 @@ export default function AlertModal({
   title,
   message,
   handleContinue,
+  handleSuccess,
 }) {
   const navigate = useNavigate();
   return (
