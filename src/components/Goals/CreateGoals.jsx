@@ -9,8 +9,8 @@ import { developmentAPIs as url } from "../../context/apiList";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
-import { Toast } from "flowbite-react";
-import { FaExclamation } from "react-icons/fa";
+import { Tooltip } from "flowbite-react";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 
 export default function CreateGoals({
   pillars = [],
@@ -350,7 +350,6 @@ export default function CreateGoals({
       }
     }
   }, [saveStatus]);
-  console.log(user);
   return (
     <>
       <div className="h-[calc(91vh-64px)] flex flex-col gap-2 overflow-y-scroll">
@@ -402,7 +401,6 @@ export default function CreateGoals({
         <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
           {goals.length > 0
             ? goals.map((goal, index) => {
-                console.log(goal);
                 return (
                   <>
                     <div
@@ -416,37 +414,49 @@ export default function CreateGoals({
                       <div className="flex flex-row items-center justify-between gap-1 p-1 lg:w-1/6">
                         <label
                           htmlFor="pillar_name"
-                          className="font-bold whitespace-nowrap"
+                          className="font-bold whitespace-nowrap flex items-center gap-2"
                         >
                           {goal.pillar_name}
+                          <Tooltip
+                            content="This is the KPI pillar settings."
+                            style="light"
+                          >
+                            <IoIosInformationCircleOutline />
+                          </Tooltip>
                         </label>
-                        <input
-                          type="number"
-                          min={globalSettings.pillar_min}
-                          max={globalSettings.pillar_max}
-                          required
-                          value={goal.pillar_percentage}
-                          className="outline-none rounded-md p-1 text-center ml-auto"
-                          onChange={(e) => {
-                            const point = e.target.valueAsNumber;
-                            const updatedGoals = [...goals];
-                            updatedGoals[index] = {
-                              ...updatedGoals[index],
-                              pillar_percentage: point,
-                            };
-                            setGoals(updatedGoals);
-                          }}
-                        />
+                        <Tooltip
+                          content=" You will put the pillar weight here."
+                          style="light"
+                          trigger="click"
+                        >
+                          <input
+                            type="number"
+                            min={globalSettings.pillar_min}
+                            max={globalSettings.pillar_max}
+                            required
+                            value={goal.pillar_percentage}
+                            className="outline-none rounded-md p-1 text-center ml-auto"
+                            onChange={(e) => {
+                              const point = e.target.valueAsNumber;
+                              const updatedGoals = [...goals];
+                              updatedGoals[index] = {
+                                ...updatedGoals[index],
+                                pillar_percentage: point,
+                              };
+                              setGoals(updatedGoals);
+                            }}
+                          />
+                        </Tooltip>
                         <span className="font-bold">%</span>
                       </div>
-                      <div>
+                      <div className="overflow-x-scroll py-2">
                         {goal.objectives.map((obj, objIndex) => {
                           return (
                             <>
-                              <div className="flex flex-row justify-between gap-2 overflow-scroll">
+                              <div className="flex flex-row justify-between gap-2">
                                 <div className="flex flex-col gap-2">
                                   <span>Objective</span>
-                                  <div className="flex flex-row gap-2">
+                                  <div className="flex flex-row gap-2 items-center">
                                     <span>{objIndex + 1}</span>
                                     <textarea
                                       required
@@ -467,14 +477,19 @@ export default function CreateGoals({
                                     ></textarea>
                                     {goal.objectives.length !==
                                       globalSettings.required_min && (
-                                      <button
-                                        type="button"
-                                        onClick={() =>
-                                          removeObjective(index, objIndex)
-                                        }
+                                      <Tooltip
+                                        content="Remove Objective"
+                                        style="light"
                                       >
-                                        <AiOutlineMinus />
-                                      </button>
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            removeObjective(index, objIndex)
+                                          }
+                                        >
+                                          <AiOutlineMinus />
+                                        </button>
+                                      </Tooltip>
                                     )}
                                   </div>
                                 </div>
@@ -543,29 +558,21 @@ export default function CreateGoals({
                                               </div>
                                               {getTotalKpiCount(goals) <
                                                 globalSettings.required_max && (
-                                                <div className="relative">
-                                                  <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                      addKPI(index, objIndex)
-                                                    }
+                                                <>
+                                                  <Tooltip
+                                                    content="Add another KPI"
+                                                    style="light"
                                                   >
-                                                    <AiOutlinePlus />
-                                                  </button>
-                                                  {index === 0 && (
-                                                    <div className="fixed left-50 z-[50]">
-                                                      <Toast>
-                                                        <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-                                                          <FaExclamation className="h-5 w-5" />
-                                                        </div>
-                                                        <div className="ml-3 text-sm font-normal">
-                                                          This is where you can add and remove KPIs
-                                                        </div>
-                                                        <Toast.Toggle />
-                                                      </Toast>
-                                                    </div>
-                                                  )}
-                                                </div>
+                                                    <button
+                                                      type="button"
+                                                      onClick={() =>
+                                                        addKPI(index, objIndex)
+                                                      }
+                                                    >
+                                                      <AiOutlinePlus />
+                                                    </button>
+                                                  </Tooltip>
+                                                </>
                                               )}
                                               {obj.kpi.length > 1 && (
                                                 <button
@@ -645,13 +652,15 @@ export default function CreateGoals({
                         })}
                         {getTotalKpiCount(goals) <
                           globalSettings.required_max && (
-                          <button
-                            type="button"
-                            className="bg-un-blue-light text-white p-1 px-2 rounded"
-                            onClick={() => addObjective(index)}
-                          >
-                            Add Objective
-                          </button>
+                          <Tooltip content="Add Objective" style="light">
+                            <button
+                              type="button"
+                              className="sticky left-0 bg-un-blue-light text-white p-1 px-2 rounded"
+                              onClick={() => addObjective(index)}
+                            >
+                              Add Objective
+                            </button>
+                          </Tooltip>
                         )}
                       </div>
                     </div>
@@ -675,12 +684,12 @@ export default function CreateGoals({
           </div>
         </form>
       </div>
-      <div
+      {/* <div
         className={classNames(
           "bg-[#00000035] fixed h-full w-full z-[21] top-0 left-0 animate-fade pointer-events-auto",
           !toolTip && "z-[-1] hidden pointer-events-none"
         )}
-      />
+      /> */}
     </>
   );
 }
