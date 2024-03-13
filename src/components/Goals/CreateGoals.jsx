@@ -458,23 +458,26 @@ export default function CreateGoals({
                                   <span>Objective</span>
                                   <div className="flex flex-row gap-2 items-center">
                                     <span>{objIndex + 1}</span>
-                                    <textarea
-                                      required
-                                      className="p-1 rounded-md w-[350px]"
-                                      value={obj.objective_description}
-                                      onChange={(e) => {
-                                        const text = e.target.value;
-                                        const updatedGoals = [...goals];
-                                        const currentPillar =
-                                          updatedGoals[index];
-                                        currentPillar.objectives[objIndex] = {
-                                          ...currentPillar.objectives[objIndex],
-                                          objective_description: text,
-                                        };
+                                      <textarea
+                                        required
+                                        className="p-1 rounded-md w-[350px]"
+                                        placeholder="Enter objective description"
+                                        value={obj.objective_description}
+                                        onChange={(e) => {
+                                          const text = e.target.value;
+                                          const updatedGoals = [...goals];
+                                          const currentPillar =
+                                            updatedGoals[index];
+                                          currentPillar.objectives[objIndex] = {
+                                            ...currentPillar.objectives[
+                                              objIndex
+                                            ],
+                                            objective_description: text,
+                                          };
 
-                                        setGoals(updatedGoals);
-                                      }}
-                                    ></textarea>
+                                          setGoals(updatedGoals);
+                                        }}
+                                      ></textarea>
                                     {goal.objectives.length !==
                                       globalSettings.required_min && (
                                       <Tooltip
@@ -504,6 +507,7 @@ export default function CreateGoals({
                                               <textarea
                                                 required
                                                 className="p-1 rounded-md w-[300px]"
+                                                placeholder="Enter KPI Description"
                                                 value={kpi.kpi_description}
                                                 onChange={(e) => {
                                                   const text = e.target.value;
@@ -525,6 +529,7 @@ export default function CreateGoals({
                                                 }}
                                               ></textarea>
                                               <div className="flex flex-row items-center gap-1 p-1">
+                                                <Tooltip content="Enter KPI weight." style="light" trigger="click">
                                                 <input
                                                   required
                                                   type="number"
@@ -552,6 +557,7 @@ export default function CreateGoals({
                                                     setGoals(updatedGoals);
                                                   }}
                                                 />
+                                                </Tooltip>
                                                 <span className="font-bold">
                                                   %
                                                 </span>
@@ -575,18 +581,23 @@ export default function CreateGoals({
                                                 </>
                                               )}
                                               {obj.kpi.length > 1 && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() =>
-                                                    removeKPI(
-                                                      index,
-                                                      objIndex,
-                                                      kpiIndex
-                                                    )
-                                                  }
+                                                <Tooltip
+                                                  content="Remove KPI"
+                                                  style="light"
                                                 >
-                                                  <AiOutlineMinus />
-                                                </button>
+                                                  <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                      removeKPI(
+                                                        index,
+                                                        objIndex,
+                                                        kpiIndex
+                                                      )
+                                                    }
+                                                  >
+                                                    <AiOutlineMinus />
+                                                  </button>
+                                                </Tooltip>
                                               )}
                                             </div>
                                           </div>
@@ -605,6 +616,7 @@ export default function CreateGoals({
                                                       <textarea
                                                         required
                                                         className="p-1 rounded-md w-[300px]"
+                                                        placeholder="Enter Target Metrics Description"
                                                         value={
                                                           metrics.metric_description
                                                         }
@@ -650,18 +662,24 @@ export default function CreateGoals({
                             </>
                           );
                         })}
-                        {getTotalKpiCount(goals) <
-                          globalSettings.required_max && (
-                          <Tooltip content="Add Objective" style="light">
-                            <button
-                              type="button"
-                              className="sticky left-0 bg-un-blue-light text-white p-1 px-2 rounded"
-                              onClick={() => addObjective(index)}
+                        <div className="sticky left-0">
+                          {getTotalKpiCount(goals) <
+                            globalSettings.required_max && (
+                            <Tooltip
+                              content="Add Objective"
+                              style="light"
+                              className="sticky left-0"
                             >
-                              Add Objective
-                            </button>
-                          </Tooltip>
-                        )}
+                              <button
+                                type="button"
+                                className="bg-un-blue-light text-white p-1 px-2 rounded"
+                                onClick={() => addObjective(index)}
+                              >
+                                Add Objective
+                              </button>
+                            </Tooltip>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </>

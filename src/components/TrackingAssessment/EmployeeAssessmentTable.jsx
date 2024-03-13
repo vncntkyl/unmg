@@ -64,7 +64,6 @@ export default function EmployeeAssessmentTable({ emp_id }) {
       };
       try {
         const response = await axios.get(url.retrieveTrackingEmployee, parameters);
-        console.log(response.data);
 
         const employeeRecords = response.data.map((item) => {
           return {

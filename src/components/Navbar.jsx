@@ -7,7 +7,9 @@ import classNames from "classnames";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { useFunction } from "../context/FunctionContext";
-
+import axios from "axios";
+import { developmentAPIs as url } from "../context/apiList";
+import { format } from "date-fns";
 export default function Navbar({
   notification_count,
   user_data,
@@ -22,19 +24,40 @@ export default function Navbar({
     capitalizeSentence,
   } = useFunction();
   const [imgProfile, setImgProfile] = useState(null);
+  const [notifications, setNotifications] = useState([]);
   const [panel, togglePanel] = useState({
     notification: false,
     user: false,
   });
   const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.clear();
     setCurrentUser([]);
     navigate("/login");
   };
+  const getNotification = async () => {
+    const parameters = {
+      params: {
+        logs: true,
+        employee_id: JSON.parse(localStorage.getItem("currentUser"))
+          .employee_id,
+      },
+    };
+    try {
+      const response = await axios.get(url.retrieveNotifications, parameters);
+      setNotifications(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  useEffect(() => {
+    setInterval(() => {
+      getNotification();
+    }, 5000);
+  }, []);
 
   useEffect(() => {
+    getNotification();
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const setImg = async () => {
       if (!currentUser["picture"]) return;
@@ -47,11 +70,20 @@ export default function Navbar({
     };
     setImg();
   }, []);
-  const userType = JSON.parse(currentUser).user_type
+  const userType = JSON.parse(currentUser).user_type;
   return (
     user_data && (
       <>
-        <nav className={classNames("w-[100%] mx-auto px-4 py-2 grid grid-cols-[.5fr_1fr_s1fr] gap-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-18 z-[10]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")}>
+        <nav
+          className={classNames(
+            "w-[100%] mx-auto px-4 py-2 grid grid-cols-[.5fr_1fr_s1fr] gap-2 md:px-6 md:flex md:gap-4 md:justify-between xl:px-18 z-[10]",
+            userType <= 2
+              ? "bg-un-blue"
+              : userType >= 3 && userType <= 5
+              ? "bg-un-red-dark-1"
+              : "bg-dark-gray"
+          )}
+        >
           <div className=" col-[1/2] flex flex-row gap-2 py-2 items-center w-fit">
             <img
               src={logo}
@@ -105,7 +137,7 @@ export default function Navbar({
                   };
                 })
               }
-              data-count={notification_count}
+              data-count={notifications.length}
               className="relative before:block before:absolute before:content-[attr(data-count)] before:top-[-5px] before:right-[-5px] before:text-tooltip before:text-white before:bg-un-red before:w-[1rem] before:h-[1rem] sm:before:w-[1.1rem] sm:before:h-[1.1rem] before:rounded-full ml-3"
             >
               <FaBell className="text-white text-[1.2rem] sm:text-[1.5rem]" />
@@ -113,16 +145,34 @@ export default function Navbar({
                 className={classNames(
                   "notification_panel",
                   !panel.notification && "hidden",
-                  "absolute top-full right-0 w-[max-content] mt-4 bg-white py-2 px-3 rounded-md shadow-md animate-fade z-[10]"
+                  "absolute top-full right-0 w-[15rem] max-h-[10rem] mt-4 bg-white py-2 rounded-md shadow-md animate-fade z-[10] overflow-y-scroll"
                 )}
               >
                 <ul>
-                  <li className="p-2">
-                    <a href="/account-settings">Notification 1</a>
-                  </li>
-                  <li className="p-2">
-                    <a href="/logout">Notification 2</a>
-                  </li>
+                  {notifications &&
+                    notifications.map((notification) => (
+                      <li className="group relative px-2 hover:bg-default">
+                        <a
+                          href={notification.link}
+                          className="py-2 flex flex-col justify-center items-start"
+                        >
+                          <span className="font-semibold">
+                            {notification.title}
+                          </span>
+                          <p className="text-[0.9rem] text-black">
+                            {notification.message}
+                          </p>
+                        </a>
+                        <div class="group-hover:bg-default right-0 bottom-0 bg-white p-2 flex flex-col text-end text-[0.8rem] text-black">
+                          <span>
+                            {format(
+                              new Date(notification.creation_date),
+                              "dd/MM/yyyy hh:mm a"
+                            )}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
                 </ul>
               </div>
             </button>

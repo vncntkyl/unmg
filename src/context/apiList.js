@@ -16,6 +16,7 @@ export const developmentAPIs = {
   updateSettings:"http://localhost/unmg_pms/api/updateSettings.php",
   userSubmitKPIDuration: "http://localhost/unmg_pms/api/userSubmitKPIDuration.php",
   retrieveLogs:"http://localhost/unmg_pms/api/retrieveLogs.php",
+  retrieveNotifications:"http://localhost/unmg_pms/api/retrieveNotifications.php",
   
   //Retrieval of Data
   fetchKPIDuration: "http://localhost/unmg_pms/api/fetchKpiDuration.php",
@@ -34,9 +35,9 @@ export const developmentAPIs = {
   retrieveGlobalSettings: "http://localhost/unmg_pms/api/retrieveGlobalSettings.php",
   retriveVerifyIfEvaluator: "http://localhost/unmg_pms/api/retriveVerifyIfEvaluator.php",
   
-  retrieveReceivers: "http://localhost/unmg_pms/api/conversationsApi/retrieveReceivers.php",
-  retrieveConversations: "http://localhost/unmg_pms/api/conversationsApi/retrieveConversations.php",
-  retrieveConvo:"http://localhost/unmg_pms/api/conversationsApi/retrieveConvo.php",
+  retrieveReceivers: "http://localhost/unmg_pms/api/conversations/retrieveReceivers.php",
+  retrieveConversations: "http://localhost/unmg_pms/api/conversations/retrieveConversations.php",
+  retrieveConvo:"http://localhost/unmg_pms/api/conversations/retrieveConvo.php",
   
   //Submitting/Updating Data
   uploadProfilePicture: "http://localhost/unmg_pms/api/uploadImage.php",
@@ -50,10 +51,10 @@ export const developmentAPIs = {
   userSubmitApproval:"http://localhost/unmg_pms/api/userSubmitApproval.php",
   userSubmitSignOff:"http://localhost/unmg_pms/api/userSubmitSignOff.php",
 
-  userSubmitNewConversation:"http://localhost/unmg_pms/api/conversationsApi/userSubmitNewConversation.php",
-  userSubmitDiscussion:"http://localhost/unmg_pms/api/conversationsApi/userSubmitDiscussion.php",
-  userSubmitNewMessage:"http://localhost/unmg_pms/api/conversationsApi/userSubmitNewMessage.php",
-  userDeleteConversation:"http://localhost/unmg_pms/api/conversationsApi/userDeleteConversation.php",
+  userSubmitNewConversation:"http://localhost/unmg_pms/api/conversations/userSubmitNewConversation.php",
+  userSubmitDiscussion:"http://localhost/unmg_pms/api/conversations/userSubmitDiscussion.php",
+  userSubmitNewMessage:"http://localhost/unmg_pms/api/conversations/userSubmitNewMessage.php",
+  userDeleteConversation:"http://localhost/unmg_pms/api/conversations/userDeleteConversation.php",
 };
 
 export const releaseAPIs = {
@@ -74,6 +75,7 @@ export const releaseAPIs = {
   updateSettings:"../api/updateSettings.php",
   userSubmitKPIDuration: "../api/userSubmitKPIDuration.php",
   retrieveLogs:"../api/retrieveLogs.php",
+  retrieveNotifications:"../api/retrieveNotifications.php",
   
   //Retrieval of Data
   fetchKPIDuration: "../api/fetchKpiDuration.php",
@@ -92,9 +94,9 @@ export const releaseAPIs = {
   retrieveGlobalSettings: "../api/retrieveGlobalSettings.php",
   retriveVerifyIfEvaluator: "../api/retriveVerifyIfEvaluator.php",
 
-  retrieveReceivers: "../api/conversationsApi/retrieveReceivers.php",
-  retrieveConversations: "../api/conversationsApi/retrieveConversations.php",
-  retrieveConvo:"../api/conversationsApi/retrieveConvo.php",
+  retrieveReceivers: "../api/conversations/retrieveReceivers.php",
+  retrieveConversations: "../api/conversations/retrieveConversations.php",
+  retrieveConvo:"../api/conversations/retrieveConvo.php",
 
   //Submitting/Updating Data
   uploadProfilePicture: "../api/uploadImage.php",
@@ -108,8 +110,8 @@ export const releaseAPIs = {
   userSubmitApproval:"../api/userSubmitApproval.php",
   userSubmitSignOff:"../api/userSubmitSignOff.php",
 
-  userSubmitNewConversation:"../api/conversationsApi/userSubmitNewConversation.php",
-  userSubmitDiscussion:"../api/conversationsApi/userSubmitDiscussion.php",
-  userSubmitNewMessage:"../api/conversationsApi/userSubmitNewMessage.php",
-  userDeleteConversation:"../api/conversationsApi/userDeleteConversation.php",
+  userSubmitNewConversation:"../api/conversations/userSubmitNewConversation.php",
+  userSubmitDiscussion:"../api/conversations/userSubmitDiscussion.php",
+  userSubmitNewMessage:"../api/conversations/userSubmitNewMessage.php",
+  userDeleteConversation:"../api/conversations/userDeleteConversation.php",
 };

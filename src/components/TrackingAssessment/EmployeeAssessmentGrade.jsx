@@ -515,25 +515,25 @@ export default function EmployeeAssessmentGrade({
                                                 </td>
                                                 <td className="w-[10%]">
                                                   <div className="p-2 flex items-center justify-center">
-                                                    {grade.myr_status == 1 ? (
+                                                    {parseInt(grade.myr_status) == 1 ? (
                                                       <Badge
                                                         message={"Struggling/Help!"}
                                                         type={"failure"}
                                                         className={"text-[.8rem] px-1"}
                                                       />
-                                                    ) : grade.myr_status == 2 ? (
+                                                    ) : parseInt(grade.myr_status) == 2 ? (
                                                       <Badge
                                                         message={"Lagging/Behind"}
                                                         type={"warning"}
                                                         className={"text-[.8rem] px-1"}
                                                       />
-                                                    ) : grade.myr_status == 3 ? (
+                                                    ) : parseInt(grade.myr_status) == 3 ? (
                                                       <Badge
                                                         message={"Ontrack/Completed"}
                                                         type={"success"}
                                                         className={"text-[.8rem] px-1"}
                                                       />
-                                                    ) : grade.myr_status == 4 ? (
+                                                    ) : parseInt(grade.myr_status) == 4 ? (
                                                       <Badge
                                                         message={"Ontrack/Completed"}
                                                         type={"success"}
