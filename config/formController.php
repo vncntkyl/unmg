@@ -446,7 +446,7 @@ class Form extends Controller
 
     function selectKpiDuration()
     {
-        $this->setStatement("SELECT * FROM `hr_kpi_year_duration`");
+        $this->setStatement("SELECT * FROM hr_kpi_year_duration ORDER BY from_date DESC");
         $this->statement->execute();
         return $this->statement->fetchAll();
     }

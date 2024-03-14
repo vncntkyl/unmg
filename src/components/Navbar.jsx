@@ -150,7 +150,7 @@ export default function Navbar({
                 <ul>
                   {notifications.length > 0 &&
                     notifications?.map((notification) => (
-                      <li className="group relative px-2 hover:bg-default">
+                      <li className="group relative px-2 hover:bg-default" key={notification.ID}>
                         <a
                           href={notification.link}
                           className="py-2 flex flex-col justify-center items-start"
@@ -162,7 +162,7 @@ export default function Navbar({
                             {notification.message}
                           </p>
                         </a>
-                        <div class="group-hover:bg-default right-0 bottom-0 bg-white p-2 flex flex-col text-end text-[0.8rem] text-black">
+                        <div className="group-hover:bg-default right-0 bottom-0 bg-white p-2 flex flex-col text-end text-[0.8rem] text-black">
                           <span>
                             {format(
                               new Date(notification.creation_date),

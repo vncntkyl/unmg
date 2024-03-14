@@ -8,6 +8,7 @@ import classNames from "classnames";
 import { format } from "date-fns";
 import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
+import WorkYear from "../../misc/WorkYear";
 export default function Goals({
   user_id,
   pillars = [],
@@ -26,7 +27,6 @@ export default function Goals({
 
   const { removeSubText } = useFunction();
   const { headList, fetchUsers } = useAuth();
-
   const handleApproval = async () => {
     let approver, creator;
     approver = user_id;
@@ -124,6 +124,7 @@ export default function Goals({
   }, [user_id, workYear, goalOwner]);
   return !loading ? (
     <div className="flex flex-col gap-2">
+      <WorkYear setKpiDuration={setKpiDuration}/>
       <div className="flex flex-row gap-2 items-center justify-between">
         <div className="flex flex-row items-center gap-2">
           <label htmlFor="workyear"> Select Work Year:</label>
@@ -134,14 +135,15 @@ export default function Goals({
               localStorage.setItem("work_year", parseInt(e.target.value));
               setKpiDuration(parseInt(e.target.value));
             }}
+            defaultValue={-1}
           >
-            <option value="-1" disabled selected={workYear === -1}>
+            <option value={-1} disabled>
               --Select Year--
             </option>
             {kpiYears.length > 0 &&
-              kpiYears.map((year) => {
+              kpiYears.map((year,index) => {
                 return (
-                  <option value={year.kpi_year_duration_id}>
+                  <option value={year.kpi_year_duration_id} key={index}>
                     {format(new Date(year.from_date), "MMM d, yyyy") +
                       " - " +
                       format(new Date(year.to_date), "MMM d, yyyy")}
@@ -208,7 +210,7 @@ export default function Goals({
       ) : (
         <div className="flex flex-col">
           <div className="hidden lg:flex flex-row">
-            {pillars.map((pillar) => {
+            {pillars?.map((pillar, index) => {
               return (
                 <>
                   <button
@@ -218,6 +220,7 @@ export default function Goals({
                       currentPillar === pillar.pillar_id &&
                         "bg-default font-semibold"
                     )}
+                    key={"goals" + index}
                   >
                     {removeSubText(pillar.pillar_name)}
                   </button>
@@ -231,10 +234,10 @@ export default function Goals({
                 onChange={(e) => setPillar(e.target.value)}
                 className="w-full outline-none lg:hidden"
               >
-                {pillars.map((pillar) => {
+                {pillars.map((pillar, index) => {
                   return (
                     <>
-                      <option value={pillar.pillar_id}>
+                      <option value={pillar.pillar_id} key={index}>
                         {removeSubText(pillar.pillar_name)}
                       </option>
                     </>
