@@ -39,8 +39,7 @@ export default function Navbar({
     const parameters = {
       params: {
         logs: true,
-        employee_id: JSON.parse(localStorage.getItem("currentUser"))
-          .employee_id,
+        employee_id: JSON.parse(localStorage.getItem("currentUser")).employee_id,
       },
     };
     try {
@@ -102,15 +101,15 @@ export default function Navbar({
           </div>
           <div className="nav_page col-[2/3] flex items-center md:mr-auto">
             <span className="crumbs text-white text-[.8rem] text-sm md:text-lg sm:text-[.9rem]">
-              {usertypeList.length > 0 &&
+              {usertypeList?.length > 0 &&
                 currentUser != [] &&
                 capitalize(
-                  usertypeList.find(
+                  usertypeList?.find(
                     (usertype) =>
                       usertype.job_level_id == JSON.parse(currentUser).user_type
                   ).job_level_name === "rank and file"
                     ? "employee"
-                    : usertypeList.find(
+                    : usertypeList?.find(
                         (usertype) =>
                           usertype.job_level_id ==
                           JSON.parse(currentUser).user_type
@@ -144,13 +143,13 @@ export default function Navbar({
               <div
                 className={classNames(
                   "notification_panel",
-                  !panel.notification && "hidden",
+                  !panel?.notification && "hidden",
                   "absolute top-full right-0 w-[15rem] max-h-[10rem] mt-4 bg-white py-2 rounded-md shadow-md animate-fade z-[10] overflow-y-scroll"
                 )}
               >
                 <ul>
-                  {notifications &&
-                    notifications.map((notification) => (
+                  {notifications.length > 0 &&
+                    notifications?.map((notification) => (
                       <li className="group relative px-2 hover:bg-default">
                         <a
                           href={notification.link}

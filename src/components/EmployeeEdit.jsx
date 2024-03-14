@@ -30,6 +30,7 @@ export default function EmployeeEdit({ admin }) {
     caps,
   } = useFunction();
   const path = window.location.pathname.split("/")[1];
+  const [loading, toggleLoading] = useState(true);
   const [personalInfo, setPersonalInfo] = useState([]);
   const [jobInfo, setJobInfo] = useState([]);
   const [evaluators, setEvaluators] = useState([]);
@@ -187,8 +188,11 @@ export default function EmployeeEdit({ admin }) {
       secondary_evaluator: user.secondary_evaluator || "N/A",
       tertiary_evaluator: user.tertiary_evaluator || "N/A",
     });
+    toggleLoading(false);
   }, []);
-  return personalInfo ? (
+  return loading ? (
+    <>Loading...</>
+  ) : (
     <>
       <div className="flex flex-col gap-2">
         <a
@@ -265,7 +269,7 @@ export default function EmployeeEdit({ admin }) {
               Personal Information
             </span>
             <div className="flex flex-col gap-2 pt-2">
-              {Object.keys(personalInfo).map((object_key, index) => (
+              {Object.keys(personalInfo)?.map((object_key, index) => (
                 <Input
                   key={index}
                   withLabel={true}
@@ -311,7 +315,7 @@ export default function EmployeeEdit({ admin }) {
               Job Information
             </span>
             <div className="flex flex-col gap-2 pt-2">
-              {Object.keys(jobInfo).map((object_key, index) => (
+              {Object.keys(jobInfo)?.map((object_key, index) => (
                 <Input
                   key={index}
                   withLabel={true}
@@ -372,7 +376,7 @@ export default function EmployeeEdit({ admin }) {
               ))}
             </div>
             {/* evaluators */}
-            {evaluators.primary_evaluator && (
+            {evaluators?.primary_evaluator && (
               <>
                 <div className="flex flex-col gap-2 pt-2">
                   <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
@@ -395,7 +399,7 @@ export default function EmployeeEdit({ admin }) {
                       >
                         None
                       </option>
-                      {headList.map((head, index) => {
+                      {headList?.map((head, index) => {
                         return (
                           <option
                             key={index}
@@ -412,8 +416,8 @@ export default function EmployeeEdit({ admin }) {
                       })}
                     </select>
                   </div>
-                  {evaluators.primary_evaluator !== "N/A" &&
-                  evaluators.primary_evaluator ? (
+                  {evaluators?.primary_evaluator !== "N/A" &&
+                  evaluators?.primary_evaluator ? (
                     <>
                       <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
                         <label className="md:w-1/2">Secondary Evaluator</label>
@@ -435,13 +439,11 @@ export default function EmployeeEdit({ admin }) {
                           >
                             None
                           </option>
-                          {headList
-                            .filter(
+                          {headList?.filter(
                               (item) =>
                                 parseInt(item.employee_id) !==
                                 parseInt(evaluators.primary_evaluator)
-                            )
-                            .map((head, index) => {
+                            ).map((head, index) => {
                               return (
                                 <option
                                   key={index}
@@ -459,8 +461,8 @@ export default function EmployeeEdit({ admin }) {
                             })}
                         </select>
                       </div>
-                      {evaluators.secondary_evaluator !== "N/A" &&
-                      evaluators.secondary_evaluator ? (
+                      {evaluators?.secondary_evaluator !== "N/A" &&
+                      evaluators?.secondary_evaluator ? (
                         <>
                           <div className="flex flex-col gap-1 justify-between md:flex-row lg:flex-col xl:flex-row">
                             <label className="md:w-1/2">
@@ -479,15 +481,13 @@ export default function EmployeeEdit({ admin }) {
                                 --Select Tertiary Evaluator--
                               </option>
                               <option value="">None</option>
-                              {headList
-                                .filter(
+                              {headList?.filter(
                                   (item) =>
                                     parseInt(item.employee_id) !==
                                       parseInt(evaluators.primary_evaluator) &&
                                     parseInt(item.employee_id) !==
                                       parseInt(evaluators.secondary_evaluator)
-                                )
-                                .map((head, index) => {
+                                ).map((head, index) => {
                                   return (
                                     <option
                                       key={index}
@@ -594,7 +594,5 @@ export default function EmployeeEdit({ admin }) {
         />
       )}
     </>
-  ) : (
-    <>Loading...</>
   );
 }
