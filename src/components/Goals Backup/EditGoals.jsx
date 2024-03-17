@@ -7,13 +7,12 @@ import GoalTable from "./GoalTableHeader";
 import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
 
-export default function EditGoals({ pillars, workYear }) {
+export default function EditGoals({ pillars = [], workYear }) {
   const [goalData, setGoalData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPillar, setPillar] = useState(1);
   const [tableData, setTableData] = useState([]);
   const [users, setUsers] = useState([]);
-  const [employeeName, setEmployeeName] = useState("");
 
   const navigate = useNavigate();
   const { removeSubText } = useFunction();
@@ -102,8 +101,8 @@ export default function EditGoals({ pillars, workYear }) {
 
         const response = await axios.post(url.sendMail, notificationData);
         if (response.data === 1) {
-          if (alert("You have successfully updated your goals")) {
-            navigate("/main_goals");
+          if(alert("You have successfully updated your goals")){
+            navigate("/main_goals")
           }
         }
       } else {
@@ -162,15 +161,8 @@ export default function EditGoals({ pillars, workYear }) {
 
     retrieveUser();
   }, [workYear]);
-  useEffect(() => {
-    if (localStorage.getItem("goal_name")) {
-      setEmployeeName(localStorage.getItem("goal_name"));
-      localStorage.removeItem("goal_name");
-    }
-  }, []);
   return !loading && pillars ? (
     <>
-      {employeeName && <span className="text-[1.1rem]">{employeeName}</span>}
       <div className="flex flex-row flex-wrap gap-2">
         {pillars.map((pillar, index) => {
           return (

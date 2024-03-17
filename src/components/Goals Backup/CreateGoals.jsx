@@ -4,6 +4,7 @@ import axios from "axios";
 import GoalsInstructions from "./GoalsInstructions";
 import { useAuth } from "../../context/authContext";
 import { format } from "date-fns";
+import { useFunction } from "../../context/FunctionContext";
 import { developmentAPIs as url } from "../../context/apiList";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
@@ -197,20 +198,20 @@ export default function CreateGoals({
       return;
     }
 
+
     try {
-      console.log(goals);
-      // const formData = new FormData();
-      // formData.append("submit", true);
-      // formData.append("userID", user.length != 0 ? user : user_id);
-      // formData.append("current_user_id", user_id);
-      // formData.append("employee_id", employee_id);
-      // formData.append("goals", JSON.stringify(goals));
-      // formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
-      // const response = await axios.post(url.formCreation, formData);
-      // alert(response.data);
-      // localStorage.setItem("finished_new_goals", duration);
-      // localStorage.removeItem("progress_goals");
-      // navigate("/main_goals");
+      const formData = new FormData();
+      formData.append("submit", true);
+      formData.append("userID", user.length != 0 ? user : user_id);
+      formData.append("current_user_id", user_id);
+      formData.append("employee_id", employee_id);
+      formData.append("goals", JSON.stringify(goals));
+      formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
+      const response = await axios.post(url.formCreation, formData);
+      alert(response.data);
+      localStorage.setItem("finished_new_goals", duration);
+      localStorage.removeItem("progress_goals");
+      navigate("/main_goals");
     } catch (e) {
       console.log(e.message);
     }
@@ -457,24 +458,26 @@ export default function CreateGoals({
                                   <span>Objective</span>
                                   <div className="flex flex-row gap-2 items-center">
                                     <span>{objIndex + 1}</span>
-                                    <textarea
-                                      required
-                                      className="p-1 rounded-md w-[350px]"
-                                      placeholder="Enter objective description"
-                                      value={obj.objective_description}
-                                      onChange={(e) => {
-                                        const text = e.target.value;
-                                        const updatedGoals = [...goals];
-                                        const currentPillar =
-                                          updatedGoals[index];
-                                        currentPillar.objectives[objIndex] = {
-                                          ...currentPillar.objectives[objIndex],
-                                          objective_description: text,
-                                        };
+                                      <textarea
+                                        required
+                                        className="p-1 rounded-md w-[350px]"
+                                        placeholder="Enter objective description"
+                                        value={obj.objective_description}
+                                        onChange={(e) => {
+                                          const text = e.target.value;
+                                          const updatedGoals = [...goals];
+                                          const currentPillar =
+                                            updatedGoals[index];
+                                          currentPillar.objectives[objIndex] = {
+                                            ...currentPillar.objectives[
+                                              objIndex
+                                            ],
+                                            objective_description: text,
+                                          };
 
-                                        setGoals(updatedGoals);
-                                      }}
-                                    ></textarea>
+                                          setGoals(updatedGoals);
+                                        }}
+                                      ></textarea>
                                     {goal.objectives.length !==
                                       globalSettings.required_min && (
                                       <Tooltip
@@ -526,41 +529,35 @@ export default function CreateGoals({
                                                 }}
                                               ></textarea>
                                               <div className="flex flex-row items-center gap-1 p-1">
-                                                <Tooltip
-                                                  content="Enter KPI weight."
-                                                  style="light"
-                                                  trigger="click"
-                                                >
-                                                  <input
-                                                    required
-                                                    type="number"
-                                                    min={0}
-                                                    max={goal.pillar_percentage}
-                                                    className="outline-none rounded-md p-1 text-center"
-                                                    value={kpi.kpi_weight}
-                                                    onChange={(e) => {
-                                                      const point =
-                                                        e.target.valueAsNumber;
-                                                      const updatedGoals = [
-                                                        ...goals,
-                                                      ];
-                                                      const currentObjective =
-                                                        updatedGoals[index]
-                                                          .objectives[objIndex];
-                                                      currentObjective.kpi[
+                                                <Tooltip content="Enter KPI weight." style="light" trigger="click">
+                                                <input
+                                                  required
+                                                  type="number"
+                                                  min={0}
+                                                  max={goal.pillar_percentage}
+                                                  className="outline-none rounded-md p-1 text-center"
+                                                  value={kpi.kpi_weight}
+                                                  onChange={(e) => {
+                                                    const point =
+                                                      e.target.valueAsNumber;
+                                                    const updatedGoals = [
+                                                      ...goals,
+                                                    ];
+                                                    const currentObjective =
+                                                      updatedGoals[index]
+                                                        .objectives[objIndex];
+                                                    currentObjective.kpi[
+                                                      kpiIndex
+                                                    ] = {
+                                                      ...currentObjective.kpi[
                                                         kpiIndex
-                                                      ] = {
-                                                        ...currentObjective.kpi[
-                                                          kpiIndex
-                                                        ],
-                                                        kpi_weight: point,
-                                                      };
-                                                      setGoals(updatedGoals);
-                                                    }}
-                                                    onWheel={(e) =>
-                                                      e.target.blur()
-                                                    }
-                                                  />
+                                                      ],
+                                                      kpi_weight: point,
+                                                    };
+                                                    setGoals(updatedGoals);
+                                                  }}
+                                                  onWheel={(e) => e.target.blur()}
+                                                />
                                                 </Tooltip>
                                                 <span className="font-bold">
                                                   %
@@ -608,61 +605,6 @@ export default function CreateGoals({
                                           <div className="flex flex-col gap-2">
                                             <span>Target Metrics</span>
                                             {kpi.target_metrics.map(
-                                              (metrics, metricIndex, array) => {
-                                                const reversedIndex =
-                                                  array.length -
-                                                  1 -
-                                                  metricIndex;
-                                                return (
-                                                  <>
-                                                    <div className="flex flex-row items-center gap-1">
-                                                      <span>
-                                                        {
-                                                          array[reversedIndex]
-                                                            .point
-                                                        }
-                                                      </span>
-                                                      <textarea
-                                                        required
-                                                        className="p-1 rounded-md w-[300px]"
-                                                        placeholder="Enter Target Metrics Description"
-                                                        value={
-                                                          array[reversedIndex]
-                                                            .metric_description
-                                                        }
-                                                        onChange={(e) => {
-                                                          const text =
-                                                            e.target.value;
-                                                          const updatedGoals = [
-                                                            ...goals,
-                                                          ];
-                                                          const currentKPI =
-                                                            updatedGoals[index]
-                                                              .objectives[
-                                                              objIndex
-                                                            ].kpi[kpiIndex];
-                                                          currentKPI.target_metrics[
-                                                            reversedIndex
-                                                          ] = {
-                                                            ...currentKPI
-                                                              .target_metrics[
-                                                              reversedIndex
-                                                            ],
-                                                            metric_description:
-                                                              text,
-                                                          };
-
-                                                          setGoals(
-                                                            updatedGoals
-                                                          );
-                                                        }}
-                                                      ></textarea>
-                                                    </div>
-                                                  </>
-                                                );
-                                              }
-                                            )}
-                                            {/* {kpi.target_metrics.map(
                                               (metrics, metricIndex) => {
                                                 const reversedPoint =
                                                   4 - metrics.point + 1;
@@ -710,7 +652,7 @@ export default function CreateGoals({
                                                   </>
                                                 );
                                               }
-                                            )} */}
+                                            )}
                                           </div>
                                         </div>
                                       </>

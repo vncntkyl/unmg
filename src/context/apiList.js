@@ -16,7 +16,10 @@ export const developmentAPIs = {
   updateSettings:"http://localhost/unmg_pms/api/updateSettings.php",
   userSubmitKPIDuration: "http://localhost/unmg_pms/api/userSubmitKPIDuration.php",
   retrieveLogs:"http://localhost/unmg_pms/api/retrieveLogs.php",
-  retrieveNotifications:"http://localhost/unmg_pms/api/retrieveNotifications.php",
+
+  retrieveNotifications:"http://localhost/unmg_pms/api/notificationsApi/retrieveNotifications.php",
+  seenNotifications:"http://localhost/unmg_pms/api/notificationsApi/seenNotifications.php",
+  deleteNotifications:"http://localhost/unmg_pms/api/notificationsApi/deleteNotifications.php",
   
   //Retrieval of Data
   fetchKPIDuration: "http://localhost/unmg_pms/api/fetchKpiDuration.php",
@@ -57,7 +60,7 @@ export const developmentAPIs = {
   userDeleteConversation:"http://localhost/unmg_pms/api/conversations/userDeleteConversation.php",
 };
 
-export const developmentAPIs = {
+export const releaseAPIs = {
   //Login Credentials
   login: "../api/signInUser.php",
   register: "../api/registerUser.php",
@@ -75,7 +78,10 @@ export const developmentAPIs = {
   updateSettings:"../api/updateSettings.php",
   userSubmitKPIDuration: "../api/userSubmitKPIDuration.php",
   retrieveLogs:"../api/retrieveLogs.php",
-  retrieveNotifications:"../api/retrieveNotifications.php",
+
+  retrieveNotifications:"../api/notificationsApi/retrieveNotifications.php",
+  seenNotifications:"../api/notificationsApi/seenNotifications.php",
+  deleteNotifications:"../api/notificationsApi/deleteNotifications.php",
   
   //Retrieval of Data
   fetchKPIDuration: "../api/fetchKpiDuration.php",

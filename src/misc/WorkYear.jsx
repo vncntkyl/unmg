@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import format from "date-fns/format";
 
-export default function WorkYear({ kpiDuration, setKpiDuration }) {
+export default function WorkYear({ workYear, setWorkYear }) {
   const { kpiDurations } = useAuth();
   return (
     <div className="flex flex-row items-center gap-2">
       <label htmlFor="workyear"> Select Work Year:</label>
       <select
-        className="bg-default rounded-md p-1 px-2 text-center"
+        className="bg-white rounded-md p-1 px-2 text-center"
         onChange={(e) => {
-          setKpiDuration(parseInt(e.target.value));
+          setWorkYear(parseInt(e.target.value));
           localStorage.setItem("work_year", parseInt(e.target.value));
         }}
-        value={kpiDuration}
+        value={workYear}
       >
         <option value="-1">--Select Work Year--</option>
         {kpiDurations?.map((year, index) => {

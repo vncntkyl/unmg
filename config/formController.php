@@ -269,68 +269,73 @@ class Form extends Controller
         $this->statement->execute([$user_id]);
         return $this->statement->fetchAll();
     }
-    function getEmployeeGoals($workyear, $is_count = false)
+    function getAdminEmployeeGoals($workyear)
     {
-        $this->setStatement("SELECT
-        u.users_id,
-        u.employee_id,
-        IF(u.middle_name <> '.', CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.'), CONCAT(u.last_name, ', ', u.first_name)) AS full_name,
-        u.contract_type,
-        IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :work_year, 1, 0)) AS has_eval,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
-        CASE
-            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' AND fp.approved_by <> '') THEN '1'
-            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' OR fp.approved_by <> '') THEN '2'
-            ELSE '3'
-        END AS status
-        FROM
-            hr_users u
+        $this->setStatement("SELECT 
+            u.users_id,
+            u.employee_id,
+            CASE 
+            WHEN u.middle_name IS NOT NULL AND u.middle_name <> '' THEN
+                CONCAT(u.last_name, ' ', u.first_name, ' ', SUBSTRING(u.middle_name, 1, 1), '. ')
+            ELSE
+                CONCAT(u.last_name, ' ', u.first_name)
+            END AS full_name,
+            u.contract_type,
+            CASE WHEN (ef.users_id IS NULL AND ef.CreationDate IS NULL) THEN 0 ELSE CASE WHEN (ef.CreationDate = :work_year) THEN 1 ELSE 0 END END AS has_eval,
+            MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
+            MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
+            MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
+            MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
+            CASE
+                WHEN (fp.created_by <> '' AND fp.approved_by <> '') THEN '1'
+                WHEN (fp.created_by <> '' OR fp.approved_by <> '') THEN '2'
+                ELSE '3'
+            END AS status
+            FROM hr_users AS u
             LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
+            AND ef.CreationDate = :work_year
             LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
-            LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
-        WHERE
-            u.contract_type IN ('regular', 'probationary') 
-            AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30') 
-        GROUP BY
-        u.users_id");
+            LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_fp_id = fp.hr_eval_form_fp_id
+            WHERE u.users_id != 1
+            AND u.contract_type IN ('regular', 'probationary') 
+            GROUP BY u.users_id, u.employee_id, full_name, u.contract_type, has_eval");
         $this->statement->execute([":work_year" => $workyear]);
-        if ($is_count) {
-            return $this->statement->rowCount();
-        } else {
-            return $this->statement->fetchAll();
-        }
+        return $this->statement->fetchAll();
     }
     function getEvaluatorEmployeeGoals($evaluator, $is_count = false, $workyear)
     {
         $this->setStatement("SELECT
-        u.users_id,
-        u.employee_id,
-        IF(u.middle_name <> '.', CONCAT(u.last_name, ', ', u.first_name, ' ', LEFT(u.middle_name, 1), '.'), CONCAT(u.last_name, ', ', u.first_name)) AS full_name,
-        u.contract_type,
-        IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :work_year, 1, 0)) AS has_eval,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
-        MAX(CASE WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
-        CASE
-            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' AND fp.approved_by <> '') THEN '1'
-            WHEN (ef.CreationDate IS NOT NULL AND ef.CreationDate = :work_year) AND (fp.created_by <> '' OR fp.approved_by <> '') THEN '2'
-            ELSE '3'
-        END AS status
-        FROM
-        hr_users u
-        LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
-        LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
-        LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
-        WHERE
-        u.contract_type IN ('regular', 'probationary') 
-        AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30') 
-        AND (u.primary_evaluator = :evaluator OR u.secondary_evaluator = :evaluator OR u.tertiary_evaluator = :evaluator) AND u.users_id != 1
-        GROUP BY
-        u.users_id");
+            u.users_id,
+            u.employee_id,
+            CASE 
+            WHEN u.middle_name IS NOT NULL AND u.middle_name <> '' THEN
+                CONCAT(u.last_name, ' ', u.first_name, ' ', SUBSTRING(u.middle_name, 1, 1), '. ')
+            ELSE
+                CONCAT(u.last_name, ' ', u.first_name)
+            END AS full_name,
+            u.contract_type,
+            IF(ef.users_id IS NULL AND ef.CreationDate IS NULL, 0, IF(ef.CreationDate = :work_year, 1, 0)) AS has_eval,
+            MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
+            MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
+            MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
+            MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
+            CASE
+                WHEN (fp.created_by <> '' AND fp.approved_by <> '') THEN '1'
+                WHEN (fp.created_by <> '' OR fp.approved_by <> '') THEN '2'
+                ELSE '3'
+            END AS status
+            FROM
+            hr_users u
+            LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
+            AND ef.CreationDate = :work_year
+            LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
+            LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
+            WHERE
+            u.users_id != 1
+            AND u.contract_type IN ('regular', 'probationary') 
+            AND (u.primary_evaluator = :evaluator OR u.secondary_evaluator = :evaluator OR u.tertiary_evaluator = :evaluator) 
+            GROUP BY
+            u.users_id");
         $this->statement->execute([":evaluator" => $evaluator, ":work_year" => $workyear]);
         if ($is_count) {
             return $this->statement->rowCount();
@@ -338,43 +343,43 @@ class Form extends Controller
             return $this->statement->fetchAll();
         }
     }
-    function getEmployeeGoalsData()
-    {
-        $this->setStatement("SELECT   COUNT(CASE WHEN status = '3' AND contract_type = 'regular' THEN 1 END) AS waiting_regular,
-		COUNT(CASE WHEN status = '3' AND contract_type = 'probationary' THEN 1 END) AS waiting_probationary,
-         COUNT(CASE WHEN status = '2' AND contract_type = 'regular' THEN 1 END) AS pending_regular,
-		COUNT(CASE WHEN status = '2' AND contract_type = 'probationary' THEN 1 END) AS pending_probationary
-            FROM (
-                SELECT
-                    u.users_id,
-                    CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
-                    u.contract_type,
-                    CASE
-                        WHEN ef.users_id IS NULL THEN 0
-                        ELSE 1
-                    END AS has_eval,
-                    MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
-                    MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
-                    MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
-                    MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
-                    CASE
-                        WHEN fp.created_by <> '' AND fp.approved_by <> '' THEN '1'
-                        WHEN fp.created_by <> '' OR fp.approved_by <> '' THEN '2'
-                        ELSE '3'
-                    END AS status
-                FROM
-                    hr_users u
-                    LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
-                    LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
-                    LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
-                WHERE
-                    u.contract_type IN ('regular', 'probationary') AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')
-                GROUP BY
-                    u.users_id
-            ) AS subquery;");
-        $this->statement->execute();
-        return $this->statement->fetch();
-    }
+    // function getEmployeeGoalsData()
+    // {
+    //     $this->setStatement("SELECT   COUNT(CASE WHEN status = '3' AND contract_type = 'regular' THEN 1 END) AS waiting_regular,
+    // 	COUNT(CASE WHEN status = '3' AND contract_type = 'probationary' THEN 1 END) AS waiting_probationary,
+    //      COUNT(CASE WHEN status = '2' AND contract_type = 'regular' THEN 1 END) AS pending_regular,
+    // 	COUNT(CASE WHEN status = '2' AND contract_type = 'probationary' THEN 1 END) AS pending_probationary
+    //         FROM (
+    //             SELECT
+    //                 u.users_id,
+    //                 CONCAT(u.first_name, ' ', LEFT(u.middle_name, 1), '.', ' ', u.last_name) AS full_name,
+    //                 u.contract_type,
+    //                 CASE
+    //                     WHEN ef.users_id IS NULL THEN 0
+    //                     ELSE 1
+    //                 END AS has_eval,
+    //                 MAX(CASE WHEN p.pillar_id = 1 THEN p.pillar_percentage ELSE '-' END) AS pillar_1,
+    //                 MAX(CASE WHEN p.pillar_id = 2 THEN p.pillar_percentage ELSE '-' END) AS pillar_2,
+    //                 MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
+    //                 MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
+    //                 CASE
+    //                     WHEN fp.created_by <> '' AND fp.approved_by <> '' THEN '1'
+    //                     WHEN fp.created_by <> '' OR fp.approved_by <> '' THEN '2'
+    //                     ELSE '3'
+    //                 END AS status
+    //             FROM
+    //                 hr_users u
+    //                 LEFT JOIN hr_eval_form ef ON ef.users_id = u.users_id
+    //                 LEFT JOIN hr_eval_form_fp fp ON fp.eval_form_id = ef.hr_eval_form_id
+    //                 LEFT JOIN hr_eval_form_pillars p ON p.hr_eval_form_id = ef.hr_eval_form_id
+    //             WHERE
+    //                 u.contract_type IN ('regular', 'probationary') AND u.hire_date <= CONCAT(YEAR(CURRENT_DATE()), '-09-30')
+    //             GROUP BY
+    //                 u.users_id
+    //         ) AS subquery;");
+    //     $this->statement->execute();
+    //     return $this->statement->fetch();
+    // }
 
     function updateObjectiveByID($objectiveID, $objective)
     {

@@ -1,66 +1,59 @@
 import React, { useEffect, useState } from "react";
 import { GrFormSearch } from "react-icons/gr";
 import axios from "axios";
-import DataTable from "./DataTable";
+import DataTable from "../Goals/DataTable";
 import { useFunction } from "../../context/FunctionContext";
 import { useAuth } from "../../context/authContext";
+import { format } from "date-fns";
 import { developmentAPIs as url } from "../../context/apiList";
-import WorkYear from "../../misc/WorkYear";
 
 export default function EmployeeGoals({
-  user_id,
-  employee_id,
-  userType,
-  pillars,
+  pillars = [],
   workYear,
-  setWorkYear,
+  setKpiDuration,
 }) {
   const [employees, setEmployees] = useState([]);
   const [loading, toggleLoading] = useState(true);
-  const [approvalStatus, setApprovalStatus] = useState(0);
+  const [approvalStatus, setStatus] = useState(0);
   const [type, setType] = useState("all");
   const { capitalize } = useFunction();
+  const { currentUser, kpiDurations } = useAuth();
   const statusList = ["Approved", "Pending Approval", "Awaiting Submission"];
-  const fetchUsers = async () => {
-    const parameters = {
-      params: {
-        employee_goals: true,
-        work_year: workYear,
-        evaluator: userType != 6 && userType != 1 ? employee_id : "",
-        admin: userType <= 2 ? true : false,
-      },
-    };
-    try {
-      const response = await axios.get(url.getEmployeeGoals, parameters);
-      setEmployees(response.data);
-      toggleLoading(false);
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUsers = async () => {
+      const parameters = {
+        params: {
+          employee_goals: true,
+          work_year: workYear,
+        },
+      };
+      if (
+        JSON.parse(currentUser).user_type != 6 &&
+        JSON.parse(currentUser).users_id != 1
+      ) {
+        parameters.params.evaluator = JSON.parse(currentUser).employee_id;
+      }
+
       try {
-        await fetchUsers();
+        const response = await axios.get(url.getEmployeeGoals, parameters);
+        setEmployees(response.data);
+        console.log(response.data);
         toggleLoading(false);
       } catch (e) {
         console.log(e.message);
       }
     };
-
-    fetchData();
-    const intervalID = setInterval(fetchData, 5000);
-    return () => clearInterval(intervalID);
-  }, [workYear]);
-
-  useEffect(() => {
     if (localStorage.getItem("usertype")) {
       setType(localStorage.getItem("usertype"));
+      localStorage.removeItem("usertype");
     }
     if (localStorage.getItem("goalstatus")) {
-      setApprovalStatus(parseInt(localStorage.getItem("goalstatus")));
+      setStatus(parseInt(localStorage.getItem("goalstatus")));
+      localStorage.removeItem("goalstatus");
     }
-  }, []);
+    fetchUsers();
+  }, [workYear]);
 
   return loading ? (
     "Loading..."
@@ -74,7 +67,7 @@ export default function EmployeeGoals({
               <select
                 className="w-full rounded-md md:w-[unset] h-full p-1 px-2"
                 value={approvalStatus}
-                onChange={(e) => setApprovalStatus(parseInt(e.target.value))}
+                onChange={(e) => setStatus(parseInt(e.target.value))}
               >
                 <option value="0" selected>
                   All
@@ -116,7 +109,34 @@ export default function EmployeeGoals({
                 className="w-full outline-none bg-transparent placeholder:text-[.9rem] placeholder:md:text-[1rem]"
               />
             </div>
-            <WorkYear workYear={workYear} setWorkYear={setWorkYear} />
+            <div className="flex flex-row gap-2 items-center">
+              <label htmlFor="workyear"> Select Work Year:</label>
+              <select
+                id="workyear"
+                className="bg-white rounded-md p-1 px-2"
+                onChange={(e) => {
+                  localStorage.setItem("work_year", parseInt(e.target.value));
+                  setKpiDuration(parseInt(e.target.value));
+                }}
+              >
+                <option value="-1" disabled selected={workYear === -1}>
+                  --Select Year--
+                </option>
+                {kpiDurations.length > 0 &&
+                  kpiDurations.map((year) => {
+                    return (
+                      <option
+                        value={year.kpi_year_duration_id}
+                        selected={year.kpi_year_duration_id === workYear}
+                      >
+                        {format(new Date(year.from_date), "MMM d, yyyy") +
+                          " - " +
+                          format(new Date(year.to_date), "MMM d, yyyy")}
+                      </option>
+                    );
+                  })}
+              </select>
+            </div>
           </div>
         </div>
         {workYear === -1 ? (
@@ -126,7 +146,6 @@ export default function EmployeeGoals({
         ) : (
           <div className="w-full rounded-md max-h-[60vh]">
             <DataTable
-              user_id={user_id}
               data={employees}
               pillars={pillars}
               statusIdx={approvalStatus}

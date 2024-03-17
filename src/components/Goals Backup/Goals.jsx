@@ -5,10 +5,18 @@ import { useParams } from "react-router-dom";
 import { useFunction } from "../../context/FunctionContext";
 import GoalTable from "./GoalTableHeader";
 import classNames from "classnames";
+import { format } from "date-fns";
 import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
 import WorkYear from "../../misc/WorkYear";
-export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
+export default function Goals({
+  user_id,
+  pillars = [],
+  kpiYears = [],
+  workYear,
+  kpiDuration,
+  setKpiDuration,
+}) {
   const { id } = useParams();
   const [hasSet, toggleSet] = useState(false);
   const [goalOwner, setGoalOwner] = useState(null);
@@ -17,11 +25,9 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const [currentPillar, setPillar] = useState(1);
   const [tableData, setTableData] = useState([]);
   const [goalStatus, setGoalStatus] = useState(false);
-  const [employeeName, setEmployeeName] = useState("");
 
   const { removeSubText } = useFunction();
   const { headList, fetchUsers } = useAuth();
-
   const handleApproval = async () => {
     let approver, creator;
     approver = user_id;
@@ -52,6 +58,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
     if (!user_id) return;
 
     const retrieveUser = async () => {
+
       const formData = new FormData();
       formData.append("user_id", id ? id : user_id);
       formData.append("work_year", workYear);
@@ -116,22 +123,11 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
     retrieveUser();
     getGoalApproval();
   }, [user_id, workYear, goalOwner]);
-  useEffect(() => {
-    if (localStorage.getItem("goal_name")) {
-      setEmployeeName(localStorage.getItem("goal_name"));
-      localStorage.removeItem("goal_name");
-    }
-  }, []);
   return !loading ? (
     <div className="flex flex-col gap-2">
       <div className="flex flex-row gap-2 items-center justify-between">
-        <div className="flex flex-col gap-2">
-          {employeeName && (
-            <span className="text-[1.1rem]">{employeeName}</span>
-          )}
-          <WorkYear workYear={workYear} setWorkYear={setWorkYear} />
-        </div>
-        {workYear && hasSet && user_id != 1 && (
+      <WorkYear kpiDuration={kpiDuration} setKpiDuration={setKpiDuration}/>
+        {workYear && hasSet && (
           <div className="flex flex-row gap-2">
             <a
               className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
@@ -170,29 +166,21 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
         </div>
       ) : !hasSet ? (
         <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">
-          {user_id != 1 ? (
-            <>
-              <span>
-                Sorry, you haven&lsquo;t set your KPIs Objectives yet. Please
-                click the button to get started.
-              </span>
-              <a
-                href="/main_goals/create"
-                className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
-                onClick={() => {
-                  localStorage.setItem("create_goal", user_id);
-                  localStorage.setItem("work_year", workYear);
-                }}
-              >
-                <AiOutlinePlus />
-                Create Goals
-              </a>
-            </>
-          ) : (
-            <span>
-              Sorry, the user has not set their KPIs Objectives yet.
-            </span>
-          )}
+          <span>
+            Sorry, you haven&lsquo;t set your KPIs Objectives yet. Please click
+            the button to get started.
+          </span>
+          <a
+            href="/main_goals/create"
+            className="text-white p-2 flex flex-row items-center gap-2 bg-un-blue-light hover:bg-un-blue rounded-full text-[.9rem]"
+            onClick={() => {
+              localStorage.setItem("create_goal", user_id);
+              localStorage.setItem("work_year", workYear);
+            }}
+          >
+            <AiOutlinePlus />
+            Create Goals
+          </a>
         </div>
       ) : (
         <div className="flex flex-col">

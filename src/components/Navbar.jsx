@@ -10,6 +10,7 @@ import { useFunction } from "../context/FunctionContext";
 import axios from "axios";
 import { developmentAPIs as url } from "../context/apiList";
 import { format } from "date-fns";
+import AlertModal from "../misc/AlertModal";
 export default function Navbar({
   notification_count,
   user_data,
@@ -29,6 +30,8 @@ export default function Navbar({
     notification: false,
     user: false,
   });
+  const [modal, setModal] = useState("standby");
+  const [modalMessage, setModalMessage] = useState("");
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.clear();
@@ -39,37 +42,76 @@ export default function Navbar({
     const parameters = {
       params: {
         logs: true,
-        employee_id: JSON.parse(localStorage.getItem("currentUser")).employee_id,
+        employee_id: JSON.parse(localStorage.getItem("currentUser"))
+          .employee_id,
       },
     };
     try {
       const response = await axios.get(url.retrieveNotifications, parameters);
       setNotifications(response.data);
-    } catch (error) {
-      console.log(error.message);
+    } catch (e) {
+      console.log(e.message);
     }
   };
+
+  const handleDeleteNotifications = async () => {
+    try {
+      const fData = new FormData();
+      fData.append("submit", true);
+      fData.append("employee_id", JSON.parse(localStorage.getItem("currentUser")).employee_id)
+      const response = await axios.post(url.deleteNotifications, fData);
+      if (response.data === "success") {
+        setModal("success");
+        setModalMessage("Notifications deleted successfully!");
+      }
+
+    }catch(e){
+      console.log(e.message);
+      setModal("success");
+      setModalMessage(e.message);
+    }
+  };
+
   useEffect(() => {
-    setInterval(() => {
-      getNotification();
-    }, 5000);
+    const fetchData = async () => {
+      try {
+        await getNotification();
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    getNotification();
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const setImg = async () => {
       if (!currentUser["picture"]) return;
       try {
         const image = await import("./" + currentUser["picture"]);
         setImgProfile(image.default);
-      } catch (error) {
-        console.log(error.message);
+      } catch (e) {
+        console.log(e.message);
       }
     };
     setImg();
   }, []);
   const userType = JSON.parse(currentUser).user_type;
+  const handleViewNotification = async (ID, link) => {
+    try {
+      const fData = new FormData();
+      fData.append("submit", true);
+      fData.append("notifID", ID);
+      const response = await axios.post(url.seenNotifications, fData);
+      if (response.data === "success") {
+        navigate(link);
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
   return (
     user_data && (
       <>
@@ -136,7 +178,11 @@ export default function Navbar({
                   };
                 })
               }
-              data-count={notifications.length}
+              data-count={
+                notifications &&
+                notifications?.filter((notif) => parseInt(notif.seen) === 0)
+                  .length
+              }
               className="relative before:block before:absolute before:content-[attr(data-count)] before:top-[-5px] before:right-[-5px] before:text-tooltip before:text-white before:bg-un-red before:w-[1rem] before:h-[1rem] sm:before:w-[1.1rem] sm:before:h-[1.1rem] before:rounded-full ml-3"
             >
               <FaBell className="text-white text-[1.2rem] sm:text-[1.5rem]" />
@@ -144,25 +190,43 @@ export default function Navbar({
                 className={classNames(
                   "notification_panel",
                   !panel?.notification && "hidden",
-                  "absolute top-full right-0 w-[15rem] max-h-[10rem] mt-4 bg-white py-2 rounded-md shadow-md animate-fade z-[10] overflow-y-scroll"
+                  "absolute top-full right-0 w-[15rem] max-h-[12rem] mt-4 bg-white py-2 rounded-md shadow-md animate-fade z-[10] overflow-y-scroll"
                 )}
               >
                 <ul>
-                  {notifications.length > 0 &&
+                  {notifications.length > 0 ? (
                     notifications?.map((notification) => (
-                      <li className="group relative px-2 hover:bg-default" key={notification.ID}>
-                        <a
-                          href={notification.link}
+                      <li
+                        className={classNames(
+                          "group relative px-2 text-left",
+                          parseInt(notification.seen) === 1
+                            ? "bg-default"
+                            : "bg-white hover:bg-default"
+                        )}
+                        key={notification.ID}
+                        onClick={() =>
+                          handleViewNotification(notification.ID, notification.link)
+                        }
+                      >
+                        <div
+                          // href={notification.link}
                           className="py-2 flex flex-col justify-center items-start"
                         >
-                          <span className="font-semibold">
+                          <span className="text-[0.9rem] font-semibold">
                             {notification.title}
                           </span>
-                          <p className="text-[0.9rem] text-black">
+                          <p className="ml-2 text-[0.8rem] text-black">
                             {notification.message}
                           </p>
-                        </a>
-                        <div className="group-hover:bg-default right-0 bottom-0 bg-white p-2 flex flex-col text-end text-[0.8rem] text-black">
+                        </div>
+                        <div
+                          className={classNames(
+                            "group-hover:bg-default right-0 bottom-0 p-2 flex flex-col text-end text-[0.8rem] text-black",
+                            parseInt(notification.seen) === 1
+                              ? "bg-default"
+                              : "bg-white group-hover:bg-default"
+                          )}
+                        >
                           <span>
                             {format(
                               new Date(notification.creation_date),
@@ -171,7 +235,20 @@ export default function Navbar({
                           </span>
                         </div>
                       </li>
-                    ))}
+                    ))
+                  ) : (
+                    <li className="group text-left px-2">
+                      There are no new notifications.
+                    </li>
+                  )}
+                  <li className="sticky bottom-[-0.6rem] border-t border-default bg-white py-2">
+                    <button 
+                    type="button"
+                    className="text-un-blue-light hover:text-un-blue text-[0.8rem] underline"
+                    onClick={() => setModal("confirmation")}>
+                      Delete All Notifications
+                    </button>
+                  </li>
                 </ul>
               </div>
             </button>
@@ -258,6 +335,30 @@ export default function Navbar({
             />
           </div>
         </nav>
+        {modal === "confirmation" && (
+          <AlertModal
+            closeModal={setModal}
+            modalType={"confirmation"}
+            title={"Delete Notifications"}
+            message={"Are you sure you want to delete all of your notifications?"}
+            handleContinue={() => {
+              handleDeleteNotifications();
+            }}
+          />
+        )}
+        {modal === "success" && (
+        <AlertModal
+          closeModal={setModal}
+          modalType={"status"}
+          modalStatus={modalMessage === "Notifications deleted successfully!" ? "success" : "error"}
+          message={modalMessage}
+          continuebutton={"Confirm"}
+          handleContinue={() => {
+            handleSuccess();
+            setModal("standby");
+          }}
+        />
+      )}
       </>
     )
   );
