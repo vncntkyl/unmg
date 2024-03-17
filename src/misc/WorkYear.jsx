@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { developmentAPIs } from "../context/apiList";
 import { useAuth } from "../context/authContext";
 import format from "date-fns/format";
 
-export default function WorkYear({ setKpiDuration }) {
+export default function WorkYear({ kpiDuration, setKpiDuration }) {
   const { kpiDurations } = useAuth();
-  const [workYear, setWorkYear] = useState(-1);
-  useEffect(() => {
-    if (localStorage.getItem("work_year")){
-      setWorkYear(parseInt(localStorage.getItem("work_year")));
-    }
-  }, []);
   return (
     <div className="flex flex-row items-center gap-2">
       <label htmlFor="workyear"> Select Work Year:</label>
       <select
         className="bg-default rounded-md p-1 px-2 text-center"
         onChange={(e) => {
-          localStorage.setItem("work_year", parseInt(e.target.value));
           setKpiDuration(parseInt(e.target.value));
+          localStorage.setItem("work_year", parseInt(e.target.value));
         }}
-        value={workYear ? workYear : -1}
+        value={kpiDuration}
       >
         <option value="-1">--Select Work Year--</option>
         {kpiDurations?.map((year, index) => {

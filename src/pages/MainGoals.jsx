@@ -13,6 +13,7 @@ import classNames from "classnames";
 export default function MainGoals() {
   const [panel, setPanel] = useState("My Goals");
   const [employeeID, setEmployeeID] = useState();
+  const [empID, setEmpID] = useState();
   const [pillars, setPillars] = useState([]);
   const [isEvaluator, setIsEvaluator] = useState(false);
   const [workYear, setWorkYear] = useState(-1);
@@ -73,6 +74,7 @@ export default function MainGoals() {
   useEffect(() => {
     const user = JSON.parse(currentUser);
     setEmployeeID(user.users_id);
+    setEmpID(user.employee_id);
     if (user.user_type == 3 || user.users_id == 1) {
       setPanel("Employee Goals");
     }
@@ -130,6 +132,7 @@ export default function MainGoals() {
                           pillars={pillars}
                           kpiYears={kpiDurations}
                           workYear={workYear}
+                          kpiDuration={workYear}
                           setKpiDuration={setWorkYear}
                         />
                       }
@@ -168,6 +171,7 @@ export default function MainGoals() {
                     <CreateGoals
                       pillars={pillars}
                       user_id={employeeID}
+                      employee_id={empID}
                       kpi_work_year={workYear}
                     />
                   }

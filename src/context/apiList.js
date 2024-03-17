@@ -57,7 +57,7 @@ export const developmentAPIs = {
   userDeleteConversation:"http://localhost/unmg_pms/api/conversations/userDeleteConversation.php",
 };
 
-export const releaseAPIs = {
+export const developmentAPIs = {
   //Login Credentials
   login: "../api/signInUser.php",
   register: "../api/registerUser.php",

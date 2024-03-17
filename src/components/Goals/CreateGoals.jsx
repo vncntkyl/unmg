@@ -16,19 +16,16 @@ export default function CreateGoals({
   pillars = [],
   user_id,
   kpi_work_year = null,
+  employee_id,
 }) {
   const navigate = useNavigate();
   const [goals, setGoals] = useState([]);
   const [user, setUser] = useState("");
   const [duration, setDuration] = useState();
   const [users, setUsers] = useState([]);
-  const [toolTip, setToolTip] = useState(true);
-  const [checkToolTip, setCheckToolTip] = useState("");
   const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
   const { kpiDurations, fetchUsers, globalSettings } = useAuth();
-  const { capitalizeSentence } = useFunction();
   const [newConvoModal, setNewConvoModal] = useState(false);
-
   const addObjective = (i) => {
     const objectiveTemplate = {
       objective_description: "",
@@ -201,11 +198,13 @@ export default function CreateGoals({
       return;
     }
 
+
     try {
       const formData = new FormData();
       formData.append("submit", true);
       formData.append("userID", user.length != 0 ? user : user_id);
       formData.append("current_user_id", user_id);
+      formData.append("employee_id", employee_id);
       formData.append("goals", JSON.stringify(goals));
       formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
       const response = await axios.post(url.formCreation, formData);
@@ -425,7 +424,7 @@ export default function CreateGoals({
                           </Tooltip>
                         </label>
                         <Tooltip
-                          content=" You will put the pillar weight here."
+                          content=" You will put the overall pillar weight here."
                           style="light"
                           trigger="click"
                         >
@@ -445,6 +444,7 @@ export default function CreateGoals({
                               };
                               setGoals(updatedGoals);
                             }}
+                            onWheel={(e) => e.target.blur()}
                           />
                         </Tooltip>
                         <span className="font-bold">%</span>
@@ -556,6 +556,7 @@ export default function CreateGoals({
                                                     };
                                                     setGoals(updatedGoals);
                                                   }}
+                                                  onWheel={(e) => e.target.blur()}
                                                 />
                                                 </Tooltip>
                                                 <span className="font-bold">

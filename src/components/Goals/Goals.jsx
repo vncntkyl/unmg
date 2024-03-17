@@ -14,6 +14,7 @@ export default function Goals({
   pillars = [],
   kpiYears = [],
   workYear,
+  kpiDuration,
   setKpiDuration,
 }) {
   const { id } = useParams();
@@ -124,34 +125,8 @@ export default function Goals({
   }, [user_id, workYear, goalOwner]);
   return !loading ? (
     <div className="flex flex-col gap-2">
-      <WorkYear setKpiDuration={setKpiDuration}/>
       <div className="flex flex-row gap-2 items-center justify-between">
-        <div className="flex flex-row items-center gap-2">
-          <label htmlFor="workyear"> Select Work Year:</label>
-          <select
-            id="workyear"
-            className="bg-default rounded-md p-1 px-2"
-            onChange={(e) => {
-              localStorage.setItem("work_year", parseInt(e.target.value));
-              setKpiDuration(parseInt(e.target.value));
-            }}
-            defaultValue={-1}
-          >
-            <option value={-1} disabled>
-              --Select Year--
-            </option>
-            {kpiYears.length > 0 &&
-              kpiYears.map((year,index) => {
-                return (
-                  <option value={year.kpi_year_duration_id} key={index}>
-                    {format(new Date(year.from_date), "MMM d, yyyy") +
-                      " - " +
-                      format(new Date(year.to_date), "MMM d, yyyy")}
-                  </option>
-                );
-              })}
-          </select>
-        </div>
+      <WorkYear kpiDuration={kpiDuration} setKpiDuration={setKpiDuration}/>
         {workYear && hasSet && (
           <div className="flex flex-row gap-2">
             <a
