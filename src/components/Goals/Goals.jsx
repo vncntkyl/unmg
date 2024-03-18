@@ -8,10 +8,13 @@ import classNames from "classnames";
 import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
 import WorkYear from "../../misc/WorkYear";
+import ViewLayout from "../../misc/ViewLayout";
+
 export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const { id } = useParams();
   const [hasSet, toggleSet] = useState(false);
   const [goalOwner, setGoalOwner] = useState(null);
+  const [viewLayout, setViewLayout] = useState("tabular");
   const [loading, setLoading] = useState(true);
   const [goalData, setGoalData] = useState([]);
   const [currentPillar, setPillar] = useState(1);
@@ -121,6 +124,9 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
       setEmployeeName(localStorage.getItem("goal_name"));
       localStorage.removeItem("goal_name");
     }
+    if (localStorage.getItem("viewLayout")) {
+      setViewLayout(localStorage.getItem("viewLayout"));
+    }
   }, []);
   return !loading ? (
     <div className="flex flex-col gap-2">
@@ -131,8 +137,10 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
           )}
           <WorkYear workYear={workYear} setWorkYear={setWorkYear} />
         </div>
+
         {workYear && hasSet && user_id != 1 && (
           <div className="flex flex-row gap-2">
+            <ViewLayout viewLayout={viewLayout} setViewLayout={setViewLayout} />
             <a
               className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
               href="/main_goals/edit"
@@ -189,64 +197,127 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
               </a>
             </>
           ) : (
-            <span>
-              Sorry, the user has not set their KPIs Objectives yet.
-            </span>
+            <span>Sorry, the user has not set their KPIs Objectives yet.</span>
           )}
         </div>
       ) : (
-        <div className="flex flex-col">
-          <div className="hidden lg:flex flex-row">
-            {pillars?.map((pillar, index) => {
-              return (
-                <>
-                  <button
-                    onClick={() => setPillar(pillar.pillar_id)}
-                    className={classNames(
-                      "p-2 rounded-t-lg",
-                      currentPillar === pillar.pillar_id &&
-                        "bg-default font-semibold"
-                    )}
-                    key={"goals" + index}
-                  >
-                    {removeSubText(pillar.pillar_name)}
-                  </button>
-                </>
-              );
-            })}
-          </div>
-          <div className="overflow-x-scroll xl:overflow-hidden rounded-b-lg rounded-tr-lg bg-default">
-            <div className="w-full p-2 flex flex-col gap-2">
-              <select
-                onChange={(e) => setPillar(e.target.value)}
-                className="w-full outline-none lg:hidden"
-              >
-                {pillars.map((pillar, index) => {
+        <>
+          {viewLayout === "tabular" ? (
+            <div className="flex flex-col">
+              <div className="hidden lg:flex flex-row">
+                {pillars?.map((pillar, index) => {
                   return (
                     <>
-                      <option value={pillar.pillar_id} key={index}>
+                      <button
+                        onClick={() => setPillar(pillar.pillar_id)}
+                        className={classNames(
+                          "p-2 rounded-t-lg",
+                          currentPillar === pillar.pillar_id &&
+                            "bg-default font-semibold"
+                        )}
+                        key={"goals" + index}
+                      >
                         {removeSubText(pillar.pillar_name)}
-                      </option>
+                      </button>
                     </>
                   );
                 })}
-              </select>
-              <div className="overflow-hidden w-full">
-                <div className="font-semibold flex gap-2 items-center lg:hidden">
-                  <p>{pillars[currentPillar - 1].pillar_name}</p>
-                  <p>
-                    {goalData.find((p) => p.pillar_id == currentPillar)
-                      ? goalData.find((p) => p.pillar_id == currentPillar)
-                          .pillar_percentage
-                      : 0}
-                    %
-                  </p>
+              </div>
+              <div className="overflow-x-scroll xl:overflow-hidden rounded-b-lg rounded-tr-lg bg-default">
+                <div className="w-full p-2 flex flex-col gap-2">
+                  <select
+                    onChange={(e) => setPillar(e.target.value)}
+                    className="w-full outline-none lg:hidden"
+                  >
+                    {pillars.map((pillar, index) => {
+                      return (
+                        <>
+                          <option value={pillar.pillar_id} key={index}>
+                            {removeSubText(pillar.pillar_name)}
+                          </option>
+                        </>
+                      );
+                    })}
+                  </select>
+                  <div className="overflow-hidden w-full">
+                    <div className="font-semibold flex gap-2 items-center lg:hidden">
+                      <p>{pillars[currentPillar - 1].pillar_name}</p>
+                      <p>
+                        {goalData.find((p) => p.pillar_id == currentPillar)
+                          ? goalData.find((p) => p.pillar_id == currentPillar)
+                              .pillar_percentage
+                          : 0}
+                        %
+                      </p>
+                    </div>
+                    <GoalTable current={currentPillar} tableData={tableData} />
+                  </div>
                 </div>
-                <GoalTable current={currentPillar} tableData={tableData} />
               </div>
             </div>
-          </div>
-        </div>
+          ) : viewLayout === "list" ? (
+            <>
+              <div className="flex flex-col gap-2">
+                {pillars?.map((pillar, pillarIndex) => {
+                  const uniqueObjectives = tableData
+                    .filter((item) => item.pillar_id === pillar.pillar_id)
+                    .filter((item, index, array) => {
+                      return (array.findIndex((obj) => obj.objective_id === item.objective_id) === index);
+                    });
+                  return (
+                    <div
+                      className="bg-default rounded-md p-2"
+                      key={pillarIndex}
+                    >
+                      <span className="font-semibold">
+                        {`${pillar.pillar_name} ${
+                          goalData.find((p) => p.pillar_id === pillar.pillar_id)
+                            ?.pillar_percentage
+                        }%`}
+                      </span>
+                      <div className="p-2">
+                        <table className="rounded-md w-full bg-white overflow-hidden">
+                          <thead>
+                            <tr className="bg-un-blue-light text-white border border-un-blue-light">
+                              <th className="w-full md:w-1/3 p-1 text-center">
+                                Objective
+                              </th>
+                              <th className="w-full md:w-1/3 p-1 text-center">
+                                KPI
+                              </th>
+                              <th className="w-full md:w-[10%] p-1 text-center">
+                                Weight
+                              </th>
+                              <th className="w-full md:w-1/3 p-1 text-center">
+                                Target Metrics
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {console.log(tableData)}
+                            {uniqueObjectives
+                              .filter(
+                                (item) =>
+                                  item.pillar_id === pillar.pillar_id
+                              )
+                              .map((objective, ObjIndex) => (
+                                <tr key={ObjIndex} className="border border-mid-gray">
+                                  <td className="border border-mid-gray">{objective.objective}</td>
+                                  <td className="border border-mid-gray">{objective.kpi_desc}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            "Loading..."
+          )}
+        </>
       )}
     </div>
   ) : (

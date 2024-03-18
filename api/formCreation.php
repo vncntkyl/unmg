@@ -38,8 +38,7 @@ if (isset($_POST['submit'])) {
                             foreach ($objectiveKPIs as $kpiIndex => $kpi) {
                                 $kpi_description = $kpi->kpi_description;
                                 $kpi_weight = $kpi->kpi_weight;
-                                $target_metrics = $kpi->target_metrics;
-
+                                 $target_metrics = array_reverse($kpi->target_metrics);
                                 if ($kpiID = $formController->insertKPI($kpi_description, $objectiveID, $kpi_weight)) {
                                     $formController->insertFqEval($kpiID, $latestSpID);
                                     $formController->insertMyrEval($kpiID, $latestSpID);

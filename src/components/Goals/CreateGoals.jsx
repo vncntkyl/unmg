@@ -198,19 +198,18 @@ export default function CreateGoals({
     }
 
     try {
-      console.log(goals);
-      // const formData = new FormData();
-      // formData.append("submit", true);
-      // formData.append("userID", user.length != 0 ? user : user_id);
-      // formData.append("current_user_id", user_id);
-      // formData.append("employee_id", employee_id);
-      // formData.append("goals", JSON.stringify(goals));
-      // formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
-      // const response = await axios.post(url.formCreation, formData);
-      // alert(response.data);
-      // localStorage.setItem("finished_new_goals", duration);
-      // localStorage.removeItem("progress_goals");
-      // navigate("/main_goals");
+      const formData = new FormData();
+      formData.append("submit", true);
+      formData.append("userID", user.length != 0 ? user : user_id);
+      formData.append("current_user_id", user_id);
+      formData.append("employee_id", employee_id);
+      formData.append("goals", JSON.stringify(goals));
+      formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
+      const response = await axios.post(url.formCreation, formData);
+      alert(response.data);
+      localStorage.setItem("finished_new_goals", duration);
+      localStorage.removeItem("progress_goals");
+      navigate("/main_goals");
     } catch (e) {
       console.log(e.message);
     }
