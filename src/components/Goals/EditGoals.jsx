@@ -3,17 +3,18 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFunction } from "../../context/FunctionContext";
 import classNames from "classnames";
-import GoalTable from "./GoalTableHeader";
+import GoalTable, { GoalList } from "./GoalTableHeader";
 import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
+import ViewLayout from "../../misc/ViewLayout";
 
-export default function EditGoals({ pillars, workYear }) {
+export default function EditGoals({ pillars = [], workYear }) {
   const [goalData, setGoalData] = useState([]);
+  const [viewLayout, setViewLayout] = useState("tabular");
   const [loading, setLoading] = useState(true);
   const [currentPillar, setPillar] = useState(1);
   const [tableData, setTableData] = useState([]);
   const [users, setUsers] = useState([]);
-  const [employeeName, setEmployeeName] = useState("");
 
   const navigate = useNavigate();
   const { removeSubText } = useFunction();
@@ -24,7 +25,7 @@ export default function EditGoals({ pillars, workYear }) {
     let currentGoal;
     switch (part) {
       case "objective":
-        currentGoal = tempData.filter((goal) => goal.pillar_id === index);
+        currentGoal = tempData.filter((goal) => goal.objective_id === index);
         currentGoal.forEach((goal) => {
           goal.objective = event.target.value;
         });
@@ -118,6 +119,9 @@ export default function EditGoals({ pillars, workYear }) {
     if (!localStorage.getItem("goal_user")) {
       navigate("/main_goals");
     }
+    if (localStorage.getItem("viewLayout")) {
+      setViewLayout(localStorage.getItem("viewLayout"));
+    }
 
     const retrieveUser = async () => {
       const response = await fetchUsers();
@@ -162,52 +166,66 @@ export default function EditGoals({ pillars, workYear }) {
 
     retrieveUser();
   }, [workYear]);
-  useEffect(() => {
-    if (localStorage.getItem("goal_name")) {
-      setEmployeeName(localStorage.getItem("goal_name"));
-      localStorage.removeItem("goal_name");
-    }
-  }, []);
   return !loading && pillars ? (
     <>
-      {employeeName && <span className="text-[1.1rem]">{employeeName}</span>}
-      <div className="flex flex-row flex-wrap gap-2">
-        {pillars.map((pillar, index) => {
-          return (
-            <button
-              onClick={() => setPillar(pillar.pillar_id)}
-              key={index}
-              className={classNames(
-                "p-2 rounded-t-lg",
-                currentPillar === pillar.pillar_id && "bg-default font-semibold"
-              )}
-            >
-              {removeSubText(pillar.pillar_name)}
-            </button>
-          );
-        })}
+      <div className="w-full flex justify-end my-2">
+        <ViewLayout viewLayout={viewLayout} setViewLayout={setViewLayout} />
       </div>
-      <div className="overflow-hidden w-full p-2 bg-default">
-        <div className="font-semibold flex gap-2 items-center lg:hidden">
-          <p>{pillars[currentPillar - 1].pillar_name}</p>
-          <p>
-            {goalData.find((p) => p.pillar_id == currentPillar)
-              ? goalData.find((p) => p.pillar_id == currentPillar)
-                  .pillar_percentage
-              : 0}
-            %
-          </p>
-        </div>
-        <GoalTable
-          data={goalData}
-          setData={setGoalData}
-          current={currentPillar}
-          edit={true}
-          updateData={updateData}
-          saveData={saveData}
-          tableData={tableData}
-        />
-      </div>
+      {viewLayout === "tabular" ? (
+        <>
+          {" "}
+          <div className="flex flex-row flex-wrap gap-2">
+            {pillars.map((pillar, index) => {
+              return (
+                <button
+                  onClick={() => setPillar(pillar.pillar_id)}
+                  key={index}
+                  className={classNames(
+                    "p-2 rounded-t-lg",
+                    currentPillar === pillar.pillar_id &&
+                      "bg-default font-semibold"
+                  )}
+                >
+                  {removeSubText(pillar.pillar_name)}
+                </button>
+              );
+            })}
+          </div>
+          <div className="overflow-hidden w-full p-2 bg-default">
+            <div className="font-semibold flex gap-2 items-center lg:hidden">
+              <p>{pillars[currentPillar - 1].pillar_name}</p>
+              <p>
+                {goalData.find((p) => p.pillar_id == currentPillar)
+                  ? goalData.find((p) => p.pillar_id == currentPillar)
+                      .pillar_percentage
+                  : 0}
+                %
+              </p>
+            </div>
+            <GoalTable
+              data={goalData}
+              setData={setGoalData}
+              current={currentPillar}
+              edit={true}
+              updateData={updateData}
+              saveData={saveData}
+              tableData={tableData}
+            />
+          </div>
+        </>
+      ) : viewLayout === "list" ? (
+        <>
+          <GoalList
+            pillars={pillars}
+            edit={true}
+            updateData={updateData}
+            tableData={tableData}
+            saveData={saveData}
+          />
+        </>
+      ) : (
+        "Loading..."
+      )}
     </>
   ) : (
     <>Loading...</>

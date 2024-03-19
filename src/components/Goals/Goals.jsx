@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 import { useFunction } from "../../context/FunctionContext";
-import GoalTable from "./GoalTableHeader";
+import GoalTable, { GoalList } from "./GoalTableHeader";
 import classNames from "classnames";
 import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
@@ -21,7 +21,6 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const [tableData, setTableData] = useState([]);
   const [goalStatus, setGoalStatus] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
-
   const { removeSubText } = useFunction();
   const { headList, fetchUsers } = useAuth();
 
@@ -257,62 +256,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
             </div>
           ) : viewLayout === "list" ? (
             <>
-              <div className="flex flex-col gap-2">
-                {pillars?.map((pillar, pillarIndex) => {
-                  const uniqueObjectives = tableData
-                    .filter((item) => item.pillar_id === pillar.pillar_id)
-                    .filter((item, index, array) => {
-                      return (array.findIndex((obj) => obj.objective_id === item.objective_id) === index);
-                    });
-                  return (
-                    <div
-                      className="bg-default rounded-md p-2"
-                      key={pillarIndex}
-                    >
-                      <span className="font-semibold">
-                        {`${pillar.pillar_name} ${
-                          goalData.find((p) => p.pillar_id === pillar.pillar_id)
-                            ?.pillar_percentage
-                        }%`}
-                      </span>
-                      <div className="p-2">
-                        <table className="rounded-md w-full bg-white overflow-hidden">
-                          <thead>
-                            <tr className="bg-un-blue-light text-white border border-un-blue-light">
-                              <th className="w-full md:w-1/3 p-1 text-center">
-                                Objective
-                              </th>
-                              <th className="w-full md:w-1/3 p-1 text-center">
-                                KPI
-                              </th>
-                              <th className="w-full md:w-[10%] p-1 text-center">
-                                Weight
-                              </th>
-                              <th className="w-full md:w-1/3 p-1 text-center">
-                                Target Metrics
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {console.log(tableData)}
-                            {uniqueObjectives
-                              .filter(
-                                (item) =>
-                                  item.pillar_id === pillar.pillar_id
-                              )
-                              .map((objective, ObjIndex) => (
-                                <tr key={ObjIndex} className="border border-mid-gray">
-                                  <td className="border border-mid-gray">{objective.objective}</td>
-                                  <td className="border border-mid-gray">{objective.kpi_desc}</td>
-                                </tr>
-                              ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+            <GoalList pillars={pillars} tableData={tableData} />
             </>
           ) : (
             "Loading..."
