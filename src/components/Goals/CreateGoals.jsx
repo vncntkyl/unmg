@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
 import { Tooltip } from "flowbite-react";
 import { IoIosInformationCircleOutline } from "react-icons/io";
+import AlertModal from "../../misc/AlertModal";
 
 export default function CreateGoals({
   pillars = [],
@@ -25,6 +26,8 @@ export default function CreateGoals({
   const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
   const { kpiDurations, fetchUsers, globalSettings } = useAuth();
   const [newConvoModal, setNewConvoModal] = useState(false);
+  const [modal, setModal] = useState("standby");
+  const [modalMessage, setModalMessage] = useState("Standby");
   const addObjective = (i) => {
     const objectiveTemplate = {
       objective_description: "",
@@ -168,53 +171,6 @@ export default function CreateGoals({
       return "Loading...";
     }
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const pillarPercentage = checkPillarPercentage(goals);
-    if (pillarPercentage < globalSettings.overall_percentage) {
-      alert(
-        "Total pillar percentage is lacking " +
-          (globalSettings.overall_percentage - pillarPercentage) +
-          "%"
-      );
-      return;
-    }
-    if (pillarPercentage > globalSettings.overall_percentage) {
-      alert(
-        "Total pillar percentage have exceeded the limit " +
-          (pillarPercentage - globalSettings.overall_percentage) +
-          "%"
-      );
-      return;
-    }
-    const kpiValidate = validateGoals(goals);
-    if (kpiValidate !== 1) {
-      alert(
-        "Some of your KPI Weight is not equal to its pillar percentage. Please review your goals. " +
-          kpiValidate +
-          " missing."
-      );
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("submit", true);
-      formData.append("userID", user.length != 0 ? user : user_id);
-      formData.append("current_user_id", user_id);
-      formData.append("employee_id", employee_id);
-      formData.append("goals", JSON.stringify(goals));
-      formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
-      const response = await axios.post(url.formCreation, formData);
-      alert(response.data);
-      localStorage.setItem("finished_new_goals", duration);
-      localStorage.removeItem("progress_goals");
-      navigate("/main_goals");
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-
   const checkKPIWeight = (pillar) => {
     const limit = pillar.pillar_percentage;
     let cumulativeWeights = 0;
@@ -227,13 +183,11 @@ export default function CreateGoals({
       return limit - cumulativeWeights;
     }
   };
-
   const saveProgress = () => {
     const progress = JSON.stringify(goals);
     localStorage.setItem("progress_goals", progress);
     alert("Current progress is saved.");
   };
-
   function areObjectsEqual(obj1, obj2) {
     if (Object.keys(obj1).length !== Object.keys(obj2).length) {
       return false;
@@ -290,7 +244,6 @@ export default function CreateGoals({
       setGoals(initialGoals);
     }
   }, [pillars]);
-
   useEffect(() => {
     const setup = async () => {
       setUsers(await fetchUsers());
@@ -318,7 +271,7 @@ export default function CreateGoals({
             setSaveStatus("Progress saved");
           }
         }
-        console.log("reading");
+        //console.log("reading");
       }
     };
     checkProgress();
@@ -347,6 +300,67 @@ export default function CreateGoals({
       }
     }
   }, [saveStatus]);
+  
+  const handleContinue = (e) => {
+    e.preventDefault();
+    const pillarPercentage = checkPillarPercentage(goals);
+    if (pillarPercentage < globalSettings.overall_percentage) {
+      setModal("error");
+      setModalMessage(
+        "Total pillar percentage is lacking " +
+          (globalSettings.overall_percentage - pillarPercentage) +
+          "%"
+      );
+      return;
+    }
+    if (pillarPercentage > globalSettings.overall_percentage) {
+      setModal("error");
+      setModalMessage(
+        "Total pillar percentage have exceeded the limit " +
+          (pillarPercentage - globalSettings.overall_percentage) +
+          "%"
+      );
+      return;
+    }
+    const kpiValidate = validateGoals(goals);
+    if (kpiValidate !== 1) {
+      setModal("error");
+      setModalMessage(
+        "Some of your KPI Weight is not equal to its pillar percentage. Please review your goals. " +
+          kpiValidate +
+          " missing."
+      );
+      return;
+    }
+        setModal("confirmation");
+  };
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("submit", true);
+      formData.append("userID", user.length != 0 ? user : user_id);
+      formData.append("current_user_id", user_id);
+      formData.append("employee_id", employee_id);
+      formData.append("goals", JSON.stringify(goals));
+      formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
+      const response = await axios.post(url.formCreation, formData);
+      if (response.data === "success") {
+        setModal("success");
+        setModalMessage("Goals have been created successfully.");
+        localStorage.setItem("finished_new_goals", duration);
+        localStorage.removeItem("progress_goals");
+      }else {
+        setModal("error");
+        setModalMessage(response.data);
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const handleSuccess = () => {
+    setModal("standby");
+    navigate("/main_goals");
+  }
   return (
     <>
       <div className="h-[calc(91vh-64px)] flex flex-col gap-2 overflow-y-scroll">
@@ -395,7 +409,7 @@ export default function CreateGoals({
             </button>
           </div>
         )}
-        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-2" onSubmit={handleContinue}>
           {goals.length > 0
             ? goals.map((goal, index) => {
                 return (
@@ -754,7 +768,9 @@ export default function CreateGoals({
             >
               Save Progress
             </button>
-            <button className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue">
+            <button
+              className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue"
+            >
               Submit
             </button>
           </div>
@@ -766,6 +782,53 @@ export default function CreateGoals({
           !toolTip && "z-[-1] hidden pointer-events-none"
         )}
       /> */}
+      {modal === "confirmation" && (
+        <>
+          <AlertModal
+            closeModal={setModal}
+            modalType={"confirmation"}
+            title={"Submit Goals"}
+            message={
+              "Can you please confirm whether the provided goal details are accurate?"
+            }
+            handleContinue={() => {
+              handleSubmit();
+            }}
+          />
+        </>
+      )}
+      {modal === "error" && (
+          <>
+            <AlertModal
+              closeModal={setModal}
+              modalType={"status"}
+              modalStatus={modal}
+              message={modalMessage}
+              handleContinue={() => {
+                handleSuccess();
+              }}
+              handleSuccess={() => {
+                handleSuccess();
+              }}
+            />
+          </>
+        )}
+      {modal === "success" && (
+          <>
+            <AlertModal
+              closeModal={setModal}
+              modalType={"status"}
+              modalStatus={modal}
+              message={modalMessage}
+              handleContinue={() => {
+                handleSuccess();
+              }}
+              handleSuccess={() => {
+                handleSuccess();
+              }}
+            />
+          </>
+        )}
     </>
   );
 }

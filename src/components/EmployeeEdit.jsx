@@ -591,6 +591,9 @@ export default function EmployeeEdit({ admin }) {
             handleSuccess();
             setModal("standby");
           }}
+          handleSuccess={() => {
+            handleSuccess();
+          }}
         />
       )}
     </>

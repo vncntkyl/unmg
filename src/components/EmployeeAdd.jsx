@@ -75,7 +75,7 @@ export default function EmployeeAdd() {
     if (registerUser(userdata, contributor)) {
       setModal("success");
       setModalMessage("Employee added successfully!");
-    }else{
+    } else {
       setModal("success");
       setModalMessage("Failed to add employee");
     }
@@ -372,27 +372,34 @@ export default function EmployeeAdd() {
         </div>
       </div>
       {modal === "confirmation" && (
-          <AlertModal
-            closeModal={setModal}
-            modalType={"confirmation"}
-            title={"Add New Employee"}
-            message={"Are you sure the employee details are correct?"}
-            handleContinue={() => {
-              handleSubmit();
-            }}
-          />
+        <AlertModal
+          closeModal={setModal}
+          modalType={"confirmation"}
+          title={"Add New Employee"}
+          message={"Are you sure the employee details are correct?"}
+          handleContinue={() => {
+            handleSubmit();
+          }}
+        />
       )}
       {modal === "success" && (
-          <AlertModal
-            closeModal={setModal}
-            modalType={"status"}
-            modalStatus={modalMessage === "Employee added successfully!" ? "success" : "error"}
-            message={modalMessage}
-            handleContinue={() => {
-              handleSuccess();
-              setModal("standby");
-            }}
-          />
+        <AlertModal
+          closeModal={setModal}
+          modalType={"status"}
+          modalStatus={
+            modalMessage === "Employee added successfully!"
+              ? "success"
+              : "error"
+          }
+          message={modalMessage}
+          handleContinue={() => {
+            handleSuccess();
+            setModal("standby");
+          }}
+          handleSuccess={() => {
+            handleSuccess();
+          }}
+        />
       )}
     </>
   );

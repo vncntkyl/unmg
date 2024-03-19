@@ -86,7 +86,7 @@ export default function AlertModal({
                     if (modalStatus === "error") {
                       closeModal("standby");
                     } else {
-                      navigate(0);
+                      handleSuccess();
                     }
                   } else {
                     closeModal("standby");
@@ -133,7 +133,7 @@ export default function AlertModal({
             if (modalStatus === "error") {
               closeModal("standby");
             } else {
-              navigate(0);
+              handleSuccess();
             }
           } else {
             closeModal("standby");

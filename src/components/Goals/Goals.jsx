@@ -136,7 +136,6 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
           )}
           <WorkYear workYear={workYear} setWorkYear={setWorkYear} />
         </div>
-
         {workYear && hasSet && user_id != 1 && (
           <div className="flex flex-row gap-2">
             <ViewLayout viewLayout={viewLayout} setViewLayout={setViewLayout} />

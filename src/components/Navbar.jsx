@@ -11,6 +11,8 @@ import axios from "axios";
 import { developmentAPIs as url } from "../context/apiList";
 import { format } from "date-fns";
 import AlertModal from "../misc/AlertModal";
+import { Tabs } from "flowbite-react";
+import { Popover } from "flowbite-react";
 export default function Navbar({
   notification_count,
   user_data,
@@ -58,14 +60,16 @@ export default function Navbar({
     try {
       const fData = new FormData();
       fData.append("submit", true);
-      fData.append("employee_id", JSON.parse(localStorage.getItem("currentUser")).employee_id)
+      fData.append(
+        "employee_id",
+        JSON.parse(localStorage.getItem("currentUser")).employee_id
+      );
       const response = await axios.post(url.deleteNotifications, fData);
       if (response.data === "success") {
         setModal("success");
         setModalMessage("Notifications deleted successfully!");
       }
-
-    }catch(e){
+    } catch (e) {
       console.log(e.message);
       setModal("success");
       setModalMessage(e.message);
@@ -169,89 +173,195 @@ export default function Navbar({
             <span className="text-white text-sm md:text-lg font-medium hidden lg:block">
               Welcome {capitalize(user_data.first_name)}!
             </span>
-            <button
-              onClick={() =>
-                togglePanel((prev) => {
-                  return {
-                    notification: !prev.notification,
-                    user: false,
-                  };
-                })
-              }
-              data-count={
-                notifications &&
-                notifications?.filter((notif) => parseInt(notif.seen) === 0)
-                  .length
-              }
-              className="relative before:block before:absolute before:content-[attr(data-count)] before:top-[-5px] before:right-[-5px] before:text-tooltip before:text-white before:bg-un-red before:w-[1rem] before:h-[1rem] sm:before:w-[1.1rem] sm:before:h-[1.1rem] before:rounded-full ml-3"
-            >
-              <FaBell className="text-white text-[1.2rem] sm:text-[1.5rem]" />
-              <div
-                className={classNames(
-                  "notification_panel",
-                  !panel?.notification && "hidden",
-                  "absolute top-full right-0 w-[15rem] max-h-[12rem] mt-4 bg-white py-2 rounded-md shadow-md animate-fade z-[10] overflow-y-scroll"
-                )}
-              >
-                <ul>
-                  {notifications.length > 0 ? (
-                    notifications?.map((notification) => (
-                      <li
-                        className={classNames(
-                          "group relative px-2 text-left",
-                          parseInt(notification.seen) === 1
-                            ? "bg-default"
-                            : "bg-white hover:bg-default"
+            <Popover
+              aria-labelledby="default-popover"
+              placement="bottom"
+              content={
+                <div className="animate-fade w-[30rem]">
+                  <Tabs
+                    className="pt-1 px-2"
+                    aria-label="Default tabs"
+                    theme={{
+                      tablist: {
+                        tabitem: {
+                          base: "px-2 py-1 focus:ring-0 hover:bg-default",
+                          styles: {
+                            default: {
+                              active: {
+                                on: "bg-un-red text-white hover:bg-un-red",
+                              },
+                            },
+                          },
+                        },
+                      },
+                    }}
+                  >
+                    <Tabs.Item active title="All">
+                      <ul className="max-h-[20rem] overflow-y-scroll">
+                        {notifications.length > 0 ? (
+                          notifications?.map((notification) => (
+                            <li
+                              className={classNames(
+                                "group relative px-2 text-left hover:bg-default-dark cursor-pointer border-b border-default",
+                                parseInt(notification.seen) === 0
+                                  ? "bg-default"
+                                  : "bg-white text-mid-gray"
+                              )}
+                              key={notification.ID}
+                              onClick={() =>
+                                handleViewNotification(
+                                  notification.ID,
+                                  notification.link
+                                )
+                              }
+                            >
+                              <div
+                                // href={notification.link}
+                                className="py-2 flex flex-col justify-center items-start"
+                              >
+                                <span className="text-[0.9rem] font-semibold">
+                                  {notification.title}
+                                </span>
+                                <p className="ml-2 text-[0.8rem]">
+                                  {notification.message}
+                                </p>
+                              </div>
+                              <div
+                                className={classNames(
+                                  "right-0 bottom-0 p-2 flex flex-col text-end text-[0.8rem] group-hover:bg-default-dark",
+                                  parseInt(notification.seen) === 0
+                                    ? "bg-default"
+                                    : "bg-white group-hover:bg-default"
+                                )}
+                              >
+                                <span>
+                                  {format(
+                                    new Date(notification.creation_date),
+                                    "dd/MM/yyyy hh:mm a"
+                                  )}
+                                </span>
+                              </div>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="group text-left px-2">
+                            There are no new notifications.
+                          </li>
                         )}
-                        key={notification.ID}
-                        onClick={() =>
-                          handleViewNotification(notification.ID, notification.link)
-                        }
-                      >
-                        <div
-                          // href={notification.link}
-                          className="py-2 flex flex-col justify-center items-start"
-                        >
-                          <span className="text-[0.9rem] font-semibold">
-                            {notification.title}
-                          </span>
-                          <p className="ml-2 text-[0.8rem] text-black">
-                            {notification.message}
-                          </p>
-                        </div>
-                        <div
-                          className={classNames(
-                            "group-hover:bg-default right-0 bottom-0 p-2 flex flex-col text-end text-[0.8rem] text-black",
-                            parseInt(notification.seen) === 1
-                              ? "bg-default"
-                              : "bg-white group-hover:bg-default"
-                          )}
-                        >
-                          <span>
-                            {format(
-                              new Date(notification.creation_date),
-                              "dd/MM/yyyy hh:mm a"
-                            )}
-                          </span>
-                        </div>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="group text-left px-2">
-                      There are no new notifications.
-                    </li>
-                  )}
-                  <li className="sticky bottom-[-0.6rem] border-t border-default bg-white py-2">
-                    <button 
-                    type="button"
-                    className="text-un-blue-light hover:text-un-blue text-[0.8rem] underline"
-                    onClick={() => setModal("confirmation")}>
+                      </ul>
+                    </Tabs.Item>
+                    <Tabs.Item title="Unread">
+                      <ul className="max-h-[20rem] overflow-y-scroll">
+                        {notifications.length > 0 ? (
+                          notifications
+                            ?.filter((item) => parseInt(item.seen) === 0)
+                            .map((notification) => (
+                              <li
+                                className="group relative px-2 text-left bg-default hover:bg-default-dark"
+                                key={notification.ID}
+                                onClick={() =>
+                                  handleViewNotification(
+                                    notification.ID,
+                                    notification.link
+                                  )
+                                }
+                              >
+                                <div
+                                  // href={notification.link}
+                                  className="py-2 flex flex-col justify-center items-start"
+                                >
+                                  <span className="text-[0.9rem] font-semibold">
+                                    {notification.title}
+                                  </span>
+                                  <p className="ml-2 text-[0.8rem]">
+                                    {notification.message}
+                                  </p>
+                                </div>
+                                <div className="group-hover:bg-default-dark right-0 bottom-0 p-2 flex flex-col text-end text-[0.8rem]">
+                                  <span>
+                                    {format(
+                                      new Date(notification.creation_date),
+                                      "dd/MM/yyyy hh:mm a"
+                                    )}
+                                  </span>
+                                </div>
+                              </li>
+                            ))
+                        ) : (
+                          <li className="group text-left px-2">
+                            There are no new notifications.
+                          </li>
+                        )}
+                      </ul>
+                    </Tabs.Item>
+                    <Tabs.Item title="Read">
+                      <ul className="max-h-[20rem] overflow-y-scroll">
+                        {notifications.length > 0 ? (
+                          notifications
+                            ?.filter((item) => parseInt(item.seen) === 1)
+                            .map((notification) => (
+                              <li
+                                className="group relative px-2 text-left hover:bg-default-dark cursor-pointer"
+                                key={notification.ID}
+                                onClick={() =>
+                                  handleViewNotification(
+                                    notification.ID,
+                                    notification.link
+                                  )
+                                }
+                              >
+                                <div
+                                  // href={notification.link}
+                                  className="py-2 flex flex-col justify-center items-start"
+                                >
+                                  <span className="text-[0.9rem] font-semibold">
+                                    {notification.title}
+                                  </span>
+                                  <p className="ml-2 text-[0.8rem]">
+                                    {notification.message}
+                                  </p>
+                                </div>
+                                <div className="bg-white group-hover:bg-default-dark right-0 bottom-0 p-2 flex flex-col text-end text-[0.8rem]">
+                                  <span>
+                                    {format(
+                                      new Date(notification.creation_date),
+                                      "dd/MM/yyyy hh:mm a"
+                                    )}
+                                  </span>
+                                </div>
+                              </li>
+                            ))
+                        ) : (
+                          <li className="group text-left px-2">
+                            There are no new notifications.
+                          </li>
+                        )}
+                      </ul>
+                    </Tabs.Item>
+                  </Tabs>
+                  <div className="flex items-center justify-center py-2 border-t border-default">
+                    <button
+                      type="button"
+                      className="text-un-blue-light hover:text-un-blue text-[0.8rem] underline"
+                      onClick={() => setModal("confirmation")}
+                    >
                       Delete All Notifications
                     </button>
-                  </li>
-                </ul>
-              </div>
-            </button>
+                  </div>
+                </div>
+              }
+            >
+              <button
+                data-count={
+                  notifications &&
+                  notifications?.filter((notif) => parseInt(notif.seen) === 0)
+                    .length
+                }
+                className="relative before:block before:absolute before:content-[attr(data-count)] before:top-[-5px] before:right-[-5px] before:text-tooltip before:text-white before:bg-un-red before:w-[1rem] before:h-[1rem] sm:before:w-[1.1rem] sm:before:h-[1.1rem] before:rounded-full ml-3"
+              >
+                <FaBell className="text-white text-[1.2rem] sm:text-[1.5rem]" />
+              </button>
+            </Popover>
             <div className="user_dropdown relative ml-3 group/user">
               <button
                 className="flex text-sm rounded-full bg-white items-center gap-1 transition-all group-hover/user:pr-1 lg:pr-0 lg:bg-transparent lg:group-hover/user:pr-0"
@@ -340,25 +450,34 @@ export default function Navbar({
             closeModal={setModal}
             modalType={"confirmation"}
             title={"Delete Notifications"}
-            message={"Are you sure you want to delete all of your notifications?"}
+            message={
+              "Are you sure you want to delete all of your notifications?"
+            }
             handleContinue={() => {
               handleDeleteNotifications();
             }}
           />
         )}
         {modal === "success" && (
-        <AlertModal
-          closeModal={setModal}
-          modalType={"status"}
-          modalStatus={modalMessage === "Notifications deleted successfully!" ? "success" : "error"}
-          message={modalMessage}
-          continuebutton={"Confirm"}
-          handleContinue={() => {
-            handleSuccess();
-            setModal("standby");
-          }}
-        />
-      )}
+          <AlertModal
+            closeModal={setModal}
+            modalType={"status"}
+            modalStatus={
+              modalMessage === "Notifications deleted successfully!"
+                ? "success"
+                : "error"
+            }
+            message={modalMessage}
+            continuebutton={"Confirm"}
+            handleContinue={() => {
+              handleSuccess();
+              setModal("standby");
+            }}
+            handleSuccess={() => {
+              navigate(0);
+            }}
+          />
+        )}
       </>
     )
   );

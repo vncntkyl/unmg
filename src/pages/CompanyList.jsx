@@ -22,7 +22,8 @@ export default function CompanyList() {
     company: "",
   });
   const [deleteModalSuccess, setDeleteModalSuccess] = useState("standby");
-  const [deleteModalSuccessMessage, setDeleteModalSuccessMessage] = useState("");
+  const [deleteModalSuccessMessage, setDeleteModalSuccessMessage] =
+    useState("");
 
   const [companyData, setCompanyData] = useState(0);
   const [departmentID, setDepartmentID] = useState(null);
@@ -44,7 +45,12 @@ export default function CompanyList() {
         });
       setDeleteModal("standby");
     } else if (deleteModal === "Department") {
-      deleteDepartment(contributor, deleteDetails.ID, deleteDetails.name, deleteDetails.company)
+      deleteDepartment(
+        contributor,
+        deleteDetails.ID,
+        deleteDetails.name,
+        deleteDetails.company
+      )
         .then((response) => {
           setDeleteModalSuccess("success");
           setDeleteModalSuccessMessage(response);
@@ -54,8 +60,7 @@ export default function CompanyList() {
           console.log(error);
         });
       setDeleteModal("standby");
-    }
-    else {
+    } else {
       setDeleteModal("standby");
     }
   };
@@ -154,6 +159,9 @@ export default function CompanyList() {
                 setDeleteModal("standby");
                 handleDelete();
               }}
+              handleSuccess={() => {
+                navigate(0);
+              }}
             />
           </>
         )}
@@ -164,15 +172,9 @@ export default function CompanyList() {
               action={"Save"}
               closeModal={toggleModal}
               departmentID={departmentID}
-              companyData={
-                modal === "add department"
-                  ? companyData
-                  : null
-              }
+              companyData={modal === "add department" ? companyData : null}
               departmentList={
-                modal === "add department"
-                  ? departmentList
-                  : null
+                modal === "add department" ? departmentList : null
               }
               toggleSuccessModal={showSuccessModal}
             />

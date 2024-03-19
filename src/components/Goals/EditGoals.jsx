@@ -95,8 +95,6 @@ export default function EditGoals({ pillars = [], workYear }) {
         } else {
           //email si employee lang
         }
-
-        console.log(receipients);
         notificationData.append("receipients", JSON.stringify(receipients));
         notificationData.append("link", "");
         notificationData.append("linkMessage", "View updates");
@@ -173,7 +171,6 @@ export default function EditGoals({ pillars = [], workYear }) {
       </div>
       {viewLayout === "tabular" ? (
         <>
-          {" "}
           <div className="flex flex-row flex-wrap gap-2">
             {pillars.map((pillar, index) => {
               return (
@@ -191,7 +188,7 @@ export default function EditGoals({ pillars = [], workYear }) {
               );
             })}
           </div>
-          <div className="overflow-hidden w-full p-2 bg-default">
+          <div className="max-h-[70vh] overflow-y-scroll overflow-hidden w-full p-2 bg-default">
             <div className="font-semibold flex gap-2 items-center lg:hidden">
               <p>{pillars[currentPillar - 1].pillar_name}</p>
               <p>

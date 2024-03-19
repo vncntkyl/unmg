@@ -88,12 +88,12 @@ if (isset($_POST['submit'])) {
                 if (in_array(0, $notification)) {
                     echo "There seems to be an error in sending notifications. Please try again.";
                 } else {
-                    echo "Congratulations! You have set your goals!";
+                    echo "success";
                 }
             } else {
                 $userNotif = $notif->addEmployeeGoalNotification($userID, "Goal Submitted!", "Your goals have been set by your rater.", "/main_goals");
                 if ($userNotif == "success") {
-                    echo "Congratulations! You have set your goals!";
+                    echo "success";
                 } else {
                     echo "There seems to be an error in sending notifications. Please try again.";
                 }
