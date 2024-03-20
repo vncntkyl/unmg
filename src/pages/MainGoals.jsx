@@ -110,7 +110,7 @@ export default function MainGoals() {
           )}
         />
         <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
-          <div className="max-h-[90vh] bg-white p-2 rounded-md overflow-y-scroll">
+          <div className="max-h-[90vh] bg-white p-2 rounded-md overflow-y-hidden">
             {/* HEADER */}
             <div className="flex flex-col items-center justify-between md:flex-row mb-4">
               <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">

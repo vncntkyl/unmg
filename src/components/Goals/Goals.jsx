@@ -9,6 +9,8 @@ import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
 import WorkYear from "../../misc/WorkYear";
 import ViewLayout from "../../misc/ViewLayout";
+import { MdMessage } from "react-icons/md";
+import { Popover } from "flowbite-react";
 
 export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const { id } = useParams();
@@ -17,13 +19,12 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const [viewLayout, setViewLayout] = useState("tabular");
   const [loading, setLoading] = useState(true);
   const [goalData, setGoalData] = useState([]);
-  const [currentPillar, setPillar] = useState(1);
+  const [currentPillar, setPillar] = useState("1");
   const [tableData, setTableData] = useState([]);
   const [goalStatus, setGoalStatus] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
   const { removeSubText } = useFunction();
   const { headList, fetchUsers } = useAuth();
-
   const handleApproval = async () => {
     let approver, creator;
     approver = user_id;
@@ -238,16 +239,6 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
                     })}
                   </select>
                   <div className="overflow-hidden w-full">
-                    <div className="font-semibold flex gap-2 items-center lg:hidden">
-                      <p>{pillars[currentPillar - 1].pillar_name}</p>
-                      <p>
-                        {goalData.find((p) => p.pillar_id == currentPillar)
-                          ? goalData.find((p) => p.pillar_id == currentPillar)
-                              .pillar_percentage
-                          : 0}
-                        %
-                      </p>
-                    </div>
                     <GoalTable current={currentPillar} tableData={tableData} />
                   </div>
                 </div>
@@ -255,7 +246,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
             </div>
           ) : viewLayout === "list" ? (
             <>
-            <GoalList pillars={pillars} tableData={tableData} />
+              <GoalList pillars={pillars} tableData={tableData} />
             </>
           ) : (
             "Loading..."

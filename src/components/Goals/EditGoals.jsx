@@ -7,19 +7,21 @@ import GoalTable, { GoalList } from "./GoalTableHeader";
 import { useAuth } from "../../context/authContext";
 import { developmentAPIs as url } from "../../context/apiList";
 import ViewLayout from "../../misc/ViewLayout";
+import AlertModal from "../../misc/AlertModal";
 
-export default function EditGoals({ pillars = [], workYear }) {
+export default function EditGoals({ pillars, workYear }) {
   const [goalData, setGoalData] = useState([]);
   const [viewLayout, setViewLayout] = useState("tabular");
   const [loading, setLoading] = useState(true);
-  const [currentPillar, setPillar] = useState(1);
+  const [currentPillar, setPillar] = useState("1");
   const [tableData, setTableData] = useState([]);
   const [users, setUsers] = useState([]);
+  const [modal, setModal] = useState("standby");
+  const [modalMessage, setModalMessage] = useState("");
 
   const navigate = useNavigate();
   const { removeSubText } = useFunction();
   const { currentUser, fetchUsers } = useAuth();
-
   const updateData = (part, index, event) => {
     const tempData = [...tableData];
     let currentGoal;
@@ -53,64 +55,14 @@ export default function EditGoals({ pillars = [], workYear }) {
         currentGoal.forEach((goal) => {
           goal.pillar_percentage = event.target.value;
         });
+        break;
+      case "comment":
+        currentGoal = tempData.filter((goal) => goal.pillar_id === index);
+        currentGoal.forEach((goal) => {
+          goal.comment = event.target.value;
+        });
     }
     setTableData(tempData);
-  };
-
-  const saveData = async () => {
-    try {
-      const formdata = new FormData();
-      formdata.append("goalData", JSON.stringify(tableData));
-      const response = await axios.post(url.updateGoals, formdata);
-      if (response.data === 1) {
-        const notificationData = new FormData();
-        notificationData.append("sendNotification", true);
-
-        const receipients = [];
-        const loggedUser = JSON.parse(currentUser);
-        const goalOwner = tableData[0].users_id;
-        const editor = loggedUser.users_id;
-        const supervisor = users.find(
-          (user) => user.employee_id == loggedUser.primary_evaluator
-        );
-        const supervisorName = `${supervisor.salutation} ${supervisor.first_name} ${supervisor.last_name}`;
-        const employee = `${loggedUser.salutation} ${loggedUser.first_name} ${loggedUser.last_name}`;
-        if (goalOwner === editor) {
-          receipients.push({
-            user_type: "superior",
-            name: supervisorName,
-            email: supervisor.email_address,
-            message:
-              "One of your employees has made some changes to their goals. Please take a moment to review the edited goals and provide your feedback or remarks.",
-            subject: employee + " Updated Their Goals",
-          });
-          receipients.push({
-            user_type: "employee",
-            name: employee,
-            email: loggedUser.email_address,
-            message: "You have successfully updated your goals!",
-            subject: "Successfully Updated Goals",
-          });
-          notificationData.append("employeeName", employee);
-        } else {
-          //email si employee lang
-        }
-        notificationData.append("receipients", JSON.stringify(receipients));
-        notificationData.append("link", "");
-        notificationData.append("linkMessage", "View updates");
-
-        const response = await axios.post(url.sendMail, notificationData);
-        if (response.data === 1) {
-          if (alert("You have successfully updated your goals")) {
-            navigate("/main_goals");
-          }
-        }
-      } else {
-        alert("An error has occured. Please Contact the IT Department");
-      }
-    } catch (e) {
-      console.log(e.message);
-    }
   };
 
   useEffect(() => {
@@ -164,6 +116,78 @@ export default function EditGoals({ pillars = [], workYear }) {
 
     retrieveUser();
   }, [workYear]);
+const handleContinue = () => {
+  setModal("confirmation");
+}
+const handleSubmit = async () => {
+  try {
+    const formdata = new FormData();
+    formdata.append("goalData", JSON.stringify(tableData));
+    formdata.append("goal_editor", parseInt(JSON.parse(currentUser).users_id))
+    formdata.append("user_id", parseInt(localStorage.getItem("goal_user")))
+    const response = await axios.post(url.updateGoals, formdata);
+    if (response.data === 1) {
+      setModal("success");
+      setModalMessage("Goals successfully updated.");
+    } else {
+      setModal("error");
+      setModalMessage(response.data);
+    }
+    // if (response.data === 1) {
+    //   const notificationData = new FormData();
+    //   notificationData.append("sendNotification", true);
+
+    //   const receipients = [];
+    //   const loggedUser = JSON.parse(currentUser);
+    //   const goalOwner = tableData[0].users_id;
+    //   const editor = loggedUser.users_id;
+    //   const supervisor = users.find(
+    //     (user) => user.employee_id == loggedUser.primary_evaluator
+    //   );
+    //   const supervisorName = `${supervisor.salutation} ${supervisor.first_name} ${supervisor.last_name}`;
+    //   const employee = `${loggedUser.salutation} ${loggedUser.first_name} ${loggedUser.last_name}`;
+    //   if (goalOwner === editor) {
+    //     receipients.push({
+    //       user_type: "superior",
+    //       name: supervisorName,
+    //       email: supervisor.email_address,
+    //       message:
+    //         "One of your employees has made some changes to their goals. Please take a moment to review the edited goals and provide your feedback or remarks.",
+    //       subject: employee + " Updated Their Goals",
+    //     });
+    //     receipients.push({
+    //       user_type: "employee",
+    //       name: employee,
+    //       email: loggedUser.email_address,
+    //       message: "You have successfully updated your goals!",
+    //       subject: "Successfully Updated Goals",
+    //     });
+    //     notificationData.append("employeeName", employee);
+    //   } else {
+    //     //email si employee lang
+    //   }
+    //   notificationData.append("receipients", JSON.stringify(receipients));
+    //   notificationData.append("link", "");
+    //   notificationData.append("linkMessage", "View updates");
+
+    //   const response = await axios.post(url.sendMail, notificationData);
+    //   if (response.data === 1) {
+    //     if (alert("You have successfully updated your goals")) {
+    //       navigate("/main_goals");
+    //     }
+    //   }
+    // } else {
+    //   alert("An error has occured. Please Contact the IT Department");
+    // }
+  } catch (e) {
+    setModal("error");
+    setModalMessage(e.message);
+    console.log(e.message);
+  }
+};
+const handleSuccess = () => {
+  navigate("/main_goals");
+}
   return !loading && pillars ? (
     <>
       <div className="w-full flex justify-end my-2">
@@ -189,24 +213,20 @@ export default function EditGoals({ pillars = [], workYear }) {
             })}
           </div>
           <div className="max-h-[70vh] overflow-y-scroll overflow-hidden w-full p-2 bg-default">
-            <div className="font-semibold flex gap-2 items-center lg:hidden">
-              <p>{pillars[currentPillar - 1].pillar_name}</p>
-              <p>
-                {goalData.find((p) => p.pillar_id == currentPillar)
-                  ? goalData.find((p) => p.pillar_id == currentPillar)
-                      .pillar_percentage
-                  : 0}
-                %
-              </p>
-            </div>
             <GoalTable
               data={goalData}
               setData={setGoalData}
               current={currentPillar}
               edit={true}
               updateData={updateData}
-              saveData={saveData}
               tableData={tableData}
+              isApprover={
+                parseInt(JSON.parse(currentUser).users_id) !==
+                parseInt(localStorage.getItem("goal_user"))
+                  ? true
+                  : false
+              }
+              handleContinue={handleContinue}
             />
           </div>
         </>
@@ -217,12 +237,65 @@ export default function EditGoals({ pillars = [], workYear }) {
             edit={true}
             updateData={updateData}
             tableData={tableData}
-            saveData={saveData}
+            isApprover={
+              parseInt(JSON.parse(currentUser).users_id) !==
+              parseInt(localStorage.getItem("goal_user"))
+                ? true
+                : false
+            }
+            handleContinue={handleContinue}
           />
         </>
       ) : (
         "Loading..."
       )}
+      {modal === "confirmation" && (
+        <>
+          <AlertModal
+            closeModal={setModal}
+            modalType={"confirmation"}
+            title={"Edit Goals"}
+            message={
+              "Can you please confirm whether the provided goal details are accurate?"
+            }
+            handleContinue={() => {
+              handleSubmit();
+            }}
+          />
+        </>
+      )}
+      {modal === "error" && (
+          <>
+            <AlertModal
+              closeModal={setModal}
+              modalType={"status"}
+              modalStatus={modal}
+              message={modalMessage}
+              handleContinue={() => {
+                handleSuccess();
+              }}
+              handleSuccess={() => {
+                handleSuccess();
+              }}
+            />
+          </>
+        )}
+      {modal === "success" && (
+          <>
+            <AlertModal
+              closeModal={setModal}
+              modalType={"status"}
+              modalStatus={modal}
+              message={modalMessage}
+              handleContinue={() => {
+                handleSuccess();
+              }}
+              handleSuccess={() => {
+                handleSuccess();
+              }}
+            />
+          </>
+        )}
     </>
   ) : (
     <>Loading...</>

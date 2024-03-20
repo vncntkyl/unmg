@@ -234,7 +234,10 @@ class Form extends Controller
             hr_target_metrics.target_metrics_id,
             hr_target_metrics.target_metrics_score,
             hr_target_metrics.target_metrics_desc,
-            hr_eval_form_pillars.pillar_percentage
+            hr_eval_form_pillars.pillar_percentage,
+            hr_eval_form_pillars.comment,
+            hr_eval_form_pillars.hr_eval_form_pillar_id
+
         FROM 
             hr_eval_form
         JOIN 
@@ -380,7 +383,11 @@ class Form extends Controller
     //     $this->statement->execute();
     //     return $this->statement->fetch();
     // }
-
+    function updatePillarByID($pillarID, $pillarPercentage, $comment)
+    {
+        $this->setStatement("UPDATE `hr_eval_form_pillars` SET `pillar_percentage`= ?, `comment` = ? WHERE `hr_eval_form_pillar_id` = ?");
+        return $this->statement->execute([$pillarPercentage, $comment, $pillarID]);
+    }
     function updateObjectiveByID($objectiveID, $objective)
     {
         $this->setStatement("UPDATE `hr_objectives` SET `objective`= ? WHERE `objective_id` = ?");
