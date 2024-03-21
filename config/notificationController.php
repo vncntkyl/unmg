@@ -4,7 +4,19 @@ class Notification extends Controller
 {
   function retrieveNotifications($employee_id)
   {
-    $this->setStatement("SELECT * FROM `hr_notifications` WHERE employee_id = :employee_id AND deleted = 0 ORDER BY ID DESC");
+    $this->setStatement("
+    SELECT 
+    CASE
+    WHEN hr_users.middle_name IS NOT NULL AND hr_users.middle_name <> '' THEN
+        CONCAT(hr_users.first_name, ' ', SUBSTRING(hr_users.middle_name, 1, 1), '. ', hr_users.last_name)
+    ELSE
+        CONCAT(hr_users.first_name, ' ', hr_users.last_name)
+    END AS sender_name,
+    hr_notifications.* 
+    FROM `hr_notifications`
+    LEFT JOIN hr_users on hr_users.employee_id = hr_notifications.sender_id
+    WHERE hr_notifications.employee_id = :employee_id 
+    AND hr_notifications.deleted = 0 ORDER BY ID DESC");
     $this->statement->execute([':employee_id' => $employee_id]);
     return $this->statement->fetchAll();
   }
@@ -75,23 +87,36 @@ class Notification extends Controller
     return $this->statement->fetchAll();
   }
 
-  function addGoalNotification($employee_ID, $title, $message, $link)
+  function addGoalNotification($creator_ID, $employee_ID, $title, $message, $link)
   {
-    $this->setStatement("INSERT INTO hr_notifications (employee_id, title, message, link, seen, deleted, creation_date) VALUES (:employee_ID, :title, :message, :link, 0, 0, :creation_date)");
-    $process = $this->statement->execute([':employee_ID' => $employee_ID, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
+    $this->setStatement("
+    START TRANSACTION;
+    SELECT employee_id INTO @creator_id FROM hr_users WHERE users_id = :user_id;
+    INSERT INTO hr_notifications (sender_id, employee_id, title, message, link, seen, deleted, creation_date) 
+    VALUES (@creator_id, :employee_ID, :title, :message, :link, 0, 0, :creation_date);
+    COMMIT;");
+    $process = $this->statement->execute([
+      ':user_id' => $creator_ID, 
+      ':employee_ID' => $employee_ID, 
+      ':title' => $title, 
+      ':message' => $message, 
+      ':link' => $link, 
+      ':creation_date' => date('Y-m-d H:i:s')
+    ]);
     if ($process) {
       return "success";
     }
   }
-  function addEmployeeGoalNotification($user_id, $title, $message, $link)
+  function addEmployeeGoalNotification($creator, $user_id, $title, $message, $link)
   {
-    $this->setStatement("DECLARE @employee_id INT;
-    SELECT @employee_id = employee_id
-    FROM hr_users
-    WHERE users_id = :user_id;
-    INSERT INTO hr_notifications (employee_id, title, message, link, seen, deleted, creation_date)
-    VALUES (@employee_id, :title, :message, :link, 0, 0, :creation_date)");
-    $process = $this->statement->execute([':user_id' => $user_id, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
+    $this->setStatement("
+    START TRANSACTION;
+    SELECT employee_id INTO @creator_id FROM hr_users WHERE users_id = :creator;
+    SELECT employee_id INTO @employee_id FROM hr_users WHERE users_id = :user_id;
+    INSERT INTO hr_notifications (sender_id, employee_id, title, message, link, seen, deleted, creation_date)
+    VALUES (@creator_id, @employee_id, :title, :message, :link, 0, 0, :creation_date);
+    COMMIT;");
+    $process = $this->statement->execute([':creator' => $creator, ':user_id' => $user_id, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
     if ($process) {
       return "success";
     }

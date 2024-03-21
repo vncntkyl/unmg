@@ -305,7 +305,7 @@ export default function EmployeeTable({ filters = [] }) {
                   <th
                     className={classNames(
                       "text-center w-1/2 bg-un-blue-light text-white p-1 px-2",
-                      !onFilter && "sticky top-0"
+                      !onFilter && "sticky top-0 z-[10]"
                     )}
                   >
                     Action

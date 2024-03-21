@@ -21,11 +21,18 @@ export default {
         toggle: "cubic-bezier(0,.72,1,.52)",
       },
       animation: {
+        'spin-slow': 'spin 5s linear infinite',
+        'reverse-spin': 'reverse-spin 5s linear infinite',
         "slide-down": "slide-down 500ms ease-in-out forwards",
         "slide-right": "slide-right 200ms ease-in-out forwards",
         fade: "fade 200ms ease-in-out forwards",
       },
       keyframes: {
+        'reverse-spin': {
+          from: {
+            transform: 'rotate(360deg)'
+          },
+        },
         "slide-down": {
           "0%": {
             opacity: "0",
@@ -78,9 +85,9 @@ export default {
       "un-red-light-1": "#FDB4B4",
       "un-red-dark": "#883030",
       "un-red-dark-1": "#5c1c1c",
-      "un-orange":"#ed9036",
-      "un-orange-light":"#fdd8b4",
-      "un-orange-dark":"#915318",
+      "un-orange": "#ed9036",
+      "un-orange-light": "#fdd8b4",
+      "un-orange-dark": "#915318",
       "un-yellow": "#f0d74c",
       "un-yellow-light": "#fdf6b4",
       "un-yellow-dark": "#807519",
@@ -96,5 +103,18 @@ export default {
   },
   plugins: [
     require('flowbite/plugin'),
+    // function ({ addUtilities }) {
+    //   const newUtilies = {
+    //     ".no-scrollbar::-webkit-scrollbar": {
+    //       display: "none",
+    //     },
+    //     ".no-scrollbar": {
+    //       "-ms-overflow-style": "none",
+    //       "scrollbar-width": "none",
+    //     },
+    //   };
+
+    //   addUtilities(newUtilies);
+    // },
   ],
 };

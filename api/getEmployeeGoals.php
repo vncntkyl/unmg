@@ -2,18 +2,18 @@
 header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Origin, Content-Type');
-require_once '../config/formController.php';
-$formController = new Form();
+require_once '../config/performanceplanController.php';
+$performancePlan = new PerformancePlan();
 if (isset($_GET['employee_goals'])) {
     if ($_GET['evaluator'] != "") {
         if (isset($_GET['is_count'])) {
-            echo json_encode($formController->getEvaluatorEmployeeGoals($_GET['evaluator'], true, $_GET['work_year']));
+            echo json_encode($performancePlan->getEvaluatorEmployeeGoals($_GET['evaluator'], true, $_GET['work_year']));
         } else {
-            echo json_encode($formController->getEvaluatorEmployeeGoals($_GET['evaluator'], false, $_GET['work_year']));
+            echo json_encode($performancePlan->getEvaluatorEmployeeGoals($_GET['evaluator'], false, $_GET['work_year']));
         }
     } else {
         if (isset($_GET['admin'])) {
-            echo json_encode($formController->getAdminEmployeeGoals($_GET['work_year']));
+            echo json_encode($performancePlan->getAdminEmployeeGoals($_GET['work_year']));
         }
     }
 }

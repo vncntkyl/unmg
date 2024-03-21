@@ -12,6 +12,7 @@ import { useAuth } from "../context/authContext";
 import Toggle from "../components/Toggle";
 import axios from "axios";
 import classNames from "classnames";
+import AvailableSoon from "../components/TrackingAssessment/AvailableSoon";
 
 export default function TrackingAssessment() {
   const [loading, toggleLoading] = useState(true);
@@ -69,73 +70,121 @@ export default function TrackingAssessment() {
   const navigate = useNavigate();
   const viewConversations = () => {
     navigate("/tracking_and_assessment/conversations");
-  }
-  return employeeID !== -1 && (loading ? (
-    "Loading..."
-  ) : (
-    <>
-      <section className="relative">
-        <div className={classNames("w-full min-h-[175px]", userType <= 2 ? "bg-un-blue" : userType >= 3 && userType <= 5 ? "bg-un-red-dark-1" : "bg-dark-gray")} />
-        <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
-          <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between gap-2">
-            {/* HEADER */}
-            <div className="flex flex-col items-center justify-between md:flex-row">
-              <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
-                {["/tracking_and_assessment/create", "/tracking_and_assessment/create/"].includes(getPath()) && (
-                  <a
-                    href="/tracking_and_assessment"
-                    className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
-                  >
-                    <MdOutlineKeyboardArrowLeft />
-                    <span>Back</span>
-                  </a>
-                )
-                }
-                {setHeader(getPath())}
-              </span>
-              {/* TOGGLE */}
-              {JSON.parse(currentUser).user_type != 3 && (
-                <>
-                  {isEvaluator && (
-                    <Toggle
-                      paths={["/tracking_and_assessment/", "/tracking_and_assessment", "/"]}
-                      panel={panel}
-                      panel_1={"My Assessment"}
-                      setPanel={setPanel}
-                      panel_2={"Employee Assessment"}
+  };
+  return (
+    employeeID !== -1 &&
+    (loading ? (
+      "Loading..."
+    ) : (
+      <>
+        <section className="relative">
+          <div
+            className={classNames(
+              "w-full min-h-[175px]",
+              userType <= 2
+                ? "bg-un-blue"
+                : userType >= 3 && userType <= 5
+                ? "bg-un-red-dark-1"
+                : "bg-dark-gray"
+            )}
+          />
+          <div className="absolute top-0 left-0 w-full px-4 lg:pl-[18rem] xl:pl-[18.5rem] xl:pr-[1.5rem]">
+            <div className="bg-white p-2 rounded-md flex flex-col shadow-md justify-between gap-2">
+              {/* HEADER */}
+              <div className="flex flex-col items-center justify-between md:flex-row">
+                <span className="text-un-blue text-[1.2rem] font-semibold text-start w-full flex flex-row items-center gap-2">
+                  {[
+                    "/tracking_and_assessment/create",
+                    "/tracking_and_assessment/create/",
+                  ].includes(getPath()) && (
+                    <a
+                      href="/tracking_and_assessment"
+                      className="flex flex-row items-center w-fit text-dark-gray text-[.9rem] bg-default-dark p-1 rounded-md"
+                    >
+                      <MdOutlineKeyboardArrowLeft />
+                      <span>Back</span>
+                    </a>
+                  )}
+                  {setHeader(getPath())}
+                </span>
+                {/* TOGGLE */}
+                {JSON.parse(currentUser).user_type != 3 && (
+                  <>
+                    {isEvaluator && (
+                      <Toggle
+                        paths={[
+                          "/tracking_and_assessment/",
+                          "/tracking_and_assessment",
+                          "/",
+                        ]}
+                        panel={panel}
+                        panel_1={"My Assessment"}
+                        setPanel={setPanel}
+                        panel_2={"Employee Assessment"}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+              {/* Content */}
+              <div className="flex flex-col">
+                <Routes>
+                  {panel === "My Assessment" ? (
+                    <Route
+                      path="/"
+                      element={
+                        // <AssessmentTracking
+                        //   emp_id={employeeID}
+                        //   kpiYears={kpiDurations}
+                        //   workYear={workYear}
+                        //   setKpiDuration={setWorkYear}
+                        // />
+                        <AvailableSoon />
+                      }
+                    />
+                  ) : (
+                    <Route
+                      path="/"
+                      element={
+                        // <EmployeeAssessmentTable emp_id={employeeID} />
+                        <AvailableSoon />
+                      }
                     />
                   )}
-                </>
-              )}
-            </div>
-            {/* Content */}
-            <div className="flex flex-col">
-              <Routes>
-                {panel === "My Assessment" ? <Route
-                  path="/"
-                  element={<AssessmentTracking
-                    emp_id={employeeID}
-                    kpiYears={kpiDurations}
-                    workYear={workYear}
-                    setKpiDuration={setWorkYear} />}
-                /> : <Route
-                  path="/"
-                  element={<EmployeeAssessmentTable emp_id={employeeID} />}
-                />}
-                <Route
-                  path="/create/*"
-                  element={
-                    <CreateAchievements emp_id={employeeID} />
-                  }
-                />
-                <Route path="/employee_assessment/:id" element={<EmployeeAssessment />} />
-                <Route path="/employee_assessment/:id/grade_edit" element={<EmployeeAssessmentGradeEdit />} />
-                <Route path="/employee_assessment/:id/approve" element={<EmployeeAssessment />} />
-              </Routes>
+                  <Route
+                    path="/create/*"
+                    element={
+                      // <CreateAchievements emp_id={employeeID} />
+                      <AvailableSoon />
+                    }
+                  />
+                  <Route
+                    path="/employee_assessment/:id"
+                    element={
+                      <AvailableSoon />
+                      // <EmployeeAssessment />
+                    }
+                  />
+                  <Route
+                    path="/employee_assessment/:id/grade_edit"
+                    element={
+                      <AvailableSoon />
+                      // <EmployeeAssessmentGradeEdit />
+                    }
+                  />
+                  <Route
+                    path="/employee_assessment/:id/approve"
+                    element={
+                      <AvailableSoon />
+                      // <EmployeeAssessment />
+                    }
+                  />
+                </Routes>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    </>
-  ));
+        </section>
+      </>
+    ))
+  );
 }

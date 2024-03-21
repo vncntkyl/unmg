@@ -223,7 +223,7 @@ export default function Navbar({
                                   {notification.title}
                                 </span>
                                 <p className="ml-2 text-[0.8rem]">
-                                  {notification.message}
+                                {`${notification.sender_name} ${notification.message}`}
                                 </p>
                               </div>
                               <div
@@ -274,7 +274,7 @@ export default function Navbar({
                                     {notification.title}
                                   </span>
                                   <p className="ml-2 text-[0.8rem]">
-                                    {notification.message}
+                                  {`${notification.sender_name} ${notification.message}`}
                                   </p>
                                 </div>
                                 <div className="group-hover:bg-default-dark right-0 bottom-0 p-2 flex flex-col text-end text-[0.8rem]">
@@ -318,7 +318,7 @@ export default function Navbar({
                                     {notification.title}
                                   </span>
                                   <p className="ml-2 text-[0.8rem]">
-                                    {notification.message}
+                                    {`${notification.sender_name} ${notification.message}`}
                                   </p>
                                 </div>
                                 <div className="bg-white group-hover:bg-default-dark right-0 bottom-0 p-2 flex flex-col text-end text-[0.8rem]">

@@ -44,6 +44,7 @@ export default function EmployeeEdit({ admin }) {
   const employment_type = ["LOCAL", "EXPAT"];
   const salutationList = ["Mr.", "Miss."];
   const contractList = ["Regular", "Probationary"];
+  console.log(personalInfo, jobInfo, evaluators);
   useEffect(() => {
     setInfoChecker(userInformationChecker(personalInfo, jobInfo, evaluators));
   }, [personalInfo, jobInfo]);

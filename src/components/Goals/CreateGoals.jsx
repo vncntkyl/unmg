@@ -18,13 +18,18 @@ export default function CreateGoals({
   kpi_work_year = null,
   employee_id,
 }) {
+  const { kpiDurations, fetchUsers, globalSettings } = useAuth();
   const navigate = useNavigate();
   const [goals, setGoals] = useState([]);
   const [user, setUser] = useState("");
   const [duration, setDuration] = useState();
   const [users, setUsers] = useState([]);
   const [saveStatus, setSaveStatus] = useState("Changes are not yet saved");
-  const { kpiDurations, fetchUsers, globalSettings } = useAuth();
+  const [saveButton, setSaveButton] = useState(
+    localStorage.getItem("saved_goals")
+      ? localStorage.getItem("saved_goals")
+      : "Changes are not yet saved"
+  );
   const [newConvoModal, setNewConvoModal] = useState(false);
   const [modal, setModal] = useState("standby");
   const [modalMessage, setModalMessage] = useState("Standby");
@@ -271,7 +276,7 @@ export default function CreateGoals({
             setSaveStatus("Progress saved");
           }
         }
-        //console.log("reading");
+        // console.log("reading");
       }
     };
     checkProgress();
@@ -300,7 +305,7 @@ export default function CreateGoals({
       }
     }
   }, [saveStatus]);
-  
+
   const handleContinue = (e) => {
     e.preventDefault();
     const pillarPercentage = checkPillarPercentage(goals);
@@ -332,7 +337,7 @@ export default function CreateGoals({
       );
       return;
     }
-        setModal("confirmation");
+    setModal("confirmation");
   };
   const handleSubmit = async () => {
     try {
@@ -344,12 +349,13 @@ export default function CreateGoals({
       formData.append("goals", JSON.stringify(goals));
       formData.append("work_year", user.length != 0 ? duration : kpi_work_year);
       const response = await axios.post(url.formCreation, formData);
+      console.log(response.data);
       if (response.data === "success") {
         setModal("success");
         setModalMessage("Goals have been created successfully.");
         localStorage.setItem("finished_new_goals", duration);
         localStorage.removeItem("progress_goals");
-      }else {
+      } else {
         setModal("error");
         setModalMessage(response.data);
       }
@@ -360,11 +366,10 @@ export default function CreateGoals({
   const handleSuccess = () => {
     setModal("standby");
     navigate("/main_goals");
-  }
+  };
   return (
     <>
-      <div className="h-[calc(91vh-64px)] flex flex-col gap-2 overflow-y-scroll">
-        <GoalsInstructions />
+      <div className="flex flex-col gap-2">
         <div className="flex flex-row justify-between">
           <span>Create goals for: {showGoalsOwner()}</span>
           <span>Status: {saveStatus}</span>
@@ -398,18 +403,40 @@ export default function CreateGoals({
                   })}
               </select>
             </div>
-            <button
-              className="w-fit outline-none bg-un-red rounded-md text-white hover:bg-un-red-light flex items-center justify-center text-[0.8rem] lg:text-[1rem] transition-all overflow-hidden px-2 py-1"
-              onClick={() => {
-                setNewConvoModal(true);
-              }}
-            >
-              <FaPencilAlt className="text-[0.8rem] lg:text-[1rem]" />
-              <span>Compose</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {saveButton === "Changes are not yet saved" && (
+                <Tooltip content="Save your progress" style="light">
+                  <button
+                    type="button"
+                    formNoValidate
+                    onClick={() => {
+                      saveProgress();
+                      localStorage.setItem("saved_goals", "Changes are saved");
+                      setSaveButton("Changes are saved");
+                    }}
+                    className="bg-un-blue p-1 rounded-md text-white hover:bg-dark-gray"
+                  >
+                    Save Progress
+                  </button>
+                </Tooltip>
+              )}
+              <button
+                className="w-fit outline-none bg-un-red rounded-md text-white hover:bg-un-red-light flex items-center justify-center text-[0.8rem] lg:text-[1rem] transition-all overflow-hidden px-2 py-1"
+                onClick={() => {
+                  setNewConvoModal(true);
+                }}
+              >
+                <FaPencilAlt className="text-[0.8rem] lg:text-[1rem]" />
+                <span>Compose</span>
+              </button>
+            </div>
           </div>
         )}
-        <form className="flex flex-col gap-2" onSubmit={handleContinue}>
+        <GoalsInstructions />
+        <form
+          className="h-[70vh] flex flex-col gap-2 overflow-scroll"
+          onSubmit={handleContinue}
+        >
           {goals.length > 0
             ? goals.map((goal, index) => {
                 return (
@@ -760,17 +787,7 @@ export default function CreateGoals({
             : "Loading..."}
           <div className="flex flex-row gap-2 justify-end">
             <span>Current Percentage: {checkPillarPercentage(goals)}</span>
-            <button
-              type="button"
-              formNoValidate
-              onClick={() => saveProgress()}
-              className="bg-mid-gray p-1 rounded-md text-white hover:bg-dark-gray"
-            >
-              Save Progress
-            </button>
-            <button
-              className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue"
-            >
+            <button className="bg-un-blue-light p-1 rounded-md text-white hover:bg-un-blue">
               Submit
             </button>
           </div>
@@ -797,38 +814,38 @@ export default function CreateGoals({
           />
         </>
       )}
-      {modal === "error" && (
-          <>
-            <AlertModal
-              closeModal={setModal}
-              modalType={"status"}
-              modalStatus={modal}
-              message={modalMessage}
-              handleContinue={() => {
-                handleSuccess();
-              }}
-              handleSuccess={() => {
-                handleSuccess();
-              }}
-            />
-          </>
-        )}
-      {modal === "success" && (
-          <>
-            <AlertModal
-              closeModal={setModal}
-              modalType={"status"}
-              modalStatus={modal}
-              message={modalMessage}
-              handleContinue={() => {
-                handleSuccess();
-              }}
-              handleSuccess={() => {
-                handleSuccess();
-              }}
-            />
-          </>
-        )}
+      {modal === "error" && modal !== "success" && (
+        <>
+          <AlertModal
+            closeModal={setModal}
+            modalType={"status"}
+            modalStatus={modal}
+            message={modalMessage}
+            handleContinue={() => {
+              handleSuccess();
+            }}
+            handleSuccess={() => {
+              handleSuccess();
+            }}
+          />
+        </>
+      )}
+      {modal === "success" && modal !== "error" && (
+        <>
+          <AlertModal
+            closeModal={setModal}
+            modalType={"status"}
+            modalStatus={modal}
+            message={modalMessage}
+            handleContinue={() => {
+              handleSuccess();
+            }}
+            handleSuccess={() => {
+              handleSuccess();
+            }}
+          />
+        </>
+      )}
     </>
   );
 }

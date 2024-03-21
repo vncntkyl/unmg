@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import classNames from "classnames";
 import { GrClose } from "react-icons/gr";
 import { BsExclamationOctagonFill } from "react-icons/bs";
@@ -18,6 +18,7 @@ export default function AlertModal({
   handleSuccess,
 }) {
   const navigate = useNavigate();
+  const [clicked, setClicked] = useState(false);
   return (
     <>
       <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] min-w-[90%] max-w-[90%] z-[50] md:min-w-[70%] lg:min-w-[0%]">
@@ -116,7 +117,9 @@ export default function AlertModal({
                     modalStatus === "error"
                       ? closeModal("standby")
                       : handleContinue();
+                    setClicked(true);
                   }}
+                  disabled={clicked}
                   className="text-white bg-un-blue-light border border-un-blue-light p-1 px-2 rounded-md text-[.9rem] hover:bg-un-blue disabled:bg-dark-gray"
                 >
                   Confirm

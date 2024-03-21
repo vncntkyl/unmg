@@ -23,6 +23,8 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const [tableData, setTableData] = useState([]);
   const [goalStatus, setGoalStatus] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
+  const [approvals, setApprovals] = useState([]);
+  console.log(approvals);
   const { removeSubText } = useFunction();
   const { headList, fetchUsers } = useAuth();
   const handleApproval = async () => {
@@ -50,7 +52,6 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
       console.log(e.message);
     }
   };
-
   useEffect(() => {
     if (!user_id) return;
 
@@ -116,6 +117,24 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
     if (id) {
       setGoalOwner(id);
     }
+    const getApprovals = async () => {
+      const parameters = {
+        params: {
+          approvals: true,
+          user_id: id ? id : user_id,
+          work_year: workYear,
+        },
+      };
+      try {
+        const response = await axios.get(url.fetchAllGoals, parameters);
+        setApprovals(response.data);
+        // setEmployees(response.data);
+        setLoading(false);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    getApprovals();
     retrieveUser();
     getGoalApproval();
   }, [user_id, workYear, goalOwner]);
@@ -127,6 +146,12 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
     if (localStorage.getItem("viewLayout")) {
       setViewLayout(localStorage.getItem("viewLayout"));
     }
+
+    // const getUser = {
+    //   if (approvals.user_id){
+
+    //   }
+    // }
   }, []);
   return !loading ? (
     <div className="flex flex-col gap-2">
@@ -138,6 +163,30 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
           <WorkYear workYear={workYear} setWorkYear={setWorkYear} />
         </div>
         {workYear && hasSet && user_id != 1 && (
+          <>
+            {parseInt(approvals.employee_id) === user_id
+              ? parseInt(approvals.fp_employee) <= 1 && (
+                  <>
+                    <a
+                      className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                      href="/main_goals/edit"
+                      onClick={() => {
+                        if (goalOwner) {
+                          localStorage.setItem("goal_user", goalOwner);
+                        } else {
+                          localStorage.setItem("goal_user", user_id);
+                        }
+                      }}
+                    >
+                      Edit Goals
+                    </a>
+                  </>
+                )
+              : ""}
+          </>
+        )}
+        {console.log(hasSet)}
+        {/* {workYear && hasSet && user_id != 1 && (
           <div className="flex flex-row gap-2">
             <ViewLayout viewLayout={viewLayout} setViewLayout={setViewLayout} />
             <a
@@ -169,7 +218,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
               </button>
             )}
           </div>
-        )}
+        )} */}
       </div>
       {workYear === -1 ? (
         <div className="font-semibold text-dark-gray bg-default rounded-md p-2 flex flex-col gap-2 items-center text-center">

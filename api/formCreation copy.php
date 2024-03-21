@@ -18,9 +18,9 @@ if (isset($_POST['submit'])) {
         $employee_id = $_POST['employee_id'];
         $creator = $_POST['current_user_id'];
         $work_year = $_POST['work_year'];
-        $checkRaters = $form->checkRaters($userID);
+
         if ($formID = $form->createEvalForm($userID, $work_year)) {
-            $latestFpID = $form->createEvalFormFp($formID, $creator, $_POST['userID'], $checkRaters->status);
+            $latestFpID = $form->createEvalFormFp($formID, $creator, $_POST['userID']);
             $latestSpID = $form->createEvalFormSp($formID);
             foreach ($goals as $index => $goal) {
                 $pillarObjectives = $goal->objectives;
