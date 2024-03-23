@@ -16,6 +16,7 @@ import AgreementSignOff from "./AgreementSignOff";
 import GlobalSettings from "./GlobalSettings";
 import Conversations from "./Conversations";
 import UserLogs from "./UserLogs";
+import AvailableSoon from "../components/TrackingAssessment/AvailableSoon";
 
 export default function Dashboard() {
   if (!localStorage.getItem("currentUser")) {
@@ -103,10 +104,10 @@ export default function Dashboard() {
           {/* <Route path="/roles/*" element={<Roles />} /> */}
           <Route path="/help/*" element={<Help />} />
           <Route path="/main_goals/*" element={<MainGoals />} />
-          <Route path="/tracking_and_assessment/*" element={<TrackingAssessment />}/>
+          <Route path="/tracking_and_assessment/*" element={<AvailableSoon />}/>
           <Route path="/conversations/*" element={<Conversations />}/>
           <Route path="/global_settings/*" element={<GlobalSettings />} />
-          <Route path="/sign_off/*" element={<AgreementSignOff />} />
+          <Route path="/sign_off/*" element={<AvailableSoon />} />
           <Route path="/view_evaluations/*" element={<ViewEvaluation />} />
           <Route path="/company_plans/*" element={<CompanyPlans />} />
           <Route path="/Logs/*" element={<UserLogs />} />

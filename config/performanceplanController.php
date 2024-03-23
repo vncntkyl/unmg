@@ -281,7 +281,14 @@ class PerformancePlan extends Controller
     CASE WHEN te.middle_name IS NOT NULL AND te.middle_name <> '' THEN CONCAT(te.last_name, ' ', te.first_name, ' ', SUBSTRING(te.middle_name, 1, 1), '. ') 
     ELSE CONCAT(te.last_name, ' ', te.first_name)
     END AS tertiary_evaluator,
-    fp.rater_3 AS fp_rater_3
+    fp.rater_3 AS fp_rater_3,
+    CASE
+          WHEN fp.rater_1 = 5 AND fp.rater_2 = 5 AND fp.rater_3 = 5 THEN 1
+          WHEN fp.rater_1 != 5 AND fp.rater_2 = 5 AND fp.rater_3 = 5 THEN 2
+          WHEN fp.rater_1 != 5 AND fp.rater_2 != 5 AND fp.rater_3 = 5 THEN 3
+          WHEN fp.rater_1 != 5 AND fp.rater_2 != 5 AND fp.rater_3 != 5 THEN 4
+          ELSE 5
+      END AS status
     FROM
     hr_eval_form ef
     LEFT JOIN hr_users u ON u.users_id = ef.users_id
@@ -312,5 +319,11 @@ class PerformancePlan extends Controller
     $this->setStatement("SELECT COUNT(*) AS status FROM hr_eval_form_fp fp JOIN hr_eval_form ef ON fp.eval_form_id = ef.hr_eval_form_id WHERE ef.CreationDate = ? AND fp.created_by = ? AND fp.approved_by = ?");
     $this->statement->execute([$workyear, $creator, $approver]);
     return $this->statement->fetch();
+  }
+
+  function approveGoal($column_name, $id)
+  {
+      $this->setStatement("UPDATE `hr_eval_form_fp` SET {$column_name} = 2 WHERE hr_eval_form_fp_id = ?");
+      return $this->statement->execute([$id]);
   }
 }

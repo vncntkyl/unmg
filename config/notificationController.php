@@ -121,13 +121,16 @@ class Notification extends Controller
       return "success";
     }
   }
-  function updateEmployeeGoalNotification($user_id, $title, $message, $link)
+  function updateEmployeeGoalNotification($creator, $user_id, $title, $message, $link)
   {
-    $this->setStatement("INSERT INTO hr_notifications (employee_id, title, message, link, seen, deleted, creation_date)
-    SELECT employee_id, :title, :message, :link, 0, 0, :creation_date 
-    FROM hr_users 
-    WHERE users_id = :user_id;");
-    $process = $this->statement->execute([':user_id' => $user_id, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
+    $this->setStatement("
+    START TRANSACTION;
+    SELECT employee_id INTO @creator_id FROM hr_users WHERE users_id = :creator;
+    SELECT employee_id INTO @employee_id FROM hr_users WHERE users_id = :user_id;
+    INSERT INTO hr_notifications (sender_id, employee_id, title, message, link, seen, deleted, creation_date)
+    VALUES (@creator_id, @employee_id, :title, :message, :link, 0, 0, :creation_date);
+    COMMIT;");
+    $process = $this->statement->execute([':creator' => $creator, ':user_id' => $user_id, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
     if ($process) {
       return "success";
     }

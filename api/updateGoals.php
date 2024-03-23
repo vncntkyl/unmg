@@ -51,7 +51,7 @@ if (isset($_POST['goalData'])) {
             if ($goal_editor === $user_id) {
                 $fetchGoalRaters = $notif->fetchGoalRaters($user_id);
                 foreach ($fetchGoalRaters as $rater) {
-                    $raterNotif = $notif->addGoalNotification($rater->evaluator, "Employee Goals Updated!", "Your employee have updated their goals. Please check for their approval", "/main_goals/" . $user_id);
+                    $raterNotif = $notif->addGoalNotification($goal_editor, $rater->evaluator, "Employee Goals Updated!", "have updated their goals. Please check for their approval", "/main_goals/" . $user_id);
                     if ($raterNotif == "success") {
                         array_push($notification, 1);
                     } else {
@@ -64,7 +64,7 @@ if (isset($_POST['goalData'])) {
                     echo 1;
                 }
             } else {
-                $userNotif = $notif->updateEmployeeGoalNotification($user_id, "Goal Updated!", "Your goals have been updated by your rater.", "/main_goals");
+                $userNotif = $notif->updateEmployeeGoalNotification($goal_editor, $user_id, "Goal Updated!", "have updated your goals. Please check for your approval.", "/main_goals");
                 if ($userNotif == "success") {
                     echo 1;
                 } else {

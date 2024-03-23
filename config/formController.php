@@ -116,11 +116,6 @@ class Form extends Controller
         $this->statement->execute([$kpiID]);
         return $this->statement->fetchAll();
     }
-    function approveGoal($approver, $id)
-    {
-        $this->setStatement("UPDATE `hr_eval_form_fp` SET `approved_by`= ? WHERE hr_eval_form_fp_id = ?");
-        return $this->statement->execute([$approver, $id]);
-    }
 
 
     function fetchGoals($user_id)

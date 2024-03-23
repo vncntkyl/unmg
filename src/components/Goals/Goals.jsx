@@ -24,9 +24,10 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const [goalStatus, setGoalStatus] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
   const [approvals, setApprovals] = useState([]);
-  console.log(approvals);
+  console.table(approvals);
   const { removeSubText } = useFunction();
   const { headList, fetchUsers } = useAuth();
+
   const handleApproval = async () => {
     let approver, creator;
     approver = user_id;
@@ -37,10 +38,20 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
     }
     if (creator === approver) return;
 
+    const getInsert =
+      approvals.employee_id === user_id
+        ? "employee"
+        : approvals.primary_id === user_id
+        ? "rater_1"
+        : approvals.secondary_id === user_id
+        ? "rater_2"
+        : "rater_3";
+    console.log(creator, approver);
     try {
       const formData = new FormData();
       formData.append("approve", true);
-      formData.append("approver", approver);
+      formData.append("approver", creator);
+      formData.append("column_name", getInsert);
       formData.append("id", goalData[0].hr_eval_form_fp_id);
       const response = await axios.post(url.approveGoals, formData);
       if (response.data == 1) {
@@ -146,12 +157,6 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
     if (localStorage.getItem("viewLayout")) {
       setViewLayout(localStorage.getItem("viewLayout"));
     }
-
-    // const getUser = {
-    //   if (approvals.user_id){
-
-    //   }
-    // }
   }, []);
   return !loading ? (
     <div className="flex flex-col gap-2">
@@ -164,27 +169,325 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
         </div>
         {workYear && hasSet && user_id != 1 && (
           <>
-            {parseInt(approvals.employee_id) === user_id
-              ? parseInt(approvals.fp_employee) <= 1 && (
-                  <>
-                    <a
-                      className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
-                      href="/main_goals/edit"
-                      onClick={() => {
-                        if (goalOwner) {
-                          localStorage.setItem("goal_user", goalOwner);
-                        } else {
-                          localStorage.setItem("goal_user", user_id);
-                        }
-                      }}
-                    >
-                      Edit Goals
-                    </a>
-                  </>
-                )
-              : ""}
+          <ViewLayout viewLayout={viewLayout} setViewLayout={setViewLayout} />
+            {parseInt(approvals.employee_id) === user_id ? (
+              parseInt(approvals.fp_employee) === 1 && (
+                <>
+                  <a
+                    className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                    href="/main_goals/edit"
+                    onClick={() => {
+                      if (goalOwner) {
+                        localStorage.setItem("goal_user", goalOwner);
+                      } else {
+                        localStorage.setItem("goal_user", user_id);
+                      }
+                    }}
+                  >
+                    Edit Goals
+                  </a>
+                </>
+              )
+            ) : (
+              <>
+                <div className="flex gap-2">
+                  {approvals.status === 1 ? (
+                    "No Approvals Needed"
+                  ) : approvals.status === 2 ? (
+                    <>
+                      {approvals.primary_id === user_id &&
+                        approvals.fp_rater_1 <= 1 && (
+                          <>
+                            <a
+                              className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                              href="/main_goals/edit"
+                              onClick={() => {
+                                if (goalOwner) {
+                                  localStorage.setItem("goal_user", goalOwner);
+                                } else {
+                                  localStorage.setItem("goal_user", user_id);
+                                }
+                              }}
+                            >
+                              Edit Goals
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    "Are you sure you want to approve these goals?"
+                                  )
+                                ) {
+                                  handleApproval();
+                                }
+                              }}
+                              className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                            >
+                              Approve Goals
+                            </button>
+                          </>
+                        )}
+                    </>
+                  ) : approvals.status === 3 ? (
+                    <>
+                      {approvals.primary_id === user_id &&
+                        approvals.fp_employee === 1 &&
+                        approvals.fp_rater_1 <= 1 && (
+                          <>
+                            <a
+                              className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                              href="/main_goals/edit"
+                              onClick={() => {
+                                if (goalOwner) {
+                                  localStorage.setItem("goal_user", goalOwner);
+                                } else {
+                                  localStorage.setItem("goal_user", user_id);
+                                }
+                              }}
+                            >
+                              Edit Goals
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    "Are you sure you want to approve these goals?"
+                                  )
+                                ) {
+                                  handleApproval();
+                                }
+                              }}
+                              className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                            >
+                              Accept Goals
+                            </button>
+                          </>
+                        )}
+                      {approvals.secondary_id === user_id &&
+                      approvals.fp_rater_1 <= 2 &&
+                      approvals.fp_employee === 1 && 
+                      approvals.fp_rater_2 <= 1 && (
+                        <>
+                          <a
+                            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                            href="/main_goals/edit"
+                            onClick={() => {
+                              if (goalOwner) {
+                                localStorage.setItem("goal_user", goalOwner);
+                              } else {
+                                localStorage.setItem("goal_user", user_id);
+                              }
+                            }}
+                          >
+                            Edit Goals
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to approve these goals?"
+                                )
+                              ) {
+                                handleApproval();
+                              }
+                            }}
+                            className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                          >
+                            Approve Goals
+                          </button>
+                        </>
+                      )}
+                    </>
+                  ) : approvals.status === 4 ? (
+                    <>
+                      {approvals.primary_id === user_id && 
+                      approvals.fp_employee === 1 &&
+                      approvals.fp_rater_1 <= 1 ? (
+                        <>
+                          <a
+                            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                            href="/main_goals/edit"
+                            onClick={() => {
+                              if (goalOwner) {
+                                localStorage.setItem("goal_user", goalOwner);
+                              } else {
+                                localStorage.setItem("goal_user", user_id);
+                              }
+                            }}
+                          >
+                            Edit Goals
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to accept these goals?"
+                                )
+                              ) {
+                                handleApproval();
+                              }
+                            }}
+                            className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                          >
+                            Accept Goals
+                          </button>
+                        </>
+                      ) : approvals.secondary_id === user_id &&
+                        approvals.fp_rater_2 <= 1 &&
+                        approvals.fp_rater_1 === 2 ? (
+                        <>
+                          <a
+                            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                            href="/main_goals/edit"
+                            onClick={() => {
+                              if (goalOwner) {
+                                localStorage.setItem("goal_user", goalOwner);
+                              } else {
+                                localStorage.setItem("goal_user", user_id);
+                              }
+                            }}
+                          >
+                            Edit Goals
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to accept these goals?"
+                                )
+                              ) {
+                                handleApproval();
+                              }
+                            }}
+                            className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                          >
+                            Accept Goals
+                          </button>
+                        </>
+                      ) : approvals.tertiary_id === user_id &&
+                        approvals.fp_rater_1 === 2 &&
+                        approvals.fp_rater_2 === 2 ? (
+                        <>
+                          <a
+                            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                            href="/main_goals/edit"
+                            onClick={() => {
+                              if (goalOwner) {
+                                localStorage.setItem("goal_user", goalOwner);
+                              } else {
+                                localStorage.setItem("goal_user", user_id);
+                              }
+                            }}
+                          >
+                            Edit Goals
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to approve these goals?"
+                                )
+                              ) {
+                                handleApproval();
+                              }
+                            }}
+                            className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                          >
+                            Approve Goals
+                          </button>
+                        </>
+                      ) : (
+                        ""
+                      )}
+                      {/* {approvals.secondary_id === user_id &&
+                      approvals.fp_rater_2 <= 1 &&
+                      approvals.fp_rater_1 === 2 ? (
+                        <>
+                          <a
+                            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                            href="/main_goals/edit"
+                            onClick={() => {
+                              if (goalOwner) {
+                                localStorage.setItem("goal_user", goalOwner);
+                              } else {
+                                localStorage.setItem("goal_user", user_id);
+                              }
+                            }}
+                          >
+                            Edit Goals
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to approve these goals?"
+                                )
+                              ) {
+                                handleApproval();
+                              }
+                            }}
+                            className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                          >
+                            Accept Goals
+                          </button>
+                        </>
+                      ) : (
+                        "Waiting for primary rater to approve"
+                      )} */}
+                      {/* {approvals.tertiary_id === user_id &&
+                      approvals.fp_rater_3 <= 1 &&
+                      approvals.fp_rater_1 === 2 &&
+                      approvals.fp_rater_2 === 2 ? (
+                        <>
+                          <a
+                            className="bg-un-blue-light text-white p-1 w-fit rounded-md cursor-pointer hover:bg-un-blue"
+                            href="/main_goals/edit"
+                            onClick={() => {
+                              if (goalOwner) {
+                                localStorage.setItem("goal_user", goalOwner);
+                              } else {
+                                localStorage.setItem("goal_user", user_id);
+                              }
+                            }}
+                          >
+                            Edit Goals
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to approve these goals?"
+                                )
+                              ) {
+                                handleApproval();
+                              }
+                            }}
+                            className="bg-un-green text-white p-1 rounded-md cursor-pointer  hover:bg-un-green-dark"
+                          >
+                            Approve Goals
+                          </button>
+                        </>
+                      ) : (
+                        "Waiting for secondary rater to approve"
+                      )} */}
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </>
+            )}
           </>
         )}
+
         {console.log(hasSet)}
         {/* {workYear && hasSet && user_id != 1 && (
           <div className="flex flex-row gap-2">
