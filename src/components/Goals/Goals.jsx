@@ -373,7 +373,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
                         <span>Employee:</span>
                         {approvals.full_name ? approvals.full_name : "N/A"}
                       </div>
-                      {approvals.fp_employee && (
+                      {approvals.fp_employee != null && (
                         <Badge
                           message={status[approvals.fp_employee]}
                           type={
@@ -397,7 +397,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
                           ? approvals.primary_evaluator
                           : "N/A"}
                       </div>
-                      {approvals.fp_rater_1 && (
+                      {approvals.fp_rater_1 != null && (
                         <Badge
                           message={status[approvals.fp_rater_1]}
                           type={
@@ -419,7 +419,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
                           ? approvals.secondary_evaluator
                           : "N/A"}
                       </div>
-                      {approvals.fp_rater_2 && (
+                      {approvals.fp_rater_2 != null && (
                         <Badge
                           message={status[approvals.fp_rater_2]}
                           type={
@@ -441,7 +441,7 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
                           ? approvals.tertiary_evaluator
                           : "N/A"}
                       </div>
-                      {approvals.fp_rater_3 && (
+                      {approvals.fp_rater_3 != null && (
                         <Badge
                           message={status[approvals.fp_rater_3]}
                           type={

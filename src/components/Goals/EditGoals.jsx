@@ -140,6 +140,7 @@ const handleSubmit = async () => {
     const formdata = new FormData();
     formdata.append("goalData", JSON.stringify(tableData));
     formdata.append("goal_editor", parseInt(JSON.parse(currentUser).users_id))
+    formdata.append("workYear", workYear)
     formdata.append("user_id", parseInt(localStorage.getItem("goal_user")))
     const response = await axios.post(url.updateGoals, formdata);
     if (response.data === 1) {

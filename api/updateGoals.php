@@ -2,10 +2,10 @@
 header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Origin, Content-Type');
-require_once '../config/formController.php';
+require_once '../config/performanceplanController.php';
 require_once '../config/logController.php';
 require_once '../config/notificationController.php';
-$form = new Form();
+$form = new PerformancePlan();
 $logs = new Log();
 $notif = new Notification();
 
@@ -13,6 +13,7 @@ if (isset($_POST['goalData'])) {
     $data = json_decode($_POST['goalData']);
     $goal_editor = $_POST['goal_editor'];
     $user_id = $_POST['user_id'];
+    $workYear = $_POST['workYear'];
     $status  = array();
     $notification = array();
 
@@ -46,6 +47,8 @@ if (isset($_POST['goalData'])) {
     if (in_array(0, $status)) {
         echo 0;
     } else {
+        $performancePlan = $form->fetchEvaluationFormApproval($user_id, $workYear);
+        
         $userLog = $logs->updateGoals($goal_editor === $user_id ? $user_id : $goal_editor, 3, 2, $goal_editor === $user_id ? "has updated their goals" : "has updated the goals of their employee");
         if($userLog = "success"){
             if ($goal_editor === $user_id) {

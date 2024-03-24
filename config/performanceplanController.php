@@ -326,7 +326,31 @@ class PerformancePlan extends Controller
 
   function approveGoal($column_name, $acceptType, $id)
   {
-      $this->setStatement("UPDATE `hr_eval_form_fp` SET {$column_name} = ? WHERE hr_eval_form_fp_id = ?");
-      return $this->statement->execute([$acceptType, $id]);
+    $this->setStatement("UPDATE `hr_eval_form_fp` SET {$column_name} = ? WHERE hr_eval_form_fp_id = ?");
+    return $this->statement->execute([$acceptType, $id]);
+  }
+  
+  function updatePillarByID($pillarID, $pillarPercentage, $comment)
+  {
+    $this->setStatement("UPDATE `hr_eval_form_pillars` SET `pillar_percentage`= ?, `comment` = ? WHERE `hr_eval_form_pillar_id` = ?");
+    return $this->statement->execute([$pillarPercentage, $comment, $pillarID]);
+  }
+
+  function updateObjectiveByID($objectiveID, $objective)
+  {
+    $this->setStatement("UPDATE `hr_objectives` SET `objective`= ? WHERE `objective_id` = ?");
+    return $this->statement->execute([$objective, $objectiveID]);
+  }
+
+  function updateKPIByID($kpiID, $kpi, $kpiWeight)
+  {
+    $this->setStatement("UPDATE `hr_kpi` SET `kpi_desc`= ?, `kpi_weight` = ? WHERE `kpi_id` = ?");
+    return $this->statement->execute([$kpi, $kpiWeight, $kpiID]);
+  }
+
+  function updateTargetMetricsByID($targetMetricsID, $targetMetrics)
+  {
+    $this->setStatement("UPDATE `hr_target_metrics` SET `target_metrics_desc`= ? WHERE `target_metrics_id` = ?");
+    return $this->statement->execute([$targetMetrics, $targetMetricsID]);
   }
 }

@@ -115,7 +115,7 @@ export default function DataTable({
                                 <span>Employee:</span>
                                 {item.full_name ? item.full_name : "N/A"}
                               </div>
-                              {item.fp_employee && (
+                              {item.fp_employee != null && (
                                 <Badge
                                   className="px-2"
                                   message={status[item.fp_employee]}
@@ -140,7 +140,7 @@ export default function DataTable({
                                   ? item.primary_evaluator
                                   : "N/A"}
                               </div>
-                              {item.fp_rater_1 && (
+                              {item.fp_rater_1 != null && (
                                 <Badge
                                   className="px-2"
                                   message={status[item.fp_rater_1]}
@@ -163,7 +163,7 @@ export default function DataTable({
                                   ? item.secondary_evaluator
                                   : "N/A"}
                               </div>
-                              {item.fp_rater_2 && (
+                              {item.fp_rater_2 != null && (
                                 <Badge
                                   className="px-2"
                                   message={status[item.fp_rater_2]}
@@ -186,7 +186,7 @@ export default function DataTable({
                                   ? item.tertiary_evaluator
                                   : "N/A"}
                               </div>
-                              {item.fp_rater_3 && (
+                              {item.fp_rater_3 != null && (
                                 <Badge
                                   className="px-2"
                                   message={status[item.fp_rater_3]}

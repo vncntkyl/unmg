@@ -240,26 +240,6 @@ class Form extends Controller
     //     $this->statement->execute();
     //     return $this->statement->fetch();
     // }
-    function updatePillarByID($pillarID, $pillarPercentage, $comment)
-    {
-        $this->setStatement("UPDATE `hr_eval_form_pillars` SET `pillar_percentage`= ?, `comment` = ? WHERE `hr_eval_form_pillar_id` = ?");
-        return $this->statement->execute([$pillarPercentage, $comment, $pillarID]);
-    }
-    function updateObjectiveByID($objectiveID, $objective)
-    {
-        $this->setStatement("UPDATE `hr_objectives` SET `objective`= ? WHERE `objective_id` = ?");
-        return $this->statement->execute([$objective, $objectiveID]);
-    }
-    function updateKPIByID($kpiID, $kpi, $kpiWeight)
-    {
-        $this->setStatement("UPDATE `hr_kpi` SET `kpi_desc`= ?, `kpi_weight` = ? WHERE `kpi_id` = ?");
-        return $this->statement->execute([$kpi, $kpiWeight, $kpiID]);
-    }
-    function updateTargetMetricsByID($targetMetricsID, $targetMetrics)
-    {
-        $this->setStatement("UPDATE `hr_target_metrics` SET `target_metrics_desc`= ? WHERE `target_metrics_id` = ?");
-        return $this->statement->execute([$targetMetrics, $targetMetricsID]);
-    }
     function fetchAllEvaluations()
     {
         $this->setStatement("SELECT CONCAT(hr_users.last_name,',', ' ',hr_users.first_name,' ',hr_users.middle_name) AS 'Name',company,department,hr_users.job_description AS 'Job_Title',
