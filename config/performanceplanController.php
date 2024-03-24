@@ -181,14 +181,17 @@ class PerformancePlan extends Controller
           MAX(CASE WHEN p.pillar_id = 3 THEN p.pillar_percentage ELSE '-' END) AS pillar_3,
           MAX(CASE WHEN p.pillar_id = 4 THEN p.pillar_percentage ELSE '-' END) AS pillar_4,
           fp.employee AS fp_employee,
+          pe.users_id AS primary_id,
           CASE WHEN pe.middle_name IS NOT NULL AND pe.middle_name <> '' THEN CONCAT(pe.last_name, ' ', pe.first_name, ' ', SUBSTRING(pe.middle_name, 1, 1), '. ')
           ELSE CONCAT(pe.last_name, ' ', pe.first_name) 
           END AS primary_evaluator,
           fp.rater_1 AS fp_rater_1,
+          se.users_id AS secondary_id,
           CASE WHEN se.middle_name IS NOT NULL AND se.middle_name <> '' THEN CONCAT(se.last_name, ' ', se.first_name, ' ', SUBSTRING(se.middle_name, 1, 1), '. ') 
           ELSE CONCAT(se.last_name, ' ', se.first_name)
           END AS secondary_evaluator,
           fp.rater_2 AS fp_rater_2,
+          te.users_id AS tertiary_id,
           CASE WHEN te.middle_name IS NOT NULL AND te.middle_name <> '' THEN CONCAT(te.last_name, ' ', te.first_name, ' ', SUBSTRING(te.middle_name, 1, 1), '. ') 
           ELSE CONCAT(te.last_name, ' ', te.first_name)
           END AS tertiary_evaluator,
@@ -329,7 +332,7 @@ class PerformancePlan extends Controller
     $this->setStatement("UPDATE `hr_eval_form_fp` SET {$column_name} = ? WHERE hr_eval_form_fp_id = ?");
     return $this->statement->execute([$acceptType, $id]);
   }
-  
+
   function updatePillarByID($pillarID, $pillarPercentage, $comment)
   {
     $this->setStatement("UPDATE `hr_eval_form_pillars` SET `pillar_percentage`= ?, `comment` = ? WHERE `hr_eval_form_pillar_id` = ?");
@@ -352,5 +355,10 @@ class PerformancePlan extends Controller
   {
     $this->setStatement("UPDATE `hr_target_metrics` SET `target_metrics_desc`= ? WHERE `target_metrics_id` = ?");
     return $this->statement->execute([$targetMetrics, $targetMetricsID]);
+  }
+  function updateFpByID($fpID, $employee, $rater_1, $rater_2, $rater_3)
+  {
+    $this->setStatement("UPDATE `hr_eval_form_fp` SET `employee`= ?, `rater_1` = ?, `rater_2` = ?, `rater_3` = ? WHERE `eval_form_id` = ?");
+    return $this->statement->execute([$employee, $rater_1, $rater_2, $rater_3, $fpID]);
   }
 }

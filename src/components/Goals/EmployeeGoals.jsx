@@ -20,7 +20,6 @@ export default function EmployeeGoals({
   const [approvalStatus, setApprovalStatus] = useState(0);
   const [type, setType] = useState("all");
   const { capitalize } = useFunction();
-  console.table(employees);
   const statusList = ["Approved", "Pending Approval", "Awaiting Submission"];
   const fetchUsers = async () => {
     const parameters = {

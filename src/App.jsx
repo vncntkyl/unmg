@@ -31,7 +31,8 @@ function App() {
           {/* <span className="fixed bottom-0 left-2 z-[20] bg-default-dark px-2 py-1 text-[0.7rem]">PMS Version Beta:1.0.0</span> */}
           {/* <span className="fixed bottom-0 left-2 z-[20] bg-default-dark px-2 py-1 text-[0.7rem]">PMS Version Beta:1.2.0</span> */}
           {/* <span className="fixed bottom-0 left-2 z-[20] bg-default-dark px-2 py-1 text-[0.7rem]">PMS Version Beta:1.2.4</span> */}
-          <span className="fixed bottom-0 left-2 z-[20] bg-default-dark px-2 py-1 text-[0.7rem]">PMS Version Beta:1.2.6</span>
+          {/* <span className="fixed bottom-0 left-2 z-[20] bg-default-dark px-2 py-1 text-[0.7rem]">PMS Version Beta:1.2.6</span> */}
+          <span className="fixed bottom-0 left-2 z-[20] bg-default-dark px-2 py-1 text-[0.7rem]">PMS Version Beta:1.2.8</span>
         </AuthProvider>
       </FunctionProvider>
     </Router>

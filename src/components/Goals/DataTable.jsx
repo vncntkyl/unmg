@@ -19,7 +19,7 @@ export default function DataTable({
   const [actionsVisibility, setActionsVisibility] = useState(
     Array(data.length).fill(false)
   );
-
+  console.table(data);
   useEffect(() => {
     switch (statusIdx) {
       case 0:
@@ -74,7 +74,12 @@ export default function DataTable({
           const raters = [1, 2, 5];
 
           const approved =
-            parseInt(item.fp_employee) === 1 && [ parseInt(item.fp_rater_1), parseInt(item.fp_rater_2), parseInt(item.fp_rater_3),].every((rater) => raters.includes(rater));
+            parseInt(item.fp_employee) === 1 &&
+            [
+              parseInt(item.fp_rater_1),
+              parseInt(item.fp_rater_2),
+              parseInt(item.fp_rater_3),
+            ].every((rater) => raters.includes(rater));
           const status = [
             "Pending",
             "Accepted",
@@ -277,22 +282,88 @@ export default function DataTable({
                             </a>
                             {user_id !== 1 && (
                               <>
-                                <a
-                                  href={`/main_goals/edit`}
-                                  className="hover:bg-default w-full px-2 text-start"
-                                  onClick={() => {
-                                    localStorage.setItem(
-                                      "goal_user",
-                                      item.users_id
-                                    );
-                                    localStorage.setItem(
-                                      "goal_name",
-                                      item.full_name
-                                    );
-                                  }}
-                                >
-                                  Edit Goals
-                                </a>
+                                {parseInt(parseInt(item.employee_id)) ===
+                                  user_id &&
+                                parseInt(item.fp_employee) === 0 ? (
+                                  <a
+                                    href={`/main_goals/edit`}
+                                    className="hover:bg-default w-full px-2 text-start"
+                                    onClick={() => {
+                                      localStorage.setItem(
+                                        "goal_user",
+                                        item.users_id
+                                      );
+                                      localStorage.setItem(
+                                        "goal_name",
+                                        item.full_name
+                                      );
+                                    }}
+                                  >
+                                    Edit Goals
+                                  </a>
+                                ) : parseInt(item.primary_id) === user_id &&
+                                  parseInt(item.fp_employee) === 1 &&
+                                  parseInt(item.fp_rater_1) === 0 ? (
+                                  <a
+                                    href={`/main_goals/edit`}
+                                    className="hover:bg-default w-full px-2 text-start"
+                                    onClick={() => {
+                                      localStorage.setItem(
+                                        "goal_user",
+                                        item.users_id
+                                      );
+                                      localStorage.setItem(
+                                        "goal_name",
+                                        item.full_name
+                                      );
+                                    }}
+                                  >
+                                    Edit Goals
+                                  </a>
+                                ) : parseInt(item.secondary_id) === user_id &&
+                                  parseInt(item.fp_employee) === 1 &&
+                                  parseInt(item.fp_rater_1) === 1 &&
+                                  parseInt(item.fp_rater_2) === 0 ? (
+                                  <a
+                                    href={`/main_goals/edit`}
+                                    className="hover:bg-default w-full px-2 text-start"
+                                    onClick={() => {
+                                      localStorage.setItem(
+                                        "goal_user",
+                                        item.users_id
+                                      );
+                                      localStorage.setItem(
+                                        "goal_name",
+                                        item.full_name
+                                      );
+                                    }}
+                                  >
+                                    Edit Goals
+                                  </a>
+                                ) : parseInt(item.tertiary_id) === user_id &&
+                                  parseInt(item.fp_employee) === 1 &&
+                                  parseInt(item.fp_rater_1) === 1 &&
+                                  parseInt(item.fp_rater_2) === 1 &&
+                                  parseInt(item.fp_rater_3) === 0 ? (
+                                  <a
+                                    href={`/main_goals/edit`}
+                                    className="hover:bg-default w-full px-2 text-start"
+                                    onClick={() => {
+                                      localStorage.setItem(
+                                        "goal_user",
+                                        item.users_id
+                                      );
+                                      localStorage.setItem(
+                                        "goal_name",
+                                        item.full_name
+                                      );
+                                    }}
+                                  >
+                                    Edit Goals
+                                  </a>
+                                ) : (
+                                  ""
+                                )}
                                 {item.status === 2 && (
                                   <button className="hover:bg-default w-full px-2 text-start">
                                     Approve Goals

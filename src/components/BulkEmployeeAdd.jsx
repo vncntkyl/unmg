@@ -217,7 +217,6 @@ export default function BulkEmployeeAdd() {
       registeredEmployees.push(registeredEmployee);
     });
 
-    console.log(registeredEmployees);
     const data = JSON.stringify(registeredEmployees);
     const response = await uploadUsers(data);
     if (response === 1) {

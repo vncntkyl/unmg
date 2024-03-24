@@ -28,7 +28,6 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
   const [goalStatus, setGoalStatus] = useState(false);
   const [employeeName, setEmployeeName] = useState("");
   const [approvals, setApprovals] = useState([]);
-  // console.table(approvals);
   const { removeSubText } = useFunction();
   const { headList, fetchUsers } = useAuth();
 
@@ -175,7 +174,6 @@ export default function Goals({ user_id, pillars, workYear, setWorkYear }) {
           <WorkYear workYear={workYear} setWorkYear={setWorkYear} />
         </div>
         <div className="flex items-center gap-2">
-          {console.log(approvals, user_id)}
           {workYear && hasSet && user_id != 1 && (
             <>
               <ViewLayout

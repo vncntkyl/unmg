@@ -284,6 +284,7 @@ export function AuthProvider({ children }) {
   const uploadUsers = async (data) => {
     try {
       const fd = new FormData();
+      fd.append("batch", true);
       fd.append("employees", data);
 
       const response = await axios.post(url.uploadBatchUsers, fd);

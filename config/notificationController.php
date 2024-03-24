@@ -149,16 +149,16 @@ class Notification extends Controller
     }
   }
 
-  function updateEmployeeGoalNotification($creator, $user_id, $title, $message, $link)
+  function updateEmployeeGoalNotification($approver, $user_id, $title, $message, $link)
   {
     $this->setStatement("
     START TRANSACTION;
-    SELECT employee_id INTO @creator_id FROM hr_users WHERE users_id = :creator;
-    SELECT employee_id INTO @employee_id FROM hr_users WHERE users_id = :user_id;
+    SELECT employee_id INTO @approver_id FROM hr_users WHERE users_id = :approver;
+    SELECT employee_id INTO @employee_id FROM hr_users WHERE employee_id = :user_id;
     INSERT INTO hr_notifications (sender_id, employee_id, title, message, link, seen, deleted, creation_date)
-    VALUES (@creator_id, @employee_id, :title, :message, :link, 0, 0, :creation_date);
+    VALUES (@approver_id, @employee_id, :title, :message, :link, 0, 0, :creation_date);
     COMMIT;");
-    $process = $this->statement->execute([':creator' => $creator, ':user_id' => $user_id, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
+    $process = $this->statement->execute([':approver' => $approver, ':user_id' => $user_id, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
     if ($process) {
       return "success";
     }

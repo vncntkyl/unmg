@@ -18,7 +18,6 @@ export default function EditGoals({ user_id, pillars, workYear }) {
   const [users, setUsers] = useState([]);
   const [modal, setModal] = useState("standby");
   const [modalMessage, setModalMessage] = useState("");
-  const [approvals, setApprovals] = useState([]);
   const navigate = useNavigate();
   const { removeSubText } = useFunction();
   const { currentUser, fetchUsers } = useAuth();
@@ -113,33 +112,17 @@ export default function EditGoals({ user_id, pillars, workYear }) {
         console.log(e.message);
       }
     };
-    const getApprovals = async () => {
-      const parameters = {
-        params: {
-          approvals: true,
-          user_id: id ? id : user_id,
-          work_year: workYear,
-        },
-      };
-      try {
-        const response = await axios.get(url.fetchAllGoals, parameters);
-        setApprovals(response.data);
-        setLoading(false);
-      } catch (e) {
-        console.log(e.message);
-      }
-    };
-    getApprovals();
     retrieveUser();
   }, [workYear]);
 const handleContinue = () => {
   setModal("confirmation");
 }
-const handleSubmit = async () => {
+const handleSubmit = async (fp_id) => {
   try {
     const formdata = new FormData();
     formdata.append("goalData", JSON.stringify(tableData));
     formdata.append("goal_editor", parseInt(JSON.parse(currentUser).users_id))
+    formdata.append("fp_id", fp_id)
     formdata.append("workYear", workYear)
     formdata.append("user_id", parseInt(localStorage.getItem("goal_user")))
     const response = await axios.post(url.updateGoals, formdata);
@@ -277,7 +260,7 @@ const handleSuccess = () => {
               "Can you please confirm whether the provided goal details are accurate?"
             }
             handleContinue={() => {
-              handleSubmit();
+              handleSubmit(tableData[0].hr_eval_form_fp_id);
             }}
           />
         </>
