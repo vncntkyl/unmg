@@ -48,7 +48,11 @@ if (isset($_POST['goalData'])) {
         echo 0;
     } else {
         $performancePlan = $form->fetchEvaluationFormApproval($user_id, $workYear);
-        
+        $stat = 0;
+        if ($performancePlan->primary_id == $goal_editor){
+            $updatefp = $form->updateFp()
+        }
+
         $userLog = $logs->updateGoals($goal_editor === $user_id ? $user_id : $goal_editor, 3, 2, $goal_editor === $user_id ? "has updated their goals" : "has updated the goals of their employee");
         if($userLog = "success"){
             if ($goal_editor === $user_id) {
