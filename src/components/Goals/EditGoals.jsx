@@ -9,7 +9,7 @@ import { developmentAPIs as url } from "../../context/apiList";
 import ViewLayout from "../../misc/ViewLayout";
 import AlertModal from "../../misc/AlertModal";
 
-export default function EditGoals({ pillars, workYear }) {
+export default function EditGoals({ user_id, pillars, workYear }) {
   const [goalData, setGoalData] = useState([]);
   const [viewLayout, setViewLayout] = useState("tabular");
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ export default function EditGoals({ pillars, workYear }) {
   const [users, setUsers] = useState([]);
   const [modal, setModal] = useState("standby");
   const [modalMessage, setModalMessage] = useState("");
-
+  const [approvals, setApprovals] = useState([]);
   const navigate = useNavigate();
   const { removeSubText } = useFunction();
   const { currentUser, fetchUsers } = useAuth();
@@ -113,7 +113,23 @@ export default function EditGoals({ pillars, workYear }) {
         console.log(e.message);
       }
     };
-
+    const getApprovals = async () => {
+      const parameters = {
+        params: {
+          approvals: true,
+          user_id: id ? id : user_id,
+          work_year: workYear,
+        },
+      };
+      try {
+        const response = await axios.get(url.fetchAllGoals, parameters);
+        setApprovals(response.data);
+        setLoading(false);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    getApprovals();
     retrieveUser();
   }, [workYear]);
 const handleContinue = () => {
@@ -185,6 +201,7 @@ const handleSubmit = async () => {
     console.log(e.message);
   }
 };
+
 const handleSuccess = () => {
   navigate("/main_goals");
 }

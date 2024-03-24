@@ -69,7 +69,7 @@ export default function MainGoals() {
       console.log(e.message);
     }
   };
-
+  verifyEvaluator();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -214,7 +214,7 @@ export default function MainGoals() {
                 />
                 <Route
                   path="/edit/*"
-                  element={<EditGoals pillars={pillars} workYear={workYear} />}
+                  element={<EditGoals user_id={userID} pillars={pillars} workYear={workYear} />}
                 />
               </Routes>
             </div>

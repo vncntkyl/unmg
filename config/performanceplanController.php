@@ -266,6 +266,9 @@ class PerformancePlan extends Controller
   {
     $this->setStatement("SELECT
     u.users_id AS employee_id,
+    CASE WHEN u.middle_name IS NOT NULL AND u.middle_name <> '' THEN CONCAT(u.last_name, ' ', u.first_name, ' ', SUBSTRING(u.middle_name, 1, 1), '. ')
+    ELSE CONCAT(u.last_name, ' ', u.first_name) 
+    END AS full_name,
     fp.employee AS fp_employee,
     pe.users_id AS primary_id,
     CASE WHEN pe.middle_name IS NOT NULL AND pe.middle_name <> '' THEN CONCAT(pe.last_name, ' ', pe.first_name, ' ', SUBSTRING(pe.middle_name, 1, 1), '. ')
@@ -277,7 +280,7 @@ class PerformancePlan extends Controller
     ELSE CONCAT(se.last_name, ' ', se.first_name)
     END AS secondary_evaluator,
     fp.rater_2 AS fp_rater_2,
-    te.users_id AS tetiary_id,
+    te.users_id AS tertiary_id,
     CASE WHEN te.middle_name IS NOT NULL AND te.middle_name <> '' THEN CONCAT(te.last_name, ' ', te.first_name, ' ', SUBSTRING(te.middle_name, 1, 1), '. ') 
     ELSE CONCAT(te.last_name, ' ', te.first_name)
     END AS tertiary_evaluator,
@@ -321,9 +324,9 @@ class PerformancePlan extends Controller
     return $this->statement->fetch();
   }
 
-  function approveGoal($column_name, $id)
+  function approveGoal($column_name, $acceptType, $id)
   {
-      $this->setStatement("UPDATE `hr_eval_form_fp` SET {$column_name} = 2 WHERE hr_eval_form_fp_id = ?");
-      return $this->statement->execute([$id]);
+      $this->setStatement("UPDATE `hr_eval_form_fp` SET {$column_name} = ? WHERE hr_eval_form_fp_id = ?");
+      return $this->statement->execute([$acceptType, $id]);
   }
 }

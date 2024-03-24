@@ -71,15 +71,10 @@ export default function DataTable({
       </thead>
       <tbody>
         {filterEmployees(sortedEmployees).map((item, index) => {
-          const raters = [2, 5];
+          const raters = [1, 2, 5];
 
           const approved =
-            parseInt(item.fp_employee) === 2 &&
-            [
-              parseInt(item.fp_rater_1),
-              parseInt(item.fp_rater_2),
-              parseInt(item.fp_rater_3),
-            ].every((rater) => raters.includes(rater));
+            parseInt(item.fp_employee) === 1 && [ parseInt(item.fp_rater_1), parseInt(item.fp_rater_2), parseInt(item.fp_rater_3),].every((rater) => raters.includes(rater));
           const status = [
             "Pending",
             "Accepted",

@@ -3,9 +3,68 @@ header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Origin, Content-Type');
 require_once '../config/performanceplanController.php';
+require_once '../config/logController.php';
+require_once '../config/notificationController.php';
+require_once '../config/approvallogsController.php';
 
-$fc = new PerformancePlan();
+$plan = new PerformancePlan();
+$logs = new Log();
+$notif = new Notification();
+$approval = new ApprovalLogs();
 
-if(isset($_POST['approve'])){
-    return $fc->approveGoal($_POST['column_name'], $_POST['id']);
+
+if (isset($_POST['approve'])) {
+    $userID = $_POST['employee_id'];
+    $approver = $_POST['approver'];
+    $column_name = $_POST['column_name'];
+    $accept = $_POST['accept'];
+    $id = $_POST['id'];
+    $notification = array();
+    $approvals = array();
+    $process = $plan->approveGoal($column_name, $accept, $id);
+    if ($process) {
+        $userLog = $logs->approveGoals($userID == $approver ? $userID : $approver, 3, 2, $userID == $approver ? "have approved their goals. Waiting for approval from their rater/s." : ($accept == 1 ? "have accepted the goals of their employee." : "have approved the goals of their employee."));
+        if ($userLog == "success") {
+            $approvalLog = $approval->goalApprovals($approver, $userID, 1, $approver == $userID ? "have approved their goals." : ($accept == 1 ? "have accepted the goals of" : "have approved the goals of"), $id);
+            if ($approvalLog == "success") {
+                if ($userID == $approver) {
+                    $fetchRaters = $notif->fetchGoalRaters($userID);
+                    foreach ($fetchRaters as $rater) {
+                        if ($rater->evaluator != null) {
+                            $raterNotif = $notif->approveGoalNotification($approver, $rater->evaluator, "Employee Accepted!", $accept == 1 ? "have accepted their goals. Please check to accept them." : "have accepted their goals. Please check to approve them", "/main_gaoals/" . $userID);
+                            if ($raterNotif == "success") {
+                                array_push($notification, 1);
+                            } else {
+                                array_push($notification, 0);
+                            }
+                        }
+                    }
+                    if (in_array(0, $notification)) {
+                        echo "error";
+                    } else {
+                        echo "success";
+                    }
+                } else {
+                    $fetchRaters = $notif->fetchGoalRatersEmployee($userID, $approver);
+                    foreach ($fetchRaters as $rater) {
+                        if ($rater->approval != null) {
+                            $approvalNotif = $notif->approveGoalNotificationRater($approver, $rater->approval, $accept == 1 ? "Rater Accepted!" : "Rater Approved!", $rater->employee == $rater->approval ? ($accept == 1 ? "have accepted your goals. Please wait for other raters to accept your goals." : "have approved your goals. You are now poised to achieve your objectives.") : ($accept == 1 ? "have accepted the goals of their employee. Please check their objectives to see if you accept/approve." : "have approved the goals of their employee."), $rater->employee == $rater->approval ? "/main_gaoals/" : "/main_gaoals/" . $userID);
+                            if ($approvalNotif == "success") {
+                                array_push($approvals, 1);
+                            } else {
+                                array_push($approvals, 0);
+                            }
+                        }
+                    }
+                    if (in_array(0, $approvals)) {
+                        echo "error";
+                    } else {
+                        echo "success";
+                    }
+                }
+            }
+        }
+    } else {
+        echo "error";
+    }
 }

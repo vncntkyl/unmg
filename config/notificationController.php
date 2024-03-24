@@ -86,6 +86,32 @@ class Notification extends Controller
     $this->statement->execute([':user_id' => $user_id]);
     return $this->statement->fetchAll();
   }
+  function fetchGoalRatersEmployee($user_id, $approver)
+  {
+    $this->setStatement("
+    SELECT employee, approval
+    FROM (
+    SELECT employee_id AS employee, employee_id AS approval 
+    FROM hr_users 
+    WHERE employee_id = (SELECT employee_id FROM hr_users WHERE users_id = :user_id)
+    UNION
+    SELECT employee_id AS employee, primary_evaluator AS approval
+    FROM hr_users
+    WHERE employee_id = (SELECT employee_id FROM hr_users WHERE users_id = :user_id)
+    UNION
+    SELECT employee_id AS employee, secondary_evaluator AS approval
+    FROM hr_users
+    WHERE employee_id = (SELECT employee_id FROM hr_users WHERE users_id = :user_id)
+    UNION
+    SELECT employee_id AS employee, tertiary_evaluator AS approval
+    FROM hr_users
+    WHERE employee_id = (SELECT employee_id FROM hr_users WHERE users_id = :user_id)
+    ) AS query
+    WHERE approval != (SELECT employee_id FROM hr_users WHERE users_id = :approver)
+    ");
+    $this->statement->execute([':user_id' => $user_id, ':approver' => $approver]);
+    return $this->statement->fetchAll();
+  }
 
   function addGoalNotification($creator_ID, $employee_ID, $title, $message, $link)
   {
@@ -96,17 +122,18 @@ class Notification extends Controller
     VALUES (@creator_id, :employee_ID, :title, :message, :link, 0, 0, :creation_date);
     COMMIT;");
     $process = $this->statement->execute([
-      ':user_id' => $creator_ID, 
-      ':employee_ID' => $employee_ID, 
-      ':title' => $title, 
-      ':message' => $message, 
-      ':link' => $link, 
+      ':user_id' => $creator_ID,
+      ':employee_ID' => $employee_ID,
+      ':title' => $title,
+      ':message' => $message,
+      ':link' => $link,
       ':creation_date' => date('Y-m-d H:i:s')
     ]);
     if ($process) {
       return "success";
     }
   }
+
   function addEmployeeGoalNotification($creator, $user_id, $title, $message, $link)
   {
     $this->setStatement("
@@ -121,6 +148,7 @@ class Notification extends Controller
       return "success";
     }
   }
+
   function updateEmployeeGoalNotification($creator, $user_id, $title, $message, $link)
   {
     $this->setStatement("
@@ -131,6 +159,36 @@ class Notification extends Controller
     VALUES (@creator_id, @employee_id, :title, :message, :link, 0, 0, :creation_date);
     COMMIT;");
     $process = $this->statement->execute([':creator' => $creator, ':user_id' => $user_id, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
+    if ($process) {
+      return "success";
+    }
+  }
+
+  function approveGoalNotification($approver, $userID, $title, $message, $link)
+  {
+    $this->setStatement("
+    START TRANSACTION;
+    SELECT employee_id INTO @approver_id FROM hr_users WHERE users_id = :approver;
+    SELECT employee_id INTO @employee_id FROM hr_users WHERE employee_id = :user_id;
+    INSERT INTO hr_notifications (sender_id, employee_id, title, message, link, seen, deleted, creation_date)
+    VALUES (@approver_id, @employee_id, :title, :message, :link, 0, 0, :creation_date);
+    COMMIT;");
+    $process = $this->statement->execute([':approver' => $approver, ':user_id' => $userID, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
+    if ($process) {
+      return "success";
+    }
+  }
+
+  function approveGoalNotificationRater($approver, $userID, $title, $message, $link)
+  {
+    $this->setStatement("
+    START TRANSACTION;
+    SELECT employee_id INTO @approver_id FROM hr_users WHERE users_id = :approver;
+    SELECT employee_id INTO @employee_id FROM hr_users WHERE employee_id = :user_id;
+    INSERT INTO hr_notifications (sender_id, employee_id, title, message, link, seen, deleted, creation_date)
+    VALUES (@approver_id, @employee_id, :title, :message, :link, 0, 0, :creation_date);
+    COMMIT;");
+    $process = $this->statement->execute([':approver' => $approver, ':user_id' => $userID, ':title' => $title, ':message' => $message, ':link' => $link, ':creation_date' => date('Y-m-d H:i:s')]);
     if ($process) {
       return "success";
     }
