@@ -73,12 +73,12 @@ if (isset($_POST['submit'])) {
     if (in_array(0, $status)) {
         echo "There seems to be an error in creating your goals. Please try again.";
     } else {
-        $userLog = $logs->createGoals($employee_id, 3, 1, $userID == $creator ? "have submitted their goals. Waiting for approval from their rater/s." : "have submitted the goals of their employee.");
+        $userLog = $logs->createGoals($employee_id, 3, 1, $userID == $creator ? "has submitted their goals. Waiting for approval from their rater/s." : "has submitted the goals of their employee.");
         if ($userLog = "success") {
             if ($userID == $creator) {
                 $fetchRaters = $notif->fetchRaters($employee_id);
                 foreach ($fetchRaters as $rater) {
-                    $raterNotif = $notif->addGoalNotification($creator, $rater->evaluator, "Employee Goals Submitted!", "have submitted their goals. Please check for their approval", "/main_goals/" . $userID);
+                    $raterNotif = $notif->addGoalNotification($creator, $rater->evaluator, "Employee Goals Submitted!", "has submitted their goals. Please check for their approval", "/main_goals/" . $userID);
                     if ($raterNotif == "success") {
                         array_push($notification, 1);
                     } else {

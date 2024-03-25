@@ -61,21 +61,21 @@ if (isset($_POST['goalData'])) {
                 }
             } else if ($performancePlan->primary_id == $goal_editor) {
                 if ($performancePlan->status == 2) {
-                    $updatefp = $form->updateFpByID($fp_id, 0, 2, 5, 5);
+                    $updatefp = $form->updateFpByID($fp_id, 0, 0, 5, 5);
                 } else if ($performancePlan->status == 3) {
-                    $updatefp = $form->updateFpByID($fp_id, 0, 1, 0, 5);
+                    $updatefp = $form->updateFpByID($fp_id, 0, 0, 0, 5);
                 } else if ($performancePlan->status == 4) {
-                    $updatefp = $form->updateFpByID($fp_id, 0, 1, 0, 0);
+                    $updatefp = $form->updateFpByID($fp_id, 0, 0, 0, 0);
                 }
             } else if ($performancePlan->secondary_id == $goal_editor) {
                 if ($performancePlan->status == 3) {
-                    $updatefp = $form->updateFpByID($fp_id, 1, 0, 2, 5);
+                    $updatefp = $form->updateFpByID($fp_id, 1, 0, 0, 5);
                 } else if ($performancePlan->status == 4) {
-                    $updatefp = $form->updateFpByID($fp_id, 1, 0, 1, 0);
+                    $updatefp = $form->updateFpByID($fp_id, 1, 0, 0, 0);
                 }
             } else if ($performancePlan->tertiary_id == $goal_editor) {
                 if ($performancePlan->status == 4) {
-                    $updatefp = $form->updateFpByID($fp_id, 1, 0, 0, 2);
+                    $updatefp = $form->updateFpByID($fp_id, 1, 0, 0, 0);
                 }
             }
 
@@ -83,7 +83,7 @@ if (isset($_POST['goalData'])) {
                 $fetchGoalRaters = $notif->fetchGoalRaters($user_id);
                 foreach ($fetchGoalRaters as $rater) {
                     if ($rater->evaluator != null) {
-                        $raterNotif = $notif->addGoalNotification($goal_editor, $rater->evaluator, "Employee Goals Updated!", "have updated their goals. Please check for their approval", "/main_goals/" . $user_id);
+                        $raterNotif = $notif->addGoalNotification($goal_editor, $rater->evaluator, "Employee Goals Updated!", "has updated their goals. Please check for their approval", "/main_goals/" . $user_id);
                         if ($raterNotif == "success") {
                             array_push($notification, 1);
                         } else {
@@ -100,7 +100,7 @@ if (isset($_POST['goalData'])) {
                 $fetchRaters = $notif->fetchGoalRatersEmployee($user_id, $goal_editor);
                 foreach ($fetchRaters as $rater) {
                     if ($rater->approval != null) {
-                        $userNotif = $notif->updateEmployeeGoalNotification($goal_editor, $rater->approval, "Goal Updated!", $rater->employee == $rater->approval ? "have updated your goals. Please wait for other raters for your approval" : "have updated the goals of your employee. Please check for your approval", $rater->employee == $rater->approval ? "/main_goals" : "/main_goals/" . $user_id);
+                        $userNotif = $notif->updateEmployeeGoalNotification($goal_editor, $rater->approval, "Goal Updated!", $rater->employee == $rater->approval ? "has updated your goals. Please wait for other raters for your approval" : "has updated the goals of your employee. Please check for your approval", $rater->employee == $rater->approval ? "/main_goals" : "/main_goals/" . $user_id);
                         if ($userNotif == "success") {
                             array_push($approvals, 1);
                         } else {

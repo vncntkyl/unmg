@@ -23,15 +23,15 @@ if (isset($_POST['approve'])) {
     $approvals = array();
     $process = $plan->approveGoal($column_name, $accept, $id);
     if ($process) {
-        $userLog = $logs->approveGoals($userID == $approver ? $userID : $approver, 3, 2, $userID == $approver ? "have approved their goals. Waiting for approval from their rater/s." : ($accept == 1 ? "have accepted the goals of their employee." : "have approved the goals of their employee."));
+        $userLog = $logs->approveGoals($userID == $approver ? $userID : $approver, 3, 2, $userID == $approver ? "has approved their goals. Waiting for approval from their rater/s." : ($accept == 1 ? "has accepted the goals of their employee." : "has approved the goals of their employee."));
         if ($userLog == "success") {
-            $approvalLog = $approval->goalApprovals($approver, $userID, 1, $approver == $userID ? "have approved their goals." : ($accept == 1 ? "have accepted the goals of" : "have approved the goals of"), $id);
+            $approvalLog = $approval->goalApprovals($approver, $userID, 1, $approver == $userID ? "has approved their goals." : ($accept == 1 ? "has accepted the goals of" : "has approved the goals of"), $id);
             if ($approvalLog == "success") {
                 if ($userID == $approver) {
                     $fetchRaters = $notif->fetchGoalRaters($userID);
                     foreach ($fetchRaters as $rater) {
                         if ($rater->evaluator != null) {
-                            $raterNotif = $notif->approveGoalNotification($approver, $rater->evaluator, "Employee Accepted!", $accept == 1 ? "have accepted their goals. Please check to accept them." : "have accepted their goals. Please check to approve them", "/main_gaoals/" . $userID);
+                            $raterNotif = $notif->approveGoalNotification($approver, $rater->evaluator, "Employee Accepted!", $accept == 1 ? "has accepted their goals. Please check to accept them." : "has accepted their goals. Please check to approve them", "/main_goals/" . $userID);
                             if ($raterNotif == "success") {
                                 array_push($notification, 1);
                             } else {
@@ -48,7 +48,7 @@ if (isset($_POST['approve'])) {
                     $fetchRaters = $notif->fetchGoalRatersEmployee($userID, $approver);
                     foreach ($fetchRaters as $rater) {
                         if ($rater->approval != null) {
-                            $approvalNotif = $notif->approveGoalNotificationRater($approver, $rater->approval, $accept == 1 ? "Rater Accepted!" : "Rater Approved!", $rater->employee == $rater->approval ? ($accept == 1 ? "have accepted your goals. Please wait for other raters to accept your goals." : "have approved your goals. You are now poised to achieve your objectives.") : ($accept == 1 ? "have accepted the goals of their employee. Please check their objectives to see if you accept/approve." : "have approved the goals of their employee."), $rater->employee == $rater->approval ? "/main_gaoals/" : "/main_gaoals/" . $userID);
+                            $approvalNotif = $notif->approveGoalNotificationRater($approver, $rater->approval, $accept == 1 ? "Rater Accepted!" : "Rater Approved!", $rater->employee == $rater->approval ? ($accept == 1 ? "has accepted your goals. Please wait for other raters to accept your goals." : "has approved your goals. You are now poised to achieve your objectives.") : ($accept == 1 ? "has accepted the goals of their employee. Please check their objectives to see if you accept/approve." : "has approved the goals of their employee."), $rater->employee == $rater->approval ? "/main_goals/" : "/main_goals/" . $userID);
                             if ($approvalNotif == "success") {
                                 array_push($approvals, 1);
                             } else {
